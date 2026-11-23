@@ -339,6 +339,16 @@ window.addEventListener('load', function () {
     .ap-no { background: #fff1f2; border-left: 3px solid #be123c; border-radius: 0 .75rem .75rem 0; padding: 1rem 1.2rem; font-size: .93rem; margin: 1rem 0; }
     .ap-no ul { list-style: disc outside; margin: .5rem 0 0; padding-left: 1.1rem; display: grid; gap: .35rem; }
 
+    .mcp-ejemplos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: .75rem; margin-top: 1rem; }
+    .mcp-ejemplo-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: .85rem; padding: .85rem 1rem; }
+    .mcp-ejemplo-tag { display: block; font-size: .75rem; font-weight: 700; color: #00382E; margin-bottom: .25rem; }
+    .mcp-ejemplo-card p { margin: 0 !important; font-size: .88rem; line-height: 1.45; color: #334155; }
+    .mcp-addon-cta { margin-top: 1.1rem; padding: 1.15rem 1.25rem; background: #ffffff; border: 2px solid #00382E; border-radius: 1rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+    .mcp-addon-info h3 { margin: 0 0 .25rem !important; font-size: 1.05rem !important; font-weight: 800; color: #0f172a; }
+    .mcp-addon-precio { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 800; color: #00382E; margin: 0 0 .25rem !important; }
+    .mcp-addon-nota { margin: 0 !important; font-size: .85rem; color: #475569; }
+    .mcp-addon-acciones { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+
     .ls-cta-inline { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; background: #e8f0ee; border-radius: 1rem; padding: 1.2rem 1.35rem; margin-top: 1.25rem; }
     .ls-cta-inline p { margin: 0 !important; font-size: .92rem; color: #334155; }
     .ls-cta-title { font-weight: 750; color: #0f172a !important; font-size: 1.02rem !important; margin-bottom: .2rem !important; }
@@ -366,6 +376,8 @@ window.addEventListener('load', function () {
         .ls-toc ol, .sc-pilares, .ap-planes, .sc-form-grid { grid-template-columns: 1fr; columns: 1; }
         .ls-cta-inline { flex-direction: column; align-items: stretch; }
         .ls-hero-actions .ls-btn { flex: 1 1 100%; }
+        .mcp-addon-acciones { width: 100%; }
+        .mcp-addon-acciones .ls-btn { flex: 1 1 100%; min-height: 44px; justify-content: center; }
     }
 </style>
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.8.0">
@@ -697,12 +709,14 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <ol>
 <li><a href="#que-hace">Qué puedes hacer hoy</a></li>
 <li><a href="#sin-claves">Trabajo por archivos o conexión SII opcional</a></li>
+<li><a href="#copiloto-mcp">Copiloto IA de tu cartera (Conector MCP)</a></li>
 <li><a href="#comparativa">Condiciones operativas</a></li>
 <li><a href="#planes">Planes mensuales, anuales y acceso anticipado</a></li>
 <li><a href="#no-hace">Qué no hace esta herramienta</a></li>
 <li><a href="#preguntas">Preguntas frecuentes</a></li>
 </ol>
 </nav>
+<div id="sc-pago-banner" hidden></div>
 
 <article class="ls-article">
 <section id="que-hace" class="ls-section">
@@ -762,6 +776,67 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <li><strong>Cifrado y control de revocación:</strong> las credenciales del SII viajan por HTTPS, se cifran con <strong>AES-256-GCM</strong> en servidor (nunca se guardan en <code>localStorage</code> ni se vuelven a mostrar) y puedes desconectarlas o eliminar la empresa del conector cuando quieras.</li>
 <li><strong>Previred, Mi DT y bancos siempre por archivo:</strong> nunca solicitamos claves de Previred, ClaveÚnica laboral ni accesos de scraping bancario; esos módulos operan 100% con archivos revisados por el contador.</li>
 </ul>
+</div>
+</section>
+
+<section id="copiloto-mcp" class="ls-section">
+<h2>Pregúntale a tu cartera de empresas desde Claude o ChatGPT (solo lectura)</h2>
+<p>Conecta tu estudio contable mediante el protocolo abierto MCP usando tokens revocables por enlace HTTPS o configuración de escritorio. Consulta tus empresas sincronizadas en lenguaje natural sin exponer tu Clave Tributaria a la IA ni permitir escrituras en el SII. Revisa todos los detalles técnicos y prompts en la guía de <a href="conector-mcp-contadores-chile" class="font-semibold text-[#00382E] underline">Conector MCP para contadores en Chile</a>.</p>
+
+<div class="sc-pilares">
+<div class="sc-pilar">
+<h3>1. Genera tu token MCP</h3>
+<p>Desde tu sesión del estudio creas un token único (<code class="font-mono text-xs">smcp_live_...</code>) con etiqueta por equipo y lo revocas en un clic si ya no lo usas.</p>
+</div>
+<div class="sc-pilar">
+<h3>2. Conecta Claude o ChatGPT</h3>
+<p>Pega la URL remota (<code class="font-mono text-xs">https://connect.calculolaboral.cl/mcp</code>) y tu header Bearer en Claude web o ChatGPT, o copia el JSON para Claude Desktop.</p>
+</div>
+<div class="sc-pilar">
+<h3>3. Consulta tu cartera en solo lectura</h3>
+<p>Pregunta por clientes puntuales o por toda tu cartera sincronizada. El conector nunca modifica datos ni envía acuses o declaraciones al SII, TGR o PreviRed.</p>
+</div>
+<div class="sc-pilar">
+<h3>4. Privacidad y control del estudio</h3>
+<p>Tu Clave Tributaria no llega a la IA. Los resúmenes de lectura consultados son procesados por Claude o ChatGPT bajo sus términos de privacidad (Ley N° 19.628) y puedes revocar cualquier token al instante.</p>
+</div>
+</div>
+
+<div class="mcp-ejemplos-grid">
+<div class="mcp-ejemplo-card">
+<span class="mcp-ejemplo-tag">Acuses RCV 8 días</span>
+<p>«¿Qué facturas de compra pendientes vencen en las próximas 48 horas y superan $500.000?»</p>
+</div>
+<div class="mcp-ejemplo-card">
+<span class="mcp-ejemplo-tag">F29 cód. 91 del mes</span>
+<p>«Resume el F29 cód. 91, IVA débito/crédito y PPM de mis empresas para este período.»</p>
+</div>
+<div class="mcp-ejemplo-card">
+<span class="mcp-ejemplo-tag">Deuda TGR</span>
+<p>«Lista los clientes con deuda tributaria o giros registrados en Tesorería este mes.»</p>
+</div>
+<div class="mcp-ejemplo-card">
+<span class="mcp-ejemplo-tag">Mora PreviRed</span>
+<p>«¿Qué empresas registran cotizaciones impagas o mora previsional en PreviRed?»</p>
+</div>
+<div class="mcp-ejemplo-card">
+<span class="mcp-ejemplo-tag">BHE anual</span>
+<p>«Resume las Boletas de Honorarios Electrónicas recibidas y retenciones acumuladas en el año.»</p>
+</div>
+</div>
+
+<div class="mcp-addon-cta">
+<div class="mcp-addon-info">
+<h3>Add-on Conector MCP (Claude y ChatGPT, solo lectura)</h3>
+<p class="mcp-addon-precio">+$29.900 + IVA/año <span style="font-size:.85rem;font-weight:600;color:#475569;">($35.581 total IVA incl.) · o $3.490 + IVA/mes ($4.153 total)</span></p>
+<p class="mcp-addon-nota">Complemento opcional para Contador independiente sin permanencia. Incluido sin costo extra en Estudio y Estudio ilimitado.</p>
+<p id="sc-mcp-status" class="text-xs font-semibold m-0 mt-1" aria-live="polite"></p>
+</div>
+<div class="mcp-addon-acciones">
+<button type="button" id="btn-mcp-addon-anual" class="ls-btn ls-btn-primary">Agregar MCP anual ($35.581 IVA incl.)</button>
+<button type="button" id="btn-mcp-addon-mensual" class="ls-btn ls-btn-ghost" style="border:1.5px solid #00382E;">Mensual ($4.153 IVA incl.)</button>
+<a href="demo-contadores?mod=reportes" class="ls-btn ls-btn-ghost" data-demo-track="1" data-cta-slot="suite-mcp">Probar en /demo-contadores</a>
+</div>
 </div>
 </section>
 
@@ -830,6 +905,7 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <li>Hasta 10 empresas clientes (extra: $1.900/mes o $14.900/año + IVA)</li>
 <li>1 usuario del estudio (extra: $6.900/mes o $59.900/año + IVA)</li>
 <li>Nómina, Previred, LRE, F29, BHE, Conciliación, Balance 8 col., RLI y DDJJ</li>
+<li>Conector MCP (Claude y ChatGPT): suma el <strong>Add-on (+$29.900 + IVA/año [$35.581 total] o $3.490 + IVA/mes [$4.153 total])</strong> o sube a Estudio</li>
 </ul>
 </div>
 <div class="ap-plan ap-plan-dest">
@@ -851,6 +927,7 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <li>Empresas clientes sin tope</li>
 <li>Hasta 5 usuarios del estudio (extra: $6.900/mes o $59.900/año + IVA)</li>
 <li>Incluye el <a href="monitor-tributario-previsional" class="font-semibold text-[#00382E] underline">Monitor Tributario y Previsional</a> por empresa cliente</li>
+<li>Incluye Portal Cliente Marca Blanca, conexión SII opcional y conector MCP</li>
 <li>Pensado para carteras amplias con cierres mensuales en lote y soporte prioritario</li>
 </ul>
 </div>
@@ -933,6 +1010,10 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <details>
 <summary>¿Cómo funcionan los planes mensuales y el prepago anual?</summary>
 <p>Puedes elegir pago mensual sin permanencia ($16.900, $32.900 o $59.900 + IVA al mes según tramo; pagas mes a mes sin cargos automáticos) o prepago anual único ($149.900, $299.900 o $549.900 + IVA al año), siempre con $0 de habilitación y activación por facturación manual en 24 horas hábiles. Además, el acceso anticipado entrega 90 días gratis para los primeros 20 estudios antes de decidir contratar.</p>
+</details>
+<details>
+<summary>¿Qué incluye el Conector MCP para Claude y ChatGPT y cuánto cuesta?</summary>
+<p>El Conector MCP permite consultar en modo de solo lectura tus empresas sincronizadas (acuses RCV de 8 días por vencer, resumen F29 cód. 91, deudas TGR, mora PreviRed y BHE) usando conectores HTTP remotos en Claude web/ChatGPT o JSON en Claude Desktop. Nunca comparte tu Clave Tributaria con la IA ni puede modificar registros o presentar declaraciones en el SII, TGR o PreviRed (los resúmenes consultados son procesados por la IA que conectes bajo sus propios términos de privacidad, Ley N° 19.628). Viene incluido en los planes Estudio y Estudio ilimitado, y puede agregarse como add-on en Contador independiente por $29.900 + IVA/año ($35.581 total IVA incluido) o $3.490 + IVA/mes ($4.153 total IVA incluido).</p>
 </details>
 <details>
 <summary>¿Los borradores reemplazan la revisión en Previred, Mi DT o el SII?</summary>
@@ -1030,11 +1111,43 @@ Plataforma independiente con herramientas laborales y simuladores legales actual
 
 <script src="/js/constants.js?v=2.1.2"></script>
 <script src="/js/indicators.js?v=2.9.2"></script>
-<script src="/js/checkout_consent.js?v=1.5.0" defer></script>
+<script src="/js/checkout_consent.js?v=1.6.0" defer></script>
 <script src="/js/origen.js?v=1.0.0" defer></script>
 <script src="/js/motion.js?v=1.0.0" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    var mPago = /[?&]pago=(ok|rechazado)/.exec(window.location.search);
+    var pagoBanner = document.getElementById('sc-pago-banner');
+    if (pagoBanner && mPago) {
+        pagoBanner.hidden = false;
+        if (mPago[1] === 'ok') {
+            pagoBanner.className = 'p-3.5 rounded-2xl border bg-emerald-50 border-emerald-200 text-emerald-900 text-sm font-semibold mb-6';
+            pagoBanner.textContent = 'Pago confirmado: reservamos tu Add-on Conector MCP. Te escribiremos a tu correo para habilitar el conector y tu primer token.';
+        } else {
+            pagoBanner.className = 'p-3.5 rounded-2xl border bg-rose-50 border-rose-200 text-rose-900 text-sm font-semibold mb-6';
+            pagoBanner.textContent = 'El pago del Add-on Conector MCP no se completó. Puedes intentarlo de nuevo cuando quieras desde la sección del conector.';
+        }
+    }
+
+    function comprarMcp(producto) {
+        if (!(window.CLCheckout && window.CLCheckout.buyKit)) return;
+        var st = document.getElementById('sc-mcp-status');
+        window.CLCheckout.buyKit(producto, {}, {
+            askEmail: true,
+            variante: 'mcp',
+            onError: function (msgErr) {
+                if (st) {
+                    st.textContent = msgErr;
+                    st.className = 'text-xs font-semibold m-0 mt-1 text-rose-700';
+                }
+            }
+        });
+    }
+    var btnMcpAnual = document.getElementById('btn-mcp-addon-anual');
+    if (btnMcpAnual) btnMcpAnual.addEventListener('click', function () { comprarMcp('mcp12'); });
+    var btnMcpMensual = document.getElementById('btn-mcp-addon-mensual');
+    if (btnMcpMensual) btnMcpMensual.addEventListener('click', function () { comprarMcp('mcp1'); });
+
     document.querySelectorAll('[data-demo-track="1"]').forEach(function (el) {
         el.addEventListener('click', function () {
             if (typeof window.gtag === 'function') {

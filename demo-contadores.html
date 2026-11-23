@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.20.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.21.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -2642,22 +2642,40 @@
       <div class="mcp-paso">
         <div class="mcp-paso-head">
           <span class="mcp-paso-num">2</span>
-          <strong>Agrega el servidor en Claude Desktop o Claude web</strong>
+          <strong>Conecta Claude web, ChatGPT o Claude Desktop</strong>
         </div>
-        <div class="mcp-copiar-fila" style="margin-bottom:10px">
-          <code id="mcp-server-url" class="mono mcp-codigo-linea">https://connect.calculolaboral.cl/mcp</code>
-          <button type="button" class="btn btn-chico" id="btn-mcp-copiar-url">
-            <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar URL</span>
-          </button>
+        <div class="mcp-tabs" role="tablist" aria-label="Modo de conexión MCP">
+          <button type="button" class="mcp-tab activo" id="tab-mcp-remoto" role="tab" aria-selected="true" aria-controls="mcp-panel-remoto" data-mcp-tab="remoto">Conector remoto (Claude web / ChatGPT)</button>
+          <button type="button" class="mcp-tab" id="tab-mcp-json" role="tab" aria-selected="false" aria-controls="mcp-panel-json" data-mcp-tab="json">Claude Desktop (JSON)</button>
         </div>
-        <div class="mcp-json-wrap">
-          <div class="mcp-json-head">
-            <span class="texto-ayuda">Fragmento para <code class="mono">claude_desktop_config.json</code> (o usa <code class="mono">Authorization: Bearer &lt;TOKEN&gt;</code> en conectores HTTP directos)</span>
-            <button type="button" class="btn btn-chico" id="btn-mcp-copiar-json">
-              <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar JSON</span>
+
+        <div id="mcp-panel-remoto" role="tabpanel" aria-labelledby="tab-mcp-remoto">
+          <label class="mcp-campo-lbl" for="mcp-server-url">1. URL del servidor MCP</label>
+          <div class="mcp-copiar-fila">
+            <code id="mcp-server-url" class="mono mcp-codigo-linea">https://connect.calculolaboral.cl/mcp</code>
+            <button type="button" class="btn btn-chico" id="btn-mcp-copiar-url">
+              <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar URL</span>
             </button>
           </div>
-          <pre class="mcp-json-pre mono" id="mcp-config-json">{
+          <label class="mcp-campo-lbl" for="mcp-header-auth">2. Header de autorización</label>
+          <div class="mcp-copiar-fila">
+            <code id="mcp-header-auth" class="mono mcp-codigo-linea">Authorization: Bearer &lt;TU_TOKEN_MCP&gt;</code>
+            <button type="button" class="btn btn-chico" id="btn-mcp-copiar-header">
+              <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar header</span>
+            </button>
+          </div>
+          <p class="texto-ayuda" style="margin:8px 0 0">Pega esta URL y el header Bearer en conectores remotos de Claude web o ChatGPT. Si ya generaste un token en el Paso 1, el header queda completado automáticamente.</p>
+        </div>
+
+        <div id="mcp-panel-json" role="tabpanel" aria-labelledby="tab-mcp-json" hidden>
+          <div class="mcp-json-wrap">
+            <div class="mcp-json-head">
+              <span class="texto-ayuda">Fragmento para <code class="mono">claude_desktop_config.json</code> en escritorio</span>
+              <button type="button" class="btn btn-chico" id="btn-mcp-copiar-json">
+                <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar JSON</span>
+              </button>
+            </div>
+            <pre class="mcp-json-pre mono" id="mcp-config-json">{
   "mcpServers": {
     "calculolaboral-sii": {
       "command": "npx",
@@ -2671,19 +2689,63 @@
     }
   }
 }</pre>
+          </div>
         </div>
       </div>
 
       <div class="mcp-paso">
         <div class="mcp-paso-head">
           <span class="mcp-paso-num">3</span>
-          <strong>Prueba estas consultas en Claude (solo lectura)</strong>
+          <strong>Prompts listos para copiar y consultar (solo lectura)</strong>
         </div>
-        <ul class="mcp-ejemplos-lista" id="mcp-ejemplos-lista">
-          <li>«Lista mis empresas conectadas al SII y revisa su último estado de sincronización»</li>
-          <li>«¿Qué facturas de compra en estado PENDIENTE están por vencer el plazo de acuse de 8 días?»</li>
-          <li>«Resume el F29 y las BHE del período actual para mi cliente»</li>
-        </ul>
+        <div class="mcp-prompts-lista" id="mcp-prompts-lista">
+          <div class="mcp-prompt-fila">
+            <div class="mcp-prompt-txt">
+              <span class="mcp-prompt-tag">Estado de sincronización</span>
+              <span class="mcp-prompt-body">«Lista mis empresas conectadas al SII y revisa su último estado de sincronización»</span>
+            </div>
+            <button type="button" class="btn btn-chico btn-mcp-copiar-prompt" data-prompt="Lista mis empresas conectadas al SII y revisa su último estado de sincronización">
+              <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar</span>
+            </button>
+          </div>
+          <div class="mcp-prompt-fila">
+            <div class="mcp-prompt-txt">
+              <span class="mcp-prompt-tag">Acuses RCV por vencer (&le; 48 h)</span>
+              <span class="mcp-prompt-body">«¿Qué facturas de compra en estado PENDIENTE están por vencer el plazo de acuse de 8 días en las próximas 48 horas?»</span>
+            </div>
+            <button type="button" class="btn btn-chico btn-mcp-copiar-prompt" data-prompt="¿Qué facturas de compra en estado PENDIENTE están por vencer el plazo de acuse de 8 días en las próximas 48 horas?">
+              <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar</span>
+            </button>
+          </div>
+          <div class="mcp-prompt-fila">
+            <div class="mcp-prompt-txt">
+              <span class="mcp-prompt-tag">Resumen F29 del mes</span>
+              <span class="mcp-prompt-body">«Resume el borrador de F29 (código 91, IVA débito/crédito y PPM) de mis empresas para el período actual»</span>
+            </div>
+            <button type="button" class="btn btn-chico btn-mcp-copiar-prompt" data-prompt="Resume el borrador de F29 (código 91, IVA débito/crédito y PPM) de mis empresas para el período actual">
+              <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar</span>
+            </button>
+          </div>
+          <div class="mcp-prompt-fila">
+            <div class="mcp-prompt-txt">
+              <span class="mcp-prompt-tag">Deudas TGR y mora PreviRed</span>
+              <span class="mcp-prompt-body">«Revisa si alguna empresa de mi cartera tiene deudas en TGR o cotizaciones morosas en PreviRed este mes»</span>
+            </div>
+            <button type="button" class="btn btn-chico btn-mcp-copiar-prompt" data-prompt="Revisa si alguna empresa de mi cartera tiene deudas en TGR o cotizaciones morosas en PreviRed este mes">
+              <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar</span>
+            </button>
+          </div>
+          <div class="mcp-prompt-fila">
+            <div class="mcp-prompt-txt">
+              <span class="mcp-prompt-tag">Resumen anual BHE</span>
+              <span class="mcp-prompt-body">«Genera un resumen anual de Boletas de Honorarios Electrónicas (BHE) recibidas y retenciones por empresa»</span>
+            </div>
+            <button type="button" class="btn btn-chico btn-mcp-copiar-prompt" data-prompt="Genera un resumen anual de Boletas de Honorarios Electrónicas (BHE) recibidas y retenciones por empresa">
+              <span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar</span>
+            </button>
+          </div>
+        </div>
+        <p class="mcp-readonly-nota">Modo estricto de solo lectura: consulta únicamente los datos ya sincronizados de tus empresas; no puede modificar registros, emitir acuses ni presentar o pagar declaraciones en el SII, TGR o PreviRed. Los resúmenes consultados viajan a la plataforma de IA que conectes (Claude o ChatGPT) bajo sus propios términos de privacidad (Ley N° 19.628).</p>
       </div>
 
       <div class="mcp-tokens-wrap" id="mcp-tokens-wrap">
@@ -2709,7 +2771,7 @@
         <span class="material-icons" aria-hidden="true">verified_user</span>
         <div class="sii-seguridad-txt">
           <strong>Conexión de solo lectura y revocable en 1 clic</strong>
-          <p>Los tokens solo autorizan consultas sobre los datos del estudio en el servidor conector. Claude no puede editar liquidaciones, modificar claves SII ni enviar declaraciones.</p>
+          <p>Los tokens solo autorizan consultas sobre los datos del estudio en el servidor conector. La IA conectada no puede editar liquidaciones, modificar claves SII ni enviar declaraciones.</p>
         </div>
       </div>
 
@@ -3175,7 +3237,7 @@
 <script src="/js/demo_suite.js?v=2.13.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
-<script src="/js/demo_mcp.js?v=1.0.0"></script>
+<script src="/js/demo_mcp.js?v=1.1.0"></script>
 <script src="/js/demo_portal_estudio.js?v=1.1.0"></script>
 <script src="/js/demo_midt.js?v=1.1.0"></script>
 <script src="/js/feriados_cl.js?v=1.0.0"></script>

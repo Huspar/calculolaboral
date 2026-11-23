@@ -150,6 +150,22 @@ const PRODUCTS = {
         subject: 'Monitor Tributario y Previsional 1 mes',
         page: '/monitor-tributario-previsional',
         acceso: true
+    },
+    mcp12: {
+        code: 'MCP12',
+        amount: 35581,
+        subject: 'Add-on Conector MCP (Claude y ChatGPT) 12 meses ($29.900 + IVA)',
+        page: '/suite-contadores',
+        acceso: true,
+        mcp: true
+    },
+    mcp1: {
+        code: 'MCP1',
+        amount: 4153,
+        subject: 'Add-on Conector MCP (Claude y ChatGPT) 1 mes ($3.490 + IVA)',
+        page: '/suite-contadores',
+        acceso: true,
+        mcp: true
     }
 };
 // Pase Pyme: acceso al Asistente Laboral Pyme por `dias` desde la confirmacion del pago. No es descarga ni desbloqueo de generador:
@@ -380,12 +396,25 @@ function deliver(pay, extra) {
     return PRODUCTS[pay.product].unlock ? deliverUnlock(pay, extra) : deliverKit(pay, extra);
 }
 
-/** Monitor: comprobante del cupo comprado; la activacion se coordina por correo. */
+/** Monitor o Add-on Conector MCP: comprobante del cupo comprado; la activacion se coordina por correo. */
 async function deliverAcceso(pay, extra) {
     const p = PRODUCTS[pay.product];
     const paseBlock = renderPaseBlock(pay, extra);
     const o = pay.optional || {};
-    const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
+    const esMcp = Boolean(p.mcp);
+    const html = esMcp
+        ? `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55">
+<div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px">
+  <p style="margin:0 0 20px;font-size:20px;font-weight:700;letter-spacing:-.01em">Cálculo<span style="color:#00382E">Laboral</span></p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Confirmamos tu pago de <strong>$${p.amount.toLocaleString('es-CL')}</strong> por <strong>${escapeHtml(p.subject)}</strong> (orden Flow ${escapeHtml(pay.order)}).</p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Con esto queda reservado tu add-on del <strong>Conector MCP (solo lectura)</strong> para consultar tu cartera sincronizada desde Claude web, ChatGPT o Claude Desktop. Te escribiremos a este correo para habilitar el acceso en tu cuenta y coordinar la configuración de tu primer token.</p>
+  <p style="margin:0 0 16px;font-size:14px;color:#334155">Mientras tanto puedes probar las consultas y el flujo del conector en la <a href="${SITE_URL}/demo-contadores" style="color:#00382E;font-weight:700">demo interactiva de la Suite Contadores</a>.</p>
+  ${paseBlock}
+  <p style="margin:0 0 16px;font-size:12px;color:#475569">El Conector MCP opera en modo de solo lectura sobre tus empresas sincronizadas: no modifica registros ni declara o presenta formularios en el SII, TGR ni PreviRed. Puedes pedir el reembolso total dentro de 14 días corridos desde el pago, o en cualquier momento antes de la habilitación, respondiendo este correo.</p>
+  <p style="margin:0;font-size:13px;color:#64748b">¿Dudas? Responde este correo.</p>
+</div></body></html>`
+        : `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:24px;background:#F8FAF9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.55">
 <div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px">
   <p style="margin:0 0 20px;font-size:20px;font-weight:700;letter-spacing:-.01em">Cálculo<span style="color:#00382E">Laboral</span></p>
@@ -402,8 +431,10 @@ async function deliverAcceso(pay, extra) {
         reply_to: 'contacto@calculolaboral.cl',
         subject: `Pago confirmado: ${p.subject}`,
         html
-    }, `monitor-${pay.order}`);
-    await notifyOwner(pay, 'Venta confirmada por Flow: Monitor reservado. Coordinar la conexión de la empresa por correo y registrar el período desde la activación.' +
+    }, `${esMcp ? 'mcp' : 'monitor'}-${pay.order}`);
+    await notifyOwner(pay, (esMcp
+        ? 'Venta confirmada por Flow: Add-on Conector MCP reservado. Coordinar habilitación del conector en la cuenta del comprador por correo.'
+        : 'Venta confirmada por Flow: Monitor reservado. Coordinar la conexión de la empresa por correo y registrar el período desde la activación.') +
         (o.empresa ? ` Empresa: ${o.empresa}.` : ''));
 }
 

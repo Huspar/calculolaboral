@@ -2869,6 +2869,30 @@
 }
 
 /* --- Diálogo Conectar con Claude (MCP) --- */
+#dlg-mcp-claude,
+#dlg-mcp-claude .sii-dlg-cuerpo,
+#dlg-mcp-claude .mcp-paso,
+#dlg-mcp-claude .mcp-tokens-wrap {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+#dlg-mcp-claude .midt-cabeza {
+    max-width: 100%;
+    min-width: 0;
+    gap: 8px;
+}
+#dlg-mcp-claude .midt-cabeza > div {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+#dlg-mcp-claude #btn-cerrar-mcp-dlg {
+    flex-shrink: 0;
+}
+#mcp-tokens-tabla-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+}
 .mcp-paso {
     padding: 12px 0;
     border-bottom: 1px solid var(--line);
@@ -2934,6 +2958,38 @@
     font-size: 12.5px;
     color: var(--forest-deep);
     overflow-wrap: anywhere;
+    word-break: break-word;
+}
+.mcp-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 8px;
+}
+.mcp-tab {
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink-2);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .15s, border-color .15s, color .15s;
+}
+.mcp-tab.activo {
+    background: #00382E;
+    border-color: #00382E;
+    color: #FFFFFF;
+}
+.mcp-campo-lbl {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-2);
+    margin: 8px 0 4px;
 }
 .mcp-json-wrap {
     border: 1px solid var(--line);
@@ -2959,13 +3015,43 @@
     overflow-x: auto;
     max-width: 100%;
 }
-.mcp-ejemplos-lista {
-    margin: 0;
-    padding-left: 18px;
+.mcp-prompts-lista {
     display: grid;
-    gap: 6px;
+    gap: 8px;
+}
+.mcp-prompt-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+}
+.mcp-prompt-txt {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.mcp-prompt-tag {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #00382E;
+    margin-bottom: 2px;
+}
+.mcp-prompt-body {
+    display: block;
     font-size: 13px;
     color: var(--ink-2);
+    line-height: 1.4;
+}
+.btn-mcp-copiar-prompt { flex-shrink: 0; }
+.mcp-readonly-nota {
+    margin: 10px 0 0;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--muted);
 }
 .mcp-tokens-wrap { margin-top: 12px; }
 
@@ -2980,6 +3066,20 @@
     .btn-mcp-revocar,
     #btn-rep-abrir-mcp,
     #btn-torre-mcp {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+    }
+    .mcp-tab {
+        flex: 1 1 140px;
+        min-height: 44px;
+        text-align: center;
+    }
+    .mcp-prompt-fila {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .btn-mcp-copiar-prompt {
         width: 100%;
         min-height: 44px;
         justify-content: center;

@@ -28,6 +28,28 @@
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
+    function headerAuth(token) {
+        return 'Authorization: Bearer ' + (token || PLACEHOLDER_TOKEN);
+    }
+
+    function cambiarTab(tab) {
+        var esJson = tab === 'json';
+        var pRemoto = $('mcp-panel-remoto');
+        var pJson = $('mcp-panel-json');
+        var bRemoto = $('tab-mcp-remoto');
+        var bJson = $('tab-mcp-json');
+        if (pRemoto) pRemoto.hidden = esJson;
+        if (pJson) pJson.hidden = !esJson;
+        if (bRemoto) {
+            bRemoto.classList.toggle('activo', !esJson);
+            bRemoto.setAttribute('aria-selected', esJson ? 'false' : 'true');
+        }
+        if (bJson) {
+            bJson.classList.toggle('activo', esJson);
+            bJson.setAttribute('aria-selected', esJson ? 'true' : 'false');
+        }
+    }
+
     function plantillaConfig(token) {
         return JSON.stringify({
             mcpServers: {
@@ -61,10 +83,13 @@
     function limpiarTokenTemporal() {
         var box = $('mcp-token-creado-box');
         var val = $('mcp-token-valor');
+        var hdr = $('mcp-header-auth');
         var pre = $('mcp-config-json');
         if (val) val.textContent = '';
         if (box) box.hidden = true;
+        if (hdr) hdr.textContent = headerAuth(PLACEHOLDER_TOKEN);
         if (pre) pre.textContent = plantillaConfig(PLACEHOLDER_TOKEN);
+        cambiarTab('remoto');
     }
 
     function fechaCorta(iso) {
@@ -199,6 +224,7 @@
             if (secreto) {
                 if ($('mcp-token-valor')) $('mcp-token-valor').textContent = secreto;
                 if ($('mcp-token-creado-box')) $('mcp-token-creado-box').hidden = false;
+                if ($('mcp-header-auth')) $('mcp-header-auth').textContent = headerAuth(secreto);
                 if ($('mcp-config-json')) $('mcp-config-json').textContent = plantillaConfig(secreto);
             }
             if (inp) inp.value = '';
@@ -262,10 +288,48 @@
                 copiarTexto(URL_MCP, 'URL del servidor MCP copiada.');
             });
         }
+        if ($('btn-mcp-copiar-header')) {
+            $('btn-mcp-copiar-header').addEventListener('click', function () {
+                var hdr = $('mcp-header-auth') ? $('mcp-header-auth').textContent.trim() : headerAuth(PLACEHOLDER_TOKEN);
+                copiarTexto(hdr, 'Header de autorización Bearer copiado.');
+            });
+        }
         if ($('btn-mcp-copiar-json')) {
             $('btn-mcp-copiar-json').addEventListener('click', function () {
                 var pre = $('mcp-config-json') ? $('mcp-config-json').textContent : plantillaConfig(PLACEHOLDER_TOKEN);
                 copiarTexto(pre, 'Configuración JSON para Claude Desktop copiada.');
+            });
+        }
+        dlg.querySelectorAll('[data-mcp-tab]').forEach(function (tabBtn) {
+            tabBtn.addEventListener('click', function () {
+                cambiarTab(tabBtn.getAttribute('data-mcp-tab'));
+            });
+            tabBtn.addEventListener('keydown', function (ev) {
+                if (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft') {
+                    ev.preventDefault();
+                    var next = tabBtn.getAttribute('data-mcp-tab') === 'remoto' ? 'json' : 'remoto';
+                    cambiarTab(next);
+                    var nextEl = $(next === 'json' ? 'tab-mcp-json' : 'tab-mcp-remoto');
+                    if (nextEl) nextEl.focus();
+                }
+            });
+        });
+        if ($('mcp-prompts-lista')) {
+            $('mcp-prompts-lista').addEventListener('click', function (ev) {
+                var btn = ev.target.closest('[data-prompt]');
+                if (!btn) return;
+                var texto = btn.getAttribute('data-prompt') || '';
+                if (!texto) return;
+                copiarTexto(texto, 'Prompt copiado al portapapeles.');
+                var lbl = btn.querySelector('span:last-child');
+                if (lbl && !btn.dataset.originalLabel) btn.dataset.originalLabel = lbl.textContent;
+                if (lbl) {
+                    lbl.textContent = 'Copiado';
+                    clearTimeout(btn._mcpTimer);
+                    btn._mcpTimer = setTimeout(function () {
+                        lbl.textContent = btn.dataset.originalLabel || 'Copiar';
+                    }, 1600);
+                }
             });
         }
         if ($('tbody-mcp-tokens')) {

@@ -72,6 +72,13 @@
         '<li>Puedes pedir el reembolso total dentro de 14 días corridos desde el pago o, si tu empresa aún no está conectada, en cualquier momento antes de la activación, escribiendo a contacto@calculolaboral.cl.</li>' +
         '<li>El Monitor es referencial: no reemplaza a tu contador ni a los organismos (SII, TGR, PreviRed).</li>';
     var LEAD_MONITOR = 'Estás comprando el Monitor Tributario y Previsional (conexión automática en validación).';
+    // Add-on Conector MCP: solo lectura para consultar empresas sincronizadas desde Claude o ChatGPT
+    var LISTA_MCP = '' +
+        '<li>Compras el Add-on Conector MCP (Claude web, ChatGPT y Claude Desktop) en modo de solo lectura. El total a pagar en Flow con IVA incluido es $35.581 (anual: $29.900 + IVA) o $4.153 (mensual: $3.490 + IVA), según el plan seleccionado.</li>' +
+        '<li>Tu Clave Tributaria no se envía a la IA ni permite modificar registros o presentar declaraciones en SII, TGR o PreviRed. Los datos devueltos por tus consultas de lectura sí son procesados por el proveedor de IA que conectes bajo sus propios términos de privacidad (Ley N° 19.628).</li>' +
+        '<li>Sin renovación automática ni cobros sorpresa en el plan mensual: pagas solo cuando decides renovar.</li>' +
+        '<li>Puedes pedir el reembolso total dentro de 14 días corridos desde el pago o en cualquier momento antes de la habilitación escribiendo a contacto@calculolaboral.cl (se gestiona en Flow dentro de 5 días hábiles).</li>';
+    var LEAD_MCP = 'Estás comprando el Add-on Conector MCP (Claude y ChatGPT, solo lectura).';
     var EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
 
     function build() {
@@ -152,18 +159,21 @@
      * opciones: { onCancel: function, askEmail: boolean (pide el correo en el aviso) }
      */
     function textoLista(variante) {
+        if (variante === 'mcp') return LISTA_MCP;
         if (variante === 'monitor') return LISTA_MONITOR;
         if (variante === 'servicio') return LISTA_SERVICIO;
         return listaProducto;
     }
 
     function textoLead(variante) {
+        if (variante === 'mcp') return LEAD_MCP;
         if (variante === 'monitor') return LEAD_MONITOR;
         if (variante === 'servicio') return LEAD_SERVICIO;
         return leadProducto;
     }
 
     function enlaceTerminos(variante) {
+        if (variante === 'mcp') return '/terminos#mcp';
         if (variante === 'monitor') return '/terminos#monitor';
         if (variante === 'servicio') return '/terminos#asistente-pyme';
         return TERMS_URL;
@@ -176,6 +186,8 @@
             // Navegadores sin <dialog>: confirmacion nativa con el mismo contenido
             var ok = window.confirm(options.variante === 'servicio'
                 ? 'Estás comprando un pase de acceso al Asistente Laboral Pyme por los días del producto, desde que se confirma el pago. No se renueva solo. Puedes pedir el reembolso total dentro de 14 días corridos desde la compra. ¿Aceptas los Términos y condiciones y continúas al pago?'
+                : options.variante === 'mcp'
+                ? 'Estás comprando el Add-on Conector MCP (Claude y ChatGPT, solo lectura sobre empresas sincronizadas). Reembolso total dentro de 14 días corridos o antes de la habilitación. ¿Aceptas los Términos y condiciones y continúas al pago?'
                 : options.variante === 'monitor'
                 ? 'Estás comprando el Monitor Tributario y Previsional (conexión automática en validación; tu período corre desde que activamos tu empresa). Reembolso total dentro de 14 días corridos o antes de la activación. ¿Aceptas los Términos y condiciones y continúas al pago?'
                 : 'Producto digital de entrega inmediata: no aplica el derecho a retracto ' +
@@ -247,7 +259,9 @@
         pyme3: { item_id: 'pyme3', item_name: 'Pase Pyme 3 meses', price: 19990 },
         pyme12: { item_id: 'pyme12', item_name: 'Pase Pyme 12 meses', price: 59990 },
         monitor12: { item_id: 'monitor12', item_name: 'Monitor Tributario y Previsional 12 meses', price: 79900 },
-        monitor1: { item_id: 'monitor1', item_name: 'Monitor Tributario y Previsional 1 mes', price: 9990 }
+        monitor1: { item_id: 'monitor1', item_name: 'Monitor Tributario y Previsional 1 mes', price: 9990 },
+        mcp12: { item_id: 'mcp12', item_name: 'Add-on Conector MCP (Claude y ChatGPT) 12 meses', price: 35581 },
+        mcp1: { item_id: 'mcp1', item_name: 'Add-on Conector MCP (Claude y ChatGPT) 1 mes', price: 4153 }
     };
 
     function track(eventName, product, extra) {
