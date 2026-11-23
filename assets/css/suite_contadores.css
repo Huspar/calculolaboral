@@ -649,8 +649,8 @@
 .suite-contadores-app #suite-modulos .app-nav-chip {
     flex-shrink: 0;
     white-space: nowrap;
-    padding: 1px 6px;
-    font-size: 10.5px;
+    padding: 2px 7px;
+    font-size: 12px;
 }
 
 .app-side-pie {
@@ -5048,17 +5048,20 @@
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
-    padding: 12px 14px;
+    padding: 14px 16px;
     margin: 12px 0 14px;
+    min-height: 184px;
     display: grid;
-    gap: 10px;
+    align-content: start;
+    gap: 12px;
 }
 .suite-graf-titulo {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    font-size: 12.5px;
+    gap: 6px 10px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--forest);
 }
@@ -5069,24 +5072,22 @@
 }
 .suite-graf-barras {
     display: grid;
-    gap: 8px;
+    gap: 10px;
 }
 .suite-graf-fila {
     display: grid;
-    grid-template-columns: 165px minmax(0, 1fr) 105px;
+    grid-template-columns: minmax(150px, 215px) minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
+    gap: 8px 12px;
     font-size: 12.5px;
 }
 .suite-graf-lbl {
     color: var(--ink-2);
     font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.25;
 }
 .suite-graf-track {
-    height: 12px;
+    height: 15px;
     border-radius: 999px;
     background: var(--surface-2);
     border: 1px solid var(--line);
@@ -5427,5 +5428,324 @@
         min-height: 44px;
         justify-content: center;
         text-align: center;
+    }
+}
+
+/* ==========================================================================
+   ETAPA 3 REDISEÑO UI: CONTRASTE TABLAS, ORDEN VISUAL F29/REM, KPI UNIFICADO Y MÓVIL
+   ========================================================================== */
+
+/* 1. Contraste garantizado en chips dentro de tablas y paneles claros */
+.suite-contadores-app .app-content .app-nav-chip {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    background: #E2E8F0;
+    color: #0F172A;
+    border: 1px solid #CBD5E1;
+}
+.suite-contadores-app .app-content .app-nav-chip.uso {
+    background: #E0F2FE;
+    color: #0C4A6E;
+    border-color: #BAE6FD;
+}
+.suite-contadores-app .app-content .app-nav-chip.abierto {
+    background: #FEF3C7;
+    color: #78350F;
+    border-color: #F59E0B;
+}
+.suite-contadores-app .app-content .app-nav-chip.cerrado {
+    background: #DCFCE7;
+    color: #14532D;
+    border-color: #86EFAC;
+}
+
+/* 2. Semáforo de avance de módulos en topbar */
+.suite-avance-modulos {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--surface-2);
+    color: var(--ink-2);
+    border: 1px solid var(--line-2);
+    white-space: nowrap;
+}
+.suite-avance-modulos.est-parcial {
+    background: #FFFBEB;
+    color: #78350F;
+    border-color: #FCD34D;
+}
+.suite-avance-modulos.est-ok {
+    background: var(--ok-bg);
+    color: var(--ok-ink);
+    border-color: var(--ok-line);
+}
+
+/* 3. Unificar sistema KPI entre escritorio y móvil */
+.suite-contadores-app .tabla-resumen-movil {
+    display: none !important;
+}
+.suite-contadores-app .fin-kpi-label {
+    font-size: 12.5px;
+    line-height: 1.25;
+}
+.suite-contadores-app .fin-kpi-meta {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 2px;
+    line-height: 1.25;
+}
+
+/* 4. Cabecera desktop más compacta + orden visual F29 y Remuneraciones */
+.suite-contadores-app .app-top {
+    min-height: 50px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+.suite-contadores-app .suite-context-bar {
+    padding: 6px 24px;
+}
+.suite-contadores-app .suite-bar-compacta {
+    padding: 5px 12px;
+    margin-bottom: 10px;
+}
+
+.f29-resumen-superior {
+    margin-bottom: 12px;
+}
+.f29-graficos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.f29-graficos-grid[hidden] {
+    display: none;
+}
+.f29-graficos-grid .suite-graf-card {
+    margin: 0;
+}
+
+/* Gráfico SVG anual 12 meses F29 */
+.f29-anual-svg-wrap {
+    width: 100%;
+    overflow: hidden;
+}
+.f29-anual-svg {
+    width: 100%;
+    height: 132px;
+    display: block;
+}
+.f29-anual-leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    font-size: 11.5px;
+    color: var(--ink-2);
+}
+.f29-ley-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.torre-ley-sq,
+.f29-ley-sq {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.torre-seg-barra {
+    background: #E2E8F0;
+}
+.torre-seg-barra .torre-seg-warn {
+    background: repeating-linear-gradient(
+        -45deg,
+        #F59E0B,
+        #F59E0B 6px,
+        #FDE68A 6px,
+        #FDE68A 12px
+    );
+}
+
+/* Bandas SII + TGR compactas lado a lado en F29 */
+.f29-conexiones-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.f29-sii-compacto,
+.f29-tgr-compacto {
+    margin-bottom: 0 !important;
+    padding: 10px 14px;
+}
+.f29-sii-compacto .f29-sii-cabeza,
+.f29-tgr-compacto .f29-tgr-cabeza {
+    padding: 0;
+    gap: 8px 12px;
+}
+.f29-tgr-compacto .f29-tgr-cifras {
+    gap: 12px;
+}
+
+/* Remuneraciones: cuando hay resultados calculados, mostrarlos antes que parámetros */
+#pane-liquidaciones,
+#pane-finiquitos {
+    display: flex;
+    flex-direction: column;
+}
+#pane-liquidaciones[hidden],
+#pane-finiquitos[hidden] {
+    display: none;
+}
+#results-liq:not([hidden]),
+#results-fin:not([hidden]) {
+    order: -1;
+}
+.rem-previred-card .rem-previred-cabeza {
+    padding: 10px 14px;
+}
+
+/* Renta DDJJ: filas limpias en lugar de cápsulas encadenadas */
+.ddjj-grupo-chips {
+    display: grid;
+    gap: 5px;
+}
+.ddjj-grupo-chips .fin-chip {
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 7px;
+    padding: 7px 10px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-weight: 600;
+}
+.ddjj-grupo-chips .fin-chip:hover {
+    border-color: var(--forest);
+    background: #F4FAF8;
+}
+.ddjj-grupo-chips .fin-chip.activo {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: #FFFFFF;
+}
+.ddjj-chip-est {
+    border-radius: 4px;
+    font-size: 11px;
+    padding: 2px 7px;
+}
+
+.suite-graf-head-der {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+@media screen and (max-width: 960px) {
+    .f29-graficos-grid,
+    .f29-conexiones-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+@media screen and (max-width: 768px) {
+    .suite-avance-modulos {
+        display: none;
+    }
+    /* Cliente completo en 2 líneas en barra compacta móvil */
+    .suite-ctx-movil-resumen {
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr);
+        grid-template-rows: auto auto;
+        align-items: center;
+        gap: 1px 6px;
+    }
+    .suite-ctx-movil-resumen .material-icons {
+        grid-row: 1 / 3;
+    }
+    .suite-ctx-movil-resumen strong {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-height: 1.2;
+        font-size: 13px;
+    }
+    .suite-ctx-movil-resumen .mono {
+        grid-column: 2;
+        font-size: 11.5px;
+    }
+
+    /* Banner demo comprimido en 1 sola fila móvil */
+    .suite-contadores-app .suite-bar-compacta {
+        padding: 6px 10px;
+        margin-bottom: 10px;
+    }
+    .suite-contadores-app .suite-bar-compacta .suite-bar-fila {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+    }
+    .suite-contadores-app .suite-bar-compacta .suite-bar-izq {
+        flex: 1 1 auto;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+    }
+    .suite-contadores-app .suite-bar-compacta .suite-bar-txt {
+        font-size: 0;
+        line-height: 1;
+    }
+    .suite-contadores-app .suite-bar-compacta .suite-bar-link {
+        font-size: 12px;
+    }
+    .suite-contadores-app .suite-bar-compacta .suite-bar-der {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+    }
+    .suite-contadores-app .suite-bar-compacta .suite-bar-toggle,
+    .suite-contadores-app .suite-bar-compacta .suite-bar-cta {
+        display: none;
+    }
+    .suite-contadores-app .suite-bar-compacta #btn-cargar-ejemplo-todo {
+        min-height: 36px;
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    /* Master tabs ajustadas para que se note el scroll o quepan limpias */
+    .suite-contadores-app .conta-master-tabs {
+        gap: 6px;
+        padding: 5px 22px 5px 5px;
+        -webkit-mask-image: linear-gradient(to right, #000 88%, rgba(0, 0, 0, 0.25) 100%);
+        mask-image: linear-gradient(to right, #000 88%, rgba(0, 0, 0, 0.25) 100%);
+    }
+    .suite-contadores-app .conta-master-tab {
+        padding: 6px 10px;
+        font-size: 12.5px;
+        gap: 4px;
+    }
+
+    /* KPIs móviles legibles (>= 12.5px) */
+    .suite-contadores-app .fin-kpi-label {
+        font-size: 12.5px;
+    }
+    .suite-contadores-app .fin-kpi-val {
+        font-size: 18px;
     }
 }

@@ -315,7 +315,18 @@
         return Object.assign({}, cons, {
             mayor: mayorAnual,
             balance: balanceAnual,
-            rli: rliAnual
+            rli: rliAnual,
+            f29Mensual: entradas.map(function (e) {
+                var cod = (e.f29 && e.f29.codigos) || {};
+                return {
+                    periodo: e.periodo,
+                    debito: cod[538] || 0,
+                    credito: cod[537] || 0,
+                    retenciones: (cod[48] || 0) + (cod[151] || 0) + (cod[62] || 0),
+                    total91: cod[91] || 0,
+                    tieneDatos: !!(e.f29)
+                };
+            })
         });
     }
 
@@ -726,30 +737,40 @@
 
         var vacio = $('f29-vacio');
         var resPanel = $('f29-resultados');
+        var grafGrid = $('f29-graficos-grid');
         var tieneDatosF29 = m.ventas.documentos.length > 0 || m.compras.documentos.length > 0 || c[48] > 0 || c[151] > 0 || c[504] > 0;
         pintarAuditoriaComprasF29(m);
         pintarAsistenteUtm(m);
+
+        $('f29-k-debito').textContent = tieneDatosF29 ? moneySigno(c[538]) : '$0';
+        $('f29-k-credito').textContent = tieneDatosF29 ? moneySigno(c[537]) : '$0';
+        $('f29-k-iva-lbl').textContent = (!tieneDatosF29 || c[89] > 0) ? 'IVA determinado (cód. 89)' : 'Remanente mes sig. (cód. 77)';
+        $('f29-k-iva').textContent = tieneDatosF29 ? (c[89] > 0 ? D.money(c[89]) : D.money(c[77])) : '$0';
+        $('f29-k-total').textContent = tieneDatosF29 ? D.money(c[91]) : '$0';
+
+        if ($('f29-k-debito-meta')) $('f29-k-debito-meta').textContent = tieneDatosF29 ? (m.ventas.documentos.length + ' doctos. de venta') : 'Sube el RCV de ventas';
+        if ($('f29-k-credito-meta')) $('f29-k-credito-meta').textContent = tieneDatosF29 ? (m.compras.documentos.length + ' doctos. de compra') : 'Sube el RCV de compras';
+        if ($('f29-k-iva-meta')) $('f29-k-iva-meta').textContent = tieneDatosF29 ? (c[89] > 0 ? 'IVA neto por pagar' : 'Crédito a favor próx. mes') : 'Débito menos crédito';
+        if ($('f29-k-total-meta')) $('f29-k-total-meta').textContent = tieneDatosF29 ? ('Ret. ' + D.money((c[48] || 0) + (c[151] || 0)) + ' · PPM ' + D.money(c[62] || 0)) : 'Carga RCV o ejemplo para calcular';
+
+        // Mapa semantico estricto: magnitudes informativas neutras; IVA por pagar ambar; remanente/0 verde
+        aplicarEstadoKpiCard('f29-kpi-card-debito', '');
+        aplicarEstadoKpiCard('f29-kpi-card-credito', '');
+        aplicarEstadoKpiCard('f29-kpi-card-iva', !tieneDatosF29 ? '' : (c[89] > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok'));
+        aplicarEstadoKpiCard('f29-kpi-card-total', !tieneDatosF29 ? '' : (c[91] > 0 ? 'fin-kpi-marca' : 'fin-kpi-ok'));
+
         if (!tieneDatosF29) {
             vacio.hidden = false;
             resPanel.hidden = true;
+            if (grafGrid) grafGrid.hidden = true;
             if ($('f29-semaforo-auditoria')) $('f29-semaforo-auditoria').hidden = true;
             return;
         }
         vacio.hidden = true;
         resPanel.hidden = false;
+        if (grafGrid) grafGrid.hidden = false;
         pintarPostergacionF29(m);
         pintarSemaforoF29(m);
-
-        $('f29-k-debito').textContent = moneySigno(c[538]);
-        $('f29-k-credito').textContent = moneySigno(c[537]);
-        $('f29-k-iva-lbl').textContent = c[89] > 0 ? 'IVA determinado (cód. 89)' : 'Remanente mes sig. (cód. 77)';
-        $('f29-k-iva').textContent = c[89] > 0 ? D.money(c[89]) : D.money(c[77]);
-        $('f29-k-total').textContent = D.money(c[91]);
-
-        aplicarEstadoKpiCard('f29-kpi-card-debito', c[538] > 0 ? 'fin-kpi-warn' : '');
-        aplicarEstadoKpiCard('f29-kpi-card-credito', c[537] > 0 ? 'fin-kpi-ok' : '');
-        aplicarEstadoKpiCard('f29-kpi-card-iva', c[89] > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok');
-        aplicarEstadoKpiCard('f29-kpi-card-total', c[91] > 0 ? 'fin-kpi-marca' : 'fin-kpi-ok');
 
         if ($('f29-grafico-resumen')) {
             $('f29-grafico-resumen').innerHTML = renderBarrasHtml(
@@ -762,6 +783,9 @@
                     { label: 'Total F29 a pagar (Cód. 91)', valor: c[91] || 0, cls: 'fill-marca' }
                 ]
             );
+        }
+        if ($('f29-grafico-anual')) {
+            $('f29-grafico-anual').innerHTML = renderF29AnualHtml(m.anual, m.periodo);
         }
 
         if ($('f29-m-deb')) {
@@ -1125,7 +1149,7 @@
     }
 
     // ------------------------------------------------------------- Render Bancos y Contabilidad General
-    function renderBarrasHtml(titulo, subtitulo, items) {
+    function renderBarrasHtml(titulo, subtitulo, items, opts) {
         var maxVal = items.reduce(function (m, it) { return Math.max(m, Math.abs(Number(it.valor) || 0)); }, 0) || 1;
         var rows = items.map(function (it) {
             var val = Number(it.valor) || 0;
@@ -1138,8 +1162,59 @@
                 '<span class="suite-graf-val mono">' + moneySigno(val) + '</span>' +
                 '</div>';
         }).join('');
-        return '<div class="suite-graf-titulo"><span>' + D.esc(titulo) + '</span><span class="suite-graf-sub">' + D.esc(subtitulo || '') + '</span></div>' +
+        var accion = (opts && opts.accionHtml) ? opts.accionHtml : '';
+        return '<div class="suite-graf-titulo"><span>' + D.esc(titulo) + '</span><span class="suite-graf-head-der"><span class="suite-graf-sub">' + D.esc(subtitulo || '') + '</span>' + accion + '</span></div>' +
             '<div class="suite-graf-barras">' + rows + '</div>';
+    }
+
+    function renderF29AnualHtml(anual, periodoActivo) {
+        var anio = (anual && anual.anio) || Number(String(periodoActivo || '2026').slice(0, 4)) || 2026;
+        var serieMap = {};
+        if (anual && Array.isArray(anual.f29Mensual)) {
+            anual.f29Mensual.forEach(function (it) {
+                if (it && it.periodo) serieMap[it.periodo] = it;
+            });
+        }
+        var meses = [];
+        var letras = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+        var maxV = 1;
+        var conDatos = 0;
+        for (var i = 1; i <= 12; i++) {
+            var per = anio + '-' + (i < 10 ? '0' + i : '' + i);
+            var d = serieMap[per] || { periodo: per, debito: 0, credito: 0, total91: 0, tieneDatos: false };
+            if (d.tieneDatos) conDatos += 1;
+            maxV = Math.max(maxV, d.debito || 0, d.credito || 0, d.total91 || 0);
+            meses.push({ letra: letras[i - 1], per: per, d: d, activo: per === periodoActivo });
+        }
+        var w = 480;
+        var h = 128;
+        var baseY = 104;
+        var chartH = 84;
+        var colW = w / 12;
+        var pts = [];
+        var bars = meses.map(function (m, idx) {
+            var cx = idx * colW + colW / 2;
+            var hDeb = m.d.tieneDatos ? Math.max(3, Math.round(((m.d.debito || 0) / maxV) * chartH)) : 0;
+            var hCred = m.d.tieneDatos ? Math.max(3, Math.round(((m.d.credito || 0) / maxV) * chartH)) : 0;
+            var yTotal = baseY - (m.d.tieneDatos ? Math.round(((m.d.total91 || 0) / maxV) * chartH) : 0);
+            if (m.d.tieneDatos) pts.push(Math.round(cx) + ',' + yTotal);
+            var bgAct = m.activo ? '<rect x="' + (idx * colW + 4) + '" y="10" width="' + (colW - 8) + '" height="' + (baseY - 4) + '" rx="4" fill="#F4FAF8" stroke="#CBD5E1" stroke-width="0.7"/>' : '';
+            var bBase = !m.d.tieneDatos ? '<rect x="' + (cx - 9) + '" y="' + (baseY - 3) + '" width="18" height="3" rx="1.5" fill="#E2E8F0"/>' : '';
+            var bDeb = m.d.tieneDatos ? '<rect x="' + (cx - 10) + '" y="' + (baseY - hDeb) + '" width="8" height="' + hDeb + '" rx="2" fill="#D97706"><title>' + m.per + ' Débito: ' + D.money(m.d.debito) + '</title></rect>' : '';
+            var bCred = m.d.tieneDatos ? '<rect x="' + (cx + 2) + '" y="' + (baseY - hCred) + '" width="8" height="' + hCred + '" rx="2" fill="#0F766E"><title>' + m.per + ' Crédito: ' + D.money(m.d.credito) + '</title></rect>' : '';
+            var dotTot = m.d.tieneDatos ? '<circle cx="' + cx + '" cy="' + yTotal + '" r="3.5" fill="#00382E"><title>' + m.per + ' Total F29: ' + D.money(m.d.total91) + '</title></circle>' : '';
+            return bgAct + bBase + bDeb + bCred + dotTot +
+                '<text x="' + cx + '" y="121" text-anchor="middle" font-size="10.5" font-weight="' + (m.activo ? '700' : '500') + '" fill="' + (m.activo ? '#00382E' : '#64748B') + '">' + m.letra + '</text>';
+        }).join('');
+        var poly = pts.length > 1 ? '<polyline fill="none" stroke="#00382E" stroke-width="2" points="' + pts.join(' ') + '"/>' : '';
+        return '<div class="suite-graf-titulo"><span>Evolución 12 meses F29 (' + anio + ')</span><span class="suite-graf-sub">' + conDatos + ' / 12 meses guardados</span></div>' +
+            '<div class="f29-anual-svg-wrap"><svg class="f29-anual-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="Evolución anual Débito, Crédito y Total F29">' + bars + poly + '</svg></div>' +
+            '<div class="f29-anual-leyenda">' +
+            '<span class="f29-ley-item"><span class="f29-ley-sq" style="background:#D97706"></span>Débito</span>' +
+            '<span class="f29-ley-item"><span class="f29-ley-sq" style="background:#0F766E"></span>Crédito</span>' +
+            '<span class="f29-ley-item"><span class="f29-ley-sq" style="background:#00382E"></span>Total F29</span>' +
+            '<span class="suite-graf-sub">Solo meses guardados localmente</span>' +
+            '</div>';
     }
 
     function aplicarEstadoKpiCard(id, cls) {
@@ -1677,6 +1752,22 @@
         if (resumenRiel) {
             resumenRiel.textContent = 'F29 cód. 91: ' + D.money(m.f29.codigos[91]) + ' · ' + (cerrado ? 'Cerrado' : 'En preparación');
         }
+        var modListos = 0;
+        if (m.nomina && m.nomina.totalDebe > 0) modListos += 1;
+        if ((m.ventas && m.ventas.documentos.length) || (m.compras && m.compras.documentos.length)) modListos += 1;
+        if (m.estado && Array.isArray(m.estado.cartolaMovimientos) && m.estado.cartolaMovimientos.length) modListos += 1;
+        if (m.asientos && m.asientos.length) modListos += 1;
+        if (m.balance && m.balance.filas && m.balance.filas.length) modListos += 1;
+        if (m.ddjj && ((m.ddjj.dj1887 && m.ddjj.dj1887.filas && m.ddjj.dj1887.filas.length) || (m.f22 && m.f22.baseImponibleRli !== 0))) modListos += 1;
+        var avEl = $('suite-avance-modulos');
+        if (avEl) {
+            avEl.textContent = modListos + ' de 6 módulos listos';
+            avEl.className = 'suite-avance-modulos' + (modListos === 6 ? ' est-ok' : (modListos > 0 ? ' est-parcial' : ''));
+        }
+        var btnEjTop = $('btn-cargar-ejemplo-todo');
+        if (btnEjTop) {
+            btnEjTop.hidden = modListos >= 3;
+        }
     }
 
     var MODULOS_VALIDOS = /^(torre|importador|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)$/;
@@ -1935,19 +2026,15 @@
         if ($('torre-grafico-resumen')) {
             var totT = lista.length || 1;
             var pctOk = Math.round((cerrados / totT) * 100);
-            var pctBorr = Math.round((borradores / totT) * 100);
-            var pctPend = Math.max(0, 100 - pctOk - pctBorr);
             $('torre-grafico-resumen').innerHTML =
-                '<div class="suite-graf-titulo"><span>Avance de cierre mensual de la cartera</span><span class="suite-graf-sub mono">' + cerrados + ' / ' + lista.length + ' cerradas (' + pctOk + '%)</span></div>' +
-                '<div class="torre-seg-barra" role="img" aria-label="Cerradas: ' + cerrados + ', Borrador listo: ' + borradores + ', Sin declarar: ' + sinDatosT + '">' +
+                '<div class="suite-graf-titulo"><span>Avance de cierre mensual de la cartera</span><span class="suite-graf-sub mono">Cerradas: ' + cerrados + ' / ' + lista.length + ' (' + pctOk + '%) · Borrador listo: ' + borradores + '</span></div>' +
+                '<div class="torre-seg-barra" role="img" aria-label="Cerradas: ' + cerrados + ' de ' + lista.length + ' (' + pctOk + '%), Borrador listo: ' + borradores + ', Sin declarar: ' + sinDatosT + '">' +
                 '<div class="torre-seg-tramo torre-seg-ok" style="width:' + pctOk + '%"></div>' +
-                '<div class="torre-seg-tramo torre-seg-warn" style="width:' + pctBorr + '%"></div>' +
-                '<div class="torre-seg-tramo torre-seg-pend" style="width:' + pctPend + '%"></div>' +
                 '</div>' +
                 '<div class="torre-seg-leyenda">' +
-                '<span>Declarados / Cerrados: <strong class="mono">' + cerrados + '</strong></span>' +
-                '<span>Borrador listo: <strong class="mono">' + borradores + '</strong></span>' +
-                '<span>Sin declarar: <strong class="mono">' + sinDatosT + '</strong></span>' +
+                '<span class="f29-ley-item"><span class="torre-ley-sq" style="background:#0F766E"></span>Declarados / Cerrados: <strong class="mono">' + cerrados + '</strong></span>' +
+                '<span class="f29-ley-item"><span class="torre-ley-sq" style="background:#D97706"></span>Borrador F29 listo: <strong class="mono">' + borradores + '</strong></span>' +
+                '<span class="f29-ley-item"><span class="torre-ley-sq" style="background:#94A3B8"></span>Sin declarar: <strong class="mono">' + sinDatosT + '</strong></span>' +
                 '</div>';
         }
 
@@ -1967,7 +2054,7 @@
                     ? { txt: 'Declarado', cls: 'sello-activo' }
                     : (c.f29Listo ? { txt: 'Borrador listo', cls: 'sello-preparada' } : { txt: 'Sin declarar', cls: 'sello-guardada' });
                 return '<tr' + (esSyncActiva ? ' class="fila-sii-activa"' : '') + '>' +
-                    '<td><strong>' + D.esc(c.nombre) + '</strong>' + (c.esActivo ? ' <span class="app-nav-chip">En uso</span>' : '') + '</td>' +
+                    '<td><strong>' + D.esc(c.nombre) + '</strong>' + (c.esActivo ? ' <span class="app-nav-chip uso">En uso</span>' : '') + '</td>' +
                     '<td class="mono">' + (rutTxt ? D.esc(rutTxt) : '<span class="texto-ayuda">Sin RUT</span>') + '</td>' +
                     '<td class="mono">' + D.esc(c.regimen) + '</td>' +
                     '<td>' + siiCell + '</td>' +
@@ -2230,6 +2317,11 @@
         if ($('conc-k-cxc')) $('conc-k-cxc').textContent = D.money(aging.cxc.total);
         if ($('conc-k-cxp')) $('conc-k-cxp').textContent = D.money(aging.cxp.total);
 
+        if ($('conc-k-movs-meta')) $('conc-k-movs-meta').textContent = conc.resumen.totalMovimientos ? 'Cargados en cartola' : 'Sube CSV o cartola ejemplo';
+        if ($('conc-k-pct-meta')) $('conc-k-pct-meta').textContent = conc.resumen.totalMovimientos ? (((conc.resumen.porFactura || 0) + (conc.resumen.porRegla || 0)) + ' de ' + conc.resumen.totalMovimientos + ' conciliados') : 'Cruce con RCV y reglas';
+        if ($('conc-k-cxc-meta')) $('conc-k-cxc-meta').textContent = aging.cxc.total > 0 ? 'Facturas por cobrar' : 'Sin CxC pendientes';
+        if ($('conc-k-cxp-meta')) $('conc-k-cxp-meta').textContent = aging.cxp.total > 0 ? 'Facturas por pagar' : 'Sin CxP pendientes';
+
         if ($('conc-reglas-lista')) {
             var reglasUsr = Array.isArray(est.reglasConciliacion) ? est.reglasConciliacion : [];
             if ($('conc-reglas-cnt')) $('conc-reglas-cnt').textContent = reglasUsr.length + (Pro ? Pro.REGLAS_CONCILIACION_DEFECTO.length : 0);
@@ -2254,9 +2346,10 @@
         var sugCnt = resConc.sugeridos || 0;
         var pendCnt = resConc.sinConciliar || 0;
         var pctConc = resConc.pctConciliado || 0;
-        aplicarEstadoKpiCard('conc-kpi-card-pct', pctConc >= 80 ? 'fin-kpi-ok' : (pctConc > 0 ? 'fin-kpi-warn' : 'fin-kpi-risk'));
-        aplicarEstadoKpiCard('conc-kpi-card-cxc', aging.cxc.total > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok');
-        aplicarEstadoKpiCard('conc-kpi-card-cxp', aging.cxp.total > 0 ? 'fin-kpi-risk' : 'fin-kpi-ok');
+        var totMovConc = resConc.totalMovimientos || 0;
+        aplicarEstadoKpiCard('conc-kpi-card-pct', totMovConc === 0 ? '' : (pctConc >= 80 ? 'fin-kpi-ok' : (pctConc > 0 ? 'fin-kpi-warn' : 'fin-kpi-risk')));
+        aplicarEstadoKpiCard('conc-kpi-card-cxc', aging.cxc.total > 0 ? 'fin-kpi-warn' : (totMovConc > 0 ? 'fin-kpi-ok' : ''));
+        aplicarEstadoKpiCard('conc-kpi-card-cxp', aging.cxp.total > 0 ? 'fin-kpi-risk' : (totMovConc > 0 ? 'fin-kpi-ok' : ''));
 
         if ($('conc-grafico-panel')) {
             var rCirc = 21;
@@ -2413,16 +2506,24 @@
         if ($('aging-grafico-resumen')) {
             var bCxC = aging.cxc.buckets || {};
             var bCxP = aging.cxp.buckets || {};
-            $('aging-grafico-resumen').innerHTML = renderBarrasHtml(
-                'Distribución por antigüedad CxC / CxP',
-                'Saldos RCV pendientes descontando conciliados y abonos parciales',
-                [
-                    { label: 'CxC 0-30 días (vigente)', valor: bCxC.dias_0_30 || 0, cls: 'fill-ok' },
-                    { label: 'CxC +31 días (cobranza)', valor: (bCxC.dias_31_60 || 0) + (bCxC.dias_mas_60 || 0), cls: 'fill-warn' },
-                    { label: 'CxP 0-30 días (por pagar)', valor: bCxP.dias_0_30 || 0, cls: 'fill-info' },
-                    { label: 'CxP +31 días (vencida)', valor: (bCxP.dias_31_60 || 0) + (bCxP.dias_mas_60 || 0), cls: 'fill-risk' }
-                ]
-            );
+            var totAging = (aging.cxc.total || 0) + (aging.cxp.total || 0);
+            $('aging-grafico-resumen').hidden = (totAging <= 0 && ui.subBanco !== 'cartera');
+            if (!$('aging-grafico-resumen').hidden) {
+                var btnAging = ui.subBanco !== 'cartera'
+                    ? '<button type="button" class="btn btn-chico" data-ir-subbanco="cartera">Ver detalle Aging</button>'
+                    : '';
+                $('aging-grafico-resumen').innerHTML = renderBarrasHtml(
+                    'Distribución por antigüedad CxC / CxP',
+                    'Saldos RCV pendientes descontando conciliados y abonos parciales',
+                    [
+                        { label: 'CxC 0-30 días (vigente)', valor: bCxC.dias_0_30 || 0, cls: 'fill-ok' },
+                        { label: 'CxC +31 días (cobranza)', valor: (bCxC.dias_31_60 || 0) + (bCxC.dias_mas_60 || 0), cls: 'fill-warn' },
+                        { label: 'CxP 0-30 días (por pagar)', valor: bCxP.dias_0_30 || 0, cls: 'fill-info' },
+                        { label: 'CxP +31 días (vencida)', valor: (bCxP.dias_31_60 || 0) + (bCxP.dias_mas_60 || 0), cls: 'fill-risk' }
+                    ],
+                    { accionHtml: btnAging }
+                );
+            }
         }
         if ($('tbody-aging-cxp')) {
             var listaCxp = aging.cxp.todosItems || aging.cxp.items || [];
@@ -2514,6 +2615,23 @@
         aplicarEstadoKpiCard('f22-kpi-card-idpc', f22.idpcDeterminado > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok');
         aplicarEstadoKpiCard('f22-kpi-card-saldo', f22.esTransparente ? 'fin-kpi-ok' : (f22.saldoAPagar > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok'));
 
+        if ($('ddjj-f22-resumen-top')) {
+            var hayF22Top = f22 && ((f22.baseImponibleRli || 0) !== 0 || (f22.idpcDeterminado || 0) > 0 || (f22.ppmCod36Empresa || 0) > 0 || (f22.ppmDj1947Socios || 0) > 0);
+            $('ddjj-f22-resumen-top').hidden = !hayF22Top || ui.subDdjj === 'f22';
+            if (!$('ddjj-f22-resumen-top').hidden) {
+                $('ddjj-f22-resumen-top').innerHTML = renderBarrasHtml(
+                    'Resumen Propuesta F22: RLI, IDPC y PPM Reajustado',
+                    f22.esTransparente ? '14 D N°8: PPM va a DJ 1947 / socios' : (f22.saldoAPagar > 0 ? 'IDPC supera PPM (Diferencia por pagar)' : 'PPM cubre IDPC (Devolución estimada)'),
+                    [
+                        { label: 'Base Imponible / RLI', valor: Math.max(0, f22.baseImponibleRli || 0), cls: 'fill-marca' },
+                        { label: 'IDPC Determinado', valor: f22.idpcDeterminado || 0, cls: 'fill-warn' },
+                        { label: f22.esTransparente ? 'PPM Socios (DJ 1947)' : 'PPM Cód. 36 (L85)', valor: f22.esTransparente ? (f22.ppmDj1947Socios || 0) : (f22.ppmCod36Empresa || 0), cls: 'fill-ok' },
+                        { label: f22.saldoAPagar > 0 ? 'Saldo F22 a pagar' : 'Devolución PPM', valor: f22.saldoAPagar > 0 ? f22.saldoAPagar : (f22.devolucionF22 || 0), cls: f22.saldoAPagar > 0 ? 'fill-risk' : 'fill-info' }
+                    ],
+                    { accionHtml: '<button type="button" class="btn btn-chico" data-ddjj-ir="f22">Abrir Propuesta F22</button>' }
+                );
+            }
+        }
         if ($('f22-grafico-resumen')) {
             $('f22-grafico-resumen').innerHTML = renderBarrasHtml(
                 'Cruce visual F22: IDPC vs PPM Reajustado',
@@ -3619,6 +3737,22 @@
                 refrescarTodo();
             });
         });
+        if ($('suite-bancos')) {
+            $('suite-bancos').addEventListener('click', function (ev) {
+                var btnSub = ev.target.closest('[data-ir-subbanco]');
+                if (!btnSub) return;
+                ui.subBanco = btnSub.getAttribute('data-ir-subbanco') || 'cartera';
+                refrescarTodo();
+            });
+        }
+        if ($('suite-ddjj')) {
+            $('suite-ddjj').addEventListener('click', function (ev) {
+                var btnDj = ev.target.closest('[data-ddjj-ir]');
+                if (!btnDj) return;
+                ui.subDdjj = btnDj.getAttribute('data-ddjj-ir') || 'f22';
+                refrescarTodo();
+            });
+        }
 
         // Subpestañas Libros
         Array.prototype.forEach.call(document.querySelectorAll('[data-sublibro]'), function (btn) {

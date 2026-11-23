@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.26.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.27.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -152,6 +152,7 @@
 
       <!-- Zona Derecha de la Topbar -->
       <div class="app-top-der">
+        <span class="suite-avance-modulos" id="suite-avance-modulos" title="Módulos del período con datos listos">0 de 6 listos</span>
         <span class="sello sello-activo" id="suite-estado-badge" title="Estado de cierre tributario">
           <span class="material-icons" aria-hidden="true">lock_open</span>Período abierto
         </span>
@@ -266,7 +267,7 @@
           <div class="suite-bar-der">
             <button type="button" class="btn btn-chico" id="btn-cargar-ejemplo-todo" title="Carga datos reales en Nómina, Finiquitos, F29, BHE, Bancos, Balance, P&amp;L y DDJJ en un clic">
               <span class="material-icons" aria-hidden="true">play_arrow</span>
-              <span>Cargar ejemplo completo</span>
+              <span>Cargar datos de ejemplo</span>
             </button>
             <button type="button" class="btn-texto suite-bar-toggle" id="btn-toggle-incluye" aria-expanded="false" aria-controls="suite-incluye-panel">
               <span class="material-icons" aria-hidden="true">expand_more</span>
@@ -465,7 +466,7 @@
                   </div>
                 </div>
               </div>
-              <details class="param-grupo param-grupo-details" id="liq-empresa-details" open>
+              <details class="param-grupo param-grupo-details" id="liq-empresa-details">
                 <summary class="param-grupo-head">
                   <span class="param-grupo-titulo">Datos previsionales y LRE de la empresa</span>
                   <span class="param-grupo-summary-der">
@@ -682,60 +683,91 @@
             <p class="v-sub">Cuánto IVA y retenciones paga la empresa este mes: sube el RCV del SII y te armamos la hoja guía para el Formulario 29.</p>
           </div>
           <div class="v-acciones">
-            <button class="btn btn-primario" type="button" id="btn-rcv-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo SII completo</button>
+            <button class="btn btn-primario" type="button" id="btn-rcv-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo F29</button>
             <button class="btn" type="button" id="btn-limpiar-f29">Limpiar período</button>
           </div>
         </div>
 
-        <div class="panel f29-sii-panel" id="f29-sii-bloque">
-          <div class="f29-sii-cabeza">
-            <div class="f29-sii-info">
-              <div>
-                <span class="sello sello-guardada" id="f29-sii-sello">
-                  <span class="material-icons" aria-hidden="true">folder_open</span>Modo CSV local
-                </span>
-              </div>
-              <p class="f29-sii-meta" id="f29-sii-meta">Operando con archivos descargados manualmente desde sii.cl. También puedes vincular la empresa para sincronizar automático.</p>
+        <div id="f29-resumen-superior" class="f29-resumen-superior">
+          <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
+            <div class="fin-kpi" id="f29-kpi-card-debito">
+              <span class="fin-kpi-label">Total débito fiscal (cód. 538)</span>
+              <span class="fin-kpi-val mono" id="f29-k-debito">$0</span>
+              <span class="fin-kpi-meta" id="f29-k-debito-meta">Sube el RCV de ventas</span>
             </div>
-            <div class="f29-sii-acciones">
-              <button type="button" class="btn btn-primario" id="btn-f29-sii-sync" hidden>
-                <span class="material-icons" aria-hidden="true">sync</span>Sincronizar RCV y F29 del mes
-              </button>
-              <button type="button" class="btn" id="btn-f29-sii-credenciales">
-                <span class="material-icons" aria-hidden="true">link</span><span id="btn-f29-sii-cred-txt">Conectar empresa al SII</span>
-              </button>
+            <div class="fin-kpi" id="f29-kpi-card-credito">
+              <span class="fin-kpi-label">Total crédito fiscal (cód. 537)</span>
+              <span class="fin-kpi-val mono" id="f29-k-credito">$0</span>
+              <span class="fin-kpi-meta" id="f29-k-credito-meta">Sube el RCV de compras</span>
+            </div>
+            <div class="fin-kpi" id="f29-kpi-card-iva">
+              <span class="fin-kpi-label" id="f29-k-iva-lbl">IVA determinado (cód. 89)</span>
+              <span class="fin-kpi-val mono" id="f29-k-iva">$0</span>
+              <span class="fin-kpi-meta" id="f29-k-iva-meta">Débito menos crédito</span>
+            </div>
+            <div class="fin-kpi fin-kpi-destacado" id="f29-kpi-card-total">
+              <span class="fin-kpi-label">Total a pagar en F29 (cód. 91)</span>
+              <span class="fin-kpi-val mono ok" id="f29-k-total">$0</span>
+              <span class="fin-kpi-meta" id="f29-k-total-meta">Carga RCV o ejemplo para calcular</span>
             </div>
           </div>
-          <div class="f29-sii-progreso" id="f29-sii-progreso" hidden role="status" aria-live="polite">
-            <span class="sii-spin material-icons" aria-hidden="true">sync</span>
-            <span id="f29-sii-progreso-txt">Consultando RCV y F29 en el SII...</span>
+          <div class="f29-graficos-grid" id="f29-graficos-grid" hidden>
+            <div class="suite-graf-card" id="f29-grafico-resumen" aria-label="Comparación visual Débito, Crédito, Retenciones y Total F29"></div>
+            <div class="suite-graf-card" id="f29-grafico-anual" aria-label="Evolución 12 meses de Débito, Crédito y F29 a pagar"></div>
           </div>
         </div>
 
-        <div class="panel f29-tgr-panel" id="f29-tgr-bloque" style="margin-bottom:16px">
-          <div class="f29-tgr-cabeza">
-            <div class="f29-tgr-izq">
-              <span class="sello sello-guardada" id="f29-tgr-sello">
-                <span class="material-icons" aria-hidden="true">account_balance</span>
-                <span id="f29-tgr-sello-txt">TGR: Sin consultar</span>
-              </span>
-              <span class="f29-tgr-periodo mono" id="f29-tgr-periodo">Período 2026-11</span>
-              <span class="texto-ayuda" id="f29-tgr-meta">Consulta el estado real de pago, convenios o morosidades en Tesorería General de la República.</span>
-            </div>
-            <div class="f29-tgr-cifras" id="f29-tgr-cifras">
-              <div class="f29-tgr-dato">
-                <span class="f29-tgr-lbl">Total adeudado TGR</span>
-                <strong class="mono" id="f29-tgr-total">$0</strong>
+        <div class="f29-conexiones-grid">
+          <div class="panel f29-sii-panel f29-sii-compacto" id="f29-sii-bloque">
+            <div class="f29-sii-cabeza">
+              <div class="f29-sii-info">
+                <div>
+                  <span class="sello sello-guardada" id="f29-sii-sello">
+                    <span class="material-icons" aria-hidden="true">folder_open</span>Modo CSV local
+                  </span>
+                </div>
+                <p class="f29-sii-meta" id="f29-sii-meta">Operando con CSV manuales desde sii.cl o vinculación automática.</p>
               </div>
-              <div class="f29-tgr-dato">
-                <span class="f29-tgr-lbl">Multas e intereses</span>
-                <strong class="mono" id="f29-tgr-multas">$0</strong>
+              <div class="f29-sii-acciones">
+                <button type="button" class="btn btn-primario btn-chico" id="btn-f29-sii-sync" hidden>
+                  <span class="material-icons" aria-hidden="true">sync</span>Sincronizar RCV y F29
+                </button>
+                <button type="button" class="btn btn-chico" id="btn-f29-sii-credenciales">
+                  <span class="material-icons" aria-hidden="true">link</span><span id="btn-f29-sii-cred-txt">Conectar al SII</span>
+                </button>
               </div>
             </div>
-            <div class="f29-tgr-acciones">
-              <button type="button" class="btn btn-chico" id="btn-f29-tgr-sync">
-                <span class="material-icons" aria-hidden="true">sync</span><span>Actualizar TGR</span>
-              </button>
+            <div class="f29-sii-progreso" id="f29-sii-progreso" hidden role="status" aria-live="polite">
+              <span class="sii-spin material-icons" aria-hidden="true">sync</span>
+              <span id="f29-sii-progreso-txt">Consultando RCV y F29 en el SII...</span>
+            </div>
+          </div>
+
+          <div class="panel f29-tgr-panel f29-tgr-compacto" id="f29-tgr-bloque">
+            <div class="f29-tgr-cabeza">
+              <div class="f29-tgr-izq">
+                <span class="sello sello-guardada" id="f29-tgr-sello">
+                  <span class="material-icons" aria-hidden="true">account_balance</span>
+                  <span id="f29-tgr-sello-txt">TGR: Sin consultar</span>
+                </span>
+                <span class="f29-tgr-periodo mono" id="f29-tgr-periodo">Período 2026-11</span>
+                <span class="texto-ayuda" id="f29-tgr-meta">Deudas o convenios en Tesorería.</span>
+              </div>
+              <div class="f29-tgr-cifras" id="f29-tgr-cifras">
+                <div class="f29-tgr-dato">
+                  <span class="f29-tgr-lbl">Adeudado TGR</span>
+                  <strong class="mono" id="f29-tgr-total">$0</strong>
+                </div>
+                <div class="f29-tgr-dato">
+                  <span class="f29-tgr-lbl">Multas</span>
+                  <strong class="mono" id="f29-tgr-multas">$0</strong>
+                </div>
+              </div>
+              <div class="f29-tgr-acciones">
+                <button type="button" class="btn btn-chico" id="btn-f29-tgr-sync">
+                  <span class="material-icons" aria-hidden="true">sync</span><span>Actualizar TGR</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -943,7 +975,7 @@
         <div class="panel" id="f29-resultados" hidden style="margin-bottom:16px">
           <div class="panel-head"><h2>Hoja de trabajo del Formulario 29</h2><span class="texto-ayuda">Vencimiento legal: día 20 del mes siguiente</span></div>
           <div class="panel-cuerpo">
-            <div class="tabla-resumen-movil" id="f29-resumen-movil">
+            <div class="tabla-resumen-movil" id="f29-resumen-movil" hidden>
               <div class="resumen-movil-card">
                 <div class="resumen-movil-head">
                   <span class="mono resumen-movil-tag">Resumen Declaración F29</span>
@@ -972,13 +1004,6 @@
                 </div>
               </div>
             </div>
-            <div class="fin-kpis fin-kpis-4">
-              <div class="fin-kpi" id="f29-kpi-card-debito"><span class="fin-kpi-label">Total débito fiscal (cód. 538)</span><span class="fin-kpi-val mono" id="f29-k-debito">$0</span></div>
-              <div class="fin-kpi" id="f29-kpi-card-credito"><span class="fin-kpi-label">Total crédito fiscal (cód. 537)</span><span class="fin-kpi-val mono" id="f29-k-credito">$0</span></div>
-              <div class="fin-kpi" id="f29-kpi-card-iva"><span class="fin-kpi-label" id="f29-k-iva-lbl">IVA determinado (cód. 89)</span><span class="fin-kpi-val mono" id="f29-k-iva">$0</span></div>
-              <div class="fin-kpi fin-kpi-destacado" id="f29-kpi-card-total"><span class="fin-kpi-label">Total a pagar en F29 (cód. 91)</span><span class="fin-kpi-val mono ok" id="f29-k-total">$0</span></div>
-            </div>
-            <div class="suite-graf-card" id="f29-grafico-resumen" aria-label="Comparación visual Débito, Crédito, Retenciones y Total F29"></div>
             <div class="f29-postergacion-card" id="f29-postergacion-card">
               <div class="f29-postergacion-switch-fila">
                 <label class="pm-switch-label" for="f29-check-postergacion">
@@ -1072,11 +1097,13 @@
         </div>
 
         <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
-          <div class="fin-kpi" id="conc-kpi-card-movs"><span class="fin-kpi-label">Movimientos cartola</span><span class="fin-kpi-val mono" id="conc-k-movs">0</span></div>
-          <div class="fin-kpi" id="conc-kpi-card-pct"><span class="fin-kpi-label">Conciliación automática</span><span class="fin-kpi-val mono ok" id="conc-k-pct">0%</span></div>
-          <div class="fin-kpi" id="conc-kpi-card-cxc"><span class="fin-kpi-label">CxC pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxc">$0</span></div>
-          <div class="fin-kpi fin-kpi-destacado" id="conc-kpi-card-cxp"><span class="fin-kpi-label">CxP pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxp">$0</span></div>
+          <div class="fin-kpi" id="conc-kpi-card-movs"><span class="fin-kpi-label">Movimientos cartola</span><span class="fin-kpi-val mono" id="conc-k-movs">0</span><span class="fin-kpi-meta" id="conc-k-movs-meta">Sube CSV o cartola ejemplo</span></div>
+          <div class="fin-kpi" id="conc-kpi-card-pct"><span class="fin-kpi-label">Conciliación automática</span><span class="fin-kpi-val mono ok" id="conc-k-pct">0%</span><span class="fin-kpi-meta" id="conc-k-pct-meta">Cruce con RCV y reglas</span></div>
+          <div class="fin-kpi" id="conc-kpi-card-cxc"><span class="fin-kpi-label">CxC pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxc">$0</span><span class="fin-kpi-meta" id="conc-k-cxc-meta">Por cobrar</span></div>
+          <div class="fin-kpi fin-kpi-destacado" id="conc-kpi-card-cxp"><span class="fin-kpi-label">CxP pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxp">$0</span><span class="fin-kpi-meta" id="conc-k-cxp-meta">Por pagar</span></div>
         </div>
+
+        <div class="suite-graf-card" id="aging-grafico-resumen" aria-label="Comparación visual de Antigüedad CxC y CxP"></div>
 
         <div class="suite-preval-strip ok" id="bancos-buzon-alerta" hidden role="status" aria-live="polite">
           <span class="suite-preval-strip-izq">
@@ -1182,7 +1209,6 @@
 
         <!-- Subvista Cartera CxC / CxP (Aging) -->
         <div id="sub-bancos-cartera" hidden>
-          <div class="suite-graf-card" id="aging-grafico-resumen" aria-label="Comparación visual de Antigüedad CxC y CxP"></div>
           <div class="fin-cols-2 fin-cols-2-tablas">
             <div class="panel">
               <div class="panel-head"><div><h2>Antigüedad Cuentas por Cobrar (CxC)</h2><p class="panel-ayuda" id="aging-cxc-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
@@ -2002,6 +2028,8 @@
             </div>
           </div>
         </div>
+
+        <div class="suite-graf-card" id="ddjj-f22-resumen-top" hidden aria-label="Resumen visual Propuesta F22 e Impuesto Renta"></div>
 
         <div class="ddjj-grupos-grid" role="tablist" aria-label="Declaraciones Juradas disponibles">
           <div class="ddjj-grupo-box">
@@ -3460,7 +3488,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.4.0"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=2.19.0"></script>
+<script src="/js/demo_suite.js?v=2.20.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

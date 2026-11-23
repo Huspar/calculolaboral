@@ -154,7 +154,7 @@
             return '<option value="' + k + '"' + (k === estado ? ' selected' : '') + '>' + B.ESTADOS[k].etiqueta + '</option>';
         }).join('');
         return '<tr' + (cruce ? ' class="lre-fila-cruce"' : '') + '>' +
-            '<td data-l="Empresa"><strong>' + esc(c.nombre) + '</strong>' + (c.esActivo ? ' <span class="app-nav-chip">En uso</span>' : '') +
+            '<td data-l="Empresa"><strong>' + esc(c.nombre) + '</strong>' + (c.esActivo ? ' <span class="app-nav-chip uso">En uso</span>' : '') +
             '<span class="lre-rut mono">' + (rut ? esc(rut) : 'Sin RUT') + '</span></td>' +
             '<td data-l="Dotación">' + (c.trabajadores
                 ? c.trabajadores + ' trab. <span class="' + (obligatoria ? 'lre-dot-obligatoria' : 'lre-dot-opcional') + '">' + (obligatoria ? 'Obligatoria' : 'Opcional (<5)') + '</span>'
