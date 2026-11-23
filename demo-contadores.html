@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<meta name="theme-color" content="#00261F">
+<meta name="theme-color" content="#F6F7F9">
 <title>Demo Suite Contadores: Remuneraciones, F29 y Balance 8 Col.</title>
 <meta name="description" content="Demo en navegador para contadores en Chile: liquidaciones Previred (105 campos), LRE, lector RCV para F29, Balance de 8 Columnas y RLI ProPyme.">
 <link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
@@ -16,23 +16,23 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.28.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
 
-<div id="pm-panel" class="app suite-contadores-app">
+<div id="pm-panel" class="app suite-contadores-app syn-theme" data-syn-accent="naranja">
 
   <!-- ========================================================
-       1. SIDEBAR LATERAL PROFUNDA (#app-side)
+       1. SIDEBAR LATERAL CLARA ESTILO SYNCHRO (#app-side)
        ======================================================== -->
   <aside class="app-side" id="app-side" aria-label="Menú de la Suite Contable">
     <button type="button" class="app-cerrar" id="app-cerrar" aria-label="Cerrar el menú">
       <span class="material-icons" aria-hidden="true">close</span>
     </button>
 
-    <!-- Logo CálculoLaboral Blanco y Ámbar -->
-    <a class="app-logo" href="/demo-contadores" aria-label="Cálculo Laboral Suite Contable">
+    <!-- Logo CálculoLaboral -->
+    <a class="app-logo app-logo-claro syn-logo" href="/demo-contadores" aria-label="Cálculo Laboral Suite Contable">
       <span class="app-logo-isotipo">
         <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M30 84h40M38 79h24"/><path d="M50 22v57"/><path d="M50 14l-2 4h4l-2-4v8"/><path d="M18 36c10-9 22-12 32-12s22 3 32 12"/><path d="M18 36l-8 18h16Z"/><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M82 36l-8 18h16Z"/><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"/><path d="M41 43.5a10 10 0 1 0 0 20h6"/><path d="M58 43.5v20h10"/>
@@ -41,15 +41,24 @@
       <span class="app-logo-texto">Cálculo<span>Laboral</span></span>
     </a>
 
-    <!-- Bloque del Estudio -->
+    <!-- Bloque del Estudio + CTA principal oscuro -->
     <div class="app-empresa">
       <strong id="study-name-display">Asesorías Pérez Ltda.</strong>
-      <span class="mono" style="font-size:11.5px;color:var(--side-muted)">Suite Estudios Contables</span>
+      <span class="mono syn-study-sub">Suite Estudios Contables</span>
       <select id="estudio-selector-side" class="side-estudio-select" hidden aria-label="Estudio contable activo en menú móvil"></select>
+      <button type="button" class="syn-side-cta" id="btn-side-nuevo-cliente">
+        <span class="material-icons" aria-hidden="true">add</span>
+        <span>Nuevo cliente</span>
+      </button>
     </div>
 
     <!-- Navegación por Grupos Estructurados -->
     <nav class="app-nav" id="suite-modulos" aria-label="Módulos contables">
+      <button type="button" class="suite-mod-btn activo" data-modulo="dashboard" aria-current="page">
+        <span class="material-icons" aria-hidden="true">grid_view</span>
+        <span>Dashboard</span>
+      </button>
+
       <p class="app-nav-grupo">Gestión del Estudio</p>
       <button type="button" class="suite-mod-btn" data-modulo="torre" aria-current="false">
         <span class="material-icons" aria-hidden="true">apartment</span>
@@ -62,7 +71,7 @@
       </button>
 
       <p class="app-nav-grupo">Nómina y Laboral</p>
-      <button type="button" class="suite-mod-btn activo" data-modulo="remuneraciones" aria-current="page">
+      <button type="button" class="suite-mod-btn" data-modulo="remuneraciones" aria-current="false">
         <span class="material-icons" aria-hidden="true">receipt_long</span>
         <span>Remuneraciones</span>
         <span class="app-nav-chip" id="nav-count-liq">10</span>
@@ -94,6 +103,9 @@
         <span class="material-icons" aria-hidden="true">picture_as_pdf</span>
         <span>Informes y Portal</span>
       </button>
+
+      <p class="app-nav-grupo">Clientes activos</p>
+      <div class="syn-side-clientes" id="side-clientes-rapidos" aria-label="Cambio rápido de cliente"></div>
     </nav>
 
     <!-- Pie del Sidebar con Respaldo, Puente Pyme y Enlace al Asistente Pyme -->
@@ -122,11 +134,33 @@
        ======================================================== -->
   <div class="app-main" id="app-main">
 
-    <!-- Topbar Sticky (56 px) -->
-    <header class="app-top" id="app-top">
+    <!-- Topbar Única Estilo Synchro (58 px) -->
+    <header class="app-top syn-topbar" id="app-top">
       <button type="button" class="app-icono-btn app-menu-btn" id="app-menu-btn" aria-label="Abrir el menú" aria-controls="app-side" aria-expanded="false">
         <span class="material-icons" aria-hidden="true">menu</span>
       </button>
+
+      <!-- Breadcrumb + Trigger Popover Cliente Activo -->
+      <div class="syn-top-izq">
+        <div class="syn-breadcrumb" aria-label="Ubicación actual">
+          <span class="syn-bc-estudio" id="syn-bc-estudio">Estudio</span>
+          <span class="syn-bc-sep" aria-hidden="true">/</span>
+          <strong class="syn-bc-mod" id="syn-top-modulo">Dashboard</strong>
+        </div>
+        <button type="button" class="syn-ctx-trigger" id="btn-ctx-popover" aria-expanded="false" aria-controls="suite-context-bar" title="Cambiar cliente, régimen SII o cerrar período">
+          <span class="material-icons" aria-hidden="true">business</span>
+          <strong id="ctx-movil-cliente">Panadería San Isidro SpA</strong>
+          <span class="mono syn-ctx-trigger-meta" id="ctx-movil-meta">14 D3</span>
+          <span class="material-icons syn-ctx-chevron" aria-hidden="true">expand_more</span>
+        </button>
+      </div>
+
+      <!-- Buscador Global -->
+      <div class="syn-search-wrap" id="syn-global-search-wrap">
+        <span class="material-icons syn-search-ico" aria-hidden="true">search</span>
+        <input type="search" id="syn-global-search" class="syn-search-input" placeholder="Buscar módulo, cliente o RUT..." aria-label="Buscar módulo o cliente" autocomplete="off">
+        <div class="syn-search-dropdown" id="syn-search-dropdown" hidden role="listbox" aria-label="Resultados de búsqueda"></div>
+      </div>
 
       <!-- Selector de Período -->
       <div class="app-mes">
@@ -157,6 +191,29 @@
           <span class="material-icons" aria-hidden="true">lock_open</span>Período abierto
         </span>
 
+        <!-- Selector de Acento de Color para el Usuario -->
+        <div class="syn-accent-wrap" id="syn-accent-wrap">
+          <button type="button" class="btn btn-chico syn-accent-btn" id="btn-syn-accent" aria-expanded="false" aria-controls="syn-accent-popover" title="Cambiar color de acento">
+            <span class="syn-accent-swatch" aria-hidden="true"></span>
+            <span class="syn-accent-btn-txt">Color</span>
+          </button>
+          <div class="syn-accent-popover" id="syn-accent-popover" hidden role="group" aria-label="Color de acento de la interfaz">
+            <p class="syn-pop-titulo">Color de acento</p>
+            <button type="button" class="syn-accent-opt" data-set-accent="naranja" aria-pressed="true">
+              <span class="syn-swatch-dot" style="background:#F97316" aria-hidden="true"></span>
+              <span>Naranja (Synchro)</span>
+            </button>
+            <button type="button" class="syn-accent-opt" data-set-accent="ambar" aria-pressed="false">
+              <span class="syn-swatch-dot" style="background:#D97706" aria-hidden="true"></span>
+              <span>Ámbar Fiscal</span>
+            </button>
+            <button type="button" class="syn-accent-opt" data-set-accent="indigo" aria-pressed="false">
+              <span class="syn-swatch-dot" style="background:#4F46E5" aria-hidden="true"></span>
+              <span>Índigo Studio</span>
+            </button>
+          </div>
+        </div>
+
         <button type="button" class="cloud-sync-pill" id="cloud-sync-pill" aria-label="Modo local sin sesión. Clic para iniciar sesión.">
           <span class="material-icons" aria-hidden="true">cloud_queue</span>
           <span class="cloud-sync-txt">Solo local</span>
@@ -173,16 +230,16 @@
       </div>
     </header>
 
-    <!-- Barra de Contexto del Cliente Activo -->
-    <section class="suite-context-bar" id="suite-context-bar" aria-label="Contexto del cliente activo">
+    <!-- Popover Flotante de Contexto del Cliente Activo -->
+    <section class="suite-context-bar syn-ctx-popover" id="suite-context-bar" aria-label="Contexto del cliente activo">
       <div class="suite-ctx-movil-bar">
         <div class="suite-ctx-movil-resumen">
           <span class="material-icons" aria-hidden="true">business</span>
-          <strong id="ctx-movil-cliente">Panadería San Isidro SpA</strong>
-          <span class="mono" id="ctx-movil-meta">14 D3 · UF $41.439</span>
+          <strong id="ctx-movil-cliente-pop">Panadería San Isidro SpA</strong>
+          <span class="mono" id="ctx-movil-meta-pop">14 D3 · UF $41.439</span>
         </div>
         <button type="button" class="btn btn-chico suite-ctx-movil-toggle" id="btn-ctx-movil-toggle" aria-expanded="false" aria-controls="suite-ctx-cuerpo">
-          <span class="material-icons" aria-hidden="true">tune</span><span>Cliente / Cerrar</span>
+          <span class="material-icons" aria-hidden="true">tune</span><span>Cerrar panel</span>
         </button>
       </div>
       <div class="suite-ctx-cuerpo" id="suite-ctx-cuerpo">
@@ -305,8 +362,126 @@
         </div>
       </section>
 
+      <!-- ==================== VISTA 0: DASHBOARD DEL ESTUDIO (SYNCHRO) ==================== -->
+      <section class="vista" id="suite-dashboard">
+        <div class="v-head">
+          <div>
+            <h1 class="v-titulo">Dashboard del Estudio</h1>
+            <p class="v-sub">Resumen operativo del período <strong class="mono" id="dash-periodo-lbl">2026-11</strong>, vencimientos tributarios y cartera de clientes.</p>
+          </div>
+          <div class="v-acciones">
+            <button type="button" class="btn btn-primario" id="btn-dash-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar datos de ejemplo</button>
+            <button type="button" class="btn" id="btn-dash-nuevo-cliente"><span class="material-icons" aria-hidden="true">add_business</span>Nuevo cliente</button>
+          </div>
+        </div>
+
+        <!-- 4 Acciones Rápidas -->
+        <div class="syn-quick-grid" aria-label="Accesos directos del período">
+          <button type="button" class="syn-quick-card" data-dash-ir="f29">
+            <span class="syn-quick-ico" aria-hidden="true"><span class="material-icons">receipt</span></span>
+            <span class="syn-quick-txt"><strong>Declarar F29</strong><span>Subir RCV ventas y compras</span></span>
+          </button>
+          <button type="button" class="syn-quick-card" data-dash-ir="remuneraciones">
+            <span class="syn-quick-ico" aria-hidden="true"><span class="material-icons">receipt_long</span></span>
+            <span class="syn-quick-txt"><strong>Calcular Nómina</strong><span>Liquidaciones, Previred y LRE</span></span>
+          </button>
+          <button type="button" class="syn-quick-card" data-dash-ir="bancos">
+            <span class="syn-quick-ico" aria-hidden="true"><span class="material-icons">sync_alt</span></span>
+            <span class="syn-quick-txt"><strong>Conciliar Cartola</strong><span>Cruce bancario y Aging CxC/CxP</span></span>
+          </button>
+          <button type="button" class="syn-quick-card" data-dash-ir="reportes">
+            <span class="syn-quick-ico" aria-hidden="true"><span class="material-icons">picture_as_pdf</span></span>
+            <span class="syn-quick-txt"><strong>Informe Mensual</strong><span>PDF cliente y Portal estudio</span></span>
+          </button>
+        </div>
+
+        <!-- 4 KPIs Limpios -->
+        <div class="fin-kpis fin-kpis-4" style="margin-bottom:18px">
+          <div class="fin-kpi" id="dash-kpi-card-clientes">
+            <span class="fin-kpi-label">Empresas en cartera</span>
+            <span class="fin-kpi-val mono" id="dash-k-clientes">1</span>
+            <span class="fin-kpi-meta" id="dash-k-clientes-meta">Cliente activo en período</span>
+          </div>
+          <div class="fin-kpi fin-kpi-marca" id="dash-kpi-card-f29">
+            <span class="fin-kpi-label">F29 consolidado (cód. 91)</span>
+            <span class="fin-kpi-val mono" id="dash-k-f29">$0</span>
+            <span class="fin-kpi-meta" id="dash-k-f29-meta">Total estimado cartera</span>
+          </div>
+          <div class="fin-kpi" id="dash-kpi-card-alertas">
+            <span class="fin-kpi-label">Acuses y alertas SII</span>
+            <span class="fin-kpi-val mono" id="dash-k-alertas">0</span>
+            <span class="fin-kpi-meta" id="dash-k-alertas-meta">Plazo 8 días Ley 19.983</span>
+          </div>
+          <div class="fin-kpi" id="dash-kpi-card-cerrados">
+            <span class="fin-kpi-label">Períodos cerrados</span>
+            <span class="fin-kpi-val mono" id="dash-k-cerrados">0 / 1</span>
+            <span class="fin-kpi-meta" id="dash-k-cerrados-meta">Cierre tributario mensual</span>
+          </div>
+        </div>
+
+        <!-- Bento Principal 2 Columnas -->
+        <div class="syn-dash-grid">
+          <div class="syn-dash-main">
+            <!-- Calendario Fiscal del Mes (reemplaza Gantt social) -->
+            <section class="panel syn-panel" aria-labelledby="dash-cal-titulo">
+              <div class="panel-head">
+                <div>
+                  <h2 id="dash-cal-titulo">Mapa de vencimientos fiscales del mes</h2>
+                  <p class="panel-ayuda">Hitos SII, PreviRed y Mi DT del período activo con estado de avance.</p>
+                </div>
+                <span class="mono syn-pill-neutro" id="dash-cal-mes-tag">Nov 2026</span>
+              </div>
+              <div class="panel-cuerpo" id="dash-timeline-fiscal"></div>
+            </section>
+
+            <!-- Clientes en Cartera con Progreso y Modal Detalle -->
+            <section class="panel syn-panel" aria-labelledby="dash-cli-titulo">
+              <div class="panel-head">
+                <div>
+                  <h2 id="dash-cli-titulo">Clientes prioritarios</h2>
+                  <p class="panel-ayuda">Haz clic en «Ver ficha» para revisar resumen, notas del estudio y ajustes rápidos.</p>
+                </div>
+                <div class="v-acciones">
+                  <button type="button" class="btn btn-primario btn-chico" id="btn-dash-panel-nuevo"><span class="material-icons" aria-hidden="true">add</span>Nuevo cliente</button>
+                  <button type="button" class="btn btn-chico" data-dash-ir="torre">Ver toda la cartera</button>
+                </div>
+              </div>
+              <div class="panel-cuerpo">
+                <div class="syn-clientes-grid" id="dash-clientes-cards"></div>
+              </div>
+            </section>
+
+            <!-- Gráfico Comparativo con Tooltip Oscuro + Control Segmentado de Rango -->
+            <section class="panel syn-panel" aria-labelledby="dash-chart-titulo">
+              <div class="panel-cuerpo" id="dash-milestone-chart" aria-live="polite"></div>
+            </section>
+          </div>
+
+          <aside class="syn-dash-rail" aria-label="Vencimientos y actividad reciente">
+            <section class="panel syn-panel">
+              <div class="panel-head">
+                <h2>Próximos vencimientos</h2>
+                <span class="mono syn-pill-neutro">Chile SII/DT</span>
+              </div>
+              <div class="panel-cuerpo">
+                <div class="syn-venc-lista" id="dash-vencimientos-lista"></div>
+              </div>
+            </section>
+
+            <section class="panel syn-panel">
+              <div class="panel-head">
+                <h2>Actividad reciente</h2>
+              </div>
+              <div class="panel-cuerpo">
+                <ul class="syn-activity-lista" id="dash-actividad-lista"></ul>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </section>
+
       <!-- ==================== VISTA 1: REMUNERACIONES ==================== -->
-      <section class="vista" id="suite-remuneraciones">
+      <section class="vista" id="suite-remuneraciones" hidden>
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Remuneraciones y Nómina</h1>
@@ -2527,10 +2702,10 @@
        3. BARRA INFERIOR MÓVIL (#app-barra)
        ======================================================== -->
   <nav class="app-barra" id="app-barra" aria-label="Secciones principales de la suite">
+    <button type="button" class="suite-mod-btn activo" data-modulo="dashboard"><span class="material-icons" aria-hidden="true">grid_view</span><span>Resumen</span></button>
     <button type="button" class="suite-mod-btn" data-modulo="torre"><span class="material-icons" aria-hidden="true">apartment</span><span>Clientes</span></button>
-    <button type="button" class="suite-mod-btn activo" data-modulo="remuneraciones"><span class="material-icons" aria-hidden="true">receipt_long</span><span>Nómina</span></button>
+    <button type="button" class="suite-mod-btn" data-modulo="remuneraciones"><span class="material-icons" aria-hidden="true">receipt_long</span><span>Nómina</span></button>
     <button type="button" class="suite-mod-btn" data-modulo="f29"><span class="material-icons" aria-hidden="true">receipt</span><span>F29</span></button>
-    <button type="button" class="suite-mod-btn" data-modulo="ddjj"><span class="material-icons" aria-hidden="true">description</span><span>Renta</span></button>
     <button type="button" id="app-mas" aria-controls="app-side" aria-expanded="false"><span class="material-icons" aria-hidden="true">more_horiz</span><span>Más</span></button>
   </nav>
 
@@ -3458,6 +3633,83 @@
   </div>
 </dialog>
 
+<!-- Modal Reutilizable de Detalle Cliente / Hito Estilo Synchro -->
+<dialog class="app-dialogo syn-modal" id="dlg-syn-detalle" aria-labelledby="syn-dlg-titulo">
+  <div class="syn-modal-head">
+    <div class="syn-modal-head-izq">
+      <h2 id="syn-dlg-titulo">Panadería San Isidro SpA</h2>
+      <span class="syn-chip-est" id="syn-dlg-sub">14 D3 · Noviembre 2026</span>
+    </div>
+    <div class="syn-modal-head-der">
+      <button type="button" class="app-icono-btn" id="btn-syn-dlg-fav" aria-pressed="false" aria-label="Marcar cliente como favorito" title="Destacar cliente">
+        <span class="material-icons" aria-hidden="true">star_border</span>
+      </button>
+      <button type="button" class="app-icono-btn" id="btn-syn-dlg-cerrar" aria-label="Cerrar ficha">
+        <span class="material-icons" aria-hidden="true">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="syn-modal-body">
+    <dl class="syn-meta-grid" id="syn-dlg-meta"></dl>
+
+    <div class="syn-modal-tabs" role="tablist" aria-label="Secciones de la ficha">
+      <button type="button" class="syn-modal-tab activo" data-syn-tab="resumen" role="tab" aria-selected="true" aria-controls="syn-tab-resumen">Resumen</button>
+      <button type="button" class="syn-modal-tab" data-syn-tab="notas" role="tab" aria-selected="false" aria-controls="syn-tab-notas">Notas del estudio</button>
+      <button type="button" class="syn-modal-tab" data-syn-tab="config" role="tab" aria-selected="false" aria-controls="syn-tab-config">Parámetros</button>
+    </div>
+
+    <div class="syn-modal-panel" id="syn-tab-resumen" role="tabpanel">
+      <div class="syn-modal-kpis" id="syn-dlg-kpis"></div>
+      <div class="syn-modal-atajos" id="syn-dlg-atajos"></div>
+    </div>
+
+    <div class="syn-modal-panel" id="syn-tab-notas" role="tabpanel" hidden>
+      <ul class="syn-notas-lista" id="syn-dlg-notas-lista"></ul>
+      <div class="syn-nota-composer">
+        <div class="syn-nota-tags">
+          <button type="button" class="btn btn-chico" data-syn-tag="@F29">@F29</button>
+          <button type="button" class="btn btn-chico" data-syn-tag="@Previred">@Previred</button>
+          <button type="button" class="btn btn-chico" data-syn-tag="@RCV">@RCV</button>
+          <button type="button" class="btn btn-chico" data-syn-tag="@DDJJ">@DDJJ</button>
+        </div>
+        <label class="sr-only" for="syn-dlg-nota-input">Agregar nota de seguimiento</label>
+        <textarea id="syn-dlg-nota-input" class="syn-nota-input" rows="2" placeholder="Escribe un recordatorio o nota de revisión (ej. Revisar facturas pendientes @RCV)..."></textarea>
+      </div>
+    </div>
+
+    <div class="syn-modal-panel" id="syn-tab-config" role="tabpanel" hidden>
+      <div class="syn-modal-form">
+        <div class="lq-field">
+          <label for="syn-cfg-nombre">Razón social</label>
+          <input type="text" id="syn-cfg-nombre" maxlength="100">
+        </div>
+        <div class="lq-field">
+          <label for="syn-cfg-rut">RUT empresa</label>
+          <input type="text" id="syn-cfg-rut" maxlength="12" placeholder="76.543.210-3">
+        </div>
+        <div class="lq-field">
+          <label for="syn-cfg-regimen">Régimen tributario SII</label>
+          <select id="syn-cfg-regimen">
+            <option value="14D3">ProPyme (14 D3)</option>
+            <option value="14D3_MAYOR">ProPyme &gt;50k UF</option>
+            <option value="14D8">Transparente (14 D8)</option>
+            <option value="14D8_MAYOR">Transparente &gt;50k UF</option>
+            <option value="14A">Semi Integrado (14 A)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="syn-modal-foot">
+      <button type="button" class="btn" id="btn-syn-dlg-trabajar">Trabajar con este cliente</button>
+      <div class="syn-modal-foot-der">
+        <button type="button" class="btn" id="btn-syn-dlg-cancelar">Cancelar</button>
+        <button type="button" class="btn btn-primario" id="btn-syn-dlg-guardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
 <!-- Scripts de Motor y Suite Contable -->
 <script src="/js/constants.js"></script>
 <script src="/js/rut_cl.js?v=1.0.0"></script>
@@ -3488,7 +3740,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.4.0"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=2.20.0"></script>
+<script src="/js/demo_suite.js?v=3.0.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

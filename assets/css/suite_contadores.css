@@ -5753,3 +5753,1282 @@
         font-size: 18px;
     }
 }
+
+/* ==========================================================================
+   SYNCHRO DESIGN SYSTEM REDISEÑO COMPLETO (TOKENS, SHELL CLARO, DASHBOARD Y MODAL)
+   ========================================================================== */
+#pm-panel.suite-contadores-app.syn-theme {
+    --syn-canvas: #F6F7F9;
+    --syn-surface: #FFFFFF;
+    --syn-surface-2: #F1F3F5;
+    --syn-side-bg: #FAFAFB;
+    --syn-border: #E5E7EB;
+    --syn-border-2: #D1D5DB;
+    --syn-dark: #141518;
+    --syn-dark-hover: #26282E;
+    --syn-sage: #4D7C6F;
+    --syn-ink: #0F172A;
+    --syn-ink-2: #334155;
+    --syn-muted: #475569;
+    --syn-faint: #64748B;
+
+    /* Acento por defecto: Naranja Synchro (sobrescribible por data-syn-accent) */
+    --syn-accent: #F97316;
+    --syn-accent-ink: #C2410C;
+    --syn-accent-soft: #FFF7ED;
+    --syn-accent-line: #FED7AA;
+
+    /* Constantes de movimiento derivadas del estudio 30fps */
+    --syn-dur-fast: 160ms;
+    --syn-dur-tab: 200ms;
+    --syn-dur-modal: 320ms;
+    --syn-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Remapeo seguro de tokens heredados bajo .syn-theme */
+    --canvas: var(--syn-canvas);
+    --surface: var(--syn-surface);
+    --surface-2: var(--syn-surface-2);
+    --hover: #F3F4F6;
+    --line: var(--syn-border);
+    --line-2: var(--syn-border-2);
+    --line-3: #9CA3AF;
+    --ink: var(--syn-ink);
+    --ink-2: var(--syn-ink-2);
+    --muted: var(--syn-muted);
+    --faint: var(--syn-faint);
+    --forest: var(--syn-dark);
+    --forest-hover: var(--syn-dark-hover);
+    --forest-deep: var(--syn-side-bg);
+    --forest-50: var(--syn-accent-soft);
+    --forest-100: var(--syn-accent-line);
+    --forest-600: var(--syn-accent-ink);
+    --forest-700: var(--syn-dark);
+    --amber: var(--syn-accent);
+    --amber-ink: var(--syn-accent-ink);
+    --amber-bg: var(--syn-accent-soft);
+    --amber-line: var(--syn-accent-line);
+    --radius: 16px;
+    --radius-sm: 10px;
+    background: var(--syn-canvas);
+    color: var(--syn-ink);
+}
+
+#pm-panel.suite-contadores-app.syn-theme[data-syn-accent="ambar"] {
+    --syn-accent: #D97706;
+    --syn-accent-ink: #92400E;
+    --syn-accent-soft: #FFFBEB;
+    --syn-accent-line: #FDE68A;
+}
+
+#pm-panel.suite-contadores-app.syn-theme[data-syn-accent="indigo"] {
+    --syn-accent: #4F46E5;
+    --syn-accent-ink: #3730A3;
+    --syn-accent-soft: #EEF2FF;
+    --syn-accent-line: #C7D2FE;
+}
+
+#pm-panel.suite-contadores-app.syn-theme :focus-visible {
+    outline: 2px solid var(--syn-accent);
+    outline-offset: 2px;
+}
+
+/* ---------- Sidebar Clara Estilo Synchro ---------- */
+#pm-panel.syn-theme .app-side {
+    background: var(--syn-side-bg);
+    color: var(--syn-ink);
+    border-right: 1px solid var(--syn-border);
+    padding: 14px 12px 14px;
+    gap: 10px;
+}
+#pm-panel.syn-theme .syn-logo {
+    padding: 4px 6px;
+}
+#pm-panel.syn-theme .syn-logo .app-logo-isotipo {
+    background: var(--syn-dark);
+}
+#pm-panel.syn-theme .syn-logo .app-logo-isotipo svg {
+    color: var(--syn-accent);
+}
+#pm-panel.syn-theme .syn-logo .app-logo-texto {
+    color: var(--syn-ink);
+}
+#pm-panel.syn-theme .syn-logo .app-logo-texto span {
+    color: var(--syn-accent-ink);
+}
+#pm-panel.syn-theme .app-empresa {
+    padding: 6px 6px 12px;
+    border-bottom: 1px solid var(--syn-border);
+}
+#pm-panel.syn-theme .app-empresa strong {
+    color: var(--syn-ink);
+}
+#pm-panel.syn-theme .syn-study-sub {
+    display: block;
+    font-size: 12px;
+    color: var(--syn-muted);
+    margin-bottom: 10px;
+}
+#pm-panel.syn-theme .syn-side-cta {
+    width: 100%;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--syn-dark);
+    color: #FFFFFF;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--syn-dur-fast) var(--syn-ease), transform var(--syn-dur-fast) var(--syn-ease);
+}
+#pm-panel.syn-theme .syn-side-cta:hover {
+    background: var(--syn-dark-hover);
+}
+#pm-panel.syn-theme .syn-side-cta:active {
+    transform: scale(0.98);
+}
+#pm-panel.syn-theme .app-nav-grupo {
+    color: var(--syn-faint);
+    font-size: 11px;
+    font-weight: 600;
+    margin: 10px 8px 3px;
+}
+#pm-panel.syn-theme #suite-modulos .suite-mod-btn {
+    color: var(--syn-ink-2);
+    border-radius: 8px;
+    border-left: 3px solid transparent;
+    font-weight: 500;
+    transition: background-color var(--syn-dur-fast) var(--syn-ease), color var(--syn-dur-fast) var(--syn-ease), border-color var(--syn-dur-fast) var(--syn-ease);
+}
+#pm-panel.syn-theme #suite-modulos .suite-mod-btn .material-icons {
+    color: var(--syn-muted) !important;
+    font-size: 18px;
+}
+#pm-panel.syn-theme #suite-modulos .suite-mod-btn:hover {
+    background: #EFEFF2;
+    color: var(--syn-ink);
+}
+#pm-panel.syn-theme #suite-modulos .suite-mod-btn.activo {
+    background: #EFEFF2;
+    color: var(--syn-ink);
+    font-weight: 600;
+    border-left-color: var(--syn-accent);
+}
+#pm-panel.syn-theme #suite-modulos .suite-mod-btn.activo .material-icons {
+    color: var(--syn-accent-ink) !important;
+}
+#pm-panel.syn-theme #suite-modulos .app-nav-chip {
+    background: #E2E8F0;
+    color: #0F172A;
+    border: 1px solid #CBD5E1;
+    font-size: 12px;
+    font-weight: 600;
+}
+#pm-panel.syn-theme #suite-modulos .app-nav-chip.chip-ok {
+    background: #DCFCE7;
+    color: #14532D;
+    border-color: #86EFAC;
+}
+#pm-panel.syn-theme #suite-modulos .app-nav-chip.chip-warn {
+    background: #FEF3C7;
+    color: #78350F;
+    border-color: #FCD34D;
+}
+#pm-panel.syn-theme #suite-modulos .app-nav-chip.chip-riesgo {
+    background: #FFE4E6;
+    color: #9F1239;
+    border-color: #FECDD3;
+}
+
+/* Clientes rápidos en Sidebar */
+.syn-side-clientes {
+    display: grid;
+    gap: 3px;
+    padding-bottom: 6px;
+}
+.syn-side-cli-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    min-height: 36px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--syn-ink-2);
+    font-size: 12.5px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--syn-dur-fast) var(--syn-ease);
+}
+.syn-side-cli-btn:hover {
+    background: #EFEFF2;
+    color: var(--syn-ink);
+}
+.syn-side-cli-btn.activo {
+    background: var(--syn-surface);
+    border-color: var(--syn-border);
+    color: var(--syn-ink);
+    font-weight: 600;
+}
+.syn-side-cli-tag {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--syn-accent-soft);
+    border: 1px solid var(--syn-accent-line);
+    color: var(--syn-accent-ink);
+    font-size: 10.5px;
+    font-weight: 700;
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+.syn-side-cli-nom {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Pie claro del Sidebar */
+#pm-panel.syn-theme .app-side-pie {
+    border-top: 1px solid var(--syn-border);
+    padding-top: 10px;
+}
+#pm-panel.syn-theme #btn-respaldo,
+#pm-panel.syn-theme #btn-restaurar,
+#pm-panel.syn-theme .suite-btn-importar {
+    background: var(--syn-surface);
+    border: 1px solid var(--syn-border);
+    color: var(--syn-ink-2);
+}
+#pm-panel.syn-theme #btn-respaldo:hover,
+#pm-panel.syn-theme #btn-restaurar:hover,
+#pm-panel.syn-theme .suite-btn-importar:hover {
+    background: var(--syn-surface-2);
+    border-color: var(--syn-border-2);
+    color: var(--syn-ink);
+}
+#pm-panel.syn-theme .suite-link-pyme,
+#pm-panel.syn-theme .suite-puente-texto {
+    color: var(--syn-muted);
+}
+#pm-panel.syn-theme .suite-link-pyme:hover {
+    color: var(--syn-ink);
+}
+#pm-panel.syn-theme .app-cerrar {
+    color: var(--syn-ink);
+}
+
+/* ---------- Cabecera Única Compacta (.syn-topbar) ---------- */
+#pm-panel.syn-theme .syn-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 42;
+    min-height: 58px;
+    height: auto;
+    padding: 8px 20px;
+    background: var(--syn-surface);
+    border-bottom: 1px solid var(--syn-border);
+    display: flex;
+    align-items: center;
+    gap: 10px 14px;
+    flex-wrap: nowrap;
+}
+.syn-top-izq {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+.syn-breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+.syn-bc-estudio {
+    color: var(--syn-muted);
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.syn-bc-sep {
+    color: var(--syn-faint);
+}
+.syn-bc-mod {
+    color: var(--syn-ink);
+    font-weight: 600;
+}
+.syn-ctx-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    max-width: 260px;
+    padding: 0 10px;
+    border-radius: 9px;
+    border: 1px solid var(--syn-border);
+    background: var(--syn-canvas);
+    color: var(--syn-ink);
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: border-color var(--syn-dur-fast) var(--syn-ease), background-color var(--syn-dur-fast) var(--syn-ease);
+}
+.syn-ctx-trigger:hover {
+    background: var(--syn-surface-2);
+    border-color: var(--syn-border-2);
+}
+.syn-ctx-trigger .material-icons {
+    font-size: 16px;
+    color: var(--syn-accent-ink);
+    flex-shrink: 0;
+}
+.syn-ctx-trigger strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+}
+.syn-ctx-trigger-meta {
+    font-size: 11.5px;
+    color: var(--syn-muted);
+    flex-shrink: 0;
+}
+
+/* Buscador global */
+.syn-search-wrap {
+    position: relative;
+    flex: 1 1 200px;
+    max-width: 280px;
+    min-width: 140px;
+}
+.syn-search-ico {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 17px;
+    color: var(--syn-faint);
+    pointer-events: none;
+}
+.syn-search-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px 0 32px;
+    border: 1px solid var(--syn-border);
+    border-radius: 9px;
+    background: var(--syn-canvas);
+    color: var(--syn-ink);
+    font-size: 13px;
+}
+.syn-search-input:focus {
+    background: var(--syn-surface);
+    border-color: var(--syn-accent);
+}
+.syn-search-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    min-width: 260px;
+    z-index: 60;
+    background: var(--syn-surface);
+    border: 1px solid var(--syn-border);
+    border-radius: 12px;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+    padding: 6px;
+    display: grid;
+    gap: 2px;
+}
+.syn-search-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    min-height: 38px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    text-align: left;
+    font-size: 13px;
+    color: var(--syn-ink);
+    cursor: pointer;
+}
+.syn-search-item:hover,
+.syn-search-item.activo {
+    background: var(--syn-surface-2);
+}
+.syn-search-item small {
+    color: var(--syn-muted);
+    font-size: 11.5px;
+}
+
+/* Selector de Color de Acento */
+.syn-accent-wrap {
+    position: relative;
+}
+.syn-accent-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--syn-border);
+    background: var(--syn-surface);
+    color: var(--syn-ink-2);
+}
+.syn-accent-swatch {
+    width: 11px;
+    height: 11px;
+    border-radius: 999px;
+    background: var(--syn-accent);
+    display: inline-block;
+}
+.syn-accent-popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 190px;
+    z-index: 65;
+    background: var(--syn-surface);
+    border: 1px solid var(--syn-border);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14);
+    display: grid;
+    gap: 4px;
+}
+.syn-pop-titulo {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--syn-muted);
+    padding: 2px 6px 4px;
+}
+.syn-accent-opt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 36px;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--syn-ink);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+}
+.syn-accent-opt:hover {
+    background: var(--syn-surface-2);
+}
+.syn-accent-opt[aria-pressed="true"] {
+    background: var(--syn-accent-soft);
+    border-color: var(--syn-accent-line);
+    color: var(--syn-accent-ink);
+    font-weight: 600;
+}
+.syn-swatch-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+/* Popover Flotante de Contexto Cliente (.syn-ctx-popover) */
+#pm-panel.syn-theme .app-main {
+    position: relative;
+}
+#pm-panel.syn-theme .suite-context-bar.syn-ctx-popover {
+    display: none;
+    position: fixed;
+    top: 62px;
+    left: 264px;
+    right: 20px;
+    max-width: 980px;
+    z-index: 48;
+    background: var(--syn-surface);
+    border: 1px solid var(--syn-border-2);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.14);
+    animation: synFadeSlide var(--syn-dur-fast) var(--syn-ease);
+}
+#pm-panel.syn-theme .suite-context-bar.syn-ctx-popover.abierto {
+    display: flex;
+}
+#pm-panel.syn-theme .suite-context-bar.syn-ctx-popover .suite-ctx-cuerpo {
+    display: flex;
+}
+
+/* ---------- Botones y Tarjetas Limpias Synchro ---------- */
+#pm-panel.syn-theme .app-content {
+    padding: 20px 24px 60px;
+}
+#pm-panel.syn-theme .panel {
+    background: var(--syn-surface);
+    border: 1px solid var(--syn-border);
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+#pm-panel.syn-theme .panel-head {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--syn-border);
+}
+#pm-panel.syn-theme .panel-cuerpo {
+    padding: 16px 18px;
+}
+#pm-panel.syn-theme .fin-kpi {
+    border: 1px solid var(--syn-border);
+    border-top: 3px solid var(--syn-border-2);
+    border-radius: 16px;
+    padding: 14px 16px;
+    background: var(--syn-surface);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+#pm-panel.syn-theme .fin-kpi.fin-kpi-marca,
+#pm-panel.syn-theme .fin-kpi.fin-kpi-destacado {
+    border-top-color: var(--syn-accent);
+    background: var(--syn-surface);
+}
+#pm-panel.syn-theme .fin-kpi.fin-kpi-ok {
+    border-top-color: #0F766E;
+    background: #F4FBF8;
+}
+#pm-panel.syn-theme .fin-kpi.fin-kpi-warn {
+    border-top-color: #D97706;
+    background: #FFFDF5;
+}
+#pm-panel.syn-theme .fin-kpi.fin-kpi-risk {
+    border-top-color: #BE123C;
+    background: #FFF8F9;
+}
+#pm-panel.syn-theme .btn-primario {
+    background: var(--syn-dark);
+    border-color: var(--syn-dark);
+    color: #FFFFFF !important;
+    border-radius: 10px;
+}
+#pm-panel.syn-theme .btn-primario:hover {
+    background: var(--syn-dark-hover);
+    border-color: var(--syn-dark-hover);
+}
+#pm-panel.syn-theme .tabla th {
+    background: var(--syn-surface-2);
+    color: var(--syn-ink-2);
+    border-bottom-color: var(--syn-border);
+}
+#pm-panel.syn-theme .fin-chip.activo {
+    background: var(--syn-dark);
+    border-color: var(--syn-dark);
+    color: #FFFFFF;
+}
+#pm-panel.syn-theme .conta-master-tab.activo {
+    background: var(--syn-dark);
+    color: #FFFFFF;
+}
+
+/* ---------- Dashboard del Estudio (#suite-dashboard) ---------- */
+.syn-quick-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.syn-quick-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    min-height: 60px;
+    background: var(--syn-surface);
+    border: 1px solid var(--syn-border);
+    border-radius: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--syn-dur-fast) var(--syn-ease), transform var(--syn-dur-fast) var(--syn-ease), box-shadow var(--syn-dur-fast) var(--syn-ease);
+}
+.syn-quick-card:hover {
+    border-color: var(--syn-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+}
+.syn-quick-ico {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--syn-accent-soft);
+    color: var(--syn-accent-ink);
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+.syn-quick-txt {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+.syn-quick-txt strong {
+    font-size: 13.5px;
+    color: var(--syn-ink);
+}
+.syn-quick-txt span {
+    font-size: 12px;
+    color: var(--syn-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.syn-dash-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.85fr) minmax(290px, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+.syn-dash-main,
+.syn-dash-rail {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+}
+.syn-pill-neutro {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--syn-surface-2);
+    color: var(--syn-ink-2);
+    border: 1px solid var(--syn-border);
+}
+
+/* Calendario Fiscal del Mes (Timeline SII/Previred) */
+.syn-cal-timeline {
+    display: grid;
+    gap: 10px;
+}
+.syn-cal-eje {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--syn-border);
+    font-size: 12px;
+    color: var(--syn-muted);
+}
+.syn-cal-eje span.hoy {
+    color: var(--syn-ink);
+    font-weight: 700;
+}
+.syn-cal-hitos {
+    display: grid;
+    gap: 8px;
+}
+.syn-cal-hito {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--syn-canvas);
+    border: 1px solid var(--syn-border);
+}
+.syn-cal-hito-dia {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--syn-ink);
+}
+.syn-cal-barra-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+.syn-cal-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--syn-border);
+    background: var(--syn-surface);
+    color: var(--syn-ink);
+    cursor: pointer;
+}
+.syn-cal-pill:hover {
+    border-color: var(--syn-accent);
+}
+.syn-cal-pill.ok {
+    background: var(--ok-bg);
+    border-color: var(--ok-line);
+    color: var(--ok-ink);
+}
+.syn-cal-pill.warn {
+    background: var(--warn-bg);
+    border-color: var(--warn-line);
+    color: var(--warn-ink);
+}
+.syn-cal-pill.risk {
+    background: var(--risk-bg);
+    border-color: var(--risk-line);
+    color: var(--risk-ink);
+}
+
+/* Tarjetas de Clientes Prioritarios */
+.syn-clientes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+.syn-cli-card {
+    background: var(--syn-surface);
+    border: 1px solid var(--syn-border);
+    border-radius: 14px;
+    padding: 14px;
+    display: grid;
+    gap: 10px;
+    transition: border-color var(--syn-dur-fast) var(--syn-ease), box-shadow var(--syn-dur-fast) var(--syn-ease);
+}
+.syn-cli-card:hover {
+    border-color: var(--syn-border-2);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+}
+.syn-cli-card.activo {
+    border-color: var(--syn-accent);
+}
+.syn-cli-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+.syn-cli-top strong {
+    font-size: 14px;
+    color: var(--syn-ink);
+    display: block;
+}
+.syn-cli-sub {
+    font-size: 12px;
+    color: var(--syn-muted);
+}
+.syn-cli-prog-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--syn-ink-2);
+}
+.syn-cli-prog-track {
+    height: 7px;
+    border-radius: 999px;
+    background: var(--syn-surface-2);
+    overflow: hidden;
+}
+.syn-cli-prog-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--syn-accent);
+    transition: width 0.3s var(--syn-ease);
+}
+.syn-cli-prog-fill.ok {
+    background: var(--syn-sage);
+}
+.syn-cli-pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Rail Derecho: Vencimientos + Actividad */
+.syn-venc-lista,
+.syn-activity-lista {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.syn-venc-card {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--syn-border);
+    background: var(--syn-canvas);
+    display: grid;
+    gap: 4px;
+}
+.syn-venc-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.syn-venc-card strong {
+    font-size: 13px;
+    color: var(--syn-ink);
+}
+.syn-venc-card span {
+    font-size: 12px;
+    color: var(--syn-muted);
+}
+.syn-act-item {
+    display: grid;
+    gap: 2px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--syn-border);
+    font-size: 12.5px;
+    color: var(--syn-ink-2);
+}
+.syn-act-item:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+.syn-act-item strong {
+    color: var(--syn-ink);
+}
+.syn-act-item time {
+    font-size: 12px;
+    color: var(--syn-faint);
+}
+
+/* ---------- Componente Reutilizable SynChart (Tooltip Oscuro + Segmented + Column Hover) ---------- */
+.syn-chart-wrap {
+    display: grid;
+    gap: 12px;
+    position: relative;
+}
+.syn-chart-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 12px;
+}
+.syn-chart-head h2,
+.syn-chart-head h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--syn-ink);
+}
+.syn-chart-range {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 10px;
+    background: var(--syn-surface-2);
+    border: 1px solid var(--syn-border);
+}
+.syn-chart-range-btn {
+    min-height: 30px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--syn-muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--syn-dur-fast) var(--syn-ease), color var(--syn-dur-fast) var(--syn-ease);
+}
+.syn-chart-range-btn.activo {
+    background: var(--syn-surface);
+    color: var(--syn-ink);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+.syn-chart-canvas {
+    position: relative;
+    width: 100%;
+    min-height: 196px;
+}
+.syn-chart-svg {
+    width: 100%;
+    height: 190px;
+    display: block;
+    overflow: visible;
+}
+.syn-chart-col {
+    cursor: pointer;
+}
+.syn-chart-col-bg {
+    fill: transparent;
+    transition: fill var(--syn-dur-fast) var(--syn-ease);
+}
+.syn-chart-col:hover .syn-chart-col-bg,
+.syn-chart-col:focus-visible .syn-chart-col-bg,
+.syn-chart-col.activo .syn-chart-col-bg {
+    fill: var(--syn-surface-2);
+}
+.syn-chart-col:focus-visible {
+    outline: none;
+}
+.syn-chart-tooltip {
+    position: absolute;
+    z-index: 25;
+    pointer-events: none;
+    background: var(--syn-dark);
+    color: #FFFFFF;
+    border-radius: 10px;
+    padding: 9px 12px;
+    min-width: 175px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.25);
+    font-size: 12px;
+    line-height: 1.4;
+    transform: translate(-50%, calc(-100% - 8px));
+    transition: opacity var(--syn-dur-fast) var(--syn-ease), transform var(--syn-dur-fast) var(--syn-ease);
+}
+.syn-chart-tooltip[hidden] {
+    display: none;
+}
+.syn-chart-tt-titulo {
+    font-weight: 700;
+    color: #E5E7EB;
+    margin-bottom: 4px;
+}
+.syn-chart-tt-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.syn-chart-tt-lbl {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #CBD5E1;
+}
+.syn-chart-tt-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+}
+.syn-chart-leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+    font-size: 12px;
+    color: var(--syn-muted);
+}
+
+/* ---------- Modal Reutilizable Synchro (#dlg-syn-detalle) ---------- */
+dialog.syn-modal {
+    width: min(620px, calc(100vw - 24px));
+    border: 1px solid var(--syn-border);
+    border-radius: 16px;
+    padding: 0;
+    background: var(--syn-surface);
+    color: var(--syn-ink);
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+    overflow: hidden;
+}
+dialog.syn-modal::backdrop {
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+dialog.syn-modal[open] {
+    animation: synModalIn var(--syn-dur-modal) var(--syn-ease);
+}
+@keyframes synModalIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+@keyframes synFadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.syn-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--syn-border);
+}
+.syn-modal-head-izq {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.syn-modal-head-izq h2 {
+    font-size: 17px;
+    font-weight: 700;
+}
+.syn-modal-head-der {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.syn-chip-est {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--syn-accent-soft);
+    color: var(--syn-accent-ink);
+    border: 1px solid var(--syn-accent-line);
+}
+.syn-modal-body {
+    padding: 16px 20px 20px;
+    display: grid;
+    gap: 14px;
+    max-height: min(76vh, 660px);
+    overflow-y: auto;
+}
+.syn-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 16px;
+    margin: 0;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--syn-canvas);
+    border: 1px solid var(--syn-border);
+}
+.syn-meta-par {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12.5px;
+}
+.syn-meta-par dt {
+    color: var(--syn-muted);
+}
+.syn-meta-par dd {
+    margin: 0;
+    font-weight: 600;
+    color: var(--syn-ink);
+    text-align: right;
+}
+.syn-modal-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--syn-border);
+}
+.syn-modal-tab {
+    padding: 8px 12px;
+    min-height: 40px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--syn-muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color var(--syn-dur-tab) var(--syn-ease), border-color var(--syn-dur-tab) var(--syn-ease);
+}
+.syn-modal-tab.activo {
+    color: var(--syn-ink);
+    border-bottom-color: var(--syn-accent);
+}
+.syn-modal-kpis {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.syn-modal-kpi-box {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--syn-border);
+    background: var(--syn-surface);
+}
+.syn-modal-kpi-box span {
+    display: block;
+    font-size: 12px;
+    color: var(--syn-muted);
+}
+.syn-modal-kpi-box strong {
+    font-size: 16px;
+    color: var(--syn-ink);
+}
+.syn-modal-atajos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.syn-notas-lista {
+    margin: 0 0 10px;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+    max-height: 180px;
+    overflow-y: auto;
+}
+.syn-nota-item {
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--syn-canvas);
+    border: 1px solid var(--syn-border);
+    font-size: 13px;
+}
+.syn-nota-item time {
+    display: block;
+    font-size: 11.5px;
+    color: var(--syn-faint);
+    margin-top: 2px;
+}
+.syn-nota-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.syn-nota-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--syn-border-2);
+    border-radius: 10px;
+    font-size: 13px;
+    resize: vertical;
+}
+.syn-modal-form {
+    display: grid;
+    gap: 10px;
+}
+.syn-modal-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 1px solid var(--syn-border);
+}
+.syn-modal-foot-der {
+    display: flex;
+    gap: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #pm-panel.suite-contadores-app.syn-theme,
+    #pm-panel.suite-contadores-app.syn-theme * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ---------- Responsive Synchro (Tablet y Móvil >= 360px) ---------- */
+@media screen and (max-width: 1120px) {
+    .syn-dash-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .syn-breadcrumb {
+        display: none;
+    }
+}
+@media screen and (max-width: 900px) {
+    #pm-panel.syn-theme .app-icono-btn.app-menu-btn {
+        display: inline-grid;
+    }
+    #pm-panel.syn-theme .suite-context-bar.syn-ctx-popover {
+        left: 12px;
+        right: 12px;
+        top: 62px;
+        max-height: 78vh;
+        overflow-y: auto;
+    }
+    #pm-panel.syn-theme .app-barra button.activo,
+    #pm-panel.syn-theme .app-barra button[aria-current="page"] {
+        color: var(--syn-accent-ink);
+    }
+    #pm-panel.syn-theme .app-barra button.activo .material-icons,
+    #pm-panel.syn-theme .app-barra button[aria-current="page"] .material-icons {
+        color: var(--syn-accent-ink);
+    }
+}
+@media screen and (max-width: 768px) {
+    #pm-panel.syn-theme .syn-topbar {
+        padding: 6px 10px;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    #pm-panel.syn-theme .syn-top-izq {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    #pm-panel.syn-theme .syn-ctx-trigger {
+        max-width: 100%;
+        min-height: 44px;
+    }
+    #pm-panel.syn-theme .syn-search-wrap {
+        order: 4;
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+    #pm-panel.syn-theme .syn-search-input {
+        min-height: 44px;
+    }
+    #pm-panel.syn-theme .syn-accent-btn-txt,
+    #pm-panel.syn-theme #btn-equipo-estudio,
+    #pm-panel.syn-theme #cloud-sync-pill {
+        display: none;
+    }
+    #pm-panel.syn-theme .syn-accent-btn {
+        min-width: 44px;
+        min-height: 44px;
+        justify-content: center;
+    }
+    #pm-panel.syn-theme .app-content {
+        padding: 14px 12px 92px;
+    }
+    .syn-quick-grid,
+    .syn-clientes-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+    .syn-meta-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .syn-cal-hito {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 6px;
+    }
+}
+@media screen and (max-width: 460px) {
+    .syn-quick-grid,
+    .syn-clientes-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .syn-modal-kpis {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

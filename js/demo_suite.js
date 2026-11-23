@@ -16,14 +16,33 @@
     var K_STORAGE = 'cl-suite-contable';
     var K_PLAN_CUENTAS = 'cl-plan-cuentas-estudio';
     var K_MEMBRETE = 'cl-membrete-estudio';
+    var K_SYN_ACCENT = 'cl_suite_accent';
+    var K_SYN_NOTAS = 'cl_suite_notas';
+    var K_SYN_FAVS = 'cl_suite_favs';
+
+    var NOMBRES_MODULO_BC = {
+        dashboard: 'Dashboard',
+        torre: 'Cartera de Clientes',
+        importador: 'Carga Masiva SII',
+        remuneraciones: 'Remuneraciones',
+        f29: 'Impuestos Mensuales (F29)',
+        ddjj: 'Renta F22 y DDJJ',
+        bancos: 'Bancos y Cartolas',
+        libros: 'Contabilidad General',
+        balance: 'Balance 8 Col. y RLI',
+        pnl: 'Estados Financieros',
+        reportes: 'Informes y Portal'
+    };
 
     var ui = {
-        modulo: 'remuneraciones',
+        modulo: 'dashboard',
         subLibro: 'diario',
         subBanco: 'conciliacion',
         subBalance: 'balance8',
         balAlcance: 'mes',
         subDdjj: '1887',
+        synRangeDash: '6M',
+        synRangeF29: '1A',
         filtroMayor: '',
         lineasManualesDraft: [
             { cuenta: '42040', debe: '', haber: '' },
@@ -785,7 +804,20 @@
             );
         }
         if ($('f29-grafico-anual')) {
-            $('f29-grafico-anual').innerHTML = renderF29AnualHtml(m.anual, m.periodo);
+            var rF29 = ui.synRangeF29 || '1A';
+            var serF29 = obtenerSerieSynChart(m.anual, m.periodo, rF29);
+            var conDatosF29 = serF29.cols.filter(function (x) { return x.tieneDatos; }).length;
+            var cfgF29 = {
+                id: 'f29',
+                titulo: 'Evolución F29 (' + serF29.anio + ')',
+                subtitulo: conDatosF29 + ' de ' + serF29.cols.length + ' meses con datos guardados',
+                lbl1: 'Crédito (537)',
+                lbl2: 'Débito (538)',
+                rango: rF29,
+                cols: serF29.cols
+            };
+            $('f29-grafico-anual').innerHTML = renderSynChartHtml(cfgF29);
+            enlazarInteraccionSynChart($('f29-grafico-anual'), cfgF29);
         }
 
         if ($('f29-m-deb')) {
@@ -1167,7 +1199,7 @@
             '<div class="suite-graf-barras">' + rows + '</div>';
     }
 
-    function renderF29AnualHtml(anual, periodoActivo) {
+    function obtenerSerieSynChart(anual, periodoActivo, rango) {
         var anio = (anual && anual.anio) || Number(String(periodoActivo || '2026').slice(0, 4)) || 2026;
         var serieMap = {};
         if (anual && Array.isArray(anual.f29Mensual)) {
@@ -1175,46 +1207,120 @@
                 if (it && it.periodo) serieMap[it.periodo] = it;
             });
         }
-        var meses = [];
-        var letras = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
-        var maxV = 1;
-        var conDatos = 0;
+        var nombres = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        var todos = [];
         for (var i = 1; i <= 12; i++) {
             var per = anio + '-' + (i < 10 ? '0' + i : '' + i);
             var d = serieMap[per] || { periodo: per, debito: 0, credito: 0, total91: 0, tieneDatos: false };
-            if (d.tieneDatos) conDatos += 1;
-            maxV = Math.max(maxV, d.debito || 0, d.credito || 0, d.total91 || 0);
-            meses.push({ letra: letras[i - 1], per: per, d: d, activo: per === periodoActivo });
+            todos.push({
+                label: nombres[i - 1],
+                periodo: per,
+                v1: d.debito || 0,
+                v2: d.credito || 0,
+                total91: d.total91 || 0,
+                tieneDatos: !!d.tieneDatos,
+                activo: per === periodoActivo
+            });
         }
-        var w = 480;
-        var h = 128;
-        var baseY = 104;
-        var chartH = 84;
-        var colW = w / 12;
-        var pts = [];
-        var bars = meses.map(function (m, idx) {
-            var cx = idx * colW + colW / 2;
-            var hDeb = m.d.tieneDatos ? Math.max(3, Math.round(((m.d.debito || 0) / maxV) * chartH)) : 0;
-            var hCred = m.d.tieneDatos ? Math.max(3, Math.round(((m.d.credito || 0) / maxV) * chartH)) : 0;
-            var yTotal = baseY - (m.d.tieneDatos ? Math.round(((m.d.total91 || 0) / maxV) * chartH) : 0);
-            if (m.d.tieneDatos) pts.push(Math.round(cx) + ',' + yTotal);
-            var bgAct = m.activo ? '<rect x="' + (idx * colW + 4) + '" y="10" width="' + (colW - 8) + '" height="' + (baseY - 4) + '" rx="4" fill="#F4FAF8" stroke="#CBD5E1" stroke-width="0.7"/>' : '';
-            var bBase = !m.d.tieneDatos ? '<rect x="' + (cx - 9) + '" y="' + (baseY - 3) + '" width="18" height="3" rx="1.5" fill="#E2E8F0"/>' : '';
-            var bDeb = m.d.tieneDatos ? '<rect x="' + (cx - 10) + '" y="' + (baseY - hDeb) + '" width="8" height="' + hDeb + '" rx="2" fill="#D97706"><title>' + m.per + ' Débito: ' + D.money(m.d.debito) + '</title></rect>' : '';
-            var bCred = m.d.tieneDatos ? '<rect x="' + (cx + 2) + '" y="' + (baseY - hCred) + '" width="8" height="' + hCred + '" rx="2" fill="#0F766E"><title>' + m.per + ' Crédito: ' + D.money(m.d.credito) + '</title></rect>' : '';
-            var dotTot = m.d.tieneDatos ? '<circle cx="' + cx + '" cy="' + yTotal + '" r="3.5" fill="#00382E"><title>' + m.per + ' Total F29: ' + D.money(m.d.total91) + '</title></circle>' : '';
-            return bgAct + bBase + bDeb + bCred + dotTot +
-                '<text x="' + cx + '" y="121" text-anchor="middle" font-size="10.5" font-weight="' + (m.activo ? '700' : '500') + '" fill="' + (m.activo ? '#00382E' : '#64748B') + '">' + m.letra + '</text>';
+        var nCols = rango === '1M' ? 1 : (rango === '3M' ? 3 : (rango === '6M' ? 6 : 12));
+        if (nCols === 12) return { anio: anio, cols: todos };
+        var idxAct = todos.findIndex(function (x) { return x.activo; });
+        if (idxAct < 0) idxAct = 10;
+        var start = Math.max(0, Math.min(12 - nCols, idxAct - nCols + 1));
+        return { anio: anio, cols: todos.slice(start, start + nCols) };
+    }
+
+    function renderSynChartHtml(cfg) {
+        var cols = cfg.cols || [];
+        var maxV = cols.reduce(function (mx, c) { return Math.max(mx, c.v1 || 0, c.v2 || 0, 1); }, 1);
+        var w = 540;
+        var h = 190;
+        var baseY = 156;
+        var chartH = 128;
+        var colW = w / (cols.length || 1);
+        var barW = Math.max(10, Math.min(20, Math.floor(colW * 0.24)));
+        var gapB = 4;
+
+        var svgCols = cols.map(function (c, i) {
+            var cx = i * colW + colW / 2;
+            var h1 = c.tieneDatos ? Math.max(4, Math.round((c.v1 / maxV) * chartH)) : 4;
+            var h2 = c.tieneDatos ? Math.max(4, Math.round((c.v2 / maxV) * chartH)) : 4;
+            var f1 = c.tieneDatos ? 'var(--syn-sage)' : '#E2E8F0';
+            var f2 = c.tieneDatos ? 'var(--syn-accent)' : '#CBD5E1';
+            var x1 = Math.round(cx - barW - gapB / 2);
+            var x2 = Math.round(cx + gapB / 2);
+            return '<g class="syn-chart-col' + (c.activo ? ' activo' : '') + '" tabindex="0" role="button" ' +
+                'data-syn-col="' + i + '" data-syn-cx="' + Math.round((cx / w) * 100) + '" data-syn-top="' + Math.round(((baseY - Math.max(h1, h2)) / h) * 100) + '" ' +
+                'data-syn-lbl="' + D.esc(c.label + ' ' + c.periodo.slice(0, 4)) + '" ' +
+                'data-syn-v1="' + D.esc(D.money(c.v1)) + '" data-syn-v2="' + D.esc(D.money(c.v2)) + '" ' +
+                'aria-label="' + D.esc(c.label + ' ' + c.periodo.slice(0, 4) + ': ' + cfg.lbl1 + ' ' + D.money(c.v1) + ', ' + cfg.lbl2 + ' ' + D.money(c.v2)) + '">' +
+                '<rect class="syn-chart-col-bg" x="' + (i * colW + 4) + '" y="10" width="' + Math.max(16, colW - 8) + '" height="' + (baseY - 4) + '" rx="8"></rect>' +
+                '<rect x="' + x1 + '" y="' + (baseY - h1) + '" width="' + barW + '" height="' + h1 + '" rx="5" fill="' + f1 + '"></rect>' +
+                '<rect x="' + x2 + '" y="' + (baseY - h2) + '" width="' + barW + '" height="' + h2 + '" rx="5" fill="' + f2 + '"></rect>' +
+                '<text x="' + cx + '" y="178" text-anchor="middle" font-size="12" font-weight="' + (c.activo ? '700' : '500') + '" fill="' + (c.activo ? '#0F172A' : '#475569') + '">' + D.esc(c.label) + '</text>' +
+                '</g>';
         }).join('');
-        var poly = pts.length > 1 ? '<polyline fill="none" stroke="#00382E" stroke-width="2" points="' + pts.join(' ') + '"/>' : '';
-        return '<div class="suite-graf-titulo"><span>Evolución 12 meses F29 (' + anio + ')</span><span class="suite-graf-sub">' + conDatos + ' / 12 meses guardados</span></div>' +
-            '<div class="f29-anual-svg-wrap"><svg class="f29-anual-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="Evolución anual Débito, Crédito y Total F29">' + bars + poly + '</svg></div>' +
-            '<div class="f29-anual-leyenda">' +
-            '<span class="f29-ley-item"><span class="f29-ley-sq" style="background:#D97706"></span>Débito</span>' +
-            '<span class="f29-ley-item"><span class="f29-ley-sq" style="background:#0F766E"></span>Crédito</span>' +
-            '<span class="f29-ley-item"><span class="f29-ley-sq" style="background:#00382E"></span>Total F29</span>' +
-            '<span class="suite-graf-sub">Solo meses guardados localmente</span>' +
+
+        var rangos = ['1M', '3M', '6M', '1A'];
+        var rangeBtns = rangos.map(function (r) {
+            return '<button type="button" class="syn-chart-range-btn' + (cfg.rango === r ? ' activo' : '') + '" data-syn-range="' + r + '" data-syn-chart-id="' + D.esc(cfg.id) + '" aria-pressed="' + (cfg.rango === r ? 'true' : 'false') + '">' + r + '</button>';
+        }).join('');
+
+        return '<div class="syn-chart-wrap" data-syn-chart="' + D.esc(cfg.id) + '">' +
+            '<div class="syn-chart-head">' +
+            '<div><h3>' + D.esc(cfg.titulo) + '</h3><p class="panel-ayuda" style="margin:2px 0 0">' + D.esc(cfg.subtitulo) + '</p></div>' +
+            '<div class="syn-chart-range" role="group" aria-label="Rango temporal">' + rangeBtns + '</div>' +
+            '</div>' +
+            '<div class="syn-chart-canvas">' +
+            '<div class="syn-chart-tooltip" hidden role="status"></div>' +
+            '<svg class="syn-chart-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + D.esc(cfg.titulo) + '">' + svgCols + '</svg>' +
+            '</div>' +
+            '<div class="syn-chart-leyenda">' +
+            '<span class="f29-ley-item"><span class="f29-ley-sq" style="background:var(--syn-sage)"></span>' + D.esc(cfg.lbl1) + '</span>' +
+            '<span class="f29-ley-item"><span class="f29-ley-sq" style="background:var(--syn-accent)"></span>' + D.esc(cfg.lbl2) + '</span>' +
+            '<span class="suite-graf-sub">' + D.esc(cfg.notaPie || 'Pasa el cursor o enfoca un mes para ver detalle') + '</span>' +
+            '</div>' +
             '</div>';
+    }
+
+    function enlazarInteraccionSynChart(container, cfg) {
+        if (!container) return;
+        var wrap = container.querySelector('.syn-chart-wrap');
+        var tt = container.querySelector('.syn-chart-tooltip');
+        if (!wrap || !tt) return;
+        function mostrar(col) {
+            var cx = Number(col.getAttribute('data-syn-cx')) || 50;
+            var top = Math.max(24, Number(col.getAttribute('data-syn-top')) || 40);
+            tt.innerHTML = '<div class="syn-chart-tt-titulo">' + D.esc(col.getAttribute('data-syn-lbl') || '') + '</div>' +
+                '<div class="syn-chart-tt-fila"><span class="syn-chart-tt-lbl"><span class="syn-chart-tt-dot" style="background:var(--syn-sage)"></span>' + D.esc(cfg.lbl1) + '</span><strong class="mono">' + D.esc(col.getAttribute('data-syn-v1') || '$0') + '</strong></div>' +
+                '<div class="syn-chart-tt-fila"><span class="syn-chart-tt-lbl"><span class="syn-chart-tt-dot" style="background:var(--syn-accent)"></span>' + D.esc(cfg.lbl2) + '</span><strong class="mono">' + D.esc(col.getAttribute('data-syn-v2') || '$0') + '</strong></div>';
+            tt.style.left = Math.max(18, Math.min(82, cx)) + '%';
+            tt.style.top = top + '%';
+            tt.hidden = false;
+        }
+        function ocultar() { tt.hidden = true; }
+        Array.prototype.forEach.call(container.querySelectorAll('.syn-chart-col'), function (col) {
+            col.addEventListener('mouseenter', function () { mostrar(col); });
+            col.addEventListener('focus', function () { mostrar(col); });
+            col.addEventListener('click', function () { mostrar(col); });
+            col.addEventListener('mouseleave', ocultar);
+            col.addEventListener('blur', ocultar);
+        });
+    }
+
+    function renderF29AnualHtml(anual, periodoActivo) {
+        var r = ui.synRangeF29 || '1A';
+        var ser = obtenerSerieSynChart(anual, periodoActivo, r);
+        var conDatos = ser.cols.filter(function (c) { return c.tieneDatos; }).length;
+        return renderSynChartHtml({
+            id: 'f29',
+            titulo: 'Evolución F29 (' + ser.anio + ')',
+            subtitulo: conDatos + ' de ' + ser.cols.length + ' meses con datos guardados',
+            lbl1: 'Crédito (537)',
+            lbl2: 'Débito (538)',
+            rango: r,
+            cols: ser.cols
+        });
     }
 
     function aplicarEstadoKpiCard(id, cls) {
@@ -1230,12 +1336,16 @@
         if (disp) disp.textContent = nom;
         var movCli = $('ctx-movil-cliente');
         if (movCli) movCli.textContent = nom;
+        var movCliPop = $('ctx-movil-cliente-pop');
+        if (movCliPop) movCliPop.textContent = nom;
+        var regTxt = $('suite-regimen') ? $('suite-regimen').value : '14D3';
+        var ufTxt = $('ctx-uf-val') ? $('ctx-uf-val').textContent : '-';
         var movMeta = $('ctx-movil-meta');
-        if (movMeta) {
-            var regTxt = $('suite-regimen') ? $('suite-regimen').value : '14D3';
-            var ufTxt = $('ctx-uf-val') ? $('ctx-uf-val').textContent : '-';
-            movMeta.textContent = regTxt + ' · UF ' + ufTxt;
-        }
+        if (movMeta) movMeta.textContent = regTxt;
+        var movMetaPop = $('ctx-movil-meta-pop');
+        if (movMetaPop) movMetaPop.textContent = regTxt + ' · UF ' + ufTxt;
+        var estNom = $('study-name-display') ? $('study-name-display').textContent : 'Estudio';
+        if ($('syn-bc-estudio')) $('syn-bc-estudio').textContent = estNom;
     }
 
     function pintarBancos(m) {
@@ -1768,21 +1878,26 @@
         if (btnEjTop) {
             btnEjTop.hidden = modListos >= 3;
         }
+        var btnDashEj = $('btn-dash-ejemplo');
+        if (btnDashEj) {
+            btnDashEj.hidden = modListos >= 3;
+        }
     }
 
-    var MODULOS_VALIDOS = /^(torre|importador|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)$/;
+    var MODULOS_VALIDOS = /^(dashboard|torre|importador|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)$/;
 
     function moduloDesdeUbicacion() {
         var hash = String(location.hash || '').replace(/^#/, '');
         if (MODULOS_VALIDOS.test(hash)) return hash;
-        var modUrl = (/[?&]mod=(torre|importador|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)/.exec(location.search) || [])[1];
-        return modUrl || 'remuneraciones';
+        var modUrl = (/[?&]mod=(dashboard|torre|importador|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)/.exec(location.search) || [])[1];
+        return modUrl || 'dashboard';
     }
 
     function cambiarModulo(mod, opts) {
-        var modNorm = MODULOS_VALIDOS.test(mod) ? mod : 'remuneraciones';
+        var modNorm = MODULOS_VALIDOS.test(mod) ? mod : 'dashboard';
         ui.modulo = modNorm;
         var mapPanes = {
+            dashboard: $('suite-dashboard'),
             torre: $('suite-torre'),
             importador: $('suite-importador'),
             remuneraciones: $('suite-remuneraciones'),
@@ -1794,6 +1909,9 @@
             pnl: $('suite-pnl'),
             reportes: $('suite-reportes')
         };
+        if ($('syn-top-modulo')) {
+            $('syn-top-modulo').textContent = NOMBRES_MODULO_BC[modNorm] || 'Dashboard';
+        }
         Object.keys(mapPanes).forEach(function (k) {
             if (mapPanes[k]) mapPanes[k].hidden = (k !== modNorm);
         });
@@ -2065,6 +2183,7 @@
                     '</td>' +
                     '<td><span class="app-nav-chip ' + (c.cerrado ? '' : 'abierto') + '">' + (c.cerrado ? 'Cerrado' : 'Abierto') + '</span></td>' +
                     '<td class="num"><div class="torre-acciones-celda">' +
+                    '<button type="button" class="btn btn-chico" data-torre-ficha="' + D.esc(c.nombre) + '">Ver ficha</button>' +
                     '<button type="button" class="btn btn-chico" data-torre-sync-id="' + D.esc((window.CLDemoSii && window.CLDemoSii.estadoConexionCliente && window.CLDemoSii.estadoConexionCliente(c.nombre).companyId) || c.nombre) + '" data-torre-sync-nombre="' + D.esc(c.nombre) + '">Sincronizar</button>' +
                     '<button type="button" class="btn btn-chico" data-torre-trabajar="' + D.esc(c.nombre) + '">' + (c.esActivo ? 'Activo' : 'Trabajar') + '</button>' +
                     '<button type="button" class="btn btn-chico" data-torre-resumen="' + D.esc(c.nombre) + '">Enviar resumen</button>' +
@@ -2729,6 +2848,263 @@
         }
     }
 
+    function leerJsonLocal(clave, defecto) {
+        try {
+            var raw = window.localStorage.getItem(clave);
+            return raw ? JSON.parse(raw) : defecto;
+        } catch (e) {
+            return defecto;
+        }
+    }
+
+    function guardarJsonLocal(clave, val) {
+        try { window.localStorage.setItem(clave, JSON.stringify(val)); } catch (e) { }
+    }
+
+    function aplicarAcentoSyn(acento) {
+        var validos = { naranja: 'naranja', ambar: 'ambar', indigo: 'indigo' };
+        var norm = validos[acento] || 'naranja';
+        var panel = $('pm-panel');
+        if (panel) panel.setAttribute('data-syn-accent', norm);
+        Array.prototype.forEach.call(document.querySelectorAll('[data-set-accent]'), function (btn) {
+            btn.setAttribute('aria-pressed', btn.getAttribute('data-set-accent') === norm ? 'true' : 'false');
+        });
+        try { window.localStorage.setItem(K_SYN_ACCENT, norm); } catch (e) { }
+    }
+
+    function pintarDashboardYClientesRapidos(m) {
+        var per = m.periodo;
+        var todo = leerTodoAlmacen();
+        var listaClientes = (D && D.clientes) ? D.clientes() : [];
+        var mapa = {};
+        listaClientes.forEach(function (c) {
+            mapa[c.nombre] = { nombre: c.nombre, trabajadores: (c.trabajadores || []).length };
+        });
+        var actNom = clienteNombre();
+        if (!mapa[actNom]) {
+            mapa[actNom] = { nombre: actNom, trabajadores: (m.nomina && m.nomina.trabajadores) || 0 };
+        }
+        var favs = leerJsonLocal(K_SYN_FAVS, {});
+        var resumenClientes = Object.keys(mapa).map(function (nom) {
+            var item = mapa[nom];
+            var k = normalizarNombreCliente(nom);
+            var esAct = k === clienteClave();
+            var st = esAct ? m.estado : (todo[k + '::' + per] || estadoDefecto(per));
+            var cerrado = !!st.cerradoTributario;
+            var f29Total = 0;
+            var f29Listo = false;
+            var pctAvance = 0;
+            if (esAct) {
+                f29Total = m.f29.codigos[91] || 0;
+                f29Listo = m.ventas.documentos.length > 0 || m.compras.documentos.length > 0 || f29Total > 0;
+                if (m.nomina && m.nomina.totalDebe > 0) pctAvance += 25;
+                if (f29Listo) pctAvance += 25;
+                if (st.cartolaMovimientos && st.cartolaMovimientos.length) pctAvance += 25;
+                if (cerrado) pctAvance = 100;
+            } else {
+                var f29Calc = construirF29YAsientosDeEstado(st, per);
+                f29Total = f29Calc.f29.codigos[91] || 0;
+                f29Listo = f29Calc.hayMovimientos || f29Total > 0;
+                if (item.trabajadores > 0) pctAvance += 25;
+                if (f29Listo) pctAvance += 25;
+                if (st.cartolaMovimientos && st.cartolaMovimientos.length) pctAvance += 25;
+                if (cerrado) pctAvance = 100;
+            }
+            var rutTxt = (window.CLDemoSii && window.CLDemoSii.rutDeCliente) ? window.CLDemoSii.rutDeCliente(nom) : '';
+            return {
+                key: k,
+                nombre: nom,
+                rut: rutTxt,
+                regimen: st.regimen || '14D3',
+                trabajadores: item.trabajadores,
+                f29Total: f29Total,
+                f29Listo: f29Listo,
+                cerrado: cerrado,
+                pctAvance: pctAvance,
+                fav: !!favs[k],
+                esActivo: esAct
+            };
+        });
+
+        var sideCliEl = $('side-clientes-rapidos');
+        if (sideCliEl) {
+            sideCliEl.innerHTML = resumenClientes.slice(0, 6).map(function (c) {
+                var ini = String(c.nombre || 'CL').trim().slice(0, 2).toUpperCase();
+                return '<button type="button" class="syn-side-cli-btn' + (c.esActivo ? ' activo' : '') + '" data-side-cli="' + D.esc(c.nombre) + '">' +
+                    '<span class="syn-side-cli-tag mono">' + D.esc(ini) + '</span>' +
+                    '<span class="syn-side-cli-nom">' + D.esc(c.nombre) + '</span>' +
+                    '</button>';
+            }).join('');
+        }
+
+        if ($('dash-periodo-lbl')) $('dash-periodo-lbl').textContent = per;
+        if ($('dash-cal-mes-tag')) $('dash-cal-mes-tag').textContent = sumarMesesNombre(per, 0) || per;
+
+        var cerradosCnt = resumenClientes.filter(function (c) { return c.cerrado; }).length;
+        var sumF29 = resumenClientes.reduce(function (s, c) { return s + c.f29Total; }, 0);
+        var decsAct = (m.estado && m.estado.acuseDecisiones) || {};
+        var acusesPend = (m.estado && Array.isArray(m.estado.comprasPendientesAcuse))
+            ? m.estado.comprasPendientesAcuse.filter(function (p) { return !decsAct[p.id]; }).length
+            : 0;
+        if ($('dash-k-clientes')) $('dash-k-clientes').textContent = resumenClientes.length;
+        if ($('dash-k-clientes-meta')) $('dash-k-clientes-meta').textContent = 'Activo: ' + actNom;
+        if ($('dash-k-f29')) $('dash-k-f29').textContent = D.money(sumF29);
+        if ($('dash-k-f29-meta')) $('dash-k-f29-meta').textContent = m.ventas.documentos.length ? (m.ventas.documentos.length + ' ventas · ' + m.compras.documentos.length + ' compras') : 'Carga ejemplo o RCV';
+        if ($('dash-k-alertas')) $('dash-k-alertas').textContent = acusesPend;
+        if ($('dash-k-alertas-meta')) $('dash-k-alertas-meta').textContent = acusesPend > 0 ? 'Requiere revisión Ley 19.983' : 'Sin acuses pendientes';
+        if ($('dash-k-cerrados')) $('dash-k-cerrados').textContent = cerradosCnt + ' / ' + resumenClientes.length;
+        aplicarEstadoKpiCard('dash-kpi-card-alertas', acusesPend > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok');
+        aplicarEstadoKpiCard('dash-kpi-card-cerrados', cerradosCnt === resumenClientes.length && resumenClientes.length > 0 ? 'fin-kpi-ok' : 'fin-kpi-warn');
+
+        var tlEl = $('dash-timeline-fiscal');
+        if (tlEl) {
+            var nomListo = !!(m.nomina && m.nomina.totalDebe > 0);
+            var f29Ok = !!(m.ventas.documentos.length || m.compras.documentos.length);
+            var concOk = !!(m.conciliacion && m.conciliacion.resumen && m.conciliacion.resumen.pctConciliado >= 80);
+            tlEl.innerHTML = '<div class="syn-cal-timeline">' +
+                '<div class="syn-cal-eje"><span>Día 1</span><span>Día 8 · Acuse</span><span class="hoy">Día 13 · PreviRed</span><span>Día 15 · LRE</span><span>Día 20 · F29</span><span>Día 30 · Cierre</span></div>' +
+                '<div class="syn-cal-hitos">' +
+                '<div class="syn-cal-hito"><span class="syn-cal-hito-dia mono">Hasta 8 días</span><div class="syn-cal-barra-wrap"><button type="button" class="syn-cal-pill ' + (acusesPend > 0 ? 'warn' : 'ok') + '" data-dash-ir="f29">Acuses RCV Ley 19.983 · ' + (acusesPend > 0 ? acusesPend + ' pendientes' : 'Al día') + '</button></div><span class="texto-ayuda">F29</span></div>' +
+                '<div class="syn-cal-hito"><span class="syn-cal-hito-dia mono">Día 13 fijo</span><div class="syn-cal-barra-wrap"><button type="button" class="syn-cal-pill ' + (nomListo ? 'ok' : 'warn') + '" data-dash-ir="remuneraciones">PreviRed 105 campos · ' + (nomListo ? 'Nómina lista' : 'Pendiente') + '</button></div><span class="texto-ayuda">Nómina</span></div>' +
+                '<div class="syn-cal-hito"><span class="syn-cal-hito-dia mono">Día 15 hábil</span><div class="syn-cal-barra-wrap"><button type="button" class="syn-cal-pill ' + (nomListo ? 'ok' : '') + '" data-dash-ir="remuneraciones">Libro LRE Mi DT · ' + (nomListo ? 'Borrador CSV listo' : 'Sin nómina') + '</button></div><span class="texto-ayuda">Mi DT</span></div>' +
+                '<div class="syn-cal-hito"><span class="syn-cal-hito-dia mono">Día 20</span><div class="syn-cal-barra-wrap"><button type="button" class="syn-cal-pill ' + (m.estado.cerradoTributario ? 'ok' : (f29Ok ? 'warn' : '')) + '" data-dash-ir="f29">Declaración F29 · ' + (m.estado.cerradoTributario ? 'Cerrado' : (f29Ok ? D.money(m.f29.codigos[91]) : 'Sin RCV')) + '</button></div><span class="texto-ayuda">' + (concOk ? 'Banco OK' : 'Bancos') + '</span></div>' +
+                '</div></div>';
+        }
+
+        var cardsEl = $('dash-clientes-cards');
+        if (cardsEl) {
+            cardsEl.innerHTML = resumenClientes.slice(0, 4).map(function (c) {
+                var estChip = c.cerrado ? '<span class="app-nav-chip cerrado">Cerrado</span>' : (c.f29Listo ? '<span class="app-nav-chip abierto">En proceso</span>' : '<span class="app-nav-chip">Pendiente</span>');
+                return '<article class="syn-cli-card' + (c.esActivo ? ' activo' : '') + '">' +
+                    '<div class="syn-cli-top"><div><strong>' + D.esc(c.nombre) + '</strong><span class="syn-cli-sub mono">' + D.esc(c.regimen) + (c.rut ? ' · ' + D.esc(c.rut) : '') + '</span></div>' + estChip + '</div>' +
+                    '<div class="syn-cli-prog-row"><span>Avance cierre mensual</span><strong class="mono">' + c.pctAvance + '%</strong></div>' +
+                    '<div class="syn-cli-prog-track"><div class="syn-cli-prog-fill' + (c.pctAvance >= 80 ? ' ok' : '') + '" style="width:' + c.pctAvance + '%"></div></div>' +
+                    '<div class="syn-cli-pie"><span class="mono syn-cli-sub">F29: <strong>' + D.money(c.f29Total) + '</strong></span>' +
+                    '<div class="v-acciones"><button type="button" class="btn btn-chico" data-syn-ficha="' + D.esc(c.nombre) + '">Ver ficha</button>' +
+                    (!c.esActivo ? '<button type="button" class="btn btn-chico btn-primario" data-side-cli="' + D.esc(c.nombre) + '">Trabajar</button>' : '') +
+                    '</div></div></article>';
+            }).join('');
+        }
+
+        var dashChartEl = $('dash-milestone-chart');
+        if (dashChartEl) {
+            var rD = ui.synRangeDash || '6M';
+            var serD = obtenerSerieSynChart(m.anual, per, rD);
+            var cfgDash = {
+                id: 'dash',
+                titulo: 'Seguimiento F29 del Estudio (' + serD.anio + ')',
+                subtitulo: 'Comparativo mensual Crédito Fiscal vs Débito Fiscal',
+                lbl1: 'Crédito Fiscal',
+                lbl2: 'Débito Fiscal',
+                rango: rD,
+                cols: serD.cols
+            };
+            dashChartEl.innerHTML = renderSynChartHtml(cfgDash);
+            enlazarInteraccionSynChart(dashChartEl, cfgDash);
+        }
+
+        var vencEl = $('dash-vencimientos-lista');
+        if (vencEl) {
+            vencEl.innerHTML = [
+                { tit: 'Acuses recibo RCV (Ley 19.983)', sub: acusesPend > 0 ? acusesPend + ' documentos por revisar (8 días)' : 'Sin acuses pendientes este mes', badge: acusesPend > 0 ? 'Urgente' : 'OK', cls: acusesPend > 0 ? 'abierto' : 'cerrado', mod: 'f29' },
+                { tit: 'Cotizaciones PreviRed (Día 13)', sub: (m.nomina && m.nomina.trabajadores) ? m.nomina.trabajadores + ' trabajadores listos' : 'Carga la nómina para generar archivo 105 campos', badge: (m.nomina && m.nomina.totalDebe > 0) ? 'Listo' : 'Pendiente', cls: (m.nomina && m.nomina.totalDebe > 0) ? 'cerrado' : 'abierto', mod: 'remuneraciones' },
+                { tit: 'Declaración F29 Mensual (Día 20)', sub: 'Cód. 91 estimado: ' + D.money(m.f29.codigos[91] || 0), badge: m.estado.cerradoTributario ? 'Cerrado' : 'Abierto', cls: m.estado.cerradoTributario ? 'cerrado' : 'abierto', mod: 'f29' }
+            ].map(function (v) {
+                return '<div class="syn-venc-card"><div class="syn-venc-card-top"><strong>' + D.esc(v.tit) + '</strong><span class="app-nav-chip ' + v.cls + '">' + D.esc(v.badge) + '</span></div><span>' + D.esc(v.sub) + '</span></div>';
+            }).join('');
+        }
+
+        var actEl = $('dash-actividad-lista');
+        if (actEl) {
+            var eventos = [];
+            if (m.nomina && m.nomina.trabajadores > 0) eventos.push({ t: 'Nómina calculada para <strong>' + D.esc(actNom) + '</strong> (' + m.nomina.trabajadores + ' trab.)', f: per });
+            if (m.ventas.documentos.length || m.compras.documentos.length) eventos.push({ t: 'RCV SII procesado (' + m.ventas.documentos.length + ' ventas, ' + m.compras.documentos.length + ' compras)', f: per });
+            if (m.estado.cartolaMovimientos && m.estado.cartolaMovimientos.length) eventos.push({ t: 'Cartola bancaria cargada (' + m.estado.cartolaMovimientos.length + ' movs.)', f: per });
+            if (m.balance && m.balance.filas && m.balance.filas.length) eventos.push({ t: 'Balance de 8 Columnas y RLI cuadrados', f: per });
+            if (!eventos.length) eventos.push({ t: 'Sin movimientos cargados aún en <strong>' + D.esc(actNom) + '</strong>. Usa «Cargar datos de ejemplo» arriba.', f: 'Inicio' });
+            actEl.innerHTML = eventos.map(function (ev) {
+                return '<li class="syn-act-item"><span>' + ev.t + '</span><time class="mono">' + D.esc(ev.f) + '</time></li>';
+            }).join('');
+        }
+    }
+
+    var clienteModalActual = '';
+    function abrirModalDetalleSyn(nombreCli, tabIni) {
+        var dlg = $('dlg-syn-detalle');
+        if (!dlg) return;
+        var nom = String(nombreCli || clienteNombre()).trim();
+        clienteModalActual = nom;
+        var k = normalizarNombreCliente(nom);
+        var per = periodoActual();
+        var esAct = k === clienteClave();
+        var m = calcularModelo();
+        var st = esAct ? m.estado : leerEstadoParaCliente(nom, per);
+        var rutTxt = (window.CLDemoSii && window.CLDemoSii.rutDeCliente) ? window.CLDemoSii.rutDeCliente(nom) : '';
+        var favs = leerJsonLocal(K_SYN_FAVS, {});
+        var esFav = !!favs[k];
+
+        if ($('syn-dlg-titulo')) $('syn-dlg-titulo').textContent = nom;
+        if ($('syn-dlg-sub')) $('syn-dlg-sub').textContent = (st.regimen || '14D3') + ' · ' + (sumarMesesNombre(per, 0) || per);
+        if ($('btn-syn-dlg-fav')) {
+            $('btn-syn-dlg-fav').setAttribute('aria-pressed', esFav ? 'true' : 'false');
+            var icFav = $('btn-syn-dlg-fav').querySelector('.material-icons');
+            if (icFav) icFav.textContent = esFav ? 'star' : 'star_border';
+        }
+        var f29Est = esAct ? (m.f29.codigos[91] || 0) : (construirF29YAsientosDeEstado(st, per).f29.codigos[91] || 0);
+        var concPct = esAct && m.conciliacion && m.conciliacion.resumen ? (m.conciliacion.resumen.pctConciliado || 0) : 0;
+        if ($('syn-dlg-meta')) {
+            $('syn-dlg-meta').innerHTML =
+                '<div class="syn-meta-par"><dt>RUT</dt><dd class="mono">' + (rutTxt ? D.esc(rutTxt) : 'Sin RUT') + '</dd></div>' +
+                '<div class="syn-meta-par"><dt>Régimen SII</dt><dd class="mono">' + D.esc(st.regimen || '14D3') + '</dd></div>' +
+                '<div class="syn-meta-par"><dt>Estado cierre</dt><dd>' + (st.cerradoTributario ? 'Cerrado' : 'Período abierto') + '</dd></div>' +
+                '<div class="syn-meta-par"><dt>Próximo hito</dt><dd>F29 día 20</dd></div>';
+        }
+        if ($('syn-dlg-kpis')) {
+            $('syn-dlg-kpis').innerHTML =
+                '<div class="syn-modal-kpi-box"><span>F29 estimado (cód. 91)</span><strong class="mono">' + D.money(f29Est) + '</strong></div>' +
+                '<div class="syn-modal-kpi-box"><span>Conciliación bancos</span><strong class="mono">' + concPct + '%</strong></div>';
+        }
+        if ($('syn-dlg-atajos')) {
+            $('syn-dlg-atajos').innerHTML =
+                '<button type="button" class="btn btn-chico" data-syn-jump="f29">Ir a F29</button>' +
+                '<button type="button" class="btn btn-chico" data-syn-jump="remuneraciones">Ir a Nómina</button>' +
+                '<button type="button" class="btn btn-chico" data-syn-jump="bancos">Ir a Bancos</button>' +
+                '<button type="button" class="btn btn-chico" data-syn-jump="balance">Ir a Balance 8 Col.</button>';
+        }
+        if ($('syn-cfg-nombre')) $('syn-cfg-nombre').value = nom;
+        if ($('syn-cfg-rut')) $('syn-cfg-rut').value = rutTxt || '';
+        if ($('syn-cfg-regimen')) $('syn-cfg-regimen').value = st.regimen || '14D3';
+        if ($('syn-dlg-nota-input')) $('syn-dlg-nota-input').value = '';
+        pintarNotasModalSyn(k);
+        activarTabModalSyn(tabIni || 'resumen');
+        if ($('btn-syn-dlg-trabajar')) $('btn-syn-dlg-trabajar').hidden = esAct;
+        if (typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
+    }
+
+    function activarTabModalSyn(tab) {
+        Array.prototype.forEach.call(document.querySelectorAll('.syn-modal-tab[data-syn-tab]'), function (b) {
+            var act = b.getAttribute('data-syn-tab') === tab;
+            b.classList.toggle('activo', act);
+            b.setAttribute('aria-selected', act ? 'true' : 'false');
+        });
+        ['resumen', 'notas', 'config'].forEach(function (t) {
+            var p = $('syn-tab-' + t);
+            if (p) p.hidden = (t !== tab);
+        });
+    }
+
+    function pintarNotasModalSyn(cliKey) {
+        var listaEl = $('syn-dlg-notas-lista');
+        if (!listaEl) return;
+        var todas = leerJsonLocal(K_SYN_NOTAS, {});
+        var arr = Array.isArray(todas[cliKey]) ? todas[cliKey] : [];
+        listaEl.innerHTML = arr.length
+            ? arr.map(function (n) {
+                return '<li class="syn-nota-item"><div>' + D.esc(n.texto) + '</div><time class="mono">' + D.esc(n.fecha || '') + '</time></li>';
+            }).join('')
+            : '<li class="texto-ayuda">Aún no hay notas internas del estudio para este cliente.</li>';
+    }
+
     function refrescarTodo() {
         var est = leerEstadoActual();
         pintarIdentidadCliente();
@@ -2736,6 +3112,7 @@
         var m = calcularModelo();
         pintarEstadoCierre(m);
         pintarSelloFiniquitos(m);
+        pintarDashboardYClientesRapidos(m);
         pintarTorre(m);
         pintarImportador(m);
         pintarF29(m);
@@ -3716,14 +4093,235 @@
         }
         document.addEventListener('click', function (ev) {
             var panel = $('ctx-cliente-edicion');
-            if (!panel || panel.hidden) return;
-            if (!ev.target.closest('.suite-ctx-grupo')) {
+            if (panel && !panel.hidden && !ev.target.closest('.suite-ctx-grupo')) {
                 alternarPanelCliente(false);
+            }
+            var ctxBar = $('suite-context-bar');
+            if (ctxBar && ctxBar.classList.contains('abierto') && !ev.target.closest('#suite-context-bar') && !ev.target.closest('#btn-ctx-popover')) {
+                ctxBar.classList.remove('abierto');
+                if ($('btn-ctx-popover')) $('btn-ctx-popover').setAttribute('aria-expanded', 'false');
+            }
+            var accPop = $('syn-accent-popover');
+            if (accPop && !accPop.hidden && !ev.target.closest('#syn-accent-wrap')) {
+                accPop.hidden = true;
+                if ($('btn-syn-accent')) $('btn-syn-accent').setAttribute('aria-expanded', 'false');
+            }
+            var srDrop = $('syn-search-dropdown');
+            if (srDrop && !srDrop.hidden && !ev.target.closest('#syn-global-search-wrap')) {
+                srDrop.hidden = true;
             }
         });
         document.addEventListener('keydown', function (ev) {
-            if (ev.key === 'Escape') alternarPanelCliente(false);
+            if (ev.key === 'Escape') {
+                alternarPanelCliente(false);
+                if ($('suite-context-bar')) $('suite-context-bar').classList.remove('abierto');
+                if ($('btn-ctx-popover')) $('btn-ctx-popover').setAttribute('aria-expanded', 'false');
+                if ($('syn-accent-popover')) $('syn-accent-popover').hidden = true;
+                if ($('btn-syn-accent')) $('btn-syn-accent').setAttribute('aria-expanded', 'false');
+                if ($('syn-search-dropdown')) $('syn-search-dropdown').hidden = true;
+            }
         });
+
+        // Inicializar acento visual guardado + selector
+        try {
+            aplicarAcentoSyn(window.localStorage.getItem(K_SYN_ACCENT) || 'naranja');
+        } catch (e) { aplicarAcentoSyn('naranja'); }
+        if ($('btn-syn-accent') && $('syn-accent-popover')) {
+            $('btn-syn-accent').addEventListener('click', function () {
+                var abrir = $('syn-accent-popover').hidden;
+                $('syn-accent-popover').hidden = !abrir;
+                $('btn-syn-accent').setAttribute('aria-expanded', abrir ? 'true' : 'false');
+            });
+        }
+        Array.prototype.forEach.call(document.querySelectorAll('[data-set-accent]'), function (btnAcc) {
+            btnAcc.addEventListener('click', function () {
+                aplicarAcentoSyn(btnAcc.getAttribute('data-set-accent'));
+                if ($('syn-accent-popover')) $('syn-accent-popover').hidden = true;
+                if ($('btn-syn-accent')) $('btn-syn-accent').setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // Popover contexto cliente desde cabecera única
+        if ($('btn-ctx-popover') && $('suite-context-bar')) {
+            $('btn-ctx-popover').addEventListener('click', function () {
+                var abr = $('suite-context-bar').classList.toggle('abierto');
+                $('btn-ctx-popover').setAttribute('aria-expanded', abr ? 'true' : 'false');
+            });
+        }
+        if ($('btn-ctx-movil-toggle') && $('suite-context-bar')) {
+            $('btn-ctx-movil-toggle').addEventListener('click', function () {
+                $('suite-context-bar').classList.remove('abierto');
+                if ($('btn-ctx-popover')) $('btn-ctx-popover').setAttribute('aria-expanded', 'false');
+            });
+        }
+
+        // Botones + Nuevo cliente (sidebar y dashboard) + cargar ejemplo en dashboard
+        function irANuevoCliente() {
+            if ($('suite-context-bar')) $('suite-context-bar').classList.add('abierto');
+            if ($('btn-ctx-popover')) $('btn-ctx-popover').setAttribute('aria-expanded', 'true');
+            alternarPanelCliente(true);
+            if ($('liq-cliente')) { $('liq-cliente').value = ''; $('liq-cliente').focus(); }
+            if ($('liq-rut')) $('liq-rut').value = '';
+            pintarIdentidadCliente();
+        }
+        if ($('btn-side-nuevo-cliente')) $('btn-side-nuevo-cliente').addEventListener('click', irANuevoCliente);
+        if ($('btn-dash-nuevo-cliente')) $('btn-dash-nuevo-cliente').addEventListener('click', irANuevoCliente);
+        if ($('btn-dash-panel-nuevo')) $('btn-dash-panel-nuevo').addEventListener('click', irANuevoCliente);
+        if ($('btn-dash-ejemplo')) {
+            $('btn-dash-ejemplo').addEventListener('click', function () {
+                if ($('btn-cargar-ejemplo-todo')) $('btn-cargar-ejemplo-todo').click();
+            });
+        }
+
+        // Buscador global en topbar
+        var inpSearch = $('syn-global-search');
+        var dropSearch = $('syn-search-dropdown');
+        if (inpSearch && dropSearch) {
+            function pintarResultadosBusqueda(q) {
+                var txt = String(q || '').trim().toLowerCase();
+                if (!txt) { dropSearch.hidden = true; return; }
+                var modItems = Object.keys(NOMBRES_MODULO_BC).map(function (k) {
+                    return { tipo: 'mod', clave: k, titulo: NOMBRES_MODULO_BC[k], sub: 'Módulo' };
+                });
+                var cliItems = (D && D.clientes ? D.clientes() : []).map(function (c) {
+                    return { tipo: 'cli', clave: c.nombre, titulo: c.nombre, sub: 'Cliente' };
+                });
+                var hits = modItems.concat(cliItems).filter(function (it) {
+                    return it.titulo.toLowerCase().indexOf(txt) >= 0 || it.clave.toLowerCase().indexOf(txt) >= 0;
+                }).slice(0, 7);
+                if (!hits.length) {
+                    dropSearch.innerHTML = '<div class="texto-ayuda" style="padding:8px 10px">Sin resultados para «' + D.esc(q) + '»</div>';
+                } else {
+                    dropSearch.innerHTML = hits.map(function (h) {
+                        return '<button type="button" class="syn-search-item" role="option" data-sr-tipo="' + h.tipo + '" data-sr-clave="' + D.esc(h.clave) + '">' +
+                            '<span>' + D.esc(h.titulo) + '</span><small>' + D.esc(h.sub) + '</small></button>';
+                    }).join('');
+                }
+                dropSearch.hidden = false;
+            }
+            inpSearch.addEventListener('input', function () { pintarResultadosBusqueda(inpSearch.value); });
+            inpSearch.addEventListener('focus', function () { if (inpSearch.value.trim()) pintarResultadosBusqueda(inpSearch.value); });
+            inpSearch.addEventListener('keydown', function (ev) {
+                if (ev.key === 'Enter') {
+                    var prim = dropSearch.querySelector('.syn-search-item');
+                    if (prim) { ev.preventDefault(); prim.click(); }
+                }
+            });
+            dropSearch.addEventListener('click', function (ev) {
+                var it = ev.target.closest('.syn-search-item');
+                if (!it) return;
+                var tp = it.getAttribute('data-sr-tipo');
+                var cl = it.getAttribute('data-sr-clave');
+                dropSearch.hidden = true;
+                inpSearch.value = '';
+                if (tp === 'mod') cambiarModulo(cl);
+                else if (tp === 'cli') { cambiarACliente(cl); }
+            });
+        }
+
+        // Navegación desde Dashboard, Sidebar Clientes Rápidos y Botones de Rango SynChart
+        document.addEventListener('click', function (ev) {
+            var btnIr = ev.target.closest('[data-dash-ir]');
+            if (btnIr) {
+                cambiarModulo(btnIr.getAttribute('data-dash-ir'));
+                return;
+            }
+            var btnCli = ev.target.closest('[data-side-cli]');
+            if (btnCli) {
+                cambiarACliente(btnCli.getAttribute('data-side-cli'));
+                return;
+            }
+            var btnFicha = ev.target.closest('[data-syn-ficha], [data-torre-ficha]');
+            if (btnFicha) {
+                abrirModalDetalleSyn(btnFicha.getAttribute('data-syn-ficha') || btnFicha.getAttribute('data-torre-ficha'));
+                return;
+            }
+            var btnRango = ev.target.closest('[data-syn-range]');
+            if (btnRango) {
+                var cid = btnRango.getAttribute('data-syn-chart-id');
+                var rng = btnRango.getAttribute('data-syn-range');
+                if (cid === 'dash') ui.synRangeDash = rng;
+                if (cid === 'f29') ui.synRangeF29 = rng;
+                refrescarTodo();
+                return;
+            }
+        });
+
+        // Interacciones Modal Reutilizable #dlg-syn-detalle
+        var dlgSyn = $('dlg-syn-detalle');
+        if (dlgSyn) {
+            function cerrarDlgSyn() { if (dlgSyn.open) dlgSyn.close(); }
+            if ($('btn-syn-dlg-cerrar')) $('btn-syn-dlg-cerrar').addEventListener('click', cerrarDlgSyn);
+            if ($('btn-syn-dlg-cancelar')) $('btn-syn-dlg-cancelar').addEventListener('click', cerrarDlgSyn);
+            dlgSyn.addEventListener('click', function (ev) {
+                var tabBtn = ev.target.closest('[data-syn-tab]');
+                if (tabBtn) { activarTabModalSyn(tabBtn.getAttribute('data-syn-tab')); return; }
+                var tagBtn = ev.target.closest('[data-syn-tag]');
+                if (tagBtn && $('syn-dlg-nota-input')) {
+                    var tg = tagBtn.getAttribute('data-syn-tag');
+                    $('syn-dlg-nota-input').value = ($('syn-dlg-nota-input').value ? $('syn-dlg-nota-input').value + ' ' : '') + tg + ' ';
+                    $('syn-dlg-nota-input').focus();
+                    return;
+                }
+                var jmpBtn = ev.target.closest('[data-syn-jump]');
+                if (jmpBtn) {
+                    var targetM = jmpBtn.getAttribute('data-syn-jump');
+                    if (clienteModalActual && normalizarNombreCliente(clienteModalActual) !== clienteClave()) {
+                        cambiarACliente(clienteModalActual);
+                    }
+                    cerrarDlgSyn();
+                    cambiarModulo(targetM);
+                }
+            });
+            if ($('btn-syn-dlg-fav')) {
+                $('btn-syn-dlg-fav').addEventListener('click', function () {
+                    var kFav = normalizarNombreCliente(clienteModalActual || clienteNombre());
+                    var favs = leerJsonLocal(K_SYN_FAVS, {});
+                    favs[kFav] = !favs[kFav];
+                    guardarJsonLocal(K_SYN_FAVS, favs);
+                    $('btn-syn-dlg-fav').setAttribute('aria-pressed', favs[kFav] ? 'true' : 'false');
+                    var icF = $('btn-syn-dlg-fav').querySelector('.material-icons');
+                    if (icF) icF.textContent = favs[kFav] ? 'star' : 'star_border';
+                });
+            }
+            if ($('btn-syn-dlg-trabajar')) {
+                $('btn-syn-dlg-trabajar').addEventListener('click', function () {
+                    if (clienteModalActual) cambiarACliente(clienteModalActual);
+                    cerrarDlgSyn();
+                });
+            }
+            if ($('btn-syn-dlg-guardar')) {
+                $('btn-syn-dlg-guardar').addEventListener('click', function () {
+                    var nomDlg = clienteModalActual || clienteNombre();
+                    var kDlg = normalizarNombreCliente(nomDlg);
+                    var notaTxt = $('syn-dlg-nota-input') ? $('syn-dlg-nota-input').value.trim() : '';
+                    if (notaTxt) {
+                        var todas = leerJsonLocal(K_SYN_NOTAS, {});
+                        if (!Array.isArray(todas[kDlg])) todas[kDlg] = [];
+                        todas[kDlg].unshift({ texto: notaTxt, fecha: new Date().toLocaleString('es-CL') });
+                        guardarJsonLocal(K_SYN_NOTAS, todas);
+                        $('syn-dlg-nota-input').value = '';
+                        pintarNotasModalSyn(kDlg);
+                    }
+                    var nuevoReg = $('syn-cfg-regimen') ? $('syn-cfg-regimen').value : '';
+                    var nuevoNom = $('syn-cfg-nombre') ? $('syn-cfg-nombre').value.trim() : '';
+                    var nuevoRut = $('syn-cfg-rut') ? $('syn-cfg-rut').value.trim() : '';
+                    if (nuevoReg) {
+                        guardarEstadoParaCliente(nomDlg, periodoActual(), function (st) { st.regimen = nuevoReg; });
+                    }
+                    if (nuevoRut && window.CLDemoSii && window.CLDemoSii.guardarRutCliente) {
+                        window.CLDemoSii.guardarRutCliente(nuevoNom || nomDlg, nuevoRut);
+                    }
+                    if (nuevoNom && kDlg === clienteClave() && $('liq-cliente')) {
+                        $('liq-cliente').value = nuevoNom;
+                        try { localStorage.setItem('cl-cliente-liq', nuevoNom); } catch (e) { }
+                    }
+                    cerrarDlgSyn();
+                    refrescarTodo();
+                    D.avisar('Ficha del cliente actualizada.');
+                });
+            }
+        }
         Array.prototype.forEach.call(document.querySelectorAll('.conta-master-tab[data-conta-ir]'), function (tBtn) {
             tBtn.addEventListener('click', function () {
                 cambiarModulo(tBtn.getAttribute('data-conta-ir'));
