@@ -650,18 +650,41 @@
         return String(d.tipoDoc || 33) + '-' + String(d.folio || 'sf') + '-' + (normRutSimple(d.rut) || 'sr');
     }
 
+    function sugerirPatronDesdeMov(glosa, rut) {
+        var r = normRutSimple(rut || extraerRutDeTexto(glosa));
+        if (r && r.length >= 7) {
+            return r.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + r.slice(-1);
+        }
+        var limpio = normTxt(glosa)
+            .replace(/\b(tef|transferencia|transf|trf|pago|abono|cargo|deposito|dep|cta|cte|web|pac|pat|nro|folio|doc|factura|boleta)\b/g, ' ')
+            .replace(/\b\d{4,}\b/g, ' ')
+            .replace(/[^a-z0-9\s]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        if (!limpio) return '';
+        var partes = limpio.split(' ').filter(function (w) { return w.length >= 2; });
+        return partes.slice(0, 3).join(' ');
+    }
+
     function conciliarCartolaConReglas(movimientos, contexto) {
         var ctx = contexto || {};
         var ventasDocs = (ctx.ventas && Array.isArray(ctx.ventas.documentos)) ? ctx.ventas.documentos : [];
         var comprasDocs = (ctx.compras && Array.isArray(ctx.compras.documentos)) ? ctx.compras.documentos : [];
+        var bheLista = Array.isArray(ctx.bheBoletas) ? ctx.bheBoletas : [];
+        var f29TotalPagar = enteroPos(ctx.f29TotalPagar);
+        var previredTotal = enteroPos(ctx.previredTotal);
         var reglasUsr = Array.isArray(ctx.reglas) ? ctx.reglas : [];
         var todasReglas = reglasUsr.concat(REGLAS_CONCILIACION_DEFECTO);
         var confirmados = (ctx.matchesConfirmados && typeof ctx.matchesConfirmados === 'object') ? ctx.matchesConfirmados : {};
         var descartados = (ctx.matchesDescartados && typeof ctx.matchesDescartados === 'object') ? ctx.matchesDescartados : {};
+        var cuentasManuales = (ctx.cuentasManuales && typeof ctx.cuentasManuales === 'object') ? ctx.cuentasManuales : {};
         var modoSug = !!ctx.modoSugerencias;
 
         var usadosVentas = {};
         var usadosCompras = {};
+        var usadosBhe = {};
+        var f29Usado = false;
+        var previredUsado = false;
         var foliosConciliados = { cxc: {}, cxp: {} };
         var filas = [];
         var porFactura = 0;
@@ -767,7 +790,64 @@
                 }
             }
 
-            // 2. Si no calza con factura, evaluar reglas de contraparte (usuario primero, defecto después)
+            // 1D. Cruce contra BHE vigentes, F29 (cod. 91) y PreviRed del periodo cuando no calzo factura RCV
+            if (!match && !descartados[movId] && tipo === 'cargo') {
+                for (var b = 0; b < bheLista.length; b++) {
+                    if (usadosBhe[b]) continue;
+                    var bhe = bheLista[b];
+                    if (!bhe || String(bhe.estado || 'VIGENTE').toUpperCase() === 'ANULADA') continue;
+                    var liqBhe = enteroPos(bhe.liquido != null ? bhe.liquido : (bhe.montoLiquido != null ? bhe.montoLiquido : (enteroPos(bhe.bruto) - enteroPos(bhe.retenido))));
+                    var rutBhe = normRutSimple(bhe.rut);
+                    if (liqBhe > 0 && Math.abs(liqBhe - monto) <= 100 && (!rutMov || !rutBhe || rutMov === rutBhe)) {
+                        usadosBhe[b] = true;
+                        var okBhe = !!confirmados[movId] || (!modoSug && !!rutMov && rutMov === rutBhe);
+                        if (okBhe) porRegla += 1;
+                        else sugeridos += 1;
+                        match = {
+                            metodo: 'bhe',
+                            matchTipo: 'BHE',
+                            estado: okBhe ? 'conciliado' : 'sugerido',
+                            cuenta: '21025',
+                            matchedKeys: [],
+                            matchedFolios: [String(bhe.folio || bhe.numero || 's/f')],
+                            detalleMatch: 'BHE #' + (bhe.folio || bhe.numero || 's/f') + ' · ' + (bhe.razonSocial || bhe.emisor || bhe.rut || 'Profesional')
+                        };
+                        break;
+                    }
+                }
+                if (!match && !f29Usado && f29TotalPagar > 0 && Math.abs(f29TotalPagar - monto) <= 100) {
+                    f29Usado = true;
+                    var okF29 = !!confirmados[movId];
+                    if (okF29) porRegla += 1;
+                    else sugeridos += 1;
+                    match = {
+                        metodo: 'obligacion',
+                        matchTipo: 'F29',
+                        estado: okF29 ? 'conciliado' : 'sugerido',
+                        cuenta: '21070',
+                        matchedKeys: [],
+                        matchedFolios: [],
+                        detalleMatch: 'Pago F29 del período (cód. 91)'
+                    };
+                }
+                if (!match && !previredUsado && previredTotal > 0 && Math.abs(previredTotal - monto) <= 100) {
+                    previredUsado = true;
+                    var okPrev = !!confirmados[movId];
+                    if (okPrev) porRegla += 1;
+                    else sugeridos += 1;
+                    match = {
+                        metodo: 'obligacion',
+                        matchTipo: 'PREVIRED',
+                        estado: okPrev ? 'conciliado' : 'sugerido',
+                        cuenta: '21035',
+                        matchedKeys: [],
+                        matchedFolios: [],
+                        detalleMatch: 'Pago cotizaciones PreviRed del período'
+                    };
+                }
+            }
+
+            // 2. Si no calza con factura ni obligacion, evaluar reglas de contraparte (usuario primero, defecto después)
             if (!match) {
                 for (var r = 0; r < todasReglas.length; r++) {
                     var regla = todasReglas[r];
@@ -789,18 +869,41 @@
             }
 
             if (!match) {
-                sinConciliar += 1;
-                montoSinConciliar += monto;
-                match = {
-                    metodo: 'pendiente',
-                    matchTipo: 'PENDIENTE',
-                    estado: 'pendiente',
-                    cuenta: mov.cuentaSugerida || (tipo === 'abono' ? '11050' : '42040'),
-                    matchedKeys: [],
-                    matchedFolios: [],
-                    detalleMatch: 'Sin regla ni factura coincidente; asignar o crear regla'
-                };
+                if (confirmados[movId]) {
+                    porRegla += 1;
+                    match = {
+                        metodo: 'manual',
+                        matchTipo: 'MANUAL',
+                        estado: 'conciliado',
+                        cuenta: mov.cuentaSugerida || (tipo === 'abono' ? '11050' : '42040'),
+                        matchedKeys: [],
+                        matchedFolios: [],
+                        detalleMatch: 'Cuenta asignada y confirmada manualmente'
+                    };
+                } else {
+                    sinConciliar += 1;
+                    montoSinConciliar += monto;
+                    match = {
+                        metodo: 'pendiente',
+                        matchTipo: 'PENDIENTE',
+                        estado: 'pendiente',
+                        cuenta: mov.cuentaSugerida || (tipo === 'abono' ? '11050' : '42040'),
+                        matchedKeys: [],
+                        matchedFolios: [],
+                        detalleMatch: 'Sin regla ni factura coincidente; elige cuenta y confirma'
+                    };
+                }
             }
+
+            if (cuentasManuales[movId]) {
+                match.cuenta = String(cuentasManuales[movId]);
+            }
+
+            var asientoPropuesto = {
+                debe: tipo === 'abono' ? '11010' : match.cuenta,
+                haber: tipo === 'abono' ? match.cuenta : '11010',
+                monto: monto
+            };
 
             filas.push({
                 id: movId,
@@ -813,6 +916,7 @@
                 metodo: match.metodo,
                 matchTipo: match.matchTipo,
                 cuenta: match.cuenta,
+                asientoPropuesto: asientoPropuesto,
                 matchedKeys: match.matchedKeys,
                 matchedFolios: match.matchedFolios,
                 detalleMatch: match.detalleMatch
@@ -1034,6 +1138,7 @@
         tasaPpmEsperadaProPyme: tasaPpmEsperadaProPyme,
         calcularActivoFijoTributario: calcularActivoFijoTributario,
         REGLAS_CONCILIACION_DEFECTO: REGLAS_CONCILIACION_DEFECTO,
+        sugerirPatronDesdeMov: sugerirPatronDesdeMov,
         conciliarCartolaConReglas: conciliarCartolaConReglas,
         calcularAgingDocumentos: calcularAgingDocumentos,
         tasaIdpcPorRegimen: tasaIdpcPorRegimen,

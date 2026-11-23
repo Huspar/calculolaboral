@@ -221,4 +221,34 @@ var agingReal = Pro.calcularAgingDocumentos(vOla2, { documentos: [] }, '2026-11'
 // Folio 101 conciliada auto ($1M) + Folio 102 pagada manual ($680k) => pendientes solo 103 + 104 = $4.850.000
 assert.strictEqual(agingReal.cxc.total, 4850000);
 
-console.log('OK test_contadores_asistente_pro (10/10 escenarios validados)');
+// 11. Fase 1: Cruce BHE / F29 / PreviRed, cuentasManuales + confirmacion, asientoPropuesto y sugerirPatronDesdeMov
+var concFase1 = Pro.conciliarCartolaConReglas([
+    { id: 'F1', fecha: '2026-11-11', glosa: 'TEF 991234', tipo: 'cargo', monto: 254250 },
+    { id: 'F2', fecha: '2026-11-13', glosa: 'PAGO CARGO WEB', tipo: 'cargo', monto: 540000 },
+    { id: 'F3', fecha: '2026-11-20', glosa: 'CARGO PORTAL', tipo: 'cargo', monto: 312000 },
+    { id: 'F4', fecha: '2026-11-22', glosa: 'CARGO SOFTWARE NUBE', tipo: 'cargo', monto: 45000 }
+], {
+    ventas: { documentos: [] },
+    compras: { documentos: [] },
+    bheBoletas: [{ folio: 77, rut: '15.222.333-4', razonSocial: 'Consultora Norte', liquido: 254250, estado: 'VIGENTE' }],
+    previredTotal: 540000,
+    f29TotalPagar: 312000,
+    modoSugerencias: true,
+    matchesConfirmados: { F4: true },
+    cuentasManuales: { F4: '42040' }
+});
+assert.strictEqual(concFase1.filas[0].matchTipo, 'BHE');
+assert.strictEqual(concFase1.filas[0].estado, 'sugerido');
+assert.strictEqual(concFase1.filas[0].cuenta, '21025');
+assert.strictEqual(concFase1.filas[1].matchTipo, 'PREVIRED');
+assert.strictEqual(concFase1.filas[1].cuenta, '21035');
+assert.strictEqual(concFase1.filas[2].matchTipo, 'F29');
+assert.strictEqual(concFase1.filas[2].cuenta, '21070');
+assert.strictEqual(concFase1.filas[3].estado, 'conciliado');
+assert.strictEqual(concFase1.filas[3].asientoPropuesto.debe, '42040');
+assert.strictEqual(concFase1.filas[3].asientoPropuesto.haber, '11010');
+
+assert.strictEqual(Pro.sugerirPatronDesdeMov('TEF PAGO 998811 ARRIENDO BODEGA'), 'arriendo bodega');
+assert.strictEqual(Pro.sugerirPatronDesdeMov('TRF 76.111.222-3 PROVEEDOR'), '76.111.222-3');
+
+console.log('OK test_contadores_asistente_pro (11/11 escenarios validados)');
