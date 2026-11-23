@@ -615,7 +615,8 @@
             pctVentasCobradas: est.tesoreria.pctVentasCobradas,
             pctComprasPagadas: est.tesoreria.pctComprasPagadas,
             carteraEstado: est.carteraEstado,
-            foliosConciliados: conciliacion ? conciliacion.foliosConciliados : {}
+            foliosConciliados: conciliacion ? conciliacion.foliosConciliados : {},
+            foliosParciales: conciliacion ? conciliacion.foliosParciales : {}
         }) : null;
 
         var ppmManualVal = (est.f22Ajustes && est.f22Ajustes.ppmManual !== '' && est.f22Ajustes.ppmManual != null)
@@ -2140,6 +2141,33 @@
             $('btn-conc-aprobar-sugeridos').classList.toggle('btn-primario', !bloqueado && sugCnt > 0);
         }
 
+        if ($('conc-tira-alertas')) {
+            var alertasDif = Array.isArray(conc.alertasDiferencias) ? conc.alertasDiferencias : [];
+            var sugReglas = Array.isArray(conc.sugerenciasReglas) ? conc.sugerenciasReglas : [];
+            var hayAlertas = alertasDif.length > 0 || sugReglas.length > 0;
+            $('conc-tira-alertas').hidden = !hayAlertas;
+            if ($('conc-alerta-dif')) {
+                $('conc-alerta-dif').hidden = alertasDif.length === 0;
+                if ($('conc-alerta-dif-txt') && alertasDif.length) {
+                    var primera = alertasDif[0];
+                    var prefDif = alertasDif.length === 1
+                        ? '1 diferencia detectada en RCV/BHE: '
+                        : (alertasDif.length + ' diferencias detectadas en RCV/BHE (ej. ');
+                    var sufDif = alertasDif.length === 1 ? '' : ')';
+                    $('conc-alerta-dif-txt').textContent = prefDif + primera.docTipo + ' F.' + primera.folio + ' dif. ' + moneySigno(primera.diferencia) + ' · ' + primera.posibleCausa + sufDif + '. Revisa antes de marcar pagado el 100%.';
+                }
+            }
+            if ($('conc-sug-reglas')) {
+                $('conc-sug-reglas').hidden = sugReglas.length === 0;
+                $('conc-sug-reglas').innerHTML = sugReglas.map(function (sr) {
+                    return '<div class="conc-sug-fila">' +
+                        '<span class="conc-sug-txt">Patrón repetido (' + sr.cantidad + ' mov. ' + D.esc(sr.tipo) + '): <strong>' + D.esc(sr.patron) + '</strong> → ' + D.esc(sr.cuentaSugerida) + ' (' + D.money(sr.montoTotal) + ')</span>' +
+                        '<button type="button" class="btn btn-chico btn-primario btn-conc-aplicar-sug" data-sug-patron="' + D.esc(sr.patron) + '" data-sug-tipo="' + D.esc(sr.tipo) + '" data-sug-cuenta="' + D.esc(sr.cuentaSugerida) + '">Aplicar regla</button>' +
+                        '</div>';
+                }).join('');
+            }
+        }
+
         if ($('tbody-conciliacion')) {
             var cuentasPlan = (C && C.obtenerPlanCuentas) ? C.obtenerPlanCuentas() : [];
             $('tbody-conciliacion').innerHTML = conc.filas.length
@@ -2148,10 +2176,15 @@
                     if (f.matchTipo === 'A') badgeHtml = '<span class="sello-match-a"><span class="material-icons" aria-hidden="true">verified</span>Match A · RUT + Monto</span>';
                     else if (f.matchTipo === 'B') badgeHtml = '<span class="sello-match-b"><span class="material-icons" aria-hidden="true">help_outline</span>Sugerencia B · Monto</span>';
                     else if (f.matchTipo === 'C') badgeHtml = '<span class="sello-match-c"><span class="material-icons" aria-hidden="true">layers</span>Match C · Agrupado</span>';
+                    else if (f.matchTipo === 'TRASPASO') badgeHtml = '<span class="conc-tag conc-tag-traspaso">Traspaso interno</span>';
                     else if (f.matchTipo === 'BHE' || f.matchTipo === 'F29' || f.matchTipo === 'PREVIRED') badgeHtml = '<span class="sello-match-b"><span class="material-icons" aria-hidden="true">auto_awesome</span>Sugerido · ' + D.esc(f.matchTipo) + '</span>';
                     else if (f.metodo === 'regla') badgeHtml = '<span class="conc-pill conc-pill-regla">Regla auto</span>';
                     else if (f.metodo === 'manual') badgeHtml = '<span class="conc-pill conc-pill-ok">Confirmado</span>';
                     else badgeHtml = '<span class="conc-pill conc-pill-pend">Sin match</span>';
+
+                    var difInlineHtml = f.alertaDiferencia
+                        ? '<div class="conc-dif-inline mono">Dif. ' + moneySigno(f.alertaDiferencia.diferencia) + ' vs ' + D.esc(f.alertaDiferencia.docTipo) + ' F.' + D.esc(f.alertaDiferencia.folio) + '</div>'
+                        : '';
 
                     var hayCuentaEnPlan = cuentasPlan.some(function (cp) { return String(cp.codigo) === String(f.cuenta); });
                     var optsPlan = cuentasPlan.map(function (cp) {
@@ -2193,7 +2226,7 @@
                         '<td data-label="Glosa">' + D.esc(f.glosa || '-') + '</td>' +
                         '<td class="cap" data-label="Tipo">' + D.esc(f.tipo) + '</td>' +
                         '<td class="mono num" data-label="Monto">' + D.money(f.monto) + '</td>' +
-                        '<td data-label="Cruce">' + badgeHtml + '<div class="texto-ayuda" style="margin-top:3px">' + D.esc(f.detalleMatch) + '</div></td>' +
+                        '<td data-label="Cruce">' + badgeHtml + difInlineHtml + '<div class="texto-ayuda" style="margin-top:3px">' + D.esc(f.detalleMatch) + '</div></td>' +
                         '<td data-label="Cuenta / Asiento">' + cuentaHtml + '</td>' +
                         '<td data-label="Estado / 1-Clic">' + accionHtml + '</td>' +
                         '</tr>';
@@ -2207,16 +2240,17 @@
             }
             return lista.slice(0, 20).map(function (it) {
                 var pagada = it.saldoPendiente <= 0;
+                var parcial = it.estadoPago === 'PARCIAL' && !pagada;
                 var selloCls = pagada ? 'sello-emitida' : 'sello-preparada';
                 var selloTxt = it.estadoPago === 'CONCILIADA'
                     ? 'Bancos'
-                    : (pagada ? 'Pagada' : 'Pendiente');
+                    : (parcial ? 'Parcial' : (pagada ? 'Pagada' : 'Pendiente'));
                 var nextEst = pagada ? 'PENDIENTE' : 'PAGADA';
                 var btnTxt = pagada ? 'Reabrir' : 'Marcar pagada';
                 return '<tr>' +
                     '<td>DTE ' + D.esc(it.tipoDoc) + ' #' + D.esc(it.folio) + '<br><span class="texto-ayuda">' + D.esc(it.razonSocial) + ' · <span class="mono">' + D.esc(it.rut || '-') + '</span></span></td>' +
                     '<td class="mono">' + it.dias + 'd (' + D.esc(it.tramo) + ')</td>' +
-                    '<td class="mono num">' + D.money(it.saldoPendiente) + (pagada ? '<br><span class="texto-ayuda">Orig. ' + D.money(it.montoOriginal) + '</span>' : '') + '</td>' +
+                    '<td class="mono num">' + D.money(it.saldoPendiente) + ((pagada || parcial) ? '<br><span class="texto-ayuda">Orig. ' + D.money(it.montoOriginal) + '</span>' : '') + '</td>' +
                     '<td><span class="sello ' + selloCls + '">' + selloTxt + '</span></td>' +
                     '<td class="num"><button type="button" class="btn btn-chico btn-cartera-toggle" data-cartera-tipo="' + tipoCartera + '" data-cartera-key="' + D.esc(it.docKey) + '" data-cartera-next="' + nextEst + '">' + btnTxt + '</button></td>' +
                     '</tr>';
@@ -2332,6 +2366,29 @@
                     '<td class="mono num">' + moneySigno(ln.monto) + '</td>' +
                     '</tr>';
             }).join('');
+        }
+
+        var djP = m.ddjj && m.ddjj.dj194x;
+        var cptP = m.ddjj && m.ddjj.cpt;
+        var regU = String(est.regimen || '14D3').toUpperCase();
+        if (djP && djP.ok) {
+            var es1947 = djP.codigoDj === '1947';
+            var baseP = es1947 ? djP.baseImponibleTotal : djP.totalRetiros;
+            var credP = es1947 ? djP.ppmDisponibleTotal : (/^14A/.test(regU) ? djP.totalCreditoBruto : djP.totalCreditoIdpc);
+            if ($('f22-res-dj-titulo')) {
+                $('f22-res-dj-titulo').textContent = 'DJ ' + djP.codigoDj + ' vinculada' + (es1947 ? ' (Base 14 D N°8 + PPM cód. 1645)' : (/^14A/.test(regU) ? ' (Retiros 14 A · créd. bruto 27/73)' : ' (Retiros 14 D N°3)'));
+            }
+            if ($('f22-res-dj-base')) $('f22-res-dj-base').textContent = moneySigno(baseP || 0);
+            if ($('f22-res-dj-cred')) $('f22-res-dj-cred').textContent = D.money(credP || 0);
+        }
+        if (cptP) {
+            if ($('f22-res-cpt-titulo')) {
+                $('f22-res-cpt-titulo').textContent = /^14A/.test(regU)
+                    ? 'CPT Simplificado (Referencial · en 14 A rige Art. 41 / DJ 1847)'
+                    : (/^14D8/.test(regU) ? 'CPT Simplificado (Referencial bajo 50.000 UF en 14 D N°8)' : 'CPT Simplificado de cierre (Circular 62/2020)');
+            }
+            if ($('f22-res-cpt-total')) $('f22-res-cpt-total').textContent = moneySigno(cptP.cptFinal || 0);
+            if ($('f22-res-cpt-rai')) $('f22-res-cpt-rai').textContent = D.money(cptP.raiEstimado || 0);
         }
     }
 
@@ -4622,6 +4679,35 @@
             });
         }
 
+        if ($('conc-tira-alertas')) {
+            $('conc-tira-alertas').addEventListener('click', function (ev) {
+                var btn = ev.target.closest('.btn-conc-aplicar-sug');
+                if (!btn) return;
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
+                var pat = btn.getAttribute('data-sug-patron') || '';
+                var tipo = btn.getAttribute('data-sug-tipo') || 'cargo';
+                var cta = btn.getAttribute('data-sug-cuenta') || '42040';
+                if (!pat) return;
+                guardarEstadoActual(function (est) {
+                    est.reglasConciliacion = Array.isArray(est.reglasConciliacion) ? est.reglasConciliacion : [];
+                    var ya = est.reglasConciliacion.some(function (r) {
+                        return String(r.patron || '').toLowerCase() === pat.toLowerCase() && String(r.tipo || 'ambos') === tipo;
+                    });
+                    if (!ya) {
+                        est.reglasConciliacion.push({
+                            id: 'REG-REC-' + Date.now(),
+                            tipo: tipo,
+                            patron: pat,
+                            cuenta: cta,
+                            motivo: 'Recurrente: ' + pat
+                        });
+                    }
+                });
+                refrescarTodo();
+                D.avisar('Regla recurrente "' + pat + '" aplicada a los movimientos del período.');
+            });
+        }
+
         // Edición inline de cuenta, confirmar 1-clic (+ aprender regla), editar o descartar match bancario
         if ($('tbody-conciliacion')) {
             $('tbody-conciliacion').addEventListener('change', function (ev) {
@@ -4775,6 +4861,161 @@
                     m.f29.regimenNombre + ' · ' + f22.fuenteTasa,
                     '<table class="print-table"><thead><tr><th>Línea / Código</th><th>Concepto</th><th class="r">Monto ($)</th></tr></thead><tbody>' + filasHtml + '</tbody></table>',
                     f22.notaNormativa
+                );
+            });
+        }
+        Array.prototype.forEach.call(document.querySelectorAll('[data-ir-subddjj]'), function (btn) {
+            btn.addEventListener('click', function () {
+                ui.subDdjj = btn.getAttribute('data-ir-subddjj') || '1947';
+                refrescarTodo();
+            });
+        });
+
+        function textosAlcancePaquete(f22) {
+            var at = (f22 && f22.anioTributario) || 2026;
+            var enc = at >= 2027
+                ? ('Simulación preliminar Año Tributario ' + at + ' (Año Comercial ' + (at - 1) + '). Utiliza tasas legales vigentes con actualización IPC provisoria (factor 1,000), sujeta a la publicación de los factores de IPC del SII en enero ' + at + '. No apto para presentación ante el SII.')
+                : 'Documento de trabajo contable-tributario generado con parámetros normativos vigentes (LIR, Ley N° 21.755 y circulares SII). No constituye declaración presentada ante el SII ni reemplaza la revisión y validación del contador o representante legal antes de declarar en sii.cl.';
+            var pie = 'Alcance: Cifras calculadas exclusivamente a partir de los archivos, registros y supuestos ingresados en la plataforma (RCV, BHE, cartolas bancarias, nómina y régimen). Las propuestas de F22, declaraciones juradas y CPT son referenciales y deben conciliarse con los antecedentes vigentes en sii.cl.';
+            return { encabezado: enc, pie: pie };
+        }
+
+        if ($('btn-f22-paquete-xlsx')) {
+            $('btn-f22-paquete-xlsx').addEventListener('click', function () {
+                var m = calcularModelo();
+                var f22 = m.f22;
+                var dj = m.ddjj && m.ddjj.dj194x;
+                var cpt = m.ddjj && m.ddjj.cpt;
+                if (!f22 || !window.CLPymeExcel) {
+                    D.avisar('No está disponible el generador de Excel o la Propuesta F22.');
+                    return;
+                }
+                var txt = textosAlcancePaquete(f22);
+                var reg = String((m.estado && m.estado.regimen) || '14D3').toUpperCase();
+                var codDj = (dj && dj.codigoDj) || (/^14D8/.test(reg) ? '1947' : '1948');
+                var comp = (cpt && cpt.componentes) || {};
+                var subCptNota = /^14A/.test(reg)
+                    ? 'Estimación referencial (en Art. 14 A rige CPT Art. 41 LIR / DJ 1847)'
+                    : (/^14D8/.test(reg) ? 'Referencial en 14 D N°8 (obligatorio sobre 50.000 UF de ingresos)' : 'Circular SII N° 62/2020 (valores nominales)');
+
+                var hojaResumen = [
+                    ['Paquete Cierre Anual Renta - ' + clienteNombre() + ' (AT ' + f22.anioTributario + ')'],
+                    [txt.encabezado],
+                    [],
+                    ['Indicador Clave', 'Referencia SII', 'Monto ($)'],
+                    ['Régimen Tributario', m.f29.regimenNombre, f22.tasaIdpc + '% IDPC'],
+                    ['Base Imponible / RLI', 'F22 / ' + (/^14D8/.test(reg) ? 'Rec. 22' : 'Rec. 17'), f22.baseImponibleRli],
+                    ['IDPC Determinado', 'Línea 54', f22.idpcDeterminado],
+                    [f22.esTransparente ? 'PPM puesto a socios (DJ 1947)' : 'PPM Reajustado F22', f22.esTransparente ? 'DJ 1947 / Cód. 1645' : 'L85 / Cód. 36', f22.esTransparente ? f22.ppmDj1947Socios : f22.ppmCod36Empresa],
+                    [f22.saldoAPagar > 0 ? 'Saldo F22 a pagar estimado' : 'Devolución / Remanente PPM estimado', f22.saldoAPagar > 0 ? 'Línea 91' : 'Línea 92', f22.saldoAPagar > 0 ? f22.saldoAPagar : f22.devolucionF22],
+                    ['DJ ' + codDj + ' · ' + (codDj === '1947' ? 'Base asignada a socios' : 'Retiros / Dividendos informados'), codDj === '1947' ? 'C17' : 'DJ 1948', codDj === '1947' ? (dj ? dj.baseImponibleTotal : 0) : (dj ? dj.totalRetiros : 0)],
+                    ['CPT Simplificado de cierre', subCptNota, cpt ? cpt.cptFinal : 0],
+                    ['RAI estimado de cierre', 'Circular 62/2020', cpt ? cpt.raiEstimado : 0],
+                    [],
+                    [txt.pie]
+                ];
+
+                var hojaF22 = [
+                    ['Propuesta Preliminar Formulario 22 - AT ' + f22.anioTributario],
+                    [f22.fuenteTasa + ' · ' + f22.notaNormativa],
+                    [],
+                    ['Línea / Código F22', 'Concepto', 'Monto ($)']
+                ].concat((f22.lineasF22 || []).map(function (ln) {
+                    return [ln.codigo, ln.concepto, ln.monto];
+                }));
+
+                var hojaDj = (codDj === '1947')
+                    ? [
+                        ['DJ 1947 - ProPyme Transparente 14 D N°8 (AT ' + f22.anioTributario + ')'],
+                        ['Base Imponible y PPM puestos a disposición de propietarios para F22 Cód. 1645'],
+                        [],
+                        ['RUT Propietario', 'Nombre', '% Part.', 'Base Imponible (C3)', 'Crédito PPM (C14)', 'Gastos Rechazados']
+                    ].concat(((dj && dj.filas) || []).map(function (f) {
+                        return [f.rutSocio, f.nombreSocio, f.porcentajeParticipacion, f.baseImponibleAsignada, f.creditoPpmAsignado, f.gastoRechazadoAsignado];
+                    }))
+                    : [
+                        ['DJ 1948 - Retiros, Remesas y Dividendos (AT ' + f22.anioTributario + ')'],
+                        [/^14A/.test(reg) ? 'Crédito bruto 27/73 sujeto a restitución del 35% en F22 socio (neto 65%)' : 'Factor crédito IDPC ProPyme 12,5% = 0,142857 (sin restitución)'],
+                        [],
+                        ['RUT Propietario', 'Nombre', '% Part.', 'Retiro / Dividendo', 'Tasa IDPC %', 'Crédito Neto Usable', 'Crédito Bruto 14 A']
+                    ].concat(((dj && dj.filas) || []).map(function (f) {
+                        return [f.rutSocio, f.nombreSocio, f.porcentajeParticipacion, f.montoRetiroODividendo, f.tasaIdpcPct, f.creditoIdpc, f.creditoBruto14A != null ? f.creditoBruto14A : f.creditoIdpc];
+                    }));
+
+                var hojaCpt = [
+                    ['Capital Propio Tributario Simplificado - AT ' + f22.anioTributario],
+                    [subCptNota],
+                    [],
+                    ['Componente CPT Simplificado', 'Monto ($)']
+                ].concat([
+                    ['(+) CPT inicial del ejercicio anterior', comp.cptAnterior || 0],
+                    ['(+) Aumentos efectivos de capital', comp.aumentosCapital || 0],
+                    ['(+/-) Base imponible o RLI del período', comp.baseImponibleRli || 0],
+                    ['(+) Rentas exentas / INR / Dividendos percibidos', comp.rentasExentasInr || 0],
+                    ['(-) Disminuciones formales de capital', -(comp.disminucionesCapital || 0)],
+                    ['(-) Retiros o dividendos distribuidos', -(comp.retirosDividendos || 0)],
+                    ['(-) Gastos rechazados no afectos Art. 21', -(comp.gastosRechazados || 0)],
+                    ['(-) IDPC pagado en el ejercicio', -(comp.idpcPagado || 0)],
+                    ['(=) CPT Simplificado de cierre', cpt ? cpt.cptFinal : 0],
+                    ['RAI estimado de cierre', cpt ? cpt.raiEstimado : 0]
+                ]);
+
+                window.CLPymeExcel.descargarXlsx('Paquete_Renta_' + clienteSlug() + '_AT' + f22.anioTributario + '.xlsx', [
+                    { nombre: 'Resumen Cliente', filas: hojaResumen, monedas: { 2: true }, estilo: { tituloFilas: [0], encabezadoFila: 3 } },
+                    { nombre: 'Propuesta F22', filas: hojaF22, monedas: { 2: true }, estilo: { tituloFilas: [0], encabezadoFila: 3 } },
+                    { nombre: 'DJ ' + codDj, filas: hojaDj, monedas: codDj === '1947' ? { 3: true, 4: true, 5: true } : { 3: true, 5: true, 6: true }, estilo: { tituloFilas: [0], encabezadoFila: 3 } },
+                    { nombre: 'CPT Simplificado', filas: hojaCpt, monedas: { 1: true }, estilo: { tituloFilas: [0], encabezadoFila: 3 } }
+                ]);
+                D.avisar('Paquete Excel del cliente generado (F22 + DJ ' + codDj + ' + CPT).');
+            });
+        }
+
+        if ($('btn-f22-paquete-pdf')) {
+            $('btn-f22-paquete-pdf').addEventListener('click', function () {
+                var m = calcularModelo();
+                var f22 = m.f22;
+                var dj = m.ddjj && m.ddjj.dj194x;
+                var cpt = m.ddjj && m.ddjj.cpt;
+                if (!f22) return;
+                var txt = textosAlcancePaquete(f22);
+                var reg = String((m.estado && m.estado.regimen) || '14D3').toUpperCase();
+                var codDj = (dj && dj.codigoDj) || (/^14D8/.test(reg) ? '1947' : '1948');
+                var comp = (cpt && cpt.componentes) || {};
+
+                var f22Rows = (f22.lineasF22 || []).map(function (ln) {
+                    return '<tr' + (ln.destacado ? ' class="total"' : '') + '><td>' + D.esc(ln.codigo) + '</td><td>' + D.esc(ln.concepto) + '</td><td class="r">' + moneySigno(ln.monto) + '</td></tr>';
+                }).join('');
+
+                var djRows = ((dj && dj.filas) || []).map(function (f) {
+                    var monto = codDj === '1947' ? f.baseImponibleAsignada : f.montoRetiroODividendo;
+                    var cred = codDj === '1947' ? f.creditoPpmAsignado : (/^14A/.test(reg) ? (f.creditoBruto14A || f.creditoIdpc) : f.creditoIdpc);
+                    return '<tr><td>' + D.esc(f.rutSocio) + '</td><td>' + D.esc(f.nombreSocio) + '</td><td class="r">' + f.porcentajeParticipacion + '%</td><td class="r">' + moneySigno(monto) + '</td><td class="r">' + D.money(cred) + '</td></tr>';
+                }).join('');
+
+                var cptRows = [
+                    ['(+) CPT anterior', comp.cptAnterior || 0],
+                    ['(+) Aumentos de capital', comp.aumentosCapital || 0],
+                    ['(+/-) Base Imponible / RLI', comp.baseImponibleRli || 0],
+                    ['(-) Disminuciones / Retiros / Gastos no Art. 21 / IDPC', -((comp.disminucionesCapital || 0) + (comp.retirosDividendos || 0) + (comp.gastosRechazados || 0) + (comp.idpcPagado || 0))],
+                    ['(=) CPT Simplificado de cierre', cpt ? cpt.cptFinal : 0],
+                    ['RAI estimado', cpt ? cpt.raiEstimado : 0]
+                ].map(function (r, idx) {
+                    return '<tr' + (idx === 4 ? ' class="total"' : '') + '><td>' + r[0] + '</td><td class="r">' + moneySigno(r[1]) + '</td></tr>';
+                }).join('');
+
+                var htmlPkg = '<p style="font-size:12px;margin-bottom:10px">' + D.esc(txt.encabezado) + '</p>' +
+                    '<h3 style="margin:12px 0 6px;font-size:14px">1. Propuesta Preliminar F22 (IDPC vs PPM Cód. 36 L85)</h3>' +
+                    '<table class="print-table"><thead><tr><th>Línea / Código</th><th>Concepto</th><th class="r">Monto ($)</th></tr></thead><tbody>' + f22Rows + '</tbody></table>' +
+                    '<h3 style="margin:14px 0 6px;font-size:14px">2. DJ ' + D.esc(codDj) + ' Vinculada (' + (codDj === '1947' ? 'Base Imponible y PPM socios' : 'Retiros / Dividendos y Crédito IDPC') + ')</h3>' +
+                    '<table class="print-table"><thead><tr><th>RUT</th><th>Propietario</th><th class="r">%</th><th class="r">' + (codDj === '1947' ? 'Base asignada' : 'Retiro / Dividendo') + '</th><th class="r">' + (codDj === '1947' ? 'PPM Cód. 1645' : (/^14A/.test(reg) ? 'Crédito Bruto 27/73' : 'Crédito IDPC')) + '</th></tr></thead><tbody>' + djRows + '</tbody></table>' +
+                    '<h3 style="margin:14px 0 6px;font-size:14px">3. Capital Propio Tributario Simplificado (Circular SII 62/2020)</h3>' +
+                    '<table class="print-table"><thead><tr><th>Componente</th><th class="r">Monto ($)</th></tr></thead><tbody>' + cptRows + '</tbody></table>';
+
+                imprimirHtmlModulo(
+                    'Paquete Cierre Tributario Cliente (AT ' + f22.anioTributario + ')',
+                    clienteNombre() + ' · ' + m.f29.regimenNombre,
+                    htmlPkg,
+                    txt.pie
                 );
             });
         }

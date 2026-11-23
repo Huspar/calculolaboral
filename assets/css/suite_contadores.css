@@ -4742,6 +4742,145 @@
         min-height: 44px;
     }
 }
+
+/* ==========================================================================
+   FASE 3: CONCILIACION RECURRENTE / TRASPASOS / ALERTAS Y PAQUETE F22
+   ========================================================================== */
+.conc-tira-alertas {
+    display: grid;
+    gap: 8px;
+    margin-top: 8px;
+}
+.conc-alerta-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    line-height: 1.4;
+}
+.conc-alerta-dif {
+    background: #FFF7E0;
+    border: 1px solid #E8C56A;
+    color: #7A4F00;
+}
+.conc-alerta-dif .material-icons {
+    font-size: 17px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.conc-sug-reglas {
+    display: grid;
+    gap: 6px;
+}
+.conc-sug-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #EEF6F3;
+    border: 1px solid #D6EBE4;
+    border-radius: 8px;
+    font-size: 12.5px;
+    color: #064A3E;
+}
+.conc-tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.conc-tag-traspaso {
+    background: #EEF6F3;
+    border: 1px solid #D6EBE4;
+    color: #064A3E;
+}
+.conc-dif-inline {
+    margin-top: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #9F1239;
+    background: #FFF1F2;
+    border: 1px solid #FECDD3;
+    border-radius: 6px;
+    padding: 2px 6px;
+    display: inline-block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+.f22-paquete-resumen {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+}
+.f22-paquete-card {
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+.f22-paquete-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink);
+}
+.f22-paquete-datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+}
+.f22-paquete-datos strong {
+    color: var(--forest-deep);
+}
+@media screen and (max-width: 768px) {
+    .f22-paquete-resumen {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .f22-ir-tab {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+}
+@media screen and (max-width: 640px) {
+    .conc-sug-fila {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .btn-conc-aplicar-sug {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+    }
+    #tbody-conciliacion td > div,
+    .conc-dif-inline {
+        min-width: 0;
+        max-width: 100%;
+    }
+    #subddjj-f22 .panel-head .v-acciones {
+        width: 100%;
+        display: grid;
+        gap: 8px;
+    }
+    #subddjj-f22 .panel-head .v-acciones .btn {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+    }
+}
 @media screen and (max-width: 640px) {
     .traza-mov-fila {
         grid-template-columns: minmax(0, 1fr);

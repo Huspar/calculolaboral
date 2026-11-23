@@ -251,4 +251,43 @@ assert.strictEqual(concFase1.filas[3].asientoPropuesto.haber, '11010');
 assert.strictEqual(Pro.sugerirPatronDesdeMov('TEF PAGO 998811 ARRIENDO BODEGA'), 'arriendo bodega');
 assert.strictEqual(Pro.sugerirPatronDesdeMov('TRF 76.111.222-3 PROVEEDOR'), '76.111.222-3');
 
-console.log('OK test_contadores_asistente_pro (11/11 escenarios validados)');
+// 12. Fase 3: Traspasos internos neutros (11015/21015), alertas diferencia RCV/BHE, abono PARCIAL en Aging y reglas recurrentes
+var concFase3 = Pro.conciliarCartolaConReglas([
+    { id: 'T1', fecha: '2026-11-05', glosa: 'TRASPASO ENTRE CUENTAS BANCO B', tipo: 'cargo', monto: 250000 },
+    { id: 'T2', fecha: '2026-11-05', glosa: 'TRASPASO ENTRE CUENTAS BANCO A', tipo: 'abono', monto: 250000 },
+    { id: 'T3', fecha: '2026-11-07', glosa: 'PAGO TC VISA CORPORATIVA', tipo: 'cargo', monto: 180000 },
+    { id: 'D1', fecha: '2026-11-10', glosa: 'ABONO RUT 76.111.222-3 FACT 101 PARCIAL', tipo: 'abono', monto: 400000 },
+    { id: 'D2', fecha: '2026-11-12', glosa: 'PAGO BHE RUT 15.222.333-4', tipo: 'cargo', monto: 300000 },
+    { id: 'R1', fecha: '2026-11-15', glosa: 'CARGO SERVICIO NUBE CLOUD', tipo: 'cargo', monto: 35000 },
+    { id: 'R2', fecha: '2026-11-22', glosa: 'CARGO SERVICIO NUBE CLOUD', tipo: 'cargo', monto: 35000 }
+], {
+    ventas: { documentos: [{ tipoDoc: 33, folio: 101, rut: '76.111.222-3', razonSocial: 'Cliente A', fecha: '2026-11-05', total: 1000000 }] },
+    compras: { documentos: [] },
+    bheBoletas: [{ folio: 77, rut: '15.222.333-4', razonSocial: 'Consultora Norte', bruto: 300000, retenido: 45750, liquido: 254250, estado: 'VIGENTE' }],
+    modoSugerencias: true,
+    matchesConfirmados: { D1: true }
+});
+
+assert.strictEqual(concFase3.filas[0].matchTipo, 'TRASPASO');
+assert.strictEqual(concFase3.filas[0].cuenta, '11018');
+assert.strictEqual(concFase3.filas[0].efectoRliNeutro, true);
+assert.strictEqual(concFase3.filas[2].matchTipo, 'TRASPASO');
+assert.strictEqual(concFase3.filas[2].cuenta, '21015');
+assert.ok(concFase3.filas[3].alertaDiferencia, 'D1 debe alertar diferencia de monto contra DTE 101');
+assert.strictEqual(concFase3.filas[3].alertaDiferencia.diferencia, -600000);
+assert.ok(concFase3.filas[4].alertaDiferencia && /bruto/i.test(concFase3.filas[4].alertaDiferencia.posibleCausa), 'D2 debe alertar pago bruto BHE');
+assert.strictEqual(concFase3.alertasDiferencias.length, 2);
+assert.strictEqual(concFase3.sugerenciasReglas.length, 1);
+assert.strictEqual(concFase3.sugerenciasReglas[0].cantidad, 2);
+
+var agingParcial = Pro.calcularAgingDocumentos(
+    { documentos: [{ tipoDoc: 33, folio: 101, rut: '76.111.222-3', razonSocial: 'Cliente A', fecha: '2026-11-05', total: 1000000 }] },
+    { documentos: [] },
+    '2026-11',
+    { modoReal: true, foliosConciliados: concFase3.foliosConciliados, foliosParciales: concFase3.foliosParciales }
+);
+assert.strictEqual(agingParcial.cxc.items[0].estadoPago, 'PARCIAL');
+assert.strictEqual(agingParcial.cxc.items[0].saldoPendiente, 600000, 'Abono parcial debe dejar $600.000 pendientes en CxC');
+assert.strictEqual(Pro.tasaIdpcPorRegimen('14D3', 2030).tasa, 25);
+
+console.log('OK test_contadores_asistente_pro (12/12 escenarios validados)');

@@ -361,6 +361,26 @@ caso('generarDj1926 y generarDj1837 respetan codigos RLI y exclusiones societari
     assert.strictEqual(djSoc.aplica, true);
     assert.strictEqual(djSoc.totales.montoTotalPpmPuesto, 500000);
     assert.ok(!/%/.test(djSoc.csv.split('\n')[0]), 'CSV DJ 1837 no debe incluir columna de porcentaje');
+
+    const dj1947Cuadre = Renta.generarDj1947o1948('14D8', {
+        baseImponible: 100,
+        ppmDisponible: 10,
+        socios: [
+            { rut: '11.111.111-1', nombre: 'A', porcentaje: 33.33 },
+            { rut: '22.222.222-2', nombre: 'B', porcentaje: 33.33 },
+            { rut: '33.333.333-3', nombre: 'C', porcentaje: 33.34 }
+        ]
+    });
+    const sumBase = dj1947Cuadre.filas.reduce((s, f) => s + f.baseImponibleAsignada, 0);
+    const sumPpm = dj1947Cuadre.filas.reduce((s, f) => s + f.creditoPpmAsignado, 0);
+    assert.strictEqual(sumBase, 100);
+    assert.strictEqual(sumPpm, 10);
+
+    const dj1948A = Renta.generarDj1947o1948('14A', {
+        socios: [{ rut: '11.111.111-1', nombre: 'Accionista', porcentaje: 100, retiros: 7300000 }]
+    });
+    assert.strictEqual(dj1948A.filas[0].creditoBruto14A, 2700000);
+    assert.strictEqual(dj1948A.filas[0].creditoIdpc, 1755000);
 });
 
 console.log('\n' + ok + ' pruebas correctas en motores Ola 2');

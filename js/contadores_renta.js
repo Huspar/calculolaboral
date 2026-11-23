@@ -384,17 +384,23 @@
         if (/^14D8/.test(regNorm)) {
             var baseImponible = enteroConSigno(d.baseImponible != null ? d.baseImponible : 0);
             var ppmDisponible = entero(d.ppmDisponible);
-            var filas1947 = socios.map(function (s) {
+            var sumaPct = socios.reduce(function (acc, s) { return acc + Number(s.porcentaje || 0); }, 0) || 100;
+            var acumBase = 0;
+            var acumPpm = 0;
+            var filas1947 = socios.map(function (s, idx) {
                 var pct = Number(s.porcentaje || 0);
-                var asignado = Math.round(baseImponible * (pct / 100));
-                var creditoPpm = Math.round(ppmDisponible * (pct / 100));
+                var ultimo = idx === socios.length - 1;
+                var asignado = ultimo ? (baseImponible - acumBase) : Math.round(baseImponible * (pct / sumaPct));
+                var creditoPpm = ultimo ? Math.max(0, ppmDisponible - acumPpm) : Math.round(ppmDisponible * (pct / sumaPct));
+                acumBase += asignado;
+                acumPpm += creditoPpm;
                 return {
                     rutSocio: formatearRut(s.rut),
                     nombreSocio: String(s.nombre || 'Socio').trim(),
                     porcentajeParticipacion: pct,
                     baseImponibleAsignada: asignado,
                     creditoPpmAsignado: creditoPpm,
-                    gastoRechazadoAsignado: Math.round(entero(d.gastosRechazados) * (pct / 100))
+                    gastoRechazadoAsignado: Math.round(entero(d.gastosRechazados) * (pct / sumaPct))
                 };
             });
             var csv1947 = ['RUT Propietario;Nombre;Porcentaje %;Base Imponible 14 D8 Asignada;Credito PPM Asignado;Gastos Rechazados Asignados'];
@@ -421,7 +427,7 @@
             var retiro = s.retiros != null ? entero(s.retiros) : Math.round(entero(d.retirosTotales) * (pct / 100));
             var factor = tasaIdpc > 0 && tasaIdpc < 100 ? (tasaIdpc / (100 - tasaIdpc)) : 0;
             var creditoBruto = Math.round(retiro * factor);
-            // En 14 A (Semi-integrado) opera restitucion del 35% (credito usable 65%)
+            // En 14 A (Semi-integrado) DJ 1948 informa credito bruto sujeto a restitucion 35% (neto usable 65% en F22 socio)
             var creditoFinal = es14A ? Math.round(creditoBruto * 0.65) : creditoBruto;
             return {
                 rutSocio: formatearRut(s.rut),
@@ -430,6 +436,7 @@
                 montoRetiroODividendo: retiro,
                 tasaIdpcPct: tasaIdpc,
                 factorCredito: Math.round(factor * 1000000) / 1000000,
+                creditoBruto14A: creditoBruto,
                 creditoIdpc: creditoFinal,
                 sujetoRestitucion14A: es14A
             };
@@ -437,9 +444,9 @@
 
         var totalRetiros = filas1948.reduce(function (acc, f) { return acc + f.montoRetiroODividendo; }, 0);
         var totalCredito = filas1948.reduce(function (acc, f) { return acc + f.creditoIdpc; }, 0);
-        var csv1948 = ['RUT Propietario;Nombre;Retiro o Dividendo;Tasa IDPC %;Factor;Credito IDPC;Sujeto Restitucion 14A'];
+        var csv1948 = ['RUT Propietario;Nombre;Retiro o Dividendo;Tasa IDPC %;Factor;Credito IDPC;Credito Bruto Sujeto Restitucion;Sujeto Restitucion 14A'];
         filas1948.forEach(function (f) {
-            csv1948.push([f.rutSocio, f.nombreSocio.replace(/;/g, ' '), f.montoRetiroODividendo, f.tasaIdpcPct, f.factorCredito, f.creditoIdpc, f.sujetoRestitucion14A ? 'SI' : 'NO'].join(';'));
+            csv1948.push([f.rutSocio, f.nombreSocio.replace(/;/g, ' '), f.montoRetiroODividendo, f.tasaIdpcPct, f.factorCredito, f.creditoIdpc, f.creditoBruto14A, f.sujetoRestitucion14A ? 'SI' : 'NO'].join(';'));
         });
 
         return {
@@ -450,6 +457,7 @@
             tasaIdpcPct: tasaIdpc,
             totalRetiros: totalRetiros,
             totalCreditoIdpc: totalCredito,
+            totalCreditoBruto: filas1948.reduce(function (acc, f) { return acc + f.creditoBruto14A; }, 0),
             filas: filas1948,
             csv: csv1948.join('\n')
         };
@@ -457,7 +465,7 @@
 
     /*
      * Capital Propio Tributario Simplificado (Art. 14 D N°3 / N°8, Circular SII N°62 de 2020):
-     * CPT Cierre = CPT Anterior + Aumentos Capital + Base Imponible (RLI) + INR/Rentas Exentas
+     * CPT Cierre = CPT Anterior + Aumentos Capital + Base Imponible (RLI) + INR/Dividendos Percibidos
      *              - Disminuciones Capital - Retiros/Dividendos - Gastos Rechazados no Art.21 - IDPC pagado.
      */
     function calcularCptSimplificado(datos) {
@@ -482,7 +490,7 @@
 
         var capitalAportado = entero(d.capitalAportadoReajustado);
         var saldoRex = entero(d.saldoRex);
-        var raiEstimado = Math.max(0, cptFinal + retirosDividendos - capitalAportado - saldoRex);
+        var raiEstimado = Math.max(0, cptFinal + disminucionesCapital + retirosDividendos - capitalAportado - saldoRex);
 
         return {
             norma: 'Circular SII 62/2020',

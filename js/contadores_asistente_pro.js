@@ -666,6 +666,23 @@
         return partes.slice(0, 3).join(' ');
     }
 
+    function extraerFolioDeTexto(texto) {
+        var m = /(?:f\.?\s*|folio\s*#?\s*|dte\s*3[34]\s*#?\s*)(\d{2,10})\b/i.exec(String(texto || ''));
+        return m ? String(m[1]) : '';
+    }
+
+    function esGlosaTraspaso(glosa) {
+        var n = normTxt(glosa);
+        return /traspaso|transferencia propia|entre cuentas|fondos en transito|mismo titular|a caja|desde caja|deposito caja|tarjeta de credito|pago tc|\bvisa\b|\bmastercard\b|\bamex\b/.test(n);
+    }
+
+    function cuentaTraspasoDesdeGlosa(glosa) {
+        var n = normTxt(glosa);
+        if (/tarjeta de credito|pago tc|\bvisa\b|\bmastercard\b|\bamex\b/.test(n)) return '21015';
+        if (/caja/.test(n)) return '11012';
+        return '11018';
+    }
+
     function conciliarCartolaConReglas(movimientos, contexto) {
         var ctx = contexto || {};
         var ventasDocs = (ctx.ventas && Array.isArray(ctx.ventas.documentos)) ? ctx.ventas.documentos : [];
@@ -679,6 +696,7 @@
         var descartados = (ctx.matchesDescartados && typeof ctx.matchesDescartados === 'object') ? ctx.matchesDescartados : {};
         var cuentasManuales = (ctx.cuentasManuales && typeof ctx.cuentasManuales === 'object') ? ctx.cuentasManuales : {};
         var modoSug = !!ctx.modoSugerencias;
+        var movList = Array.isArray(movimientos) ? movimientos : [];
 
         var usadosVentas = {};
         var usadosCompras = {};
@@ -686,19 +704,23 @@
         var f29Usado = false;
         var previredUsado = false;
         var foliosConciliados = { cxc: {}, cxp: {} };
-        var filas = [];
+        var foliosParciales = { cxc: {}, cxp: {} };
+        var filasTmp = [];
         var porFactura = 0;
         var porRegla = 0;
         var sugeridos = 0;
         var sinConciliar = 0;
         var montoSinConciliar = 0;
+        var traspasos = 0;
 
-        (Array.isArray(movimientos) ? movimientos : []).forEach(function (mov, idx) {
+        // Fase 1: Match exacto DTE (A/B/C), BHE, F29, PreviRed
+        movList.forEach(function (mov, idx) {
             var movId = mov.id || ('MOV-' + (idx + 1));
             var monto = enteroPos(mov.monto);
             var tipo = mov.tipo === 'abono' ? 'abono' : 'cargo';
             var glosa = String(mov.glosa || '').trim();
             var rutMov = normRutSimple(mov.rut || extraerRutDeTexto(glosa));
+            var folioMov = extraerFolioDeTexto(glosa);
             var match = null;
             var pool = tipo === 'abono' ? ventasDocs : comprasDocs;
             var usados = tipo === 'abono' ? usadosVentas : usadosCompras;
@@ -847,8 +869,144 @@
                 }
             }
 
-            // 2. Si no calza con factura ni obligacion, evaluar reglas de contraparte (usuario primero, defecto después)
-            if (!match) {
+            filasTmp.push({
+                idx: idx,
+                mov: mov,
+                movId: movId,
+                monto: monto,
+                tipo: tipo,
+                glosa: glosa,
+                rutMov: rutMov,
+                folioMov: folioMov,
+                pool: pool,
+                usados: usados,
+                carteraTipo: carteraTipo,
+                match: match
+            });
+        });
+
+        // Fase 2: Pares de traspasos internos, alertas de diferencias RCV/BHE y reglas recurrentes
+        var paresUsados = {};
+        var alertasDiferencias = [];
+
+        filasTmp.forEach(function (item, idx) {
+            if (item.match || descartados[item.movId] || paresUsados[idx] || !item.monto) return;
+            for (var k = idx + 1; k < filasTmp.length; k++) {
+                var otro = filasTmp[k];
+                if (otro.match || descartados[otro.movId] || paresUsados[k]) continue;
+                if (otro.tipo !== item.tipo && otro.monto === item.monto) {
+                    paresUsados[idx] = { parCon: otro.movId, cuenta: cuentaTraspasoDesdeGlosa(item.glosa + ' ' + otro.glosa) };
+                    paresUsados[k] = { parCon: item.movId, cuenta: paresUsados[idx].cuenta };
+                    break;
+                }
+            }
+        });
+
+        var filas = filasTmp.map(function (item, idx) {
+            var movId = item.movId;
+            var monto = item.monto;
+            var tipo = item.tipo;
+            var glosa = item.glosa;
+            var rutMov = item.rutMov;
+            var folioMov = item.folioMov;
+            var match = item.match;
+            var alertaDiferencia = null;
+            var esTraspaso = false;
+
+            // 1E. Detectar diferencias de monto (> $100) con DTE del RCV o BHE cuando coincide RUT o folio
+            if (!match && !descartados[movId] && monto > 0 && (rutMov || folioMov)) {
+                var candDte = null;
+                var bestDiff = Infinity;
+                for (var dIdx = 0; dIdx < item.pool.length; dIdx++) {
+                    if (item.usados[dIdx]) continue;
+                    var dD = item.pool[dIdx];
+                    if (!dD || dD.esResumen || dD.resta) continue;
+                    var totalD = enteroPos(dD.total);
+                    if (!totalD || Math.abs(totalD - monto) <= 100) continue;
+                    var matchRut = rutMov && normRutSimple(dD.rut) === rutMov;
+                    var matchFolio = folioMov && String(dD.folio || '') === folioMov;
+                    if (matchRut || matchFolio) {
+                        var absDif = Math.abs(totalD - monto);
+                        if (absDif < bestDiff) {
+                            bestDiff = absDif;
+                            candDte = dD;
+                        }
+                    }
+                }
+                if (candDte) {
+                    var esperadoD = enteroPos(candDte.total);
+                    var difD = monto - esperadoD;
+                    var keyDif = docKeyFactura(candDte);
+                    var causaD = difD < 0
+                        ? (/transbank|tbk|getnet|webpay|mercadopago|flow|sumup|redelcom/i.test(normTxt(glosa))
+                            ? 'Comisión operador de pago descontada'
+                            : 'Abono parcial (no extinguir 100% en CxC/CxP)')
+                        : 'Excedente sobre DTE (verificar múltiples DTE o anticipo)';
+                    alertaDiferencia = {
+                        docTipo: 'DTE ' + candDte.tipoDoc,
+                        folio: String(candDte.folio || 's/f'),
+                        docKey: keyDif,
+                        esperado: esperadoD,
+                        pagado: monto,
+                        diferencia: difD,
+                        posibleCausa: causaD
+                    };
+                    if (confirmados[movId] && difD < 0) {
+                        foliosParciales[item.carteraTipo][keyDif] = (foliosParciales[item.carteraTipo][keyDif] || 0) + monto;
+                    }
+                } else if (tipo === 'cargo' && rutMov) {
+                    for (var hb = 0; hb < bheLista.length; hb++) {
+                        if (usadosBhe[hb]) continue;
+                        var bObj = bheLista[hb];
+                        if (!bObj || String(bObj.estado || 'VIGENTE').toUpperCase() === 'ANULADA') continue;
+                        if (normRutSimple(bObj.rut) !== rutMov) continue;
+                        var liqExp = enteroPos(bObj.liquido != null ? bObj.liquido : (bObj.montoLiquido != null ? bObj.montoLiquido : (enteroPos(bObj.bruto) - enteroPos(bObj.retenido))));
+                        var brutoExp = enteroPos(bObj.bruto);
+                        if (liqExp > 0 && Math.abs(liqExp - monto) > 100) {
+                            var pagoBruto = brutoExp > 0 && Math.abs(brutoExp - monto) <= 100;
+                            alertaDiferencia = {
+                                docTipo: 'BHE',
+                                folio: String(bObj.folio || bObj.numero || 's/f'),
+                                docKey: 'BHE-' + String(bObj.folio || hb),
+                                esperado: liqExp,
+                                pagado: monto,
+                                diferencia: monto - liqExp,
+                                posibleCausa: pagoBruto
+                                    ? 'Pago por monto bruto sin descontar retención BHE'
+                                    : 'Diferencia frente a monto líquido BHE'
+                            };
+                            break;
+                        }
+                    }
+                }
+                if (alertaDiferencia) {
+                    alertasDiferencias.push(Object.assign({ movId: movId, glosa: glosa }, alertaDiferencia));
+                }
+            }
+
+            // 1F. Traspasos internos automáticos / TC corporativa (solo si no hay alerta DTE/BHE)
+            if (!match && !alertaDiferencia && !descartados[movId] && (paresUsados[idx] || esGlosaTraspaso(glosa))) {
+                var ctaTrasp = paresUsados[idx] ? paresUsados[idx].cuenta : cuentaTraspasoDesdeGlosa(glosa);
+                var okTrasp = !!confirmados[movId] || !modoSug;
+                if (okTrasp) porRegla += 1;
+                else sugeridos += 1;
+                traspasos += 1;
+                esTraspaso = true;
+                match = {
+                    metodo: 'traspaso',
+                    matchTipo: 'TRASPASO',
+                    estado: okTrasp ? 'conciliado' : 'sugerido',
+                    cuenta: ctaTrasp,
+                    matchedKeys: [],
+                    matchedFolios: [],
+                    detalleMatch: paresUsados[idx]
+                        ? ('Par cargo/abono ' + paresUsados[idx].parCon + ' · efecto neutro RLI')
+                        : (ctaTrasp === '21015' ? 'Pago Tarjeta Crédito Corp. (sin duplicar gasto RLI)' : 'Traspaso interno cuentas propias (neutro RLI)')
+                };
+            }
+
+            // 2. Reglas de contraparte (usuario primero, defecto después) si no calzó ni tiene alerta de diferencia
+            if (!match && !alertaDiferencia) {
                 for (var r = 0; r < todasReglas.length; r++) {
                     var regla = todasReglas[r];
                     var tipoOk = !regla.tipo || regla.tipo === 'ambos' || regla.tipo === tipo;
@@ -869,16 +1027,21 @@
             }
 
             if (!match) {
+                var cuentaDef = alertaDiferencia
+                    ? (alertaDiferencia.docTipo === 'BHE' ? '21025' : (tipo === 'abono' ? '11050' : '21010'))
+                    : (item.mov.cuentaSugerida || (tipo === 'abono' ? '11050' : '42040'));
                 if (confirmados[movId]) {
                     porRegla += 1;
                     match = {
                         metodo: 'manual',
                         matchTipo: 'MANUAL',
                         estado: 'conciliado',
-                        cuenta: mov.cuentaSugerida || (tipo === 'abono' ? '11050' : '42040'),
+                        cuenta: cuentaDef,
                         matchedKeys: [],
                         matchedFolios: [],
-                        detalleMatch: 'Cuenta asignada y confirmada manualmente'
+                        detalleMatch: alertaDiferencia
+                            ? ('Confirmado parcial/diferencia · ' + alertaDiferencia.docTipo + ' F.' + alertaDiferencia.folio)
+                            : 'Cuenta asignada y confirmada manualmente'
                     };
                 } else {
                     sinConciliar += 1;
@@ -887,10 +1050,12 @@
                         metodo: 'pendiente',
                         matchTipo: 'PENDIENTE',
                         estado: 'pendiente',
-                        cuenta: mov.cuentaSugerida || (tipo === 'abono' ? '11050' : '42040'),
+                        cuenta: cuentaDef,
                         matchedKeys: [],
                         matchedFolios: [],
-                        detalleMatch: 'Sin regla ni factura coincidente; elige cuenta y confirma'
+                        detalleMatch: alertaDiferencia
+                            ? alertaDiferencia.posibleCausa
+                            : 'Sin regla ni factura coincidente; elige cuenta y confirma'
                     };
                 }
             }
@@ -905,9 +1070,9 @@
                 monto: monto
             };
 
-            filas.push({
+            return {
                 id: movId,
-                fecha: mov.fecha || '',
+                fecha: item.mov.fecha || '',
                 glosa: glosa,
                 rut: rutMov,
                 tipo: tipo,
@@ -915,13 +1080,40 @@
                 estado: match.estado,
                 metodo: match.metodo,
                 matchTipo: match.matchTipo,
+                esTraspaso: esTraspaso,
+                efectoRliNeutro: esTraspaso,
+                alertaDiferencia: alertaDiferencia,
                 cuenta: match.cuenta,
                 asientoPropuesto: asientoPropuesto,
                 matchedKeys: match.matchedKeys,
                 matchedFolios: match.matchedFolios,
                 detalleMatch: match.detalleMatch
-            });
+            };
         });
+
+        // Fase 3: Detectar patrones repetidos >= 2 veces entre pendientes para sugerir regla recurrente
+        var gruposPat = {};
+        filas.forEach(function (f) {
+            if (f.estado !== 'pendiente' || descartados[f.id] || f.alertaDiferencia) return;
+            var pat = sugerirPatronDesdeMov(f.glosa, f.rut);
+            if (!pat || pat.length < 3) return;
+            var gKey = f.tipo + '|' + pat.toLowerCase();
+            if (!gruposPat[gKey]) {
+                gruposPat[gKey] = { patron: pat, tipo: f.tipo, cantidad: 0, cuentaSugerida: f.cuenta || (f.tipo === 'abono' ? '11050' : '42040'), montoTotal: 0 };
+            }
+            gruposPat[gKey].cantidad += 1;
+            gruposPat[gKey].montoTotal += f.monto;
+        });
+        var sugerenciasReglas = Object.keys(gruposPat)
+            .map(function (k) { return gruposPat[k]; })
+            .filter(function (g) {
+                if (g.cantidad < 2) return false;
+                return !todasReglas.some(function (r) {
+                    return (!r.tipo || r.tipo === 'ambos' || r.tipo === g.tipo) && coincidePatron(g.patron, r.patron);
+                });
+            })
+            .sort(function (a, b) { return b.cantidad - a.cantidad || b.montoTotal - a.montoTotal; })
+            .slice(0, 4);
 
         var total = filas.length;
         var pctConciliado = total > 0 ? Math.round(((porFactura + porRegla) / total) * 100) : 0;
@@ -929,10 +1121,15 @@
         return {
             filas: filas,
             foliosConciliados: foliosConciliados,
+            foliosParciales: foliosParciales,
+            alertasDiferencias: alertasDiferencias,
+            sugerenciasReglas: sugerenciasReglas,
             resumen: {
                 totalMovimientos: total,
                 porFactura: porFactura,
                 porRegla: porRegla,
+                traspasos: traspasos,
+                alertasDiferencias: alertasDiferencias.length,
                 sugeridos: sugeridos,
                 sinConciliar: sinConciliar,
                 pctConciliado: pctConciliado,
@@ -965,6 +1162,7 @@
         var pctPago = opts.pctComprasPagadas != null ? num(opts.pctComprasPagadas) : 75;
         var carteraEstado = (opts.carteraEstado && typeof opts.carteraEstado === 'object') ? opts.carteraEstado : {};
         var foliosConc = (opts.foliosConciliados && typeof opts.foliosConciliados === 'object') ? opts.foliosConciliados : {};
+        var foliosParciales = (opts.foliosParciales && typeof opts.foliosParciales === 'object') ? opts.foliosParciales : {};
         var corte = fechaCortePeriodo(periodo);
 
         function armarCartera(docs, factorPendiente, tipoCartera) {
@@ -974,6 +1172,7 @@
             var total = 0;
             var estManuales = carteraEstado[tipoCartera] || {};
             var concMap = foliosConc[tipoCartera] || {};
+            var parcMap = foliosParciales[tipoCartera] || {};
 
             (Array.isArray(docs) ? docs : []).forEach(function (d) {
                 if (!d || d.esResumen || d.resta) return;
@@ -982,10 +1181,11 @@
                 var dKey = docKeyFactura(d);
                 var manualEst = estManuales[dKey];
                 var esConc = !!concMap[dKey];
+                var abonado = enteroPos(parcMap[dKey]);
 
                 var estadoPago = 'PENDIENTE';
                 var saldo = bruto;
-                if (modoReal || manualEst || esConc) {
+                if (modoReal || manualEst || esConc || abonado > 0) {
                     if (manualEst === 'PAGADA') {
                         estadoPago = 'PAGADA';
                         saldo = 0;
@@ -995,6 +1195,9 @@
                     } else if (esConc) {
                         estadoPago = 'CONCILIADA';
                         saldo = 0;
+                    } else if (abonado > 0) {
+                        saldo = Math.max(0, bruto - abonado);
+                        estadoPago = saldo === 0 ? 'CONCILIADA' : 'PARCIAL';
                     }
                 } else {
                     saldo = Math.round(bruto * (factorPendiente / 100));
@@ -1056,7 +1259,7 @@
             var tasa14a = at <= 2027 ? 27 : (at === 2028 ? 25.5 : (at === 2029 ? 24 : 23));
             return { tasa: tasa14a, fuente: 'Régimen General 14 A (' + tasa14a + '% en AT ' + at + ')' };
         }
-        var tasaPyme = at <= 2028 ? 12.5 : (at === 2029 ? 15 : 23);
+        var tasaPyme = at <= 2028 ? 12.5 : (at === 2029 ? 15 : 25);
         return { tasa: tasaPyme, fuente: 'Art. 25 Ley 21.755 · Circ. SII N°53/2025 (' + tasaPyme + '% en AT ' + at + ')' };
     }
 

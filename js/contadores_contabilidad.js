@@ -8,6 +8,8 @@
 
     var PLAN_CUENTAS_BASE = [
         { codigo: '11010', nombre: 'Banco cuenta corriente', tipo: 'activo', grupo: 'disponible' },
+        { codigo: '11012', nombre: 'Caja y otros bancos', tipo: 'activo', grupo: 'disponible' },
+        { codigo: '11018', nombre: 'Cuenta puente traspasos / fondos en tránsito', tipo: 'activo', grupo: 'disponible' },
         { codigo: '11050', nombre: 'Clientes por cobrar', tipo: 'activo', grupo: 'cxc' },
         { codigo: '11080', nombre: 'IVA crédito fiscal', tipo: 'activo', grupo: 'impuestos' },
         { codigo: '11085', nombre: 'Remanente crédito fiscal IVA', tipo: 'activo', grupo: 'impuestos' },
@@ -15,6 +17,7 @@
         { codigo: '12010', nombre: 'Maquinaria y equipos (activo fijo)', tipo: 'activo', grupo: 'activo_fijo' },
         { codigo: '12015', nombre: 'Depreciación acumulada activo fijo', tipo: 'pasivo', grupo: 'complementaria' },
         { codigo: '21010', nombre: 'Proveedores por pagar', tipo: 'pasivo', grupo: 'cxp' },
+        { codigo: '21015', nombre: 'Tarjeta de crédito corporativa por pagar', tipo: 'pasivo', grupo: 'financiero' },
         { codigo: '21025', nombre: 'Honorarios por pagar', tipo: 'pasivo', grupo: 'honorarios' },
         { codigo: '21030', nombre: 'Remuneraciones por pagar', tipo: 'pasivo', grupo: 'laboral' },
         { codigo: '21035', nombre: 'Cotizaciones previsionales por pagar', tipo: 'pasivo', grupo: 'laboral' },
@@ -686,6 +689,9 @@
         if (mov && mov.cuentaContrapartida) return String(mov.cuentaContrapartida).trim();
         var gl = String((mov && mov.glosa) || '').toLowerCase()
             .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (/traspaso|transferencia propia|entre cuentas|fondos en transito|mismo titular/.test(gl)) return '11018';
+        if (/desde caja|a caja|deposito caja|caja menor/.test(gl)) return '11012';
+        if (/tarjeta de credito|pago tc|visa|mastercard|amex/.test(gl)) return '21015';
         var esAbono = mov && mov.tipo === 'abono';
         if (esAbono) {
             if (/venta|boleta|transbank|getnet|flow|webpay|mercadopago/.test(gl)) return '11050';
