@@ -229,10 +229,12 @@
     }
 
     function avisar(texto) {
+        var esSyn = !!document.querySelector('#pm-panel.syn-theme');
         var caja = document.createElement('div');
+        caja.className = esSyn ? 'cl-toast cl-toast-syn' : 'cl-toast';
         caja.textContent = texto;
         caja.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:99;' +
-            'background:#00382E;color:#fff;padding:10px 16px;border-radius:10px;font:600 13px/1.4 Geist,system-ui;box-shadow:0 8px 24px rgba(0,0,0,.18)';
+            'background:' + (esSyn ? '#141518' : '#00382E') + ';color:#fff;padding:10px 16px;border-radius:10px;font:600 13px/1.4 Geist,system-ui;box-shadow:0 8px 24px rgba(0,0,0,.18)';
         document.body.appendChild(caja);
         setTimeout(function () { caja.remove(); }, 3200);
     }

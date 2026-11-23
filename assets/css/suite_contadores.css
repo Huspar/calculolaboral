@@ -6028,24 +6028,35 @@
 }
 
 /* ---------- Cabecera Única Compacta (.syn-topbar) ---------- */
+#pm-panel.syn-theme .app-main {
+    min-width: 0;
+    overflow-x: clip;
+}
 #pm-panel.syn-theme .syn-topbar {
     position: sticky;
     top: 0;
     z-index: 42;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     min-height: 58px;
     height: auto;
-    padding: 8px 20px;
+    padding: 8px 16px;
     background: var(--syn-surface);
     border-bottom: 1px solid var(--syn-border);
     display: flex;
     align-items: center;
-    gap: 10px 14px;
+    gap: 8px 10px;
     flex-wrap: nowrap;
+}
+#pm-panel.syn-theme .syn-topbar > * {
+    min-width: 0;
 }
 .syn-top-izq {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    flex: 0 1 auto;
     min-width: 0;
 }
 .syn-breadcrumb {
@@ -6054,10 +6065,11 @@
     gap: 6px;
     font-size: 13px;
     white-space: nowrap;
+    min-width: 0;
 }
 .syn-bc-estudio {
     color: var(--syn-muted);
-    max-width: 110px;
+    max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -6067,13 +6079,19 @@
 .syn-bc-mod {
     color: var(--syn-ink);
     font-weight: 600;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .syn-ctx-trigger {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     min-height: 36px;
-    max-width: 260px;
+    max-width: 185px;
+    min-width: 0;
+    overflow: hidden;
+    flex: 0 1 auto;
     padding: 0 10px;
     border-radius: 9px;
     border: 1px solid var(--syn-border);
@@ -6107,9 +6125,29 @@
 /* Buscador global */
 .syn-search-wrap {
     position: relative;
-    flex: 1 1 200px;
-    max-width: 280px;
-    min-width: 140px;
+    flex: 1 1 150px;
+    max-width: 220px;
+    min-width: 115px;
+}
+#pm-panel.syn-theme .app-mes {
+    gap: 2px;
+    flex: 0 0 auto;
+}
+#pm-panel.syn-theme .app-mes select {
+    max-width: 128px;
+    font-size: 13px;
+}
+#pm-panel.syn-theme .app-top-der {
+    gap: 6px;
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+#pm-panel.syn-theme .app-cuenta {
+    gap: 6px;
+}
+#pm-panel.syn-theme .balance-ocho th,
+#pm-panel.syn-theme .balance-ocho td {
+    padding: 8px 9px;
 }
 .syn-search-ico {
     position: absolute;
@@ -6660,11 +6698,11 @@
 .syn-chart-canvas {
     position: relative;
     width: 100%;
-    min-height: 196px;
+    min-height: 232px;
 }
 .syn-chart-svg {
     width: 100%;
-    height: 190px;
+    height: 230px;
     display: block;
     overflow: visible;
 }
@@ -6946,7 +6984,32 @@ dialog.syn-modal[open] {
     }
 }
 
-/* ---------- Responsive Synchro (Tablet y Móvil >= 360px) ---------- */
+/* ---------- Responsive Synchro (Desktop compacto <= 1420px, Tablet y Móvil >= 360px) ---------- */
+@media screen and (max-width: 1420px) {
+    #pm-panel.syn-theme .syn-bc-estudio,
+    #pm-panel.syn-theme .syn-bc-sep,
+    #pm-panel.syn-theme #suite-avance-modulos,
+    #pm-panel.syn-theme #cuenta-estado,
+    #pm-panel.syn-theme .cloud-sync-txt,
+    #pm-panel.syn-theme #btn-equipo-estudio .top-btn-txt {
+        display: none;
+    }
+    #pm-panel.syn-theme .syn-ctx-trigger {
+        max-width: 162px;
+    }
+    #pm-panel.syn-theme .syn-ctx-trigger-meta {
+        display: none;
+    }
+    #pm-panel.syn-theme #suite-estado-badge {
+        padding: 4px 8px;
+        font-size: 11.5px;
+    }
+    #pm-panel.syn-theme #cloud-sync-pill,
+    #pm-panel.syn-theme #btn-equipo-estudio {
+        padding: 0 8px;
+        min-width: 34px;
+    }
+}
 @media screen and (max-width: 1120px) {
     .syn-dash-grid {
         grid-template-columns: minmax(0, 1fr);

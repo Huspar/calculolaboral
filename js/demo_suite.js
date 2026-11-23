@@ -1238,9 +1238,9 @@
         var cols = cfg.cols || [];
         var maxV = cols.reduce(function (mx, c) { return Math.max(mx, c.v1 || 0, c.v2 || 0, 1); }, 1);
         var w = 540;
-        var h = 190;
-        var baseY = 156;
-        var chartH = 128;
+        var h = 230;
+        var baseY = 196;
+        var chartH = 108;
         var colW = w / (cols.length || 1);
         var barW = Math.max(10, Math.min(20, Math.floor(colW * 0.24)));
         var gapB = 4;
@@ -1253,15 +1253,16 @@
             var f2 = c.tieneDatos ? 'var(--syn-accent)' : '#CBD5E1';
             var x1 = Math.round(cx - barW - gapB / 2);
             var x2 = Math.round(cx + gapB / 2);
+            var topPct = Math.round(((baseY - Math.max(h1, h2)) / h) * 100);
             return '<g class="syn-chart-col' + (c.activo ? ' activo' : '') + '" tabindex="0" role="button" ' +
-                'data-syn-col="' + i + '" data-syn-cx="' + Math.round((cx / w) * 100) + '" data-syn-top="' + Math.round(((baseY - Math.max(h1, h2)) / h) * 100) + '" ' +
+                'data-syn-col="' + i + '" data-syn-cx="' + Math.round((cx / w) * 100) + '" data-syn-top="' + topPct + '" ' +
                 'data-syn-lbl="' + D.esc(c.label + ' ' + c.periodo.slice(0, 4)) + '" ' +
                 'data-syn-v1="' + D.esc(D.money(c.v1)) + '" data-syn-v2="' + D.esc(D.money(c.v2)) + '" ' +
                 'aria-label="' + D.esc(c.label + ' ' + c.periodo.slice(0, 4) + ': ' + cfg.lbl1 + ' ' + D.money(c.v1) + ', ' + cfg.lbl2 + ' ' + D.money(c.v2)) + '">' +
-                '<rect class="syn-chart-col-bg" x="' + (i * colW + 4) + '" y="10" width="' + Math.max(16, colW - 8) + '" height="' + (baseY - 4) + '" rx="8"></rect>' +
+                '<rect class="syn-chart-col-bg" x="' + (i * colW + 4) + '" y="76" width="' + Math.max(16, colW - 8) + '" height="' + (baseY - 70) + '" rx="8"></rect>' +
                 '<rect x="' + x1 + '" y="' + (baseY - h1) + '" width="' + barW + '" height="' + h1 + '" rx="5" fill="' + f1 + '"></rect>' +
                 '<rect x="' + x2 + '" y="' + (baseY - h2) + '" width="' + barW + '" height="' + h2 + '" rx="5" fill="' + f2 + '"></rect>' +
-                '<text x="' + cx + '" y="178" text-anchor="middle" font-size="12" font-weight="' + (c.activo ? '700' : '500') + '" fill="' + (c.activo ? '#0F172A' : '#475569') + '">' + D.esc(c.label) + '</text>' +
+                '<text x="' + cx + '" y="216" text-anchor="middle" font-size="12" font-weight="' + (c.activo ? '700' : '500') + '" fill="' + (c.activo ? '#0F172A' : '#475569') + '">' + D.esc(c.label) + '</text>' +
                 '</g>';
         }).join('');
 
@@ -1294,11 +1295,11 @@
         if (!wrap || !tt) return;
         function mostrar(col) {
             var cx = Number(col.getAttribute('data-syn-cx')) || 50;
-            var top = Math.max(24, Number(col.getAttribute('data-syn-top')) || 40);
+            var top = Math.max(36, Number(col.getAttribute('data-syn-top')) || 44);
             tt.innerHTML = '<div class="syn-chart-tt-titulo">' + D.esc(col.getAttribute('data-syn-lbl') || '') + '</div>' +
                 '<div class="syn-chart-tt-fila"><span class="syn-chart-tt-lbl"><span class="syn-chart-tt-dot" style="background:var(--syn-sage)"></span>' + D.esc(cfg.lbl1) + '</span><strong class="mono">' + D.esc(col.getAttribute('data-syn-v1') || '$0') + '</strong></div>' +
                 '<div class="syn-chart-tt-fila"><span class="syn-chart-tt-lbl"><span class="syn-chart-tt-dot" style="background:var(--syn-accent)"></span>' + D.esc(cfg.lbl2) + '</span><strong class="mono">' + D.esc(col.getAttribute('data-syn-v2') || '$0') + '</strong></div>';
-            tt.style.left = Math.max(18, Math.min(82, cx)) + '%';
+            tt.style.left = Math.max(16, Math.min(82, cx)) + '%';
             tt.style.top = top + '%';
             tt.hidden = false;
         }
