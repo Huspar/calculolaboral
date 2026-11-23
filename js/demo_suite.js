@@ -1295,11 +1295,11 @@
         if (!wrap || !tt) return;
         function mostrar(col) {
             var cx = Number(col.getAttribute('data-syn-cx')) || 50;
-            var top = Math.max(36, Number(col.getAttribute('data-syn-top')) || 44);
+            var top = Math.max(40, Number(col.getAttribute('data-syn-top')) || 46);
             tt.innerHTML = '<div class="syn-chart-tt-titulo">' + D.esc(col.getAttribute('data-syn-lbl') || '') + '</div>' +
                 '<div class="syn-chart-tt-fila"><span class="syn-chart-tt-lbl"><span class="syn-chart-tt-dot" style="background:var(--syn-sage)"></span>' + D.esc(cfg.lbl1) + '</span><strong class="mono">' + D.esc(col.getAttribute('data-syn-v1') || '$0') + '</strong></div>' +
                 '<div class="syn-chart-tt-fila"><span class="syn-chart-tt-lbl"><span class="syn-chart-tt-dot" style="background:var(--syn-accent)"></span>' + D.esc(cfg.lbl2) + '</span><strong class="mono">' + D.esc(col.getAttribute('data-syn-v2') || '$0') + '</strong></div>';
-            tt.style.left = Math.max(16, Math.min(82, cx)) + '%';
+            tt.style.left = Math.max(18, Math.min(76, cx)) + '%';
             tt.style.top = top + '%';
             tt.hidden = false;
         }
