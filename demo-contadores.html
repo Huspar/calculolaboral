@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.25.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.26.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -80,27 +80,19 @@
         <span class="app-nav-chip" id="nav-ddjj-at">AT 2026</span>
       </button>
 
-      <p class="app-nav-grupo">Contabilidad y Tesorería</p>
+      <p class="app-nav-grupo">Contabilidad y Finanzas</p>
       <button type="button" class="suite-mod-btn" data-modulo="bancos" aria-current="false">
         <span class="material-icons" aria-hidden="true">sync_alt</span>
         <span>Bancos y Cartolas</span>
         <span class="app-nav-chip" id="nav-bancos-pct">0%</span>
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="libros" aria-current="false">
-        <span class="material-icons" aria-hidden="true">menu_book</span>
-        <span>Contabilidad General</span>
-      </button>
-      <button type="button" class="suite-mod-btn" data-modulo="balance" aria-current="false">
-        <span class="material-icons" aria-hidden="true">table_chart</span>
-        <span>Balance Tributario y RLI</span>
-      </button>
-      <button type="button" class="suite-mod-btn" data-modulo="pnl" aria-current="false">
-        <span class="material-icons" aria-hidden="true">assessment</span>
-        <span>Estados Financieros</span>
+        <span class="material-icons" aria-hidden="true">account_balance</span>
+        <span>Contabilidad y Balance</span>
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="reportes" aria-current="false">
         <span class="material-icons" aria-hidden="true">picture_as_pdf</span>
-        <span>Informes y Certificados</span>
+        <span>Informes y Portal</span>
       </button>
     </nav>
 
@@ -1190,6 +1182,7 @@
 
         <!-- Subvista Cartera CxC / CxP (Aging) -->
         <div id="sub-bancos-cartera" hidden>
+          <div class="suite-graf-card" id="aging-grafico-resumen" aria-label="Comparación visual de Antigüedad CxC y CxP"></div>
           <div class="fin-cols-2 fin-cols-2-tablas">
             <div class="panel">
               <div class="panel-head"><div><h2>Antigüedad Cuentas por Cobrar (CxC)</h2><p class="panel-ayuda" id="aging-cxc-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
@@ -1262,6 +1255,11 @@
 
       <!-- ==================== VISTA 4: CONTABILIDAD GENERAL ==================== -->
       <section class="vista" id="suite-libros" hidden>
+        <div class="conta-master-tabs" role="navigation" aria-label="Secciones de Contabilidad y Balance">
+          <button type="button" class="conta-master-tab activo" data-conta-ir="libros"><span class="material-icons" aria-hidden="true">menu_book</span>Libros y Plan</button>
+          <button type="button" class="conta-master-tab" data-conta-ir="balance"><span class="material-icons" aria-hidden="true">table_chart</span>Balance 8 Col. y RLI</button>
+          <button type="button" class="conta-master-tab" data-conta-ir="pnl"><span class="material-icons" aria-hidden="true">assessment</span>Estados Financieros</button>
+        </div>
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Contabilidad General</h1>
@@ -1388,6 +1386,11 @@
 
       <!-- ==================== VISTA 4: BALANCE Y RLI ==================== -->
       <section class="vista" id="suite-balance" hidden>
+        <div class="conta-master-tabs" role="navigation" aria-label="Secciones de Contabilidad y Balance">
+          <button type="button" class="conta-master-tab" data-conta-ir="libros"><span class="material-icons" aria-hidden="true">menu_book</span>Libros y Plan</button>
+          <button type="button" class="conta-master-tab activo" data-conta-ir="balance"><span class="material-icons" aria-hidden="true">table_chart</span>Balance 8 Col. y RLI</button>
+          <button type="button" class="conta-master-tab" data-conta-ir="pnl"><span class="material-icons" aria-hidden="true">assessment</span>Estados Financieros</button>
+        </div>
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Balance Tributario (8 Columnas) y RLI</h1>
@@ -1626,6 +1629,11 @@
 
       <!-- ==================== VISTA 5: RESULTADOS Y FLUJO ==================== -->
       <section class="vista" id="suite-pnl" hidden>
+        <div class="conta-master-tabs" role="navigation" aria-label="Secciones de Contabilidad y Balance">
+          <button type="button" class="conta-master-tab" data-conta-ir="libros"><span class="material-icons" aria-hidden="true">menu_book</span>Libros y Plan</button>
+          <button type="button" class="conta-master-tab" data-conta-ir="balance"><span class="material-icons" aria-hidden="true">table_chart</span>Balance 8 Col. y RLI</button>
+          <button type="button" class="conta-master-tab activo" data-conta-ir="pnl"><span class="material-icons" aria-hidden="true">assessment</span>Estados Financieros</button>
+        </div>
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Estados Financieros (Resultados y Flujo)</h1>
@@ -1712,12 +1720,13 @@
           </div>
         </div>
 
-        <div class="fin-kpis fin-kpis-4" style="margin-bottom:16px">
+        <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
           <div class="fin-kpi"><span class="fin-kpi-label">Clientes en estudio</span><span class="fin-kpi-val mono" id="torre-k-clientes">0</span></div>
-          <div class="fin-kpi"><span class="fin-kpi-label">Períodos abiertos</span><span class="fin-kpi-val mono" id="torre-k-abiertos">0</span></div>
-          <div class="fin-kpi"><span class="fin-kpi-label">Períodos cerrados</span><span class="fin-kpi-val mono ok" id="torre-k-cerrados">0</span></div>
+          <div class="fin-kpi" id="torre-kpi-card-abiertos"><span class="fin-kpi-label">Períodos abiertos</span><span class="fin-kpi-val mono" id="torre-k-abiertos">0</span></div>
+          <div class="fin-kpi" id="torre-kpi-card-cerrados"><span class="fin-kpi-label">Períodos cerrados</span><span class="fin-kpi-val mono ok" id="torre-k-cerrados">0</span></div>
           <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">F29 consolidado (cód. 91)</span><span class="fin-kpi-val mono" id="torre-k-f29total">$0</span></div>
         </div>
+        <div class="suite-graf-card" id="torre-grafico-resumen" aria-label="Avance gráfico de declaraciones en cartera"></div>
 
         <div class="panel torre-alertas-panel" id="torre-alertas-panel" style="margin-bottom:16px">
           <div class="panel-head">
@@ -1994,15 +2003,30 @@
           </div>
         </div>
 
-        <div class="fin-filtros ddjj-filtros" role="tablist" aria-label="Declaraciones Juradas disponibles">
-          <button type="button" class="fin-chip activo" data-subddjj="1887" role="tab" aria-selected="true" aria-controls="subddjj-1887">DJ 1887 y Cert. N°6</button>
-          <button type="button" class="fin-chip" data-subddjj="1879" role="tab" aria-selected="false" aria-controls="subddjj-1879">DJ 1879 y Cert. N°1</button>
-          <button type="button" class="fin-chip" data-subddjj="1947" role="tab" aria-selected="false" aria-controls="subddjj-1947">DJ 1947 / 1948</button>
-          <button type="button" class="fin-chip" data-subddjj="1847" role="tab" aria-selected="false" aria-controls="subddjj-1847">DJ 1847 Balance</button>
-          <button type="button" class="fin-chip" data-subddjj="1926" role="tab" aria-selected="false" aria-controls="subddjj-1926">DJ 1926 RLI</button>
-          <button type="button" class="fin-chip" data-subddjj="1837" role="tab" aria-selected="false" aria-controls="subddjj-1837">DJ 1837 PPM Socios</button>
-          <button type="button" class="fin-chip" data-subddjj="cpt" role="tab" aria-selected="false" aria-controls="subddjj-cpt">CPT Simplificado</button>
-          <button type="button" class="fin-chip" data-subddjj="f22" role="tab" aria-selected="false" aria-controls="subddjj-f22">Propuesta F22 (IDPC vs PPM)</button>
+        <div class="ddjj-grupos-grid" role="tablist" aria-label="Declaraciones Juradas disponibles">
+          <div class="ddjj-grupo-box">
+            <span class="ddjj-grupo-lbl">Sueldos y Honorarios</span>
+            <div class="ddjj-grupo-chips">
+              <button type="button" class="fin-chip activo" data-subddjj="1887" role="tab" aria-selected="true" aria-controls="subddjj-1887"><span>DJ 1887</span><span class="ddjj-chip-est" id="ddjj-st-1887">Pendiente</span></button>
+              <button type="button" class="fin-chip" data-subddjj="1879" role="tab" aria-selected="false" aria-controls="subddjj-1879"><span>DJ 1879</span><span class="ddjj-chip-est" id="ddjj-st-1879">Pendiente</span></button>
+            </div>
+          </div>
+          <div class="ddjj-grupo-box">
+            <span class="ddjj-grupo-lbl">Patrimonio, RLI y Socios</span>
+            <div class="ddjj-grupo-chips">
+              <button type="button" class="fin-chip" data-subddjj="1947" role="tab" aria-selected="false" aria-controls="subddjj-1947"><span>DJ 1947 / 1948</span><span class="ddjj-chip-est" id="ddjj-st-194x">DJ 1948</span></button>
+              <button type="button" class="fin-chip" data-subddjj="1847" role="tab" aria-selected="false" aria-controls="subddjj-1847"><span>DJ 1847 Balance</span><span class="ddjj-chip-est" id="ddjj-st-1847">Opcional</span></button>
+              <button type="button" class="fin-chip" data-subddjj="1926" role="tab" aria-selected="false" aria-controls="subddjj-1926"><span>DJ 1926 RLI</span><span class="ddjj-chip-est" id="ddjj-st-1926">Opcional</span></button>
+              <button type="button" class="fin-chip" data-subddjj="1837" role="tab" aria-selected="false" aria-controls="subddjj-1837"><span>DJ 1837 PPM</span><span class="ddjj-chip-est" id="ddjj-st-1837">Aplica</span></button>
+            </div>
+          </div>
+          <div class="ddjj-grupo-box">
+            <span class="ddjj-grupo-lbl">Cierre Anual y F22</span>
+            <div class="ddjj-grupo-chips">
+              <button type="button" class="fin-chip" data-subddjj="cpt" role="tab" aria-selected="false" aria-controls="subddjj-cpt"><span>CPT Simplif.</span><span class="ddjj-chip-est" id="ddjj-st-cpt">Calculado</span></button>
+              <button type="button" class="fin-chip" data-subddjj="f22" role="tab" aria-selected="false" aria-controls="subddjj-f22"><span>Propuesta F22</span><span class="ddjj-chip-est" id="ddjj-st-f22">Favor</span></button>
+            </div>
+          </div>
         </div>
 
         <div class="panel ddjj-sii-panel" id="ddjj-sii-estado-panel" hidden style="margin-bottom:16px">
@@ -3436,7 +3460,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.4.0"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=2.18.0"></script>
+<script src="/js/demo_suite.js?v=2.19.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

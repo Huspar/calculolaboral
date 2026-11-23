@@ -1707,9 +1707,15 @@
             if (mapPanes[k]) mapPanes[k].hidden = (k !== modNorm);
         });
         Array.prototype.forEach.call(document.querySelectorAll('.suite-mod-btn'), function (b) {
-            var act = b.getAttribute('data-modulo') === modNorm;
+            var mBtn = b.getAttribute('data-modulo');
+            var act = (mBtn === modNorm) || (mBtn === 'libros' && (modNorm === 'balance' || modNorm === 'pnl'));
             b.classList.toggle('activo', act);
             b.setAttribute('aria-current', act ? 'page' : 'false');
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('.conta-master-tab[data-conta-ir]'), function (tBtn) {
+            var actT = tBtn.getAttribute('data-conta-ir') === modNorm;
+            tBtn.classList.toggle('activo', actT);
+            tBtn.setAttribute('aria-current', actT ? 'page' : 'false');
         });
         if (!opts || !opts.sinHash) {
             var targetHash = '#' + modNorm;
@@ -1915,12 +1921,35 @@
         });
 
         var cerrados = lista.filter(function (x) { return x.cerrado; }).length;
+        var borradores = lista.filter(function (x) { return !x.cerrado && x.f29Listo; }).length;
+        var sinDatosT = Math.max(0, lista.length - cerrados - borradores);
         var f29Sum = lista.reduce(function (s, x) { return s + x.f29Total; }, 0);
         if ($('nav-count-clientes')) $('nav-count-clientes').textContent = lista.length;
         if ($('torre-k-clientes')) $('torre-k-clientes').textContent = lista.length;
         if ($('torre-k-abiertos')) $('torre-k-abiertos').textContent = Math.max(0, lista.length - cerrados);
         if ($('torre-k-cerrados')) $('torre-k-cerrados').textContent = cerrados;
         if ($('torre-k-f29total')) $('torre-k-f29total').textContent = D.money(f29Sum);
+        aplicarEstadoKpiCard('torre-kpi-card-cerrados', cerrados > 0 ? 'fin-kpi-ok' : 'fin-kpi-warn');
+        aplicarEstadoKpiCard('torre-kpi-card-abiertos', (lista.length - cerrados) > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok');
+
+        if ($('torre-grafico-resumen')) {
+            var totT = lista.length || 1;
+            var pctOk = Math.round((cerrados / totT) * 100);
+            var pctBorr = Math.round((borradores / totT) * 100);
+            var pctPend = Math.max(0, 100 - pctOk - pctBorr);
+            $('torre-grafico-resumen').innerHTML =
+                '<div class="suite-graf-titulo"><span>Avance de cierre mensual de la cartera</span><span class="suite-graf-sub mono">' + cerrados + ' / ' + lista.length + ' cerradas (' + pctOk + '%)</span></div>' +
+                '<div class="torre-seg-barra" role="img" aria-label="Cerradas: ' + cerrados + ', Borrador listo: ' + borradores + ', Sin declarar: ' + sinDatosT + '">' +
+                '<div class="torre-seg-tramo torre-seg-ok" style="width:' + pctOk + '%"></div>' +
+                '<div class="torre-seg-tramo torre-seg-warn" style="width:' + pctBorr + '%"></div>' +
+                '<div class="torre-seg-tramo torre-seg-pend" style="width:' + pctPend + '%"></div>' +
+                '</div>' +
+                '<div class="torre-seg-leyenda">' +
+                '<span>Declarados / Cerrados: <strong class="mono">' + cerrados + '</strong></span>' +
+                '<span>Borrador listo: <strong class="mono">' + borradores + '</strong></span>' +
+                '<span>Sin declarar: <strong class="mono">' + sinDatosT + '</strong></span>' +
+                '</div>';
+        }
 
         var tbody = $('tbody-torre-clientes');
         if (tbody) {
@@ -2036,6 +2065,27 @@
         pintarPropuestaF22(m);
         renderStripCobertura('ddjj-cobertura-strip', m.anual, m.periodo);
         var d = m.ddjj || {};
+        function setStDdjj(id, txt, cls) {
+            var el = $(id);
+            if (!el) return;
+            el.textContent = txt;
+            el.className = 'ddjj-chip-est' + (cls ? ' ' + cls : '');
+        }
+        var ok87 = !!(d.dj1887 && Array.isArray(d.dj1887.filas) && d.dj1887.filas.length > 0);
+        var ok79 = !!(d.dj1879 && Array.isArray(d.dj1879.filas) && d.dj1879.filas.length > 0);
+        var ok47 = !!(d.dj1847 && d.dj1847.filas && d.dj1847.filas.length > 0);
+        var ob47 = !!(d.dj1847 && d.dj1847.obligado);
+        var ok26 = !!(d.dj1926 && d.dj1926.filas && d.dj1926.filas.length > 0);
+        var ap37 = !!(d.dj1837 && d.dj1837.aplica);
+        setStDdjj('ddjj-st-1887', ok87 ? (d.dj1887.filas.length + ' trab.') : 'Pendiente', ok87 ? 'est-ok' : 'est-warn');
+        setStDdjj('ddjj-st-1879', ok79 ? (d.dj1879.filas.length + ' BHE') : 'Pendiente', ok79 ? 'est-ok' : 'est-warn');
+        setStDdjj('ddjj-st-194x', (d.dj194x && d.dj194x.ok) ? ('DJ ' + d.dj194x.codigoDj) : 'Ref.', (d.dj194x && d.dj194x.ok) ? 'est-ok' : '');
+        setStDdjj('ddjj-st-1847', ob47 ? (ok47 ? 'Oblig.' : 'Pend.') : 'Opcional', ob47 && !ok47 ? 'est-warn' : (ok47 ? 'est-ok' : ''));
+        setStDdjj('ddjj-st-1926', ob47 ? (ok26 ? 'Oblig.' : 'Pend.') : 'Opcional', ob47 && !ok26 ? 'est-warn' : (ok26 ? 'est-ok' : ''));
+        setStDdjj('ddjj-st-1837', ap37 ? 'Aplica' : 'Excluida', ap37 ? 'est-ok' : '');
+        setStDdjj('ddjj-st-cpt', d.cpt ? 'Calculado' : 'Ref.', d.cpt ? 'est-ok' : '');
+        setStDdjj('ddjj-st-f22', m.f22 ? (m.f22.saldoAPagar > 0 ? 'Paga' : 'Favor') : 'Ref.', m.f22 ? (m.f22.saldoAPagar > 0 ? 'est-warn' : 'est-ok') : '');
+
         var barDdjj = $('ddjj-preval-bar');
         if (barDdjj) {
             var rutCli = (window.CLDemoSii && window.CLDemoSii.rutDeCliente && window.CLDemoSii.rutDeCliente(clienteNombre())) || ($('liq-rut-empresa') && $('liq-rut-empresa').value.trim()) || '';
@@ -2359,6 +2409,20 @@
         if ($('aging-cxp-buckets')) {
             var bp = aging.cxp.buckets;
             $('aging-cxp-buckets').textContent = '0-30d: ' + D.money(bp.dias_0_30) + ' · 31-60d: ' + D.money(bp.dias_31_60) + ' · +60d: ' + D.money(bp.dias_mas_60);
+        }
+        if ($('aging-grafico-resumen')) {
+            var bCxC = aging.cxc.buckets || {};
+            var bCxP = aging.cxp.buckets || {};
+            $('aging-grafico-resumen').innerHTML = renderBarrasHtml(
+                'Distribución por antigüedad CxC / CxP',
+                'Saldos RCV pendientes descontando conciliados y abonos parciales',
+                [
+                    { label: 'CxC 0-30 días (vigente)', valor: bCxC.dias_0_30 || 0, cls: 'fill-ok' },
+                    { label: 'CxC +31 días (cobranza)', valor: (bCxC.dias_31_60 || 0) + (bCxC.dias_mas_60 || 0), cls: 'fill-warn' },
+                    { label: 'CxP 0-30 días (por pagar)', valor: bCxP.dias_0_30 || 0, cls: 'fill-info' },
+                    { label: 'CxP +31 días (vencida)', valor: (bCxP.dias_31_60 || 0) + (bCxP.dias_mas_60 || 0), cls: 'fill-risk' }
+                ]
+            );
         }
         if ($('tbody-aging-cxp')) {
             var listaCxp = aging.cxp.todosItems || aging.cxp.items || [];
@@ -3532,6 +3596,21 @@
                 }, 0);
             });
         }
+        document.addEventListener('click', function (ev) {
+            var panel = $('ctx-cliente-edicion');
+            if (!panel || panel.hidden) return;
+            if (!ev.target.closest('.suite-ctx-grupo')) {
+                alternarPanelCliente(false);
+            }
+        });
+        document.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Escape') alternarPanelCliente(false);
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('.conta-master-tab[data-conta-ir]'), function (tBtn) {
+            tBtn.addEventListener('click', function () {
+                cambiarModulo(tBtn.getAttribute('data-conta-ir'));
+            });
+        });
 
         // Subpestañas Bancos y Conciliación
         Array.prototype.forEach.call(document.querySelectorAll('[data-subbanco]'), function (btn) {

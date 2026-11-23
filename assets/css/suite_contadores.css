@@ -5243,6 +5243,180 @@
         min-height: 44px;
     }
 }
+
+/* ==========================================================================
+   ETAPA 2 REDISEÑO UI: POPOVER CLIENTE, SUB-TABS CONTABILIDAD, GRUPOS DDJJ Y CARTERA
+   ========================================================================== */
+@media screen and (min-width: 769px) {
+    .suite-ctx-grupo {
+        position: relative;
+    }
+    .suite-ctx-edicion {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        z-index: 45;
+        width: min(560px, 86vw);
+        background: var(--surface);
+        border: 1px solid var(--line-2);
+        border-radius: var(--radius-md);
+        padding: 12px 14px;
+        box-shadow: 0 14px 32px rgba(0, 38, 31, 0.16);
+        margin-top: 0;
+    }
+}
+
+/* Barra unificada de Contabilidad / Balance / Estados Financieros */
+.conta-master-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+}
+.conta-master-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    min-height: 38px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.conta-master-tab:hover {
+    background: var(--surface);
+    color: var(--forest);
+}
+.conta-master-tab.activo {
+    background: var(--forest);
+    color: #FFFFFF;
+}
+.conta-master-tab .material-icons {
+    font-size: 17px;
+}
+
+/* Agrupación visual de las 8 pestañas DDJJ con indicador de estado */
+.ddjj-grupos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.ddjj-grupo-box {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    display: grid;
+    gap: 6px;
+    align-content: start;
+}
+.ddjj-grupo-lbl {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+}
+.ddjj-grupo-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.ddjj-grupo-chips .fin-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    padding: 6px 10px;
+}
+.ddjj-chip-est {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(100, 116, 139, 0.14);
+    color: #475569;
+}
+.ddjj-chip-est.est-ok {
+    background: #DCFCE7;
+    color: #166534;
+}
+.ddjj-chip-est.est-warn {
+    background: #FEF3C7;
+    color: #92400E;
+}
+.fin-chip.activo .ddjj-chip-est {
+    background: rgba(255, 255, 255, 0.22);
+    color: #FFFFFF;
+}
+
+/* Barra segmentada Cartera (Torre de Control) */
+.torre-seg-barra {
+    height: 14px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    display: flex;
+}
+.torre-seg-tramo {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+.torre-seg-ok { background: #0F766E; }
+.torre-seg-warn { background: #D97706; }
+.torre-seg-pend { background: #94A3B8; }
+.torre-seg-leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    font-size: 12px;
+    color: var(--ink-2);
+}
+.torre-seg-leyenda strong {
+    color: var(--ink);
+}
+
+@media screen and (max-width: 960px) {
+    .ddjj-grupos-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+@media screen and (max-width: 768px) {
+    .conta-master-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        scrollbar-width: none;
+    }
+    .conta-master-tabs::-webkit-scrollbar { display: none; }
+    .conta-master-tab {
+        flex: 0 0 auto;
+        min-height: 44px;
+        white-space: nowrap;
+    }
+    .ddjj-grupo-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+    .ddjj-grupo-chips::-webkit-scrollbar { display: none; }
+    .ddjj-grupo-chips .fin-chip {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        min-height: 44px;
+    }
+}
 @media screen and (max-width: 640px) {
     .traza-mov-fila {
         grid-template-columns: minmax(0, 1fr);
