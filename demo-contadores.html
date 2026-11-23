@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.24.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.25.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -182,68 +182,80 @@
 
     <!-- Barra de Contexto del Cliente Activo -->
     <section class="suite-context-bar" id="suite-context-bar" aria-label="Contexto del cliente activo">
-      <div class="suite-ctx-grupo">
-        <div class="suite-cliente-picker">
-          <div class="suite-cliente-identidad" title="Cliente activo en este período">
-            <span class="material-icons suite-cliente-icono" aria-hidden="true">business</span>
-            <span id="ctx-cliente-display" class="suite-cliente-nombre">Cliente en demostración</span>
-            <span id="ctx-rut-display" class="suite-rut-chip sin-rut mono">Sin RUT</span>
-          </div>
-          <label class="sr-only" for="liq-clientes-guardados">Cambiar de cliente guardado</label>
-          <select id="liq-clientes-guardados" class="suite-ctx-select">
-            <option value="">Clientes guardados (0)</option>
-          </select>
-          <button type="button" class="btn btn-chico suite-ctx-btn-icono" id="btn-editar-cliente-trigger" aria-expanded="false" aria-controls="ctx-cliente-edicion" title="Editar nombre o RUT del cliente activo">
-            <span class="material-icons" aria-hidden="true">edit</span><span>Editar</span>
-          </button>
-          <button type="button" class="btn btn-chico suite-ctx-btn-icono" id="btn-nuevo-cliente-trigger" aria-expanded="false" aria-controls="ctx-cliente-edicion" title="Crear o registrar un nuevo cliente">
-            <span class="material-icons" aria-hidden="true">add_business</span><span>Nuevo</span>
-          </button>
+      <div class="suite-ctx-movil-bar">
+        <div class="suite-ctx-movil-resumen">
+          <span class="material-icons" aria-hidden="true">business</span>
+          <strong id="ctx-movil-cliente">Panadería San Isidro SpA</strong>
+          <span class="mono" id="ctx-movil-meta">14 D3 · UF $41.439</span>
         </div>
-        <div class="suite-ctx-edicion" id="ctx-cliente-edicion" hidden>
-          <label class="suite-ctx-label" for="liq-cliente">Razón social:</label>
-          <input type="text" id="liq-cliente" class="suite-ctx-input" value="Panadería San Isidro SpA" placeholder="Nombre o razón social">
-          <label class="sr-only" for="liq-rut">RUT de la empresa</label>
-          <input type="text" id="liq-rut" class="suite-ctx-input suite-ctx-rut" placeholder="RUT empresa (ej. 76.543.210-3)" maxlength="12" autocomplete="off">
-          <button type="button" class="btn btn-chico btn-primario suite-ctx-btn-save" id="btn-guardar-cliente">
-            <span class="material-icons" aria-hidden="true">save</span><span>Guardar cliente</span>
-          </button>
-        </div>
+        <button type="button" class="btn btn-chico suite-ctx-movil-toggle" id="btn-ctx-movil-toggle" aria-expanded="false" aria-controls="suite-ctx-cuerpo">
+          <span class="material-icons" aria-hidden="true">tune</span><span>Cliente / Cerrar</span>
+        </button>
       </div>
-      <div class="suite-ctx-acciones">
-        <div class="suite-ctx-sii-wrap">
-          <button type="button" class="sii-pill-estado" id="btn-ctx-sii-estado" aria-haspopup="dialog" title="Configurar conexión SII de esta empresa">
-            <span class="material-icons" aria-hidden="true">folder_open</span>
-            <span class="sii-pill-txt">SII: Modo CSV</span>
+      <div class="suite-ctx-cuerpo" id="suite-ctx-cuerpo">
+        <div class="suite-ctx-grupo">
+          <div class="suite-cliente-picker">
+            <div class="suite-cliente-identidad" title="Cliente activo en este período">
+              <span class="material-icons suite-cliente-icono" aria-hidden="true">business</span>
+              <span id="ctx-cliente-display" class="suite-cliente-nombre">Cliente en demostración</span>
+              <span id="ctx-rut-display" class="suite-rut-chip sin-rut mono">Sin RUT</span>
+            </div>
+            <label class="sr-only" for="liq-clientes-guardados">Cambiar de cliente guardado</label>
+            <select id="liq-clientes-guardados" class="suite-ctx-select">
+              <option value="">Clientes guardados (0)</option>
+            </select>
+            <button type="button" class="btn btn-chico suite-ctx-btn-icono" id="btn-editar-cliente-trigger" aria-expanded="false" aria-controls="ctx-cliente-edicion" title="Editar nombre o RUT del cliente activo">
+              <span class="material-icons" aria-hidden="true">edit</span><span>Editar</span>
+            </button>
+            <button type="button" class="btn btn-chico suite-ctx-btn-icono" id="btn-nuevo-cliente-trigger" aria-expanded="false" aria-controls="ctx-cliente-edicion" title="Crear o registrar un nuevo cliente">
+              <span class="material-icons" aria-hidden="true">add_business</span><span>Nuevo</span>
+            </button>
+          </div>
+          <div class="suite-ctx-edicion" id="ctx-cliente-edicion" hidden>
+            <label class="suite-ctx-label" for="liq-cliente">Razón social:</label>
+            <input type="text" id="liq-cliente" class="suite-ctx-input" value="Panadería San Isidro SpA" placeholder="Nombre o razón social">
+            <label class="sr-only" for="liq-rut">RUT de la empresa</label>
+            <input type="text" id="liq-rut" class="suite-ctx-input suite-ctx-rut" placeholder="RUT empresa (ej. 76.543.210-3)" maxlength="12" autocomplete="off">
+            <button type="button" class="btn btn-chico btn-primario suite-ctx-btn-save" id="btn-guardar-cliente">
+              <span class="material-icons" aria-hidden="true">save</span><span>Guardar cliente</span>
+            </button>
+          </div>
+        </div>
+        <div class="suite-ctx-acciones">
+          <div class="suite-ctx-sii-wrap">
+            <button type="button" class="sii-pill-estado" id="btn-ctx-sii-estado" aria-haspopup="dialog" title="Configurar conexión SII de esta empresa">
+              <span class="material-icons" aria-hidden="true">folder_open</span>
+              <span class="sii-pill-txt">SII: Modo CSV</span>
+            </button>
+            <button type="button" class="btn btn-chico sii-btn-sync-quick" id="btn-ctx-sii-sync" hidden title="Sincronizar período actual desde SII" aria-label="Sincronizar período actual desde SII">
+              <span class="material-icons" aria-hidden="true">sync</span>
+            </button>
+          </div>
+          <div class="suite-regimen-fila">
+            <label for="suite-regimen" class="suite-regimen-label">Régimen SII:</label>
+            <select id="suite-regimen" class="suite-regimen-select">
+              <option value="14D3">ProPyme (14 D3)</option>
+              <option value="14D3_MAYOR">ProPyme &gt;50k UF</option>
+              <option value="14D8">Transparente (14 D8)</option>
+              <option value="14D8_MAYOR">Transparente &gt;50k UF</option>
+              <option value="14A">Semi Integrado (14 A)</option>
+            </select>
+          </div>
+          <button type="button" class="ctx-indicadores-pill" id="btn-ctx-indicadores" title="Indicadores vigentes del período · clic para ajustar">
+            <span class="material-icons" aria-hidden="true">currency_exchange</span>
+            <span>UF <strong class="mono" id="ctx-uf-val">-</strong></span>
+            <span class="ctx-ind-sep" aria-hidden="true">|</span>
+            <span>UTM <strong class="mono" id="ctx-utm-val">-</strong></span>
           </button>
-          <button type="button" class="btn btn-chico sii-btn-sync-quick" id="btn-ctx-sii-sync" hidden title="Sincronizar período actual desde SII" aria-label="Sincronizar período actual desde SII">
-            <span class="material-icons" aria-hidden="true">sync</span>
+          <button type="button" class="btn btn-chico suite-btn-cierre" id="btn-cierre-tributario">
+            <span class="material-icons" aria-hidden="true">lock</span>Cerrar período tributario
           </button>
         </div>
-        <div class="suite-regimen-fila">
-          <label for="suite-regimen" class="suite-regimen-label">Régimen SII:</label>
-          <select id="suite-regimen" class="suite-regimen-select">
-            <option value="14D3">ProPyme (14 D3)</option>
-            <option value="14D3_MAYOR">ProPyme &gt;50k UF</option>
-            <option value="14D8">Transparente (14 D8)</option>
-            <option value="14D8_MAYOR">Transparente &gt;50k UF</option>
-            <option value="14A">Semi Integrado (14 A)</option>
-          </select>
-        </div>
-        <button type="button" class="ctx-indicadores-pill" id="btn-ctx-indicadores" title="Indicadores vigentes del período · clic para ajustar">
-          <span class="material-icons" aria-hidden="true">currency_exchange</span>
-          <span>UF <strong class="mono" id="ctx-uf-val">-</strong></span>
-          <span class="ctx-ind-sep" aria-hidden="true">|</span>
-          <span>UTM <strong class="mono" id="ctx-utm-val">-</strong></span>
-        </button>
-        <button type="button" class="btn btn-chico suite-btn-cierre" id="btn-cierre-tributario">
-          <span class="material-icons" aria-hidden="true">lock</span>Cerrar período tributario
-        </button>
       </div>
     </section>
 
     <!-- Banner de Cierre Tributario Global -->
-    <div class="cierre-banner-bloqueo" id="suite-banner-bloqueo" hidden style="margin:16px 24px 0">
+    <div class="cierre-banner-bloqueo" id="suite-banner-bloqueo" hidden style="margin:12px 24px 0">
       <span class="material-icons" aria-hidden="true">lock</span>
       <p id="suite-banner-texto"></p>
       <button type="button" class="btn btn-chico" id="btn-reabrir-banner">Reabrir para rectificar</button>
@@ -252,12 +264,12 @@
     <!-- Contenido de Pantallas (.app-content) -->
     <main class="app-content" id="app-content">
 
-      <!-- Barra compacta Modo Demo Suite Contadores -->
+      <!-- Tira compacta Modo Demo (descartable, sin competir con acciones contables) -->
       <section class="suite-bar-compacta" id="suite-header-venta" aria-label="Información de modo demo y acceso anticipado">
         <div class="suite-bar-fila">
           <div class="suite-bar-izq">
             <span class="suite-bar-badge">Modo demo</span>
-            <p class="suite-bar-txt">Datos locales por defecto sin claves SII · Conexión SII automática opcional con sesión activa · <a href="/suite-contadores" class="suite-bar-link">Ver planes</a></p>
+            <p class="suite-bar-txt">Datos locales sin claves SII · <a href="/suite-contadores" class="suite-bar-link">Ver planes</a></p>
           </div>
           <div class="suite-bar-der">
             <button type="button" class="btn btn-chico" id="btn-cargar-ejemplo-todo" title="Carga datos reales en Nómina, Finiquitos, F29, BHE, Bancos, Balance, P&amp;L y DDJJ en un clic">
@@ -266,11 +278,14 @@
             </button>
             <button type="button" class="btn-texto suite-bar-toggle" id="btn-toggle-incluye" aria-expanded="false" aria-controls="suite-incluye-panel">
               <span class="material-icons" aria-hidden="true">expand_more</span>
-              <span>Qué incluye hoy</span>
+              <span>Qué incluye</span>
             </button>
-            <button type="button" class="btn btn-primario suite-bar-cta" id="btn-abrir-postulacion">
+            <button type="button" class="btn btn-chico suite-bar-cta" id="btn-abrir-postulacion">
               <span class="material-icons" aria-hidden="true">badge</span>
-              <span>Postular 90 días gratis</span>
+              <span>90 días gratis</span>
+            </button>
+            <button type="button" class="app-icono-btn suite-bar-cerrar" id="btn-demo-cerrar" aria-label="Ocultar aviso de modo demo" title="Ocultar aviso">
+              <span class="material-icons" aria-hidden="true">close</span>
             </button>
           </div>
         </div>
@@ -966,11 +981,12 @@
               </div>
             </div>
             <div class="fin-kpis fin-kpis-4">
-              <div class="fin-kpi"><span class="fin-kpi-label">Total débito fiscal (cód. 538)</span><span class="fin-kpi-val mono" id="f29-k-debito">$0</span></div>
-              <div class="fin-kpi"><span class="fin-kpi-label">Total crédito fiscal (cód. 537)</span><span class="fin-kpi-val mono" id="f29-k-credito">$0</span></div>
-              <div class="fin-kpi"><span class="fin-kpi-label" id="f29-k-iva-lbl">IVA determinado (cód. 89)</span><span class="fin-kpi-val mono" id="f29-k-iva">$0</span></div>
-              <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Total a pagar en F29 (cód. 91)</span><span class="fin-kpi-val mono ok" id="f29-k-total">$0</span></div>
+              <div class="fin-kpi" id="f29-kpi-card-debito"><span class="fin-kpi-label">Total débito fiscal (cód. 538)</span><span class="fin-kpi-val mono" id="f29-k-debito">$0</span></div>
+              <div class="fin-kpi" id="f29-kpi-card-credito"><span class="fin-kpi-label">Total crédito fiscal (cód. 537)</span><span class="fin-kpi-val mono" id="f29-k-credito">$0</span></div>
+              <div class="fin-kpi" id="f29-kpi-card-iva"><span class="fin-kpi-label" id="f29-k-iva-lbl">IVA determinado (cód. 89)</span><span class="fin-kpi-val mono" id="f29-k-iva">$0</span></div>
+              <div class="fin-kpi fin-kpi-destacado" id="f29-kpi-card-total"><span class="fin-kpi-label">Total a pagar en F29 (cód. 91)</span><span class="fin-kpi-val mono ok" id="f29-k-total">$0</span></div>
             </div>
+            <div class="suite-graf-card" id="f29-grafico-resumen" aria-label="Comparación visual Débito, Crédito, Retenciones y Total F29"></div>
             <div class="f29-postergacion-card" id="f29-postergacion-card">
               <div class="f29-postergacion-switch-fila">
                 <label class="pm-switch-label" for="f29-check-postergacion">
@@ -1064,10 +1080,10 @@
         </div>
 
         <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
-          <div class="fin-kpi"><span class="fin-kpi-label">Movimientos cartola</span><span class="fin-kpi-val mono" id="conc-k-movs">0</span></div>
-          <div class="fin-kpi"><span class="fin-kpi-label">Conciliación automática</span><span class="fin-kpi-val mono ok" id="conc-k-pct">0%</span></div>
-          <div class="fin-kpi"><span class="fin-kpi-label">CxC pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxc">$0</span></div>
-          <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">CxP pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxp">$0</span></div>
+          <div class="fin-kpi" id="conc-kpi-card-movs"><span class="fin-kpi-label">Movimientos cartola</span><span class="fin-kpi-val mono" id="conc-k-movs">0</span></div>
+          <div class="fin-kpi" id="conc-kpi-card-pct"><span class="fin-kpi-label">Conciliación automática</span><span class="fin-kpi-val mono ok" id="conc-k-pct">0%</span></div>
+          <div class="fin-kpi" id="conc-kpi-card-cxc"><span class="fin-kpi-label">CxC pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxc">$0</span></div>
+          <div class="fin-kpi fin-kpi-destacado" id="conc-kpi-card-cxp"><span class="fin-kpi-label">CxP pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxp">$0</span></div>
         </div>
 
         <div class="suite-preval-strip ok" id="bancos-buzon-alerta" hidden role="status" aria-live="polite">
@@ -1098,39 +1114,52 @@
               </div>
             </div>
             <div class="panel-cuerpo">
-              <div class="suite-plan-nuevo-fila" style="margin-bottom:12px">
-                <div class="lq-field"><label for="regla-tipo">Movimiento</label>
-                  <select id="regla-tipo" class="lq-select">
-                    <option value="cargo">Cargo (egreso)</option>
-                    <option value="abono">Abono (ingreso)</option>
-                    <option value="ambos">Ambos</option>
-                  </select>
+              <div class="conc-graf-banda" id="conc-graf-banda">
+                <div class="conc-donut-wrap" id="conc-grafico-panel" aria-label="Proporción de movimientos bancarios conciliados"></div>
+                <div class="conc-resumen-col">
+                  <div class="conc-resumen-bar" id="conc-resumen-bar" aria-live="polite">
+                    <span class="conc-resumen-item conc-item-ok">Conciliados: <strong class="mono" id="conc-sum-ok">0</strong></span>
+                    <span class="conc-resumen-sep" aria-hidden="true">·</span>
+                    <span class="conc-resumen-item conc-item-sug">Sugeridos: <strong class="mono" id="conc-sum-sug">0</strong></span>
+                    <span class="conc-resumen-sep" aria-hidden="true">·</span>
+                    <span class="conc-resumen-item conc-item-pend">Sin regla: <strong class="mono" id="conc-sum-pend">0</strong></span>
+                  </div>
+                  <details class="suite-acordeon" id="conc-reglas-acordeon">
+                    <summary class="suite-acordeon-head">
+                      <span><span class="material-icons" aria-hidden="true">rule</span>Reglas automáticas de contraparte (<span id="conc-reglas-cnt">7</span>) · Crear nueva</span>
+                      <span class="material-icons suite-acordeon-ico" aria-hidden="true">expand_more</span>
+                    </summary>
+                    <div class="suite-acordeon-body">
+                      <div class="suite-plan-nuevo-fila" style="margin-bottom:10px">
+                        <div class="lq-field"><label for="regla-tipo">Movimiento</label>
+                          <select id="regla-tipo" class="lq-select">
+                            <option value="cargo">Cargo (egreso)</option>
+                            <option value="abono">Abono (ingreso)</option>
+                            <option value="ambos">Ambos</option>
+                          </select>
+                        </div>
+                        <div class="lq-field"><label for="regla-patron">Palabra clave en glosa</label><input type="text" id="regla-patron" placeholder="Ej: arriendo bodega|entel"></div>
+                        <div class="lq-field"><label for="regla-cuenta">Cuenta contable</label>
+                          <select id="regla-cuenta" class="lq-select">
+                            <option value="42040">42040 · Gastos generales</option>
+                            <option value="11050">11050 · Clientes por cobrar</option>
+                            <option value="21010">21010 · Proveedores por pagar</option>
+                            <option value="21070">21070 · Impuestos F29</option>
+                            <option value="21035">21035 · Previred por pagar</option>
+                            <option value="21030">21030 · Sueldos por pagar</option>
+                            <option value="21025">21025 · Honorarios por pagar</option>
+                            <option value="11018">11018 · Cuenta puente traspasos</option>
+                            <option value="11012">11012 · Caja y otros bancos</option>
+                            <option value="21015">21015 · Tarjeta de crédito corporativa</option>
+                          </select>
+                        </div>
+                        <div class="lq-field"><label for="regla-motivo">Descripción regla</label><input type="text" id="regla-motivo" placeholder="Pago servicio mensual"></div>
+                        <div class="lq-field" style="align-self:end"><button type="button" class="btn" id="btn-regla-agregar">Guardar regla</button></div>
+                      </div>
+                      <div class="suite-reglas-chips" id="conc-reglas-lista"></div>
+                    </div>
+                  </details>
                 </div>
-                <div class="lq-field"><label for="regla-patron">Palabra clave en glosa</label><input type="text" id="regla-patron" placeholder="Ej: arriendo bodega|entel"></div>
-                <div class="lq-field"><label for="regla-cuenta">Cuenta contable</label>
-                  <select id="regla-cuenta" class="lq-select">
-                    <option value="42040">42040 · Gastos generales</option>
-                    <option value="11050">11050 · Clientes por cobrar</option>
-                    <option value="21010">21010 · Proveedores por pagar</option>
-                    <option value="21070">21070 · Impuestos F29</option>
-                    <option value="21035">21035 · Previred por pagar</option>
-                    <option value="21030">21030 · Sueldos por pagar</option>
-                    <option value="21025">21025 · Honorarios por pagar</option>
-                    <option value="11018">11018 · Cuenta puente traspasos</option>
-                    <option value="11012">11012 · Caja y otros bancos</option>
-                    <option value="21015">21015 · Tarjeta de crédito corporativa</option>
-                  </select>
-                </div>
-                <div class="lq-field"><label for="regla-motivo">Descripción regla</label><input type="text" id="regla-motivo" placeholder="Pago servicio mensual"></div>
-                <div class="lq-field" style="align-self:end"><button type="button" class="btn btn-primario" id="btn-regla-agregar">Guardar regla</button></div>
-              </div>
-              <div class="suite-reglas-chips" id="conc-reglas-lista"></div>
-              <div class="conc-resumen-bar" id="conc-resumen-bar" aria-live="polite">
-                <span class="conc-resumen-item">Conciliados: <strong class="mono" id="conc-sum-ok">0</strong></span>
-                <span class="conc-resumen-sep" aria-hidden="true">·</span>
-                <span class="conc-resumen-item">Sugeridos: <strong class="mono" id="conc-sum-sug">0</strong></span>
-                <span class="conc-resumen-sep" aria-hidden="true">·</span>
-                <span class="conc-resumen-item">Sin regla: <strong class="mono" id="conc-sum-pend">0</strong></span>
               </div>
               <div class="conc-tira-alertas" id="conc-tira-alertas" hidden aria-live="polite">
                 <div class="conc-alerta-item conc-alerta-dif" id="conc-alerta-dif" hidden>
@@ -1618,11 +1647,12 @@
         </div>
 
         <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
-          <div class="fin-kpi"><span class="fin-kpi-label">Ingresos del giro (neto)</span><span class="fin-kpi-val mono ok" id="pnl-k-ingresos">$0</span></div>
-          <div class="fin-kpi"><span class="fin-kpi-label">Margen bruto</span><span class="fin-kpi-val mono" id="pnl-k-margen">$0</span></div>
-          <div class="fin-kpi"><span class="fin-kpi-label">Resultado operacional</span><span class="fin-kpi-val mono" id="pnl-k-ebit">$0</span></div>
-          <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Caja libre post Previred + F29</span><span class="fin-kpi-val mono ok" id="pnl-k-caja">$0</span></div>
+          <div class="fin-kpi fin-kpi-ok"><span class="fin-kpi-label">Ingresos del giro (neto)</span><span class="fin-kpi-val mono ok" id="pnl-k-ingresos">$0</span></div>
+          <div class="fin-kpi" id="pnl-kpi-card-margen"><span class="fin-kpi-label">Margen bruto</span><span class="fin-kpi-val mono" id="pnl-k-margen">$0</span></div>
+          <div class="fin-kpi" id="pnl-kpi-card-ebit"><span class="fin-kpi-label">Resultado operacional</span><span class="fin-kpi-val mono" id="pnl-k-ebit">$0</span></div>
+          <div class="fin-kpi fin-kpi-destacado" id="pnl-kpi-card-caja"><span class="fin-kpi-label">Caja libre post Previred + F29</span><span class="fin-kpi-val mono ok" id="pnl-k-caja">$0</span></div>
         </div>
+        <div class="suite-graf-card" id="pnl-grafico-resumen" aria-label="Gráfico comparativo de Ingresos, Costos, Gastos y Caja Libre"></div>
 
         <div class="fin-split">
           <div class="panel">
@@ -2261,10 +2291,11 @@
           </div>
           <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
             <div class="fin-kpi"><span class="fin-kpi-label">Base RLI considerada</span><span class="fin-kpi-val mono" id="f22-k-rli">$0</span></div>
-            <div class="fin-kpi"><span class="fin-kpi-label" id="f22-k-idpc-lbl">IDPC determinado</span><span class="fin-kpi-val mono" id="f22-k-idpc">$0</span></div>
-            <div class="fin-kpi"><span class="fin-kpi-label">PPM reajustado (Cód. 36 L85)</span><span class="fin-kpi-val mono ok" id="f22-k-ppm36">$0</span></div>
-            <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label" id="f22-k-saldo-lbl">Impuesto F22 estimado</span><span class="fin-kpi-val mono" id="f22-k-saldo">$0</span></div>
+            <div class="fin-kpi" id="f22-kpi-card-idpc"><span class="fin-kpi-label" id="f22-k-idpc-lbl">IDPC determinado</span><span class="fin-kpi-val mono" id="f22-k-idpc">$0</span></div>
+            <div class="fin-kpi fin-kpi-ok"><span class="fin-kpi-label">PPM reajustado (Cód. 36 L85)</span><span class="fin-kpi-val mono ok" id="f22-k-ppm36">$0</span></div>
+            <div class="fin-kpi fin-kpi-destacado" id="f22-kpi-card-saldo"><span class="fin-kpi-label" id="f22-k-saldo-lbl">Impuesto F22 estimado</span><span class="fin-kpi-val mono" id="f22-k-saldo">$0</span></div>
           </div>
+          <div class="suite-graf-card" id="f22-grafico-resumen" aria-label="Comparación visual IDPC Determinado versus PPM Reajustado F22"></div>
           <div class="panel f22-sii-cruce-panel" id="f22-sii-resumen-panel" hidden style="margin-bottom:14px">
             <div class="panel-head">
               <div>
@@ -3405,7 +3436,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.4.0"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=2.17.0"></script>
+<script src="/js/demo_suite.js?v=2.18.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

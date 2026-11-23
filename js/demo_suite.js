@@ -746,6 +746,24 @@
         $('f29-k-iva').textContent = c[89] > 0 ? D.money(c[89]) : D.money(c[77]);
         $('f29-k-total').textContent = D.money(c[91]);
 
+        aplicarEstadoKpiCard('f29-kpi-card-debito', c[538] > 0 ? 'fin-kpi-warn' : '');
+        aplicarEstadoKpiCard('f29-kpi-card-credito', c[537] > 0 ? 'fin-kpi-ok' : '');
+        aplicarEstadoKpiCard('f29-kpi-card-iva', c[89] > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok');
+        aplicarEstadoKpiCard('f29-kpi-card-total', c[91] > 0 ? 'fin-kpi-marca' : 'fin-kpi-ok');
+
+        if ($('f29-grafico-resumen')) {
+            $('f29-grafico-resumen').innerHTML = renderBarrasHtml(
+                'Balance visual del Formulario 29',
+                c[89] > 0 ? 'Débito supera al Crédito (IVA por pagar)' : 'Crédito cubre al Débito (Remanente a favor)',
+                [
+                    { label: 'Débito Fiscal (Cód. 538)', valor: c[538] || 0, cls: 'fill-warn' },
+                    { label: 'Crédito Fiscal (Cód. 537)', valor: c[537] || 0, cls: 'fill-ok' },
+                    { label: 'Retenciones + PPM (48/151/62)', valor: (c[48] || 0) + (c[151] || 0) + (c[62] || 0), cls: 'fill-info' },
+                    { label: 'Total F29 a pagar (Cód. 91)', valor: c[91] || 0, cls: 'fill-marca' }
+                ]
+            );
+        }
+
         if ($('f29-m-deb')) {
             $('f29-m-deb').textContent = moneySigno(c[538]);
             $('f29-m-cred').textContent = moneySigno(c[537]);
@@ -1107,9 +1125,42 @@
     }
 
     // ------------------------------------------------------------- Render Bancos y Contabilidad General
+    function renderBarrasHtml(titulo, subtitulo, items) {
+        var maxVal = items.reduce(function (m, it) { return Math.max(m, Math.abs(Number(it.valor) || 0)); }, 0) || 1;
+        var rows = items.map(function (it) {
+            var val = Number(it.valor) || 0;
+            var pct = val === 0 ? 0 : Math.max(4, Math.min(100, Math.round((Math.abs(val) / maxVal) * 100)));
+            return '<div class="suite-graf-fila">' +
+                '<span class="suite-graf-lbl">' + D.esc(it.label) + '</span>' +
+                '<div class="suite-graf-track" role="img" aria-label="' + D.esc(it.label + ': ' + moneySigno(val)) + '">' +
+                '<div class="suite-graf-fill ' + D.esc(it.cls || 'fill-marca') + '" style="width:' + pct + '%"></div>' +
+                '</div>' +
+                '<span class="suite-graf-val mono">' + moneySigno(val) + '</span>' +
+                '</div>';
+        }).join('');
+        return '<div class="suite-graf-titulo"><span>' + D.esc(titulo) + '</span><span class="suite-graf-sub">' + D.esc(subtitulo || '') + '</span></div>' +
+            '<div class="suite-graf-barras">' + rows + '</div>';
+    }
+
+    function aplicarEstadoKpiCard(id, cls) {
+        var el = $(id);
+        if (!el) return;
+        el.classList.remove('fin-kpi-ok', 'fin-kpi-warn', 'fin-kpi-risk', 'fin-kpi-marca');
+        if (cls) el.classList.add(cls);
+    }
+
     function pintarIdentidadCliente() {
+        var nom = clienteNombre();
         var disp = $('ctx-cliente-display');
-        if (disp) disp.textContent = clienteNombre();
+        if (disp) disp.textContent = nom;
+        var movCli = $('ctx-movil-cliente');
+        if (movCli) movCli.textContent = nom;
+        var movMeta = $('ctx-movil-meta');
+        if (movMeta) {
+            var regTxt = $('suite-regimen') ? $('suite-regimen').value : '14D3';
+            var ufTxt = $('ctx-uf-val') ? $('ctx-uf-val').textContent : '-';
+            movMeta.textContent = regTxt + ' · UF ' + ufTxt;
+        }
     }
 
     function pintarBancos(m) {
@@ -1151,6 +1202,7 @@
         if (chipPct) {
             var pct = (m.conciliacion && m.conciliacion.resumen) ? (m.conciliacion.resumen.pctConciliado || 0) : 0;
             chipPct.textContent = pct + '%';
+            chipPct.className = 'app-nav-chip ' + (pct >= 80 ? 'chip-ok' : (pct > 0 ? 'chip-warn' : 'chip-riesgo'));
         }
         pintarConciliacionYAgenda(m);
     }
@@ -1384,7 +1436,7 @@
             if (conDatos.indexOf(cand) < 0) { primerFaltante = cand; break; }
         }
         el.hidden = false;
-        el.className = 'suite-preval-strip ' + (conDatos.length >= 12 ? 'ok' : (conDatos.length > 0 ? 'ok' : 'warn'));
+        el.className = 'suite-preval-strip ' + (conDatos.length >= 12 ? 'ok' : (conDatos.length > 0 ? 'ok' : 'info-neutra'));
         var resumenTxt = conDatos.length
             ? ('Consolidado AT ' + anio + ': ' + conDatos.length + ' ' + (conDatos.length === 1 ? 'mes' : 'meses') + ' con datos (' + mesesNombres.join(', ') + ')')
             : ('Sin meses guardados en ' + anio + ' para este cliente.');
@@ -1541,6 +1593,24 @@
         $('pnl-k-margen').textContent = D.money(p.margenBruto) + ' (' + D.num(p.margenBrutoPct, 1) + '%)';
         $('pnl-k-ebit').textContent = moneySigno(p.resultadoOperacional);
         $('pnl-k-caja').textContent = moneySigno(fl.cajaProyectadaPostImpuestos);
+
+        aplicarEstadoKpiCard('pnl-kpi-card-margen', p.margenBruto >= 0 ? 'fin-kpi-ok' : 'fin-kpi-risk');
+        aplicarEstadoKpiCard('pnl-kpi-card-ebit', p.resultadoOperacional >= 0 ? 'fin-kpi-marca' : 'fin-kpi-risk');
+        aplicarEstadoKpiCard('pnl-kpi-card-caja', fl.cajaProyectadaPostImpuestos >= 0 ? 'fin-kpi-ok' : 'fin-kpi-risk');
+
+        if ($('pnl-grafico-resumen')) {
+            var gastosTotPnl = (p.costoVentas || 0) + (p.gastoLaboral || 0) + (p.gastoHonorarios || 0) + (p.gastoAdmin || 0) + (p.depreciacion || 0);
+            $('pnl-grafico-resumen').innerHTML = renderBarrasHtml(
+                'Resumen gráfico de Resultados y Caja',
+                'Margen bruto ' + D.num(p.margenBrutoPct || 0, 1) + '% · Margen op. ' + D.num(p.margenOperacionalPct || 0, 1) + '%',
+                [
+                    { label: 'Ingresos del giro', valor: p.ingresosGiro || 0, cls: 'fill-ok' },
+                    { label: 'Costos y gastos op.', valor: gastosTotPnl, cls: 'fill-risk' },
+                    { label: 'Resultado operacional', valor: p.resultadoOperacional || 0, cls: (p.resultadoOperacional || 0) >= 0 ? 'fill-marca' : 'fill-risk' },
+                    { label: 'Caja libre proyectada', valor: fl.cajaProyectadaPostImpuestos || 0, cls: (fl.cajaProyectadaPostImpuestos || 0) >= 0 ? 'fill-info' : 'fill-warn' }
+                ]
+            );
+        }
 
         $('tbody-pnl').innerHTML = [
             { glosa: 'Ingresos de explotación (ventas afectas y exentas netas)', monto: p.ingresosGiro, subtotal: true },
@@ -2112,6 +2182,7 @@
 
         if ($('conc-reglas-lista')) {
             var reglasUsr = Array.isArray(est.reglasConciliacion) ? est.reglasConciliacion : [];
+            if ($('conc-reglas-cnt')) $('conc-reglas-cnt').textContent = reglasUsr.length + (Pro ? Pro.REGLAS_CONCILIACION_DEFECTO.length : 0);
             var chipsUsr = reglasUsr.map(function (r) {
                 return '<span class="suite-regla-chip">' +
                     '<span class="suite-regla-chip-tipo">' + D.esc(r.tipo || 'ambos') + '</span>' +
@@ -2132,6 +2203,25 @@
         var okCnt = (resConc.porFactura || 0) + (resConc.porRegla || 0);
         var sugCnt = resConc.sugeridos || 0;
         var pendCnt = resConc.sinConciliar || 0;
+        var pctConc = resConc.pctConciliado || 0;
+        aplicarEstadoKpiCard('conc-kpi-card-pct', pctConc >= 80 ? 'fin-kpi-ok' : (pctConc > 0 ? 'fin-kpi-warn' : 'fin-kpi-risk'));
+        aplicarEstadoKpiCard('conc-kpi-card-cxc', aging.cxc.total > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok');
+        aplicarEstadoKpiCard('conc-kpi-card-cxp', aging.cxp.total > 0 ? 'fin-kpi-risk' : 'fin-kpi-ok');
+
+        if ($('conc-grafico-panel')) {
+            var rCirc = 21;
+            var perim = Math.round(2 * Math.PI * rCirc * 100) / 100;
+            var off = Math.round((perim * (1 - Math.max(0, Math.min(100, pctConc)) / 100)) * 100) / 100;
+            var strokeClr = pctConc >= 80 ? '#0F766E' : (pctConc > 0 ? '#D97706' : '#BE123C');
+            $('conc-grafico-panel').innerHTML = '<svg class="conc-donut-svg" viewBox="0 0 56 56" aria-hidden="true">' +
+                '<circle class="conc-donut-bg" cx="28" cy="28" r="' + rCirc + '"></circle>' +
+                '<circle class="conc-donut-fg" cx="28" cy="28" r="' + rCirc + '" stroke-dasharray="' + perim + '" stroke-dashoffset="' + off + '" style="stroke:' + strokeClr + '"></circle>' +
+                '</svg>' +
+                '<div class="conc-donut-meta">' +
+                '<strong class="mono">' + pctConc + '%</strong>' +
+                '<span>' + okCnt + ' de ' + (resConc.totalMovimientos || 0) + ' conciliados</span>' +
+                '</div>';
+        }
         if ($('conc-sum-ok')) $('conc-sum-ok').textContent = okCnt;
         if ($('conc-sum-sug')) $('conc-sum-sug').textContent = sugCnt;
         if ($('conc-sum-pend')) $('conc-sum-pend').textContent = pendCnt;
@@ -2355,6 +2445,22 @@
             $('f22-k-saldo').textContent = f22.esTransparente
                 ? '$0'
                 : D.money(f22.saldoAPagar > 0 ? f22.saldoAPagar : f22.devolucionF22);
+        }
+
+        aplicarEstadoKpiCard('f22-kpi-card-idpc', f22.idpcDeterminado > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok');
+        aplicarEstadoKpiCard('f22-kpi-card-saldo', f22.esTransparente ? 'fin-kpi-ok' : (f22.saldoAPagar > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok'));
+
+        if ($('f22-grafico-resumen')) {
+            $('f22-grafico-resumen').innerHTML = renderBarrasHtml(
+                'Cruce visual F22: IDPC vs PPM Reajustado',
+                f22.esTransparente ? '14 D N°8: PPM va a DJ 1947 / Cód. 1645 socios' : (f22.saldoAPagar > 0 ? 'IDPC supera PPM (Diferencia a pagar)' : 'PPM cubre IDPC (Devolución estimada)'),
+                [
+                    { label: 'Base Imponible / RLI', valor: Math.max(0, f22.baseImponibleRli || 0), cls: 'fill-marca' },
+                    { label: 'IDPC Determinado', valor: f22.idpcDeterminado || 0, cls: 'fill-warn' },
+                    { label: f22.esTransparente ? 'PPM Socios (DJ 1947)' : 'PPM Cód. 36 (L85)', valor: f22.esTransparente ? (f22.ppmDj1947Socios || 0) : (f22.ppmCod36Empresa || 0), cls: 'fill-ok' },
+                    { label: f22.saldoAPagar > 0 ? 'Saldo F22 a pagar' : 'Devolución PPM', valor: f22.saldoAPagar > 0 ? f22.saldoAPagar : (f22.devolucionF22 || 0), cls: f22.saldoAPagar > 0 ? 'fill-risk' : 'fill-info' }
+                ]
+            );
         }
 
         if ($('tbody-f22')) {
@@ -3370,7 +3476,24 @@
             });
         }
 
-        // Selector compacto de cliente y panel de edición inline
+        // Selector compacto de cliente, acordeón móvil de contexto y barra demo descartable
+        if ($('btn-ctx-movil-toggle') && $('suite-ctx-cuerpo')) {
+            $('btn-ctx-movil-toggle').addEventListener('click', function () {
+                var abierto = $('suite-ctx-cuerpo').classList.toggle('abierto');
+                $('btn-ctx-movil-toggle').setAttribute('aria-expanded', abierto ? 'true' : 'false');
+            });
+        }
+        try {
+            if ($('suite-header-venta') && localStorage.getItem('cl_suite_demo_bar_oculto') === '1') {
+                $('suite-header-venta').hidden = true;
+            }
+        } catch (e) { }
+        if ($('btn-demo-cerrar') && $('suite-header-venta')) {
+            $('btn-demo-cerrar').addEventListener('click', function () {
+                $('suite-header-venta').hidden = true;
+                try { localStorage.setItem('cl_suite_demo_bar_oculto', '1'); } catch (e) { }
+            });
+        }
         function alternarPanelCliente(mostrar) {
             var panel = $('ctx-cliente-edicion');
             if (!panel) return;

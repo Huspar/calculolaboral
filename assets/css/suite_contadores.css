@@ -619,13 +619,21 @@
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
-    height: 35px;
-    min-height: 35px;
-    padding: 0 8px;
-    gap: 7px;
-    font-size: 12.8px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0 10px;
+    gap: 8px;
+    font-size: 13.3px;
     white-space: nowrap;
     overflow: hidden;
+    border-left: 3px solid transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.suite-contadores-app #suite-modulos .suite-mod-btn.activo {
+    background: rgba(255, 255, 255, 0.13);
+    border-left-color: var(--amber);
+    color: #FFFFFF;
+    font-weight: 600;
 }
 .suite-contadores-app #suite-modulos .suite-mod-btn .material-icons {
     font-size: 18px;
@@ -764,20 +772,20 @@
     height: 36px;
     padding: 0 12px;
     border-radius: var(--radius-sm);
-    background: var(--amber);
-    color: var(--forest-deep);
-    border: 0;
+    background: #FFFBEB;
+    color: #78350F;
+    border: 1px solid #D97706;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     gap: 6px;
     cursor: pointer;
     white-space: nowrap;
 }
 #btn-cierre-tributario:hover {
-    filter: brightness(0.96);
+    background: #FEF3C7;
 }
 #btn-cierre-tributario .material-icons {
-    color: var(--forest-deep);
+    color: #92400E;
     font-size: 16px;
     margin: 0;
 }
@@ -4879,6 +4887,360 @@
         width: 100%;
         min-height: 44px;
         justify-content: center;
+    }
+}
+
+/* ==========================================================================
+   ETAPA 1 REDISEÑO UI: JERARQUÍA, COLOR FUNCIONAL, ACORDEONES Y GRÁFICOS SVG
+   ========================================================================== */
+.suite-contadores-app {
+    --ok-bg: #ECFDF5;
+    --ok-line: #A7F3D0;
+    --ok-ink: #0F5E4F;
+    --warn-bg: #FFF7E0;
+    --warn-line: #E8C56A;
+    --warn-ink: #7A4F00;
+    --risk-bg: #FFF1F2;
+    --risk-line: #FECDD3;
+    --risk-ink: #9F1239;
+}
+
+/* Sidebar: iconos por familia funcional y chips semánticos */
+.suite-contadores-app #suite-modulos .suite-mod-btn[data-modulo="torre"] .material-icons,
+.suite-contadores-app #suite-modulos .suite-mod-btn[data-modulo="importador"] .material-icons { color: #CBD5E1; }
+.suite-contadores-app #suite-modulos .suite-mod-btn[data-modulo="remuneraciones"] .material-icons { color: #86EFAC; }
+.suite-contadores-app #suite-modulos .suite-mod-btn[data-modulo="f29"] .material-icons,
+.suite-contadores-app #suite-modulos .suite-mod-btn[data-modulo="ddjj"] .material-icons { color: #FCD34D; }
+.suite-contadores-app #suite-modulos .suite-mod-btn[data-modulo="bancos"] .material-icons,
+.suite-contadores-app #suite-modulos .suite-mod-btn[data-modulo="libros"] .material-icons,
+.suite-contadores-app #suite-modulos .suite-mod-btn[data-modulo="balance"] .material-icons,
+.suite-contadores-app #suite-modulos .suite-mod-btn[data-modulo="pnl"] .material-icons,
+.suite-contadores-app #suite-modulos .suite-mod-btn[data-modulo="reportes"] .material-icons { color: #7DD3FC; }
+.suite-contadores-app #suite-modulos .suite-mod-btn.activo .material-icons { color: var(--amber); }
+
+.suite-contadores-app .app-nav-chip.chip-riesgo {
+    background: rgba(244, 63, 94, 0.22);
+    color: #FECDD3;
+    border: 1px solid rgba(251, 113, 133, 0.35);
+}
+.suite-contadores-app .app-nav-chip.chip-warn {
+    background: rgba(245, 158, 11, 0.22);
+    color: #FDE68A;
+    border: 1px solid rgba(252, 211, 77, 0.35);
+}
+.suite-contadores-app .app-nav-chip.chip-ok {
+    background: rgba(16, 185, 129, 0.22);
+    color: #A7F3D0;
+    border: 1px solid rgba(110, 231, 183, 0.35);
+}
+
+/* Cabecera superior compacta y barra demo discreta */
+.suite-ctx-movil-bar { display: none; }
+.suite-ctx-cuerpo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    width: 100%;
+}
+.suite-context-bar {
+    padding: 8px 24px;
+}
+.suite-bar-compacta {
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    background: var(--surface-2);
+}
+.suite-bar-compacta .suite-bar-cta {
+    background: transparent;
+    border: 1px solid var(--line-2);
+    color: var(--forest);
+    font-weight: 600;
+}
+.suite-bar-compacta .suite-bar-cta:hover {
+    background: var(--forest-50);
+    border-color: var(--forest-100);
+}
+.suite-bar-cerrar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    color: var(--muted);
+}
+
+/* Tarjetas KPI con borde superior semántico de 3px */
+.fin-kpi {
+    border-top: 3px solid var(--line);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.fin-kpi.fin-kpi-destacado,
+.fin-kpi.fin-kpi-marca {
+    border-top-color: var(--forest);
+    background: #F4FAF8;
+}
+.fin-kpi.fin-kpi-ok {
+    border-top-color: #0F766E;
+    background: var(--ok-bg);
+    border-color: var(--ok-line);
+    border-top-width: 3px;
+}
+.fin-kpi.fin-kpi-ok .fin-kpi-val { color: var(--ok-ink); }
+.fin-kpi.fin-kpi-warn {
+    border-top-color: #D97706;
+    background: var(--warn-bg);
+    border-color: var(--warn-line);
+    border-top-width: 3px;
+}
+.fin-kpi.fin-kpi-warn .fin-kpi-val { color: var(--warn-ink); }
+.fin-kpi.fin-kpi-risk {
+    border-top-color: #BE123C;
+    background: var(--risk-bg);
+    border-color: var(--risk-line);
+    border-top-width: 3px;
+}
+.fin-kpi.fin-kpi-risk .fin-kpi-val { color: var(--risk-ink); }
+
+/* Divulgación progresiva: acordeón limpio */
+.suite-acordeon {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    margin-top: 8px;
+}
+.suite-acordeon-head {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--forest);
+    cursor: pointer;
+    user-select: none;
+}
+.suite-acordeon-head::-webkit-details-marker { display: none; }
+.suite-acordeon-head > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.suite-acordeon-head .material-icons { font-size: 18px; }
+.suite-acordeon[open] .suite-acordeon-ico { transform: rotate(180deg); }
+.suite-acordeon-body {
+    padding: 10px 12px 12px;
+    border-top: 1px solid var(--line);
+}
+
+/* Renta DDJJ: distinguir aviso informativo neutro del bloqueante ámbar */
+.suite-preval-strip.info-neutra {
+    background: var(--surface-2);
+    border-color: var(--line);
+    border-left: 3px solid #64748B;
+    color: var(--ink-2);
+}
+.suite-preval-strip.info-neutra .material-icons { color: #475569; }
+
+/* Gráficos nativos SVG/CSS */
+.suite-graf-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin: 12px 0 14px;
+    display: grid;
+    gap: 10px;
+}
+.suite-graf-titulo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--forest);
+}
+.suite-graf-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+}
+.suite-graf-barras {
+    display: grid;
+    gap: 8px;
+}
+.suite-graf-fila {
+    display: grid;
+    grid-template-columns: 165px minmax(0, 1fr) 105px;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+}
+.suite-graf-lbl {
+    color: var(--ink-2);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.suite-graf-track {
+    height: 12px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    overflow: hidden;
+}
+.suite-graf-fill {
+    height: 100%;
+    border-radius: 999px;
+    min-width: 2px;
+    transition: width 0.3s ease;
+}
+.suite-graf-fill.fill-marca { background: #00382E; }
+.suite-graf-fill.fill-ok { background: #0F766E; }
+.suite-graf-fill.fill-warn { background: #D97706; }
+.suite-graf-fill.fill-risk { background: #BE123C; }
+.suite-graf-fill.fill-info { background: #2563EB; }
+.suite-graf-val {
+    text-align: right;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+}
+
+/* Bancos: anillo SVG + resumen */
+.conc-graf-banda {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    margin-bottom: 6px;
+}
+.conc-donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    min-width: 175px;
+}
+.conc-donut-svg {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    transform: rotate(-90deg);
+}
+.conc-donut-bg {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 6;
+}
+.conc-donut-fg {
+    fill: none;
+    stroke: #0F766E;
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.35s ease;
+}
+.conc-donut-meta {
+    display: grid;
+    gap: 1px;
+    font-size: 12px;
+    color: var(--ink-2);
+}
+.conc-donut-meta strong {
+    font-size: 17px;
+    color: var(--forest);
+    line-height: 1.1;
+}
+.conc-resumen-col { min-width: 0; }
+.conc-resumen-bar { margin-top: 0; }
+.conc-item-ok strong { color: var(--ok-ink); }
+.conc-item-sug strong { color: var(--warn-ink); }
+.conc-item-pend strong { color: var(--risk-ink); }
+
+@media screen and (max-width: 768px) {
+    .suite-contadores-app .suite-context-bar {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+    .suite-ctx-movil-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+    }
+    .suite-ctx-movil-resumen {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        flex: 1 1 auto;
+        font-size: 12.5px;
+    }
+    .suite-ctx-movil-resumen .material-icons {
+        font-size: 17px;
+        color: var(--forest);
+        flex-shrink: 0;
+    }
+    .suite-ctx-movil-resumen strong {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--ink);
+    }
+    .suite-ctx-movil-resumen .mono {
+        font-size: 11px;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+    .suite-ctx-movil-toggle {
+        min-height: 44px;
+        flex-shrink: 0;
+    }
+    .suite-ctx-cuerpo {
+        display: none;
+        padding-top: 8px;
+        border-top: 1px solid var(--line);
+    }
+    .suite-ctx-cuerpo.abierto {
+        display: flex;
+    }
+    .suite-contadores-app .fin-kpis-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px;
+    }
+    .suite-contadores-app .fin-kpi {
+        padding: 10px 10px;
+    }
+    .suite-contadores-app .fin-kpi-val {
+        font-size: 17px;
+    }
+    .conc-graf-banda {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .suite-graf-fila {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 4px 8px;
+    }
+    .suite-graf-track {
+        grid-column: 1 / -1;
+        order: 3;
+    }
+    .suite-bar-compacta .suite-bar-der {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .suite-bar-compacta .suite-bar-toggle,
+    .suite-bar-compacta .suite-bar-cta {
+        min-height: 44px;
     }
 }
 @media screen and (max-width: 640px) {
