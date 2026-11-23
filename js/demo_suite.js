@@ -97,10 +97,14 @@
 
     function $(id) { return document.getElementById(id); }
 
+    function normalizarNombreCliente(nombre) {
+        var v = String(nombre || '').trim();
+        return (v || 'cliente-demo').toLowerCase();
+    }
+
     function clienteClave() {
         var el = $('liq-cliente');
-        var v = el ? el.value.trim() : '';
-        return (v || 'cliente-demo').toLowerCase();
+        return normalizarNombreCliente(el ? el.value : '');
     }
 
     function clienteNombre() {
