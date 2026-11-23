@@ -2870,7 +2870,9 @@
         var validos = { naranja: 'naranja', ambar: 'ambar', indigo: 'indigo' };
         var norm = validos[acento] || 'naranja';
         var panel = $('pm-panel');
+        var dlg = $('dlg-syn-detalle');
         if (panel) panel.setAttribute('data-syn-accent', norm);
+        if (dlg) dlg.setAttribute('data-syn-accent', norm);
         Array.prototype.forEach.call(document.querySelectorAll('[data-set-accent]'), function (btn) {
             btn.setAttribute('aria-pressed', btn.getAttribute('data-set-accent') === norm ? 'true' : 'false');
         });

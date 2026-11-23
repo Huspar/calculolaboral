@@ -5757,7 +5757,8 @@
 /* ==========================================================================
    SYNCHRO DESIGN SYSTEM REDISEÑO COMPLETO (TOKENS, SHELL CLARO, DASHBOARD Y MODAL)
    ========================================================================== */
-#pm-panel.suite-contadores-app.syn-theme {
+#pm-panel.suite-contadores-app.syn-theme,
+dialog.syn-modal {
     --syn-canvas: #F6F7F9;
     --syn-surface: #FFFFFF;
     --syn-surface-2: #F1F3F5;
@@ -5809,18 +5810,22 @@
     --amber-line: var(--syn-accent-line);
     --radius: 16px;
     --radius-sm: 10px;
+}
+#pm-panel.suite-contadores-app.syn-theme {
     background: var(--syn-canvas);
     color: var(--syn-ink);
 }
 
-#pm-panel.suite-contadores-app.syn-theme[data-syn-accent="ambar"] {
+#pm-panel.suite-contadores-app.syn-theme[data-syn-accent="ambar"],
+dialog.syn-modal[data-syn-accent="ambar"] {
     --syn-accent: #D97706;
     --syn-accent-ink: #92400E;
     --syn-accent-soft: #FFFBEB;
     --syn-accent-line: #FDE68A;
 }
 
-#pm-panel.suite-contadores-app.syn-theme[data-syn-accent="indigo"] {
+#pm-panel.suite-contadores-app.syn-theme[data-syn-accent="indigo"],
+dialog.syn-modal[data-syn-accent="indigo"] {
     --syn-accent: #4F46E5;
     --syn-accent-ink: #3730A3;
     --syn-accent-soft: #EEF2FF;
@@ -6779,10 +6784,27 @@ dialog.syn-modal {
     border: 1px solid var(--syn-border);
     border-radius: 16px;
     padding: 0;
-    background: var(--syn-surface);
+    background: #FFFFFF;
     color: var(--syn-ink);
     box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
     overflow: hidden;
+}
+dialog.syn-modal .btn {
+    background: #FFFFFF;
+    border-color: var(--syn-border);
+    color: var(--syn-ink);
+}
+dialog.syn-modal .btn:hover {
+    background: var(--syn-surface-2);
+}
+dialog.syn-modal .btn-primario {
+    background: var(--syn-dark);
+    border-color: var(--syn-dark);
+    color: #FFFFFF;
+}
+dialog.syn-modal .btn-primario:hover {
+    background: var(--syn-dark-hover);
+    border-color: var(--syn-dark-hover);
 }
 dialog.syn-modal::backdrop {
     background: rgba(15, 23, 42, 0.35);
