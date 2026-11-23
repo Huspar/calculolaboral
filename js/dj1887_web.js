@@ -153,13 +153,13 @@
             };
         });
 
-        // Para AT 2026 usa generarDj1887(anioTributario: 2026); para comercial 2026 / AT 2027 genera simulacion provisoria factor 1,00 sin romper el bloqueo normativo de CLRenta.
-        var dj = Renta.generarDj1887(registros, { anioTributario: 2026, factorActualizacion: factor });
+        // Para AT 2026 usa generarDj1887(anioTributario: 2026); para comercial 2026 / AT 2027 usa modoBorrador: true segun Res. Ex. SII N° 116.
+        var dj = Renta.generarDj1887(registros, { anioTributario: anioComercial + 1, modoBorrador: provisorio, factorActualizacion: factor });
         dj.anioComercial = anioComercial;
         dj.anioTributarioVisual = anioComercial + 1;
         dj.esProvisorio = provisorio;
         dj.avisoNormativo = provisorio
-            ? 'Simulación provisoria AT 2027 (año comercial 2026) con factor ' + factor.toLocaleString('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + ' sujeta a Circular SII de enero 2027 y Resolución DDJJ AT 2027. El préstamo Ley 21.252 (C33) es nominal.'
+            ? 'Borrador AT 2027 (año comercial 2026) según Res. Ex. SII N° 116, factor ' + factor.toLocaleString('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + ' sujeto a Circular de IPC de enero 2027. En AT 2027 se eliminan C61, C64 y C65.'
             : 'Simulación AT 2026 (año comercial 2025) con factor ' + factor.toLocaleString('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + ' según Circular SII N° 5/2026.';
         return dj;
     }
@@ -233,13 +233,15 @@
         var outDj = doc.getElementById('dj-out-1887');
         if (outDj) {
             outDj.innerHTML = dj.filas.map(function (f) {
+                var noGrav = f.C8_rentaNoGravada != null ? f.C8_rentaNoGravada : f.C6_rentaNoGravada;
+                var exenta = f.C33_rentaExenta != null ? f.C33_rentaExenta : f.C7_rentaExenta;
                 return '<tr>' +
                     '<td class="p-2.5 font-mono-num text-xs whitespace-nowrap">' + esc(f.C2_rut) + '</td>' +
                     '<td class="p-2.5 text-xs">' + esc(f.nombre) + '</td>' +
                     '<td class="p-2.5 text-right font-mono-num text-xs font-bold">' + pesos(f.C3_rentaNeta) + '</td>' +
                     '<td class="p-2.5 text-right font-mono-num text-xs">' + pesos(f.C4_impuestoUnico) + '</td>' +
-                    '<td class="p-2.5 text-right font-mono-num text-xs">' + pesos(f.C6_rentaNoGravada) + '</td>' +
-                    '<td class="p-2.5 text-right font-mono-num text-xs">' + pesos(f.C7_rentaExenta) + '</td>' +
+                    '<td class="p-2.5 text-right font-mono-num text-xs">' + pesos(noGrav) + '</td>' +
+                    '<td class="p-2.5 text-right font-mono-num text-xs">' + pesos(exenta) + '</td>' +
                 '</tr>';
             }).join('');
         }
@@ -263,25 +265,35 @@
 
     function descargarExcel() {
         if (!ultimoDj || !root.CLPymeExcel) return;
+        var incluyeC61 = Number(ultimoDj.anioTributarioVisual || ultimoDj.anioTributario || 2026) <= 2026;
+        var hdr1887 = ['RUT Trabajador (C2)', 'Nombre', 'Renta Neta Pagada (C3)', 'Impuesto Unico (C4)', 'Mayor Retencion (C5)', 'Renta No Gravada (C8)', 'Renta Exenta (C33)', 'Zonas Extremas (C9)'];
+        if (incluyeC61) hdr1887.push('Prestamo Ley 21252 (C61)');
         var filas1887 = [
             ['Borrador Declaracion Jurada 1887 (AT ' + ultimoDj.anioTributarioVisual + ') - CalculoLaboral.cl'],
             [ultimoDj.avisoNormativo],
             [],
-            ['RUT Trabajador (C2)', 'Nombre', 'Renta Neta Pagada (C3)', 'Impuesto Unico (C4)', 'Mayor Retencion (C5)', 'Renta No Gravada (C6)', 'Renta Exenta (C7)', 'Zonas Extremas (C8)', 'Prestamo Ley 21252 (C33)']
+            hdr1887
         ];
         ultimoDj.filas.forEach(function (f) {
-            filas1887.push([f.C2_rut, f.nombre, f.C3_rentaNeta, f.C4_impuestoUnico, f.C5_mayorRetencion, f.C6_rentaNoGravada, f.C7_rentaExenta, f.C8_rebajaZonasExtremas, f.C33_prestamoLey21252]);
+            var noGrav = f.C8_rentaNoGravada != null ? f.C8_rentaNoGravada : f.C6_rentaNoGravada;
+            var exenta = f.C33_rentaExenta != null ? f.C33_rentaExenta : f.C7_rentaExenta;
+            var zonas = f.C9_rebajaZonasExtremas != null ? f.C9_rebajaZonasExtremas : f.C8_rebajaZonasExtremas;
+            var row = [f.C2_rut, f.nombre, f.C3_rentaNeta, f.C4_impuestoUnico, f.C5_mayorRetencion, noGrav, exenta, zonas];
+            if (incluyeC61) row.push(f.C61_prestamoLey21252 || f.C33_prestamoLey21252 || 0);
+            filas1887.push(row);
         });
         var filasCert6 = [
-            ['Certificado N°6 SII (Columnas 7 Exenta y 8 No Gravada invertidas frente a DJ 1887)'],
+            ['Certificado N°6 SII (Columnas 7 Exenta y 8 No Gravada respecto a DJ 1887 C8 y C33)'],
             [],
             ['RUT', 'Nombre', 'Meses', 'Col 2 Sueldo Imponible', 'Col 3 Cotizaciones', 'Col 4 Renta Afecta', 'Col 5 Impuesto Unico', 'Col 7 Exenta', 'Col 8 No Gravada', 'Col 10 Factor', 'Col 11 Afecta Act.', 'Col 12 Impuesto Act.', 'Col 14 Exenta Act.', 'Col 15 No Gravada Act.']
         ];
         ultimoDj.certificadosN6.forEach(function (c) {
             filasCert6.push([c.rut, c.nombre, c.col1_meses, c.col2_sueldoImponible, c.col3_cotizacionesPrevisionales, c.col4_rentaNeta, c.col5_impuestoUnico, c.col7_rentaExenta, c.col8_rentaNoGravada, c.col10_factorActualizacion, c.col11_rentaNetaActualizada, c.col12_impuestoActualizado, c.col14_rentaExentaActualizada, c.col15_rentaNoGravadaActualizada]);
         });
+        var monedas1887 = { 2: true, 3: true, 4: true, 5: true, 6: true, 7: true };
+        if (incluyeC61) monedas1887[8] = true;
         root.CLPymeExcel.descargarXlsx('Borrador_DJ1887_CertN6_AT' + ultimoDj.anioTributarioVisual + '.xlsx', [
-            { nombre: 'DJ 1887', filas: filas1887, monedas: { 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true }, estilo: { tituloFilas: [0], encabezadoFila: 3 } },
+            { nombre: 'DJ 1887', filas: filas1887, monedas: monedas1887, estilo: { tituloFilas: [0], encabezadoFila: 3 } },
             { nombre: 'Certificado N6', filas: filasCert6, monedas: { 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 10: true, 11: true, 12: true, 13: true }, estilo: { tituloFilas: [0], encabezadoFila: 2 } }
         ]);
     }

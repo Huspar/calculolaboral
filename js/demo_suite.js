@@ -351,6 +351,7 @@
             cartolaTotalCargos: 0,
             cartolaUltimoSaldo: null,
             ddjjAnio: 2026,
+            tipoEntidadDj1837: 'SOC_PERSONAS',
             socios: [
                 { rut: '12.345.678-5', nombre: 'Socio titular', porcentaje: 100, retiros: 0 }
             ],
@@ -521,17 +522,18 @@
         var pyf = C.calcularEstadoResultadosYFlujo(balance, gen.metricasFlujo, hayMovimientos ? f29 : null);
 
         var ddjjAnio = Number(est.ddjjAnio || 2026);
+        var modoBorradorDdjj = ddjjAnio >= 2027;
         var anual = construirConsolidadoAnual(ddjjAnio, est, periodo, resLiq, f29, nomina);
         var cierrePrevio = obtenerCierreMesAnterior(periodo);
         var rliParaRenta = (anual && anual.cantidadMeses > 0) ? anual.rli : rli;
         var ppmAnualCalc = (anual && anual.cantidadMeses > 0) ? anual.ppmTotal : (f29.codigos[62] || 0);
 
-        var dj1887 = null, dj1879 = null, dj194x = null, cptSimp = null;
+        var dj1887 = null, dj1879 = null, dj194x = null, dj1847 = null, dj1926 = null, dj1837 = null, cptSimp = null;
         if (Renta) {
             var nomRegs = (anual && anual.nominaRegistros && anual.nominaRegistros.length)
                 ? anual.nominaRegistros
                 : Renta.acumularLiquidacionesParaDj1887(resLiq);
-            dj1887 = Renta.generarDj1887(nomRegs, { anioTributario: ddjjAnio });
+            dj1887 = Renta.generarDj1887(nomRegs, { anioTributario: ddjjAnio, modoBorrador: modoBorradorDdjj });
 
             var bheLista = (anual && anual.bheLista && anual.bheLista.length)
                 ? anual.bheLista
@@ -540,7 +542,7 @@
                     : (est.honorariosBruto > 0
                         ? [{ rut: '12.345.678-5', razonSocial: 'Honorarios consolidados del período', bruto: est.honorariosBruto, retenido: f29.codigos[151], estado: 'VIGENTE' }]
                         : []));
-            dj1879 = Renta.generarDj1879(bheLista, { anioTributario: ddjjAnio });
+            dj1879 = Renta.generarDj1879(bheLista, { anioTributario: ddjjAnio, modoBorrador: modoBorradorDdjj });
 
             dj194x = Renta.generarDj1947o1948(est.regimen, {
                 baseImponible: rliParaRenta.baseImponible,
@@ -548,7 +550,30 @@
                 retirosTotales: (est.socios && est.socios[0] && est.socios[0].retiros) || 0,
                 tasaIdpc: est.rliAjustes.tasaIdpc,
                 socios: est.socios
-            }, { anioTributario: ddjjAnio });
+            }, { anioTributario: ddjjAnio, modoBorrador: modoBorradorDdjj });
+
+            dj1847 = typeof Renta.generarDj1847 === 'function' ? Renta.generarDj1847(balance, {
+                regimen: est.regimen,
+                anioTributario: ddjjAnio,
+                modoBorrador: modoBorradorDdjj
+            }) : null;
+
+            dj1926 = typeof Renta.generarDj1926 === 'function' ? Renta.generarDj1926({
+                regimen: est.regimen,
+                resultadoContable: balance ? balance.resultado : 0,
+                multasGastosRechazados: rliParaRenta ? rliParaRenta.multasGastosRechazados : 0,
+                depreciacionFinanciera: rliParaRenta ? rliParaRenta.depreciacionContableReversada : 0,
+                otrosAgregados: (est.rliAjustes && est.rliAjustes.otrosAgregados) || 0,
+                depreciacionTributaria: rliParaRenta ? rliParaRenta.activoFijoPagadoNeto : 0,
+                baseImponibleRli: rliParaRenta ? rliParaRenta.baseImponible : 0
+            }, { anioTributario: ddjjAnio, modoBorrador: modoBorradorDdjj }) : null;
+
+            dj1837 = typeof Renta.generarDj1837 === 'function' ? Renta.generarDj1837({
+                regimen: est.regimen,
+                tipoEntidad: est.tipoEntidadDj1837 || 'SOC_PERSONAS',
+                ppmDisponible: ppmAnualCalc,
+                socios: est.socios
+            }, { anioTributario: ddjjAnio, modoBorrador: modoBorradorDdjj }) : null;
 
             cptSimp = Renta.calcularCptSimplificado(Object.assign({}, est.cptAjustes, {
                 baseImponibleRli: rliParaRenta.baseImponible
@@ -628,7 +653,7 @@
             rli: rli,
             pnl: pyf.pnl,
             flujo: pyf.flujo,
-            ddjj: { anio: ddjjAnio, dj1887: dj1887, dj1879: dj1879, dj194x: dj194x, cpt: cptSimp }
+            ddjj: { anio: ddjjAnio, esProvisorio: modoBorradorDdjj, dj1887: dj1887, dj1879: dj1879, dj194x: dj194x, dj1847: dj1847, dj1926: dj1926, dj1837: dj1837, cpt: cptSimp }
         };
     }
 
@@ -1166,7 +1191,7 @@
                         btnAccion = '<button type="button" class="btn btn-chico" data-auditar-asiento="' + D.esc(a.id) + '">' + (marcado ? 'Quitar marca auditado' : 'Marcar auditado') + '</button>';
                     }
                 }
-                return '<article class="panel asiento-card">' +
+                return '<article class="panel asiento-card" id="asiento-card-' + D.esc(a.id) + '" data-asiento-id="' + D.esc(a.id) + '">' +
                     '<div class="panel-head asiento-head">' +
                     '<div><span class="mono asiento-num">Asiento #' + (idx + 1) + ' · ' + D.esc(a.fecha) + '</span><h3>' + D.esc(a.glosa) + '</h3></div>' +
                     '<div class="asiento-head-der">' + chipOrigenHtml(a.origen) + btnAccion + '</div>' +
@@ -1220,12 +1245,13 @@
                     '</div>' +
                     '<div class="tabla-contable-wrap asiento-tabla-wrap">' +
                     '<table class="tabla-contable">' +
-                    '<thead><tr><th>Fecha</th><th>Asiento</th><th>Glosa</th><th class="num">Debe</th><th class="num">Haber</th><th class="num">Saldo</th></tr></thead>' +
+                    '<thead><tr><th>Fecha</th><th>Asiento / Origen</th><th>Glosa</th><th class="num">Debe</th><th class="num">Haber</th><th class="num">Saldo</th></tr></thead>' +
                     '<tbody>' +
                     cta.movimientos.map(function (mv) {
+                        var orgInfo = etiquetaOrigenAsiento(mv.asientoId, mv.origen);
                         return '<tr>' +
                             '<td class="mono">' + D.esc(mv.fecha) + '</td>' +
-                            '<td class="mono">' + D.esc(mv.asientoId) + '</td>' +
+                            '<td><span class="traza-origen traza-origen-' + D.esc(orgInfo.clave) + '">' + D.esc(orgInfo.txt) + '</span> <button type="button" class="btn-texto btn-traza-diario mono" data-traza-ir-diario="' + D.esc(mv.asientoId) + '" title="Ver asiento en Libro Diario">' + D.esc(mv.asientoId) + '</button></td>' +
                             '<td>' + D.esc(mv.glosa) + '</td>' +
                             '<td class="mono num">' + (mv.debe ? D.money(mv.debe) : '-') + '</td>' +
                             '<td class="mono num">' + (mv.haber ? D.money(mv.haber) : '-') + '</td>' +
@@ -1236,6 +1262,61 @@
                     '</tbody></table></div></section>';
             }).join('');
         }
+    }
+
+    function etiquetaOrigenAsiento(asientoId, origen) {
+        var id = String(asientoId || '').toUpperCase();
+        if (/^(NOM-|AS-FIN)/.test(id)) return { clave: 'nomina', txt: 'Nómina' };
+        if (/^(VTA-|COM-|HON-)/.test(id)) return { clave: 'rcv', txt: 'RCV / BHE' };
+        if (/^(F29-|AP-)/.test(id)) return { clave: 'f29', txt: id.indexOf('AP-') === 0 ? 'Apertura' : 'F29' };
+        if (/^(MAN-CONC-|CART-|BCO-)/.test(id)) return { clave: 'cartola', txt: id.indexOf('BCO-') === 0 ? 'Bancos' : 'Cartola' };
+        if (origen === 'ajuste' || /^MAN-/.test(id)) return { clave: 'manual', txt: 'Manual' };
+        return { clave: 'rcv', txt: 'Auto' };
+    }
+
+    function abrirTrazaCuenta(codigo) {
+        var dlg = $('dlg-traza-cuenta');
+        if (!dlg || !codigo) return;
+        var m = calcularModelo();
+        var cta = (m.mayor || []).find(function (c) { return String(c.codigo) === String(codigo); });
+        if (!cta) { D.avisar('La cuenta ' + codigo + ' no tiene movimientos en este período.'); return; }
+        var saldoTxt = cta.saldoDeudor > 0
+            ? ('Saldo deudor ' + D.money(cta.saldoDeudor))
+            : (cta.saldoAcreedor > 0 ? ('Saldo acreedor ' + D.money(cta.saldoAcreedor)) : 'Cuenta saldada ($0)');
+        if ($('traza-dlg-titulo')) $('traza-dlg-titulo').textContent = cta.codigo + ' · ' + cta.nombre;
+        if ($('traza-dlg-sub')) $('traza-dlg-sub').textContent = 'Debe: ' + D.money(cta.debito) + ' · Haber: ' + D.money(cta.credito) + ' · ' + saldoTxt;
+        if ($('traza-movs-lista')) {
+            $('traza-movs-lista').innerHTML = cta.movimientos.map(function (mv) {
+                var org = etiquetaOrigenAsiento(mv.asientoId, mv.origen);
+                var montoTxt = mv.debe > 0 ? ('Debe ' + D.money(mv.debe)) : ('Haber ' + D.money(mv.haber));
+                return '<div class="traza-mov-fila">' +
+                    '<span class="mono">' + D.esc(mv.fecha) + '</span>' +
+                    '<span class="traza-mov-glosa">' + D.esc(mv.glosa) + '</span>' +
+                    '<span class="traza-origen traza-origen-' + D.esc(org.clave) + '">' + D.esc(org.txt) + '</span>' +
+                    '<span class="mono traza-mov-monto">' + montoTxt + '</span>' +
+                    '<button type="button" class="btn btn-chico btn-traza-diario" data-traza-ir-diario="' + D.esc(mv.asientoId) + '">Ver asiento en Diario</button>' +
+                    '</div>';
+            }).join('');
+        }
+        dlg.setAttribute('data-traza-codigo', cta.codigo);
+        if (typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
+        else dlg.setAttribute('open', 'open');
+    }
+
+    function irAsientoEnDiario(asientoId) {
+        var dlg = $('dlg-traza-cuenta');
+        if (dlg && dlg.open && typeof dlg.close === 'function') dlg.close();
+        else if (dlg) dlg.removeAttribute('open');
+        ui.subLibro = 'diario';
+        cambiarModulo('libros');
+        setTimeout(function () {
+            var card = document.getElementById('asiento-card-' + asientoId);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.classList.add('resaltado');
+                setTimeout(function () { card.classList.remove('resaltado'); }, 2400);
+            }
+        }, 60);
     }
 
     function opcionesPlanCuentas(sel) {
@@ -1371,8 +1452,8 @@
 
             $('tbody-balance8').innerHTML = b.filas.map(function (f) {
                 return '<tr>' +
-                    '<td class="mono">' + D.esc(f.codigo) + '</td>' +
-                    '<td>' + D.esc(f.nombre) + '</td>' +
+                    '<td class="mono"><button type="button" class="traza-cuenta-btn" data-traza-cuenta="' + D.esc(f.codigo) + '">' + D.esc(f.codigo) + '</button></td>' +
+                    '<td><button type="button" class="traza-cuenta-btn" data-traza-cuenta="' + D.esc(f.codigo) + '">' + D.esc(f.nombre) + '</button></td>' +
                     '<td class="mono num">' + D.money(f.debito) + '</td>' +
                     '<td class="mono num">' + D.money(f.credito) + '</td>' +
                     '<td class="mono num">' + (f.deudor ? D.money(f.deudor) : '-') + '</td>' +
@@ -1862,12 +1943,22 @@
     }
 
     function pintarDdjj(m) {
+        var anioSel = Number(m.estado.ddjjAnio || 2026);
+        if ($('ddjj-anio') && $('ddjj-anio').value !== String(anioSel)) {
+            $('ddjj-anio').value = String(anioSel);
+        }
+        if ($('ddjj-at2027-aviso')) {
+            $('ddjj-at2027-aviso').hidden = !(anioSel >= 2027);
+        }
+        if ($('dj1837-tipo-entidad') && m.estado.tipoEntidadDj1837) {
+            $('dj1837-tipo-entidad').value = m.estado.tipoEntidadDj1837;
+        }
         Array.prototype.forEach.call(document.querySelectorAll('[data-subddjj]'), function (btn) {
             var act = btn.getAttribute('data-subddjj') === ui.subDdjj;
             btn.classList.toggle('activo', act);
             btn.setAttribute('aria-selected', act ? 'true' : 'false');
         });
-        ['1887', '1879', '1947', 'cpt', 'f22'].forEach(function (k) {
+        ['1887', '1879', '1947', '1847', '1926', '1837', 'cpt', 'f22'].forEach(function (k) {
             var pan = $('subddjj-' + k);
             if (pan) pan.hidden = (ui.subDdjj !== k);
         });
@@ -1885,10 +1976,10 @@
             if (!tiene79) faltantesDdjj.push('BHE o honorarios para DJ 1879 / Cert. N°1');
             if (!faltantesDdjj.length) {
                 barDdjj.className = 'suite-preval-strip ok';
-                barDdjj.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">check_circle</span><strong>Pre-validación DDJJ OK</strong><span>RUT empresa, sueldos y honorarios completos para emitir borradores.</span></span>';
+                barDdjj.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">check_circle</span><strong>Pre-validación DDJJ OK</strong><span>RUT empresa, sueldos y honorarios completos para emitir borradores AT ' + anioSel + '.</span></span>';
             } else {
                 barDdjj.className = 'suite-preval-strip warn';
-                barDdjj.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">info</span><strong>Revisa antes de exportar DDJJ:</strong><span>falta ' + D.esc(faltantesDdjj.join(', ')) + '.</span></span>';
+                barDdjj.innerHTML = '<span class="suite-preval-strip-izq"><span class="material-icons" aria-hidden="true">info</span><strong>Revisa antes de exportar DDJJ (AT ' + anioSel + '):</strong><span>falta ' + D.esc(faltantesDdjj.join(', ')) + '.</span></span>';
             }
         }
         if (d.dj1887 && d.dj1887.ok && $('tbody-dj1887')) {
@@ -1896,7 +1987,9 @@
             var t87 = d.dj1887.totales || {};
             $('tbody-dj1887').innerHTML = filas87.length
                 ? filas87.map(function (f) {
-                    return '<tr><td class="mono">' + D.esc(f.C2_rut) + '</td><td>' + D.esc(f.nombre) + '</td><td class="mono num">' + D.money(f.C3_rentaNeta) + '</td><td class="mono num">' + D.money(f.C4_impuestoUnico) + '</td><td class="mono num">' + D.money(f.C6_rentaNoGravada) + '</td><td class="mono num">' + D.money(f.C7_rentaExenta) + '</td></tr>';
+                    var noGrav = f.C8_rentaNoGravada != null ? f.C8_rentaNoGravada : f.C6_rentaNoGravada;
+                    var exenta = f.C33_rentaExenta != null ? f.C33_rentaExenta : f.C7_rentaExenta;
+                    return '<tr><td class="mono">' + D.esc(f.C2_rut) + '</td><td>' + D.esc(f.nombre) + '</td><td class="mono num">' + D.money(f.C3_rentaNeta) + '</td><td class="mono num">' + D.money(f.C4_impuestoUnico) + '</td><td class="mono num">' + D.money(noGrav) + '</td><td class="mono num">' + D.money(exenta) + '</td></tr>';
                 }).join('') +
                     '<tr class="fila-total"><td colspan="2"><strong>Totales DJ 1887</strong></td><td class="mono num"><strong>' + D.money(t87.rentaNeta || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t87.impuestoUnico || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t87.rentaNoGravada || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t87.rentaExenta || 0) + '</strong></td></tr>'
                 : '<tr><td colspan="6" class="texto-ayuda">Calcula liquidaciones en Nómina para poblar automáticamente la DJ 1887 con renta neta pagada.</td></tr>';
@@ -1924,6 +2017,57 @@
                     var cred = d.dj194x.codigoDj === '1947' ? f.creditoPpmAsignado : f.creditoIdpc;
                     return '<tr><td class="mono">' + D.esc(f.rutSocio) + '</td><td>' + D.esc(f.nombreSocio) + '</td><td class="mono num">' + f.porcentajeParticipacion + '%</td><td class="mono num">' + moneySigno(monto) + '</td><td class="mono num">' + D.money(cred) + '</td></tr>';
                 }).join('');
+            }
+        }
+        if (d.dj1847 && d.dj1847.ok && $('tbody-dj1847')) {
+            if ($('dj1847-nota-norma')) $('dj1847-nota-norma').textContent = d.dj1847.notaNormativa || '';
+            var filas47 = d.dj1847.filas || [];
+            var t47 = d.dj1847.totales || {};
+            $('tbody-dj1847').innerHTML = filas47.length
+                ? filas47.map(function (f) {
+                    var c29Txt = f.C29_valorTributario != null ? moneySigno(f.C29_valorTributario) : '-';
+                    return '<tr>' +
+                        '<td class="mono">' + f.C0_n + '</td>' +
+                        '<td class="mono">' + D.esc(f.C1_idCuenta) + '</td>' +
+                        '<td class="mono">' + D.esc(f.C2_clasificadorSii) + '</td>' +
+                        '<td>' + D.esc(f.C3_nombre) + '</td>' +
+                        '<td class="mono num">' + D.money(f.C8_activo) + '</td>' +
+                        '<td class="mono num">' + D.money(f.C9_pasivo) + '</td>' +
+                        '<td class="mono num">' + D.money(f.C10_perdida) + '</td>' +
+                        '<td class="mono num">' + D.money(f.C11_ganancia) + '</td>' +
+                        '<td class="mono">' + D.esc(f.C28_conceptoResultado || '-') + '</td>' +
+                        '<td class="mono num">' + c29Txt + '</td>' +
+                    '</tr>';
+                }).join('') +
+                    '<tr class="fila-total"><td colspan="4"><strong>Totales Balance Tributario (DJ 1847)</strong></td><td class="mono num"><strong>' + D.money(t47.activo || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t47.pasivo || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t47.perdida || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t47.ganancia || 0) + '</strong></td><td colspan="2" class="mono num">Res: ' + moneySigno(t47.resultadoContable || 0) + '</td></tr>'
+                : '<tr><td colspan="10" class="texto-ayuda">Registra compras, ventas, nómina o asientos en Diario para generar el Balance DJ 1847.</td></tr>';
+        }
+        if (d.dj1926 && d.dj1926.ok && $('tbody-dj1926')) {
+            if ($('dj1926-nota-norma')) $('dj1926-nota-norma').textContent = d.dj1926.notaNormativa || '';
+            var filas26 = d.dj1926.filas || [];
+            var t26 = d.dj1926.totales || {};
+            $('tbody-dj1926').innerHTML = filas26.map(function (f) {
+                return '<tr>' +
+                    '<td class="mono">' + f.C0_n + '</td>' +
+                    '<td class="mono">' + D.esc(f.C2_conceptoRli) + '</td>' +
+                    '<td class="mono">' + D.esc(f.C3_clasificadorSecIII) + '</td>' +
+                    '<td>' + D.esc(f.C4_descripcion) + '</td>' +
+                    '<td>' + f.C6_tipoAjuste + ' · ' + D.esc(f.tipoAjusteEtiqueta) + '</td>' +
+                    '<td class="mono num">' + moneySigno(f.C5_monto) + '</td>' +
+                '</tr>';
+            }).join('') +
+                '<tr class="fila-total"><td colspan="5"><strong>Cód. 1690 · Base Imponible / RLI Determinada</strong></td><td class="mono num"><strong>' + moneySigno(t26.rliFinalC1690 || 0) + '</strong></td></tr>';
+        }
+        if (d.dj1837 && d.dj1837.ok && $('tbody-dj1837')) {
+            if ($('dj1837-nota-norma')) $('dj1837-nota-norma').textContent = d.dj1837.notaNormativa || '';
+            var filas37 = d.dj1837.filas || [];
+            if (!d.dj1837.aplica) {
+                $('tbody-dj1837').innerHTML = '<tr><td colspan="4" class="texto-ayuda">' + D.esc(d.dj1837.motivoNoAplica || 'Entidad excluida de DJ 1837.') + '</td></tr>';
+            } else {
+                $('tbody-dj1837').innerHTML = filas37.map(function (f) {
+                    return '<tr><td class="mono">' + f.C1_numero + '</td><td class="mono">' + D.esc(f.C2_rutSocio) + '</td><td>' + D.esc(f.nombreSocio) + '</td><td class="mono num">' + D.money(f.C3_montoCreditoPpm) + '</td></tr>';
+                }).join('') +
+                    '<tr class="fila-total"><td colspan="3"><strong>Total Crédito / PPM puesto a disposición</strong></td><td class="mono num"><strong>' + D.money((d.dj1837.totales && d.dj1837.totales.montoTotalPpmPuesto) || 0) + '</strong></td></tr>';
             }
         }
         if (d.cpt && $('tbody-cpt')) {
@@ -4024,6 +4168,42 @@
             });
         }
 
+        if ($('tbody-balance8')) {
+            $('tbody-balance8').addEventListener('click', function (ev) {
+                var btn = ev.target.closest('[data-traza-cuenta]');
+                if (btn) abrirTrazaCuenta(btn.getAttribute('data-traza-cuenta'));
+            });
+        }
+        if ($('mayor-lista')) {
+            $('mayor-lista').addEventListener('click', function (ev) {
+                var btn = ev.target.closest('[data-traza-ir-diario]');
+                if (btn) irAsientoEnDiario(btn.getAttribute('data-traza-ir-diario'));
+            });
+        }
+        if ($('dlg-traza-cuenta')) {
+            var cerrarTraza = function () {
+                var dlg = $('dlg-traza-cuenta');
+                if (dlg && dlg.open && typeof dlg.close === 'function') dlg.close();
+                else if (dlg) dlg.removeAttribute('open');
+            };
+            if ($('btn-cerrar-traza-dlg')) $('btn-cerrar-traza-dlg').addEventListener('click', cerrarTraza);
+            if ($('btn-traza-cerrar')) $('btn-traza-cerrar').addEventListener('click', cerrarTraza);
+            if ($('btn-traza-ir-mayor')) {
+                $('btn-traza-ir-mayor').addEventListener('click', function () {
+                    var cod = $('dlg-traza-cuenta').getAttribute('data-traza-codigo') || '';
+                    cerrarTraza();
+                    ui.filtroMayor = cod;
+                    ui.subLibro = 'mayor';
+                    cambiarModulo('libros');
+                });
+            }
+            if ($('traza-movs-lista')) {
+                $('traza-movs-lista').addEventListener('click', function (ev) {
+                    var btn = ev.target.closest('[data-traza-ir-diario]');
+                    if (btn) irAsientoEnDiario(btn.getAttribute('data-traza-ir-diario'));
+                });
+            }
+        }
         // Plan de Cuentas editable
         if ($('tbody-plan-cuentas')) {
             $('tbody-plan-cuentas').addEventListener('change', function (ev) {
@@ -4113,6 +4293,24 @@
         }
 
         // Operación Renta DDJJ
+        if ($('ddjj-anio')) {
+            $('ddjj-anio').addEventListener('change', function () {
+                var anio = Number($('ddjj-anio').value) || 2026;
+                guardarEstadoActual(function (est) {
+                    est.ddjjAnio = anio;
+                });
+                refrescarTodo();
+            });
+        }
+        if ($('dj1837-tipo-entidad')) {
+            $('dj1837-tipo-entidad').addEventListener('change', function () {
+                var tipo = $('dj1837-tipo-entidad').value || 'SOC_PERSONAS';
+                guardarEstadoActual(function (est) {
+                    est.tipoEntidadDj1837 = tipo;
+                });
+                refrescarTodo();
+            });
+        }
         Array.prototype.forEach.call(document.querySelectorAll('[data-subddjj]'), function (btn) {
             btn.addEventListener('click', function () {
                 ui.subDdjj = btn.getAttribute('data-subddjj');
@@ -4154,23 +4352,51 @@
         });
         if ($('btn-dj1887-csv')) {
             $('btn-dj1887-csv').addEventListener('click', function () {
-                var dj = calcularModelo().ddjj.dj1887;
+                var m = calcularModelo();
+                var dj = m.ddjj.dj1887;
                 if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1887.'); return; }
-                descargarCsvTexto('Borrador_DJ_1887_' + clienteSlug() + '_AT2026.csv', dj.csv);
+                descargarCsvTexto('Borrador_DJ_1887_' + clienteSlug() + '_AT' + (dj.anioTributario || m.ddjj.anio) + '.csv', dj.csv);
             });
         }
         if ($('btn-dj1879-csv')) {
             $('btn-dj1879-csv').addEventListener('click', function () {
-                var dj = calcularModelo().ddjj.dj1879;
+                var m = calcularModelo();
+                var dj = m.ddjj.dj1879;
                 if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1879.'); return; }
-                descargarCsvTexto('Borrador_DJ_1879_' + clienteSlug() + '_AT2026.csv', dj.csv);
+                descargarCsvTexto('Borrador_DJ_1879_' + clienteSlug() + '_AT' + (dj.anioTributario || m.ddjj.anio) + '.csv', dj.csv);
             });
         }
         if ($('btn-dj194x-csv')) {
             $('btn-dj194x-csv').addEventListener('click', function () {
-                var dj = calcularModelo().ddjj.dj194x;
+                var m = calcularModelo();
+                var dj = m.ddjj.dj194x;
                 if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1947/1948.'); return; }
-                descargarCsvTexto('Borrador_DJ_' + dj.codigoDj + '_' + clienteSlug() + '_AT2026.csv', dj.csv);
+                descargarCsvTexto('Borrador_DJ_' + dj.codigoDj + '_' + clienteSlug() + '_AT' + (dj.anioTributario || m.ddjj.anio) + '.csv', dj.csv);
+            });
+        }
+        if ($('btn-dj1847-csv')) {
+            $('btn-dj1847-csv').addEventListener('click', function () {
+                var m = calcularModelo();
+                var dj = m.ddjj.dj1847;
+                if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1847.'); return; }
+                descargarCsvTexto('Borrador_DJ_1847_' + clienteSlug() + '_AT' + (dj.anioTributario || m.ddjj.anio) + '.csv', dj.csv);
+            });
+        }
+        if ($('btn-dj1926-csv')) {
+            $('btn-dj1926-csv').addEventListener('click', function () {
+                var m = calcularModelo();
+                var dj = m.ddjj.dj1926;
+                if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1926.'); return; }
+                descargarCsvTexto('Borrador_DJ_1926_' + clienteSlug() + '_AT' + (dj.anioTributario || m.ddjj.anio) + '.csv', dj.csv);
+            });
+        }
+        if ($('btn-dj1837-csv')) {
+            $('btn-dj1837-csv').addEventListener('click', function () {
+                var m = calcularModelo();
+                var dj = m.ddjj.dj1837;
+                if (!dj || !dj.ok) { D.avisar(dj && dj.error ? dj.error : 'Sin datos DJ 1837.'); return; }
+                if (!dj.aplica) { D.avisar(dj.motivoNoAplica || 'Entidad excluida de DJ 1837.'); return; }
+                descargarCsvTexto('Borrador_DJ_1837_' + clienteSlug() + '_AT' + (dj.anioTributario || m.ddjj.anio) + '.csv', dj.csv);
             });
         }
         if ($('btn-dj1887-cert-pdf')) $('btn-dj1887-cert-pdf').addEventListener('click', imprimirCertificadoN6);

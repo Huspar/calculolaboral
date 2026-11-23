@@ -277,4 +277,90 @@ caso('asientoDesdeFiniquitos centraliza finiquitos cuadrados en 42018 y 42010 vs
     assert.ok(asientoPorPagar.lineas.some((l) => l.cuenta === '21030' && l.haber === 1200000));
 });
 
+caso('AT 2027 modoBorrador habilita Res. Ex. 116 con C8/C33/C9 y elimina C61', () => {
+    const regs = [
+        {
+            rut: '11.222.333-4',
+            nombre: 'Ana Prueba',
+            sueldoImponible: 1000000,
+            cotizacionesPrevisionales: 180000,
+            rentaNoGravada: 50000,
+            rentaExenta: 30000,
+            rebajaZonasExtremas: 15000,
+            prestamoLey21252: 20000,
+            factorActualizacion: 1
+        }
+    ];
+    const bloq = Renta.generarDj1887(regs, { anioTributario: 2027 });
+    assert.strictEqual(bloq.bloqueado, true);
+
+    const borrador = Renta.generarDj1887(regs, { anioTributario: 2027, modoBorrador: true });
+    assert.strictEqual(borrador.ok, true);
+    assert.strictEqual(borrador.esProvisorio, true);
+    assert.strictEqual(borrador.incluyeC61, false);
+    assert.strictEqual(borrador.filas[0].C8_rentaNoGravada, 50000);
+    assert.strictEqual(borrador.filas[0].C33_rentaExenta, 30000);
+    assert.strictEqual(borrador.filas[0].C9_rebajaZonasExtremas, 15000);
+    assert.strictEqual(borrador.filas[0].C61_prestamoLey21252, undefined);
+    assert.ok(!/C61|C64|C65/.test(borrador.csv.split('\n')[0]), 'CSV AT 2027 no debe incluir C61/C64/C65');
+});
+
+caso('generarDj1847 distingue 14A obligado vs ProPyme y aplica signo C29 y C28 solo a resultado', () => {
+    const mayor = [
+        { codigo: '11010', nombre: 'Banco', tipo: 'activo', grupo: 'caja', debito: 500000, credito: 100000, saldoDeudor: 400000, saldoAcreedor: 0 },
+        { codigo: '21010', nombre: 'Proveedores', tipo: 'pasivo', grupo: 'cxp', debito: 0, credito: 150000, saldoDeudor: 0, saldoAcreedor: 150000 },
+        { codigo: '31010', nombre: 'Capital', tipo: 'patrimonio', grupo: 'capital', debito: 0, credito: 200000, saldoDeudor: 0, saldoAcreedor: 200000 },
+        { codigo: '41010', nombre: 'Ventas', tipo: 'ganancia', grupo: 'ingresos', debito: 0, credito: 300000, saldoDeudor: 0, saldoAcreedor: 300000 },
+        { codigo: '52010', nombre: 'Gastos admin', tipo: 'perdida', grupo: 'opex_admin', debito: 250000, credito: 0, saldoDeudor: 250000, saldoAcreedor: 0 }
+    ];
+    const bal = C.calcularBalance8Columnas(mayor);
+    const dj14d3 = Renta.generarDj1847(bal, { regimen: '14D3', anioTributario: 2027, modoBorrador: true });
+    assert.strictEqual(dj14d3.obligado, false);
+    const dj14a = Renta.generarDj1847(bal, { regimen: '14A', anioTributario: 2027, modoBorrador: true });
+    assert.strictEqual(dj14a.obligado, true);
+    const fAct = dj14a.filas.find((f) => f.C1_idCuenta === '11010');
+    const fPas = dj14a.filas.find((f) => f.C1_idCuenta === '21010');
+    const fPat = dj14a.filas.find((f) => f.C1_idCuenta === '31010');
+    const fIng = dj14a.filas.find((f) => f.C1_idCuenta === '41010');
+    assert.strictEqual(fAct.C29_valorTributario, 400000);
+    assert.strictEqual(fPas.C29_valorTributario, -150000);
+    assert.strictEqual(fPat.C29_valorTributario, null);
+    assert.strictEqual(fIng.C28_conceptoResultado, '1657');
+    assert.strictEqual(fIng.C29_valorTributario, null);
+});
+
+caso('generarDj1926 y generarDj1837 respetan codigos RLI y exclusiones societarias SII', () => {
+    const rli = Renta.generarDj1926({
+        regimen: '14A',
+        resultadoContable: 1000000,
+        multasGastosRechazados: 200000,
+        depreciacionTributaria: 150000
+    }, { anioTributario: 2027, modoBorrador: true });
+    assert.strictEqual(rli.obligado, true);
+    assert.strictEqual(rli.totales.rliFinalC1690, 1050000);
+    assert.strictEqual(rli.filas[0].C6_tipoAjuste, 9);
+    assert.strictEqual(rli.filas[1].C6_tipoAjuste, 1);
+    assert.strictEqual(rli.filas[2].C6_tipoAjuste, 2);
+
+    const djSpA = Renta.generarDj1837({ regimen: '14D3', tipoEntidad: 'SPA', ppmDisponible: 500000 }, { anioTributario: 2027, modoBorrador: true });
+    assert.strictEqual(djSpA.aplica, false);
+    assert.strictEqual(djSpA.filas.length, 0);
+
+    const dj14D8 = Renta.generarDj1837({ regimen: '14D8', tipoEntidad: 'SOC_PERSONAS', ppmDisponible: 500000 }, { anioTributario: 2027, modoBorrador: true });
+    assert.strictEqual(dj14D8.aplica, false);
+
+    const djSoc = Renta.generarDj1837({
+        regimen: '14D3',
+        tipoEntidad: 'SOC_PERSONAS',
+        ppmDisponible: 500000,
+        socios: [
+            { rut: '11.111.111-1', nombre: 'Socio A', porcentaje: 60 },
+            { rut: '22.222.222-2', nombre: 'Socio B', porcentaje: 40 }
+        ]
+    }, { anioTributario: 2027, modoBorrador: true });
+    assert.strictEqual(djSoc.aplica, true);
+    assert.strictEqual(djSoc.totales.montoTotalPpmPuesto, 500000);
+    assert.ok(!/%/.test(djSoc.csv.split('\n')[0]), 'CSV DJ 1837 no debe incluir columna de porcentaje');
+});
+
 console.log('\n' + ok + ' pruebas correctas en motores Ola 2');

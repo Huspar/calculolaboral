@@ -4646,3 +4646,111 @@
         max-width: calc(100vw - 24px);
     }
 }
+
+/* ==========================================================================
+   FASE 2: TRAZABILIDAD BALANCE/MAYOR -> DIARIO Y CARRUSEL 8 TABS DDJJ
+   ========================================================================== */
+.traza-cuenta-btn {
+    text-align: left;
+    font-weight: 600;
+    color: #00382E;
+    text-decoration: underline;
+    text-decoration-color: rgba(0, 56, 46, 0.35);
+    text-underline-offset: 2px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+}
+.traza-cuenta-btn:hover { color: #00261F; text-decoration-color: #00261F; }
+.traza-origen {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    white-space: nowrap;
+}
+.traza-origen-nomina,
+.traza-origen-rcv,
+.traza-origen-f29 {
+    background: #EEF6F3;
+    border-color: #D6EBE4;
+    color: #064A3E;
+}
+.traza-origen-cartola {
+    background: #FFF8E6;
+    border-color: #FDE68A;
+    color: #92400E;
+}
+.traza-movs {
+    display: grid;
+    gap: 8px;
+}
+.traza-mov-fila {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr) auto auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+}
+.traza-mov-glosa { min-width: 0; color: var(--ink-1); }
+.traza-mov-monto { font-weight: 700; color: var(--forest-deep); white-space: nowrap; }
+.asiento-card.resaltado {
+    border-color: #FFB703;
+    box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.25);
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.ddjj-at2027-aviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    border: 1px solid #E8C56A;
+    background: #FFF7E0;
+    color: #7A4F00;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.45;
+}
+.ddjj-at2027-aviso .material-icons { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+@media screen and (max-width: 768px) {
+    .traza-cuenta-btn { min-height: 44px; display: inline-flex; align-items: center; }
+    .ddjj-filtros {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+        max-width: 100%;
+    }
+    .ddjj-filtros::-webkit-scrollbar { display: none; }
+    .ddjj-filtros .fin-chip {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        min-height: 44px;
+    }
+}
+@media screen and (max-width: 640px) {
+    .traza-mov-fila {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 6px;
+    }
+    .btn-traza-diario {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+        text-align: center;
+    }
+}

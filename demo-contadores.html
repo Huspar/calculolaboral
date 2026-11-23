@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.22.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.23.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -1918,14 +1918,14 @@
             <label for="ddjj-anio" class="sr-only">Año Tributario</label>
             <select id="ddjj-anio" class="lq-select lq-select-sm">
               <option value="2026" selected>AT 2026 (Parámetros vigentes)</option>
-              <option value="2027" disabled>AT 2027 (Bloqueado por falta de resoluciones SII)</option>
+              <option value="2027">AT 2027 (Borrador Res. Ex. SII N° 116)</option>
             </select>
           </div>
         </div>
 
-        <div class="panel-nota-normativa" id="ddjj-at2027-aviso" style="margin-bottom:14px">
+        <div class="ddjj-at2027-aviso" id="ddjj-at2027-aviso" hidden style="margin-bottom:14px">
           <span class="material-icons" aria-hidden="true">info</span>
-          <span>Año Tributario <strong>2027 bloqueado</strong> hasta que el SII publique las resoluciones de DDJJ, suplemento normativo y factores de IPC. Los exportables generados son archivos de referencia para revisar antes de subir al SII.</span>
+          <span>Borrador AT 2027 según <strong>Res. Ex. SII N° 116</strong>: los factores de corrección monetaria (IPC) se publican en enero 2027; las cifras actuales son preliminares (factor 1,000). En DJ 1887 se eliminan C61, C64 y C65.</span>
         </div>
 
         <div class="suite-preval-strip ok" id="ddjj-cobertura-strip" hidden role="status" aria-live="polite"></div>
@@ -1941,7 +1941,7 @@
                   <span id="ddjj-sii-sello-txt">Renta SII sin sincronizar</span>
                 </span>
               </div>
-              <p class="f29-sii-meta" id="ddjj-sii-meta">Contrasta tus borradores locales con las DDJJ recibidas y la propuesta o declaración F22 del SII para AT 2026.</p>
+              <p class="f29-sii-meta" id="ddjj-sii-meta">Contrasta tus borradores locales con las DDJJ recibidas y la propuesta o declaración F22 del SII para el Año Tributario seleccionado.</p>
             </div>
             <div class="f29-sii-acciones">
               <button type="button" class="btn btn-chico" id="btn-ddjj-sii-sync-ddjj">
@@ -1954,10 +1954,13 @@
           </div>
         </div>
 
-        <div class="fin-filtros" role="tablist" aria-label="Declaraciones Juradas disponibles">
+        <div class="fin-filtros ddjj-filtros" role="tablist" aria-label="Declaraciones Juradas disponibles">
           <button type="button" class="fin-chip activo" data-subddjj="1887" role="tab" aria-selected="true" aria-controls="subddjj-1887">DJ 1887 y Cert. N°6</button>
           <button type="button" class="fin-chip" data-subddjj="1879" role="tab" aria-selected="false" aria-controls="subddjj-1879">DJ 1879 y Cert. N°1</button>
           <button type="button" class="fin-chip" data-subddjj="1947" role="tab" aria-selected="false" aria-controls="subddjj-1947">DJ 1947 / 1948</button>
+          <button type="button" class="fin-chip" data-subddjj="1847" role="tab" aria-selected="false" aria-controls="subddjj-1847">DJ 1847 Balance</button>
+          <button type="button" class="fin-chip" data-subddjj="1926" role="tab" aria-selected="false" aria-controls="subddjj-1926">DJ 1926 RLI</button>
+          <button type="button" class="fin-chip" data-subddjj="1837" role="tab" aria-selected="false" aria-controls="subddjj-1837">DJ 1837 PPM Socios</button>
           <button type="button" class="fin-chip" data-subddjj="cpt" role="tab" aria-selected="false" aria-controls="subddjj-cpt">CPT Simplificado</button>
           <button type="button" class="fin-chip" data-subddjj="f22" role="tab" aria-selected="false" aria-controls="subddjj-f22">Propuesta F22 (IDPC vs PPM)</button>
         </div>
@@ -1965,7 +1968,7 @@
         <div class="panel ddjj-sii-panel" id="ddjj-sii-estado-panel" hidden style="margin-bottom:16px">
           <div class="panel-head">
             <div>
-              <h2>Estado oficial de DDJJ en SII (<span class="mono" id="ddjj-sii-at-lbl">AT 2026</span>)</h2>
+              <h2>Estado en SII de DDJJ (<span class="mono" id="ddjj-sii-at-lbl">AT 2026</span>)</h2>
               <p class="panel-ayuda">Declaraciones recibidas u observadas directamente en sii.cl. Haz clic en «Abrir borrador» para contrastar en esta pantalla.</p>
             </div>
             <span class="sello sello-guardada" id="ddjj-sii-obs-badge" hidden>0 observadas</span>
@@ -1995,7 +1998,7 @@
             <div class="panel-head">
               <div>
                 <h2>DJ 1887 · Sueldos y Renta Total Neta Pagada (Art. 42 N°1)</h2>
-                <p class="panel-ayuda">Usa renta neta (imponible menos AFP, salud 7% y AFC), nunca sueldo bruto. Recuerda: Certificado N°6 invierte columna (7) Exenta y columna (8) No Gravada frente a DJ 1887 C6/C7.</p>
+                <p class="panel-ayuda">Usa renta neta (imponible menos AFP, salud 7% y AFC), nunca sueldo bruto. Columnas SII vigentes: C8 Renta No Gravada, C33 Renta Exenta, C9 Rebaja Zonas Extremas (Certificado N°6: col. 7 Exenta / col. 8 No Gravada).</p>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button type="button" class="btn btn-primario" id="btn-dj1887-cert-pdf">PDF Certificado N°6</button>
@@ -2011,8 +2014,8 @@
                       <th scope="col">Trabajador</th>
                       <th scope="col" class="num">Renta Neta (C3)</th>
                       <th scope="col" class="num">Imp. Único (C4)</th>
-                      <th scope="col" class="num">No Gravada (C6)</th>
-                      <th scope="col" class="num">Exenta (C7)</th>
+                      <th scope="col" class="num">No Gravada (C8)</th>
+                      <th scope="col" class="num">Exenta (C33)</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-dj1887"></tbody>
@@ -2097,6 +2100,109 @@
                     </tr>
                   </thead>
                   <tbody id="tbody-dj194x"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DJ 1847 -->
+        <div id="subddjj-1847" hidden>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>DJ 1847 · Balance de 8 Columnas y Capital Propio (Art. 14 A LIR)</h2>
+                <p class="panel-ayuda" id="dj1847-nota-norma">Obligatoria para régimen Art. 14 A LIR (en ProPyme 14 D N°3 / N°8 aplica solo como borrador referencial). C29 informa Activo (+) y Pasivo (-); Patrimonio y Resultado van vacíos.</p>
+              </div>
+              <button type="button" class="btn" id="btn-dj1847-csv">Descargar borrador CSV 1847</button>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">N° (C0)</th>
+                      <th scope="col">Cuenta (C1)</th>
+                      <th scope="col">Clasif. SII (C2)</th>
+                      <th scope="col">Nombre (C3)</th>
+                      <th scope="col" class="num">Activo (C8)</th>
+                      <th scope="col" class="num">Pasivo (C9)</th>
+                      <th scope="col" class="num">Pérdida (C10)</th>
+                      <th scope="col" class="num">Ganancia (C11)</th>
+                      <th scope="col">Conc. Res. (C28)</th>
+                      <th scope="col" class="num">Valor Trib. (C29)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-dj1847"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DJ 1926 -->
+        <div id="subddjj-1926" hidden>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>DJ 1926 · Base Imponible / Renta Líquida Imponible (Art. 14 A LIR)</h2>
+                <p class="panel-ayuda" id="dj1926-nota-norma">Esquema de conciliación desde Resultado Financiero (C6 = 9) con Agregados (1), Deducciones (2) e Incentivo Art. 14 E (4).</p>
+              </div>
+              <button type="button" class="btn" id="btn-dj1926-csv">Descargar borrador CSV 1926</button>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">N° (C0)</th>
+                      <th scope="col">Cód. RLI (C2)</th>
+                      <th scope="col">Clasif. Sec. III (C3)</th>
+                      <th scope="col">Descripción del ajuste (C4)</th>
+                      <th scope="col">Tipo Ajuste (C6)</th>
+                      <th scope="col" class="num">Monto (C5)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-dj1926"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DJ 1837 -->
+        <div id="subddjj-1837" hidden>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>DJ 1837 · Créditos y PPM puestos a disposición de socios</h2>
+                <p class="panel-ayuda" id="dj1837-nota-norma">Aplica a EIRL, Soc. de Personas, Soc. de Hecho, Soc. de Profesionales y Comunidades (excluye S.A., SpA, SCPA y 14 D N°8).</p>
+              </div>
+              <div class="v-acciones">
+                <label for="dj1837-tipo-entidad" class="sr-only">Tipo societario</label>
+                <select id="dj1837-tipo-entidad" class="lq-select lq-select-sm">
+                  <option value="SOC_PERSONAS" selected>Sociedad de Personas (Ltda.)</option>
+                  <option value="EIRL">E.I.R.L.</option>
+                  <option value="PROFESIONALES">Sociedad de Profesionales</option>
+                  <option value="COMUNIDAD">Comunidad / Soc. de Hecho</option>
+                  <option value="SPA">SpA (Excluida SII)</option>
+                  <option value="SA">S.A. / SCPA (Excluida SII)</option>
+                </select>
+                <button type="button" class="btn" id="btn-dj1837-csv">Descargar borrador CSV 1837</button>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">N° (C1)</th>
+                      <th scope="col">RUT Socio / Comunero (C2)</th>
+                      <th scope="col">Nombre referencial</th>
+                      <th scope="col" class="num">Crédito / PPM a disposición (C3)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-dj1837"></tbody>
                 </table>
               </div>
             </div>
@@ -3112,6 +3218,29 @@
   </div>
 </dialog>
 
+<!-- Modal Trazabilidad de Cuenta (Balance 8 Columnas -> Diario / Origen) -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-traza-cuenta" aria-labelledby="traza-dlg-titulo">
+  <div class="midt-cabeza">
+    <div>
+      <h2 id="traza-dlg-titulo">Detalle de movimientos por cuenta</h2>
+      <p class="midt-sub mono" id="traza-dlg-sub"></p>
+    </div>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-traza-dlg" aria-label="Cerrar detalle de cuenta">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  <div class="dialogo-cuerpo">
+    <div class="traza-movs" id="traza-movs-lista"></div>
+    <div class="sii-dlg-acciones">
+      <div class="sii-acciones-izq"></div>
+      <div class="sii-acciones-der">
+        <button type="button" class="btn btn-chico" id="btn-traza-ir-mayor">Abrir en Libro Mayor</button>
+        <button type="button" class="btn btn-chico btn-primario" id="btn-traza-cerrar">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
 <!-- Modal Guía Carga Masiva LRE en Mi DT -->
 <dialog class="app-dialogo app-dialogo-medio" id="dlg-midt-lre" aria-labelledby="midt-lre-titulo">
   <div class="midt-cabeza">
@@ -3239,10 +3368,10 @@
 <script src="/js/contadores_f29.js?v=1.2.0"></script>
 <script src="/js/contadores_contabilidad.js?v=1.3.0"></script>
 <script src="/js/contadores_importadores.js?v=1.1.0"></script>
-<script src="/js/contadores_renta.js?v=1.1.0"></script>
+<script src="/js/contadores_renta.js?v=1.2.0"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.3.0"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=2.14.0"></script>
+<script src="/js/demo_suite.js?v=2.16.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

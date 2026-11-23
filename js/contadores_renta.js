@@ -25,9 +25,20 @@
         return body + '-' + clean.slice(-1);
     }
 
-    function validarAnioTributario(anioTributario) {
+    function validarAnioTributario(anioTributario, opciones) {
+        var opts = opciones || {};
         var anio = Math.round(Number(anioTributario) || ANIO_TRIBUTARIO_MAXIMO);
         if (anio > ANIO_TRIBUTARIO_MAXIMO) {
+            if (opts.modoBorrador === true && anio <= ANIO_TRIBUTARIO_MAXIMO + 1) {
+                return {
+                    ok: true,
+                    bloqueado: false,
+                    esProvisorio: true,
+                    ipcOficialDisponible: false,
+                    anioTributario: anio,
+                    avisoProvisorio: 'Borrador AT ' + anio + ' segun Res. Ex. SII N° 116: los factores de correccion monetaria (IPC) se publican en enero ' + anio + '; las cifras actuales son preliminares.'
+                };
+            }
             return {
                 ok: false,
                 bloqueado: true,
@@ -35,7 +46,7 @@
                 motivo: 'AT ' + anio + ' esta bloqueado hasta que el SII publique las resoluciones de DDJJ, suplemento normativo y factores de actualizacion IPC.'
             };
         }
-        return { ok: true, bloqueado: false, anioTributario: anio };
+        return { ok: true, bloqueado: false, esProvisorio: false, ipcOficialDisponible: true, anioTributario: anio };
     }
 
     function acumularLiquidacionesParaDj1887(resultados, opciones) {
@@ -121,11 +132,12 @@
 
     function generarDj1887(registros, opciones) {
         var opts = opciones || {};
-        var vAt = validarAnioTributario(opts.anioTributario || ANIO_TRIBUTARIO_MAXIMO);
+        var vAt = validarAnioTributario(opts.anioTributario || ANIO_TRIBUTARIO_MAXIMO, opts);
         if (!vAt.ok) {
             return { ok: false, bloqueado: true, error: vAt.motivo };
         }
 
+        var incluyeC61 = vAt.anioTributario <= 2026;
         var filas = [];
         var certificadosN6 = [];
         var totales = {
@@ -153,7 +165,7 @@
             var noGravada = entero(r.rentaNoGravada);
             var exenta = entero(r.rentaExenta);
             var zonasExt = entero(r.rebajaZonasExtremas);
-            var prestamo = entero(r.prestamoLey21252);
+            var prestamo = incluyeC61 ? entero(r.prestamoLey21252) : 0;
 
             var rentaNetaAct = Math.round(rentaNeta * factor);
             var impAct = Math.round(impuesto * factor);
@@ -162,22 +174,30 @@
             var exentaAct = Math.round(exenta * factor);
             var zonasAct = Math.round(zonasExt * factor);
 
-            // Estructura DJ 1887 SII: C6 = Renta No Gravada, C7 = Renta Exenta
-            filas.push({
+            // Estructura DJ 1887 SII (Res. Ex. 104 AT 2026 / Res. Ex. 116 AT 2027):
+            // C8 = Renta No Gravada, C33 = Renta Exenta, C9 = Rebaja Zonas Extremas.
+            // Se mantienen C6_rentaNoGravada y C7_rentaExenta solo como alias internos de compatibilidad para suites previas.
+            var filaDj = {
                 C2_rut: rutFmt,
                 nombre: String(r.nombre || 'Trabajador').trim(),
                 C3_rentaNeta: rentaNetaAct,
                 C4_impuestoUnico: impAct,
                 C5_mayorRetencion: mayorRetAct,
+                C8_rentaNoGravada: noGravAct,
+                C33_rentaExenta: exentaAct,
+                C9_rebajaZonasExtremas: zonasAct,
                 C6_rentaNoGravada: noGravAct,
                 C7_rentaExenta: exentaAct,
-                C8_rebajaZonasExtremas: zonasAct,
-                C33_prestamoLey21252: prestamo,
                 sueldoImponibleBase: sueldoImponible,
                 cotizacionesBase: cotPrev
-            });
+            };
+            if (incluyeC61) {
+                filaDj.C61_prestamoLey21252 = prestamo;
+                filaDj.C33_prestamoLey21252 = prestamo;
+            }
+            filas.push(filaDj);
 
-            // Certificado N°6 (16 columnas SII): col (7) = Renta Exenta, col (8) = Renta No Gravada (INVERTIDAS respecto a DJ 1887 C6/C7)
+            // Certificado N°6 (16 columnas SII): col (7) = Renta Exenta, col (8) = Renta No Gravada
             certificadosN6.push({
                 rut: rutFmt,
                 nombre: String(r.nombre || 'Trabajador').trim(),
@@ -210,27 +230,36 @@
             totales.prestamoLey21252 += prestamo;
         });
 
-        var lineasCsv = ['RUT Trabajador (C2);Nombre;Renta Total Neta Pagada (C3);Impuesto Unico Retenido (C4);Mayor Retencion (C5);Renta Total No Gravada (C6);Renta Total Exenta (C7);Rebaja Zonas Extremas (C8);Prestamo Ley 21252 (C33)'];
+        var lineasCsv = [
+            incluyeC61
+                ? 'RUT Trabajador (C2);Nombre;Renta Total Neta Pagada (C3);Impuesto Unico Retenido (C4);Mayor Retencion (C5);Renta Total No Gravada (C8);Renta Total Exenta (C33);Rebaja Zonas Extremas (C9);Prestamo Ley 21252 (C61)'
+                : 'RUT Trabajador (C2);Nombre;Renta Total Neta Pagada (C3);Impuesto Unico Retenido (C4);Mayor Retencion (C5);Renta Total No Gravada (C8);Renta Total Exenta (C33);Rebaja Zonas Extremas (C9)'
+        ];
         filas.forEach(function (f) {
-            lineasCsv.push([
+            var cols = [
                 f.C2_rut,
                 f.nombre.replace(/;/g, ' '),
                 f.C3_rentaNeta,
                 f.C4_impuestoUnico,
                 f.C5_mayorRetencion,
-                f.C6_rentaNoGravada,
-                f.C7_rentaExenta,
-                f.C8_rebajaZonasExtremas,
-                f.C33_prestamoLey21252
-            ].join(';'));
+                f.C8_rentaNoGravada,
+                f.C33_rentaExenta,
+                f.C9_rebajaZonasExtremas
+            ];
+            if (incluyeC61) cols.push(f.C61_prestamoLey21252 || 0);
+            lineasCsv.push(cols.join(';'));
         });
 
         return {
             ok: true,
             codigoDj: '1887',
             anioTributario: vAt.anioTributario,
+            esProvisorio: !!vAt.esProvisorio,
+            ipcOficialDisponible: vAt.esProvisorio ? false : true,
+            avisoProvisorio: vAt.avisoProvisorio || '',
+            incluyeC61: incluyeC61,
             certificadoN6ColumnasInvertidas: true,
-            notaColumnas: 'Certificado N°6 SII ubica (7) Renta Exenta y (8) Renta No Gravada invertidas frente a DJ 1887 C6 (No Gravada) y C7 (Exenta).',
+            notaColumnas: 'Certificado N°6 SII ubica (7) Renta Exenta y (8) Renta No Gravada frente a DJ 1887 C8 (No Gravada), C33 (Exenta) y C9 (Zonas Extremas).' + (incluyeC61 ? '' : ' En AT 2027 (Res. Ex. 116) se eliminan C61, C64 y C65.'),
             filas: filas,
             certificadosN6: certificadosN6,
             totales: totales,
@@ -240,7 +269,7 @@
 
     function generarDj1879(boletas, opciones) {
         var opts = opciones || {};
-        var vAt = validarAnioTributario(opts.anioTributario || ANIO_TRIBUTARIO_MAXIMO);
+        var vAt = validarAnioTributario(opts.anioTributario || ANIO_TRIBUTARIO_MAXIMO, opts);
         if (!vAt.ok) {
             return { ok: false, bloqueado: true, error: vAt.motivo };
         }
@@ -304,11 +333,12 @@
             s.boletas += f.cantidadBoletas;
             s.brutoTotal += f.brutoTotal;
             s.retenidoTotal += f.retenidoTotal;
+            s.brutoActualizado += f.brutoActualizado;
             s.retenidoActualizado += f.retenidoActualizado;
             return s;
-        }, { prestadores: 0, boletas: 0, brutoTotal: 0, retenidoTotal: 0, retenidoActualizado: 0 });
+        }, { prestadores: 0, boletas: 0, brutoTotal: 0, retenidoTotal: 0, brutoActualizado: 0, retenidoActualizado: 0 });
 
-        var lineasCsv = ['RUT Prestador;Nombre o Razon Social;Cantidad BHE;Honorarios Brutos;Retencion Real Practicada;Tasa Efectiva %;Honorarios Actualizados;Retencion Actualizada'];
+        var lineasCsv = ['RUT Prestador;Nombre o Razon Social;Cantidad BHE;Honorarios Brutos Sin Actualizar (C28);Retencion Real Practicada;Tasa Efectiva %;Honorarios Actualizados;Retencion Actualizada'];
         filas.forEach(function (f) {
             lineasCsv.push([
                 f.rut,
@@ -326,8 +356,11 @@
             ok: true,
             codigoDj: '1879',
             anioTributario: vAt.anioTributario,
+            esProvisorio: !!vAt.esProvisorio,
+            ipcOficialDisponible: vAt.esProvisorio ? false : true,
+            avisoProvisorio: vAt.avisoProvisorio || '',
             anuladasIgnoradas: anuladasIgnoradas,
-            notaNormativa: 'Acumula la retencion efectivamente practicada en cada BHE (15,25% en 2026 segun Ley 21.133). No usa tasa historica del 13%.',
+            notaNormativa: 'Acumula la retencion efectivamente practicada en cada BHE (15,25% en 2026 segun Ley 21.133). No usa tasa historica del 13%.' + (vAt.anioTributario >= 2027 ? ' AT 2027 (Res. Ex. 116) mantiene C28 e elimina C29/C30.' : ''),
             filas: filas,
             certificadosN1: certificadosN1,
             totales: totales,
@@ -337,7 +370,7 @@
 
     function generarDj1947o1948(regimen, datos, opciones) {
         var opts = opciones || {};
-        var vAt = validarAnioTributario(opts.anioTributario || ANIO_TRIBUTARIO_MAXIMO);
+        var vAt = validarAnioTributario(opts.anioTributario || ANIO_TRIBUTARIO_MAXIMO, opts);
         if (!vAt.ok) {
             return { ok: false, bloqueado: true, error: vAt.motivo };
         }
@@ -554,6 +587,273 @@
         };
     }
 
+    function clasificarCuentaDj1847(f) {
+        var cod = String(f.codigo || '');
+        var tipo = String(f.tipo || 'activo');
+        var grupo = String(f.grupo || '');
+        var activo = entero(f.activo);
+        var pasivo = entero(f.pasivo);
+        var c2 = '1.01.09';
+        var c28 = '';
+        var c29 = null;
+
+        if (tipo === 'activo') {
+            var mapaAct = { '11010': '1.01.01', '11020': '1.01.02', '11040': '1.01.03', '11060': '1.01.04', '11080': '1.01.06', '11090': '1.01.07' };
+            c2 = mapaAct[cod] || (/^12/.test(cod) ? '1.02.01' : '1.01.09');
+            c29 = activo - pasivo;
+        } else if (tipo === 'pasivo') {
+            var mapaPas = { '21010': '2.01.01', '21020': '2.01.03', '21025': '2.01.06', '21030': '2.01.06', '21035': '2.01.06', '21040': '2.01.06', '21045': '2.01.06', '21060': '2.01.08' };
+            c2 = mapaPas[cod] || (/^22/.test(cod) ? '2.02.01' : '2.01.09');
+            c29 = activo - pasivo;
+        } else if (tipo === 'patrimonio') {
+            c2 = '3.01.01';
+        } else if (tipo === 'ganancia') {
+            c2 = (grupo === 'financiero' || grupo === 'otros_ingresos') ? '4.02.01' : '4.01.01';
+            c28 = (grupo === 'financiero' || grupo === 'otros_ingresos') ? '1658' : '1657';
+        } else {
+            if (grupo === 'costo_ventas') { c2 = '5.01.01'; c28 = '1660'; }
+            else if (grupo === 'depreciacion') { c2 = '5.02.05'; c28 = '1665'; }
+            else if (grupo === 'gasto_rechazado') { c2 = '5.03.01'; c28 = '1666'; }
+            else if (grupo === 'opex_laboral') { c2 = '5.02.01'; c28 = '1664'; }
+            else if (grupo === 'opex_honorarios') { c2 = '5.02.02'; c28 = '1664'; }
+            else { c2 = '5.02.09'; c28 = '1664'; }
+        }
+        return { c2: c2, c28: c28, c29: c29 };
+    }
+
+    function generarDj1847(balance, opciones) {
+        var opts = opciones || {};
+        var vAt = validarAnioTributario(opts.anioTributario || ANIO_TRIBUTARIO_MAXIMO, opts);
+        if (!vAt.ok) {
+            return { ok: false, bloqueado: true, error: vAt.motivo };
+        }
+        var regNorm = String(opts.regimen || '14D3').toUpperCase();
+        var obligado = /^14A/.test(regNorm);
+        var srcFilas = (balance && Array.isArray(balance.filas)) ? balance.filas : [];
+
+        var filas = srcFilas.map(function (f, idx) {
+            var clf = clasificarCuentaDj1847(f);
+            return {
+                C0_n: idx + 1,
+                C1_idCuenta: String(f.codigo || ''),
+                C2_clasificadorSii: clf.c2,
+                C3_nombre: String(f.nombre || '').trim(),
+                tipo: String(f.tipo || 'activo'),
+                C4_debito: entero(f.debito),
+                C5_credito: entero(f.credito),
+                C6_deudor: entero(f.deudor),
+                C7_acreedor: entero(f.acreedor),
+                C8_activo: entero(f.activo),
+                C9_pasivo: entero(f.pasivo),
+                C10_perdida: entero(f.perdida),
+                C11_ganancia: entero(f.ganancia),
+                C28_conceptoResultado: clf.c28,
+                C29_valorTributario: clf.c29
+            };
+        });
+
+        var tot = (balance && balance.totales) || {};
+        var csv = ['Nro (C0);Id Plan Propio (C1);Clasificador SII (C2);Nombre Cuenta (C3);Debito (C4);Credito (C5);Deudor (C6);Acreedor (C7);Activo (C8);Pasivo (C9);Perdida (C10);Ganancia (C11);Concepto Resultado (C28);Valor Tributario (C29)'];
+        filas.forEach(function (f) {
+            csv.push([
+                f.C0_n,
+                f.C1_idCuenta,
+                f.C2_clasificadorSii,
+                f.C3_nombre.replace(/;/g, ' '),
+                f.C4_debito,
+                f.C5_credito,
+                f.C6_deudor,
+                f.C7_acreedor,
+                f.C8_activo,
+                f.C9_pasivo,
+                f.C10_perdida,
+                f.C11_ganancia,
+                f.C28_conceptoResultado || '',
+                f.C29_valorTributario != null ? f.C29_valorTributario : ''
+            ].join(';'));
+        });
+
+        return {
+            ok: true,
+            codigoDj: '1847',
+            anioTributario: vAt.anioTributario,
+            regimen: regNorm,
+            obligado: obligado,
+            esProvisorio: !!vAt.esProvisorio,
+            avisoProvisorio: vAt.avisoProvisorio || '',
+            notaNormativa: obligado
+                ? 'Obligatoria para contribuyentes en Art. 14 letra A LIR. Patrimonio y Resultado llevan C29 vacio; Pasivos en C29 con signo negativo.'
+                : 'No obligatoria en regimen ProPyme (Art. 14 D N°3 / N°8) segun Res. Ex. SII N° 123/2020 y N° 22/2021; borrador solo referencial.',
+            filas: filas,
+            totales: {
+                cuentas: filas.length,
+                debito: entero(tot.debito),
+                credito: entero(tot.credito),
+                activo: entero(tot.activo),
+                pasivo: entero(tot.pasivo),
+                perdida: entero(tot.perdida),
+                ganancia: entero(tot.ganancia),
+                resultadoContable: balance ? enteroConSigno(balance.resultado) : 0
+            },
+            csv: csv.join('\n')
+        };
+    }
+
+    function generarDj1926(datos, opciones) {
+        var opts = opciones || {};
+        var vAt = validarAnioTributario(opts.anioTributario || ANIO_TRIBUTARIO_MAXIMO, opts);
+        if (!vAt.ok) {
+            return { ok: false, bloqueado: true, error: vAt.motivo };
+        }
+        var d = datos || {};
+        var regNorm = String(d.regimen || opts.regimen || '14D3').toUpperCase();
+        var obligado = /^14A/.test(regNorm);
+        var etiquetasTipo = { '9': 'Resultado Financiero', '1': 'Agregado', '2': 'Deduccion', '4': 'Incentivo Art. 14 E' };
+
+        var partidas = [];
+        function addPartida(concepto, clf, desc, monto, tipoAj) {
+            var val = Number(tipoAj) === 9 ? enteroConSigno(monto) : entero(monto);
+            if (Number(tipoAj) !== 9 && val === 0) return;
+            partidas.push({
+                C2_conceptoRli: String(concepto),
+                C3_clasificadorSecIII: String(clf),
+                C4_descripcion: String(desc).trim(),
+                C5_monto: val,
+                C6_tipoAjuste: Number(tipoAj),
+                tipoAjusteEtiqueta: etiquetasTipo[String(tipoAj)] || 'Ajuste'
+            });
+        }
+
+        if (Array.isArray(d.partidas) && d.partidas.length) {
+            d.partidas.forEach(function (p) {
+                if (!p) return;
+                addPartida(p.concepto || p.C2_conceptoRli || '1679', p.clasificador || p.C3_clasificadorSecIII || '5.03.01', p.descripcion || p.C4_descripcion || 'Partida RLI', p.monto != null ? p.monto : p.C5_monto, p.tipoAjuste != null ? p.tipoAjuste : (p.C6_tipoAjuste != null ? p.C6_tipoAjuste : 1));
+            });
+        } else {
+            addPartida('1675', '3.01.00', 'Resultado financiero del ejercicio segun Balance', d.resultadoFinanciero != null ? d.resultadoFinanciero : d.resultadoContable, 9);
+            addPartida('1679', '5.03.01', 'Agregado: gastos rechazados y multas no deducibles (Art. 21 LIR)', d.multasGastosRechazados, 1);
+            addPartida('1680', '5.02.05', 'Agregado: depreciacion financiera contabilizada', d.depreciacionFinanciera, 1);
+            addPartida('1678', '4.01.09', 'Agregado: otros agregados tributarios a la RLI', d.otrosAgregados, 1);
+            addPartida('1685', '5.02.05', 'Deduccion: depreciacion tributaria autorizada (Art. 31 N°5 LIR)', d.depreciacionTributaria, 2);
+            addPartida('1686', '5.02.09', 'Deduccion: otras deducciones aceptadas de la RLI', d.otrasDeducciones, 2);
+            addPartida('1688', '5.04.01', 'Deduccion: incentivo al ahorro PYME Art. 14 letra E LIR', d.incentivo14E, 4);
+        }
+
+        var filas = partidas.map(function (p, i) {
+            return Object.assign({ C0_n: i + 1 }, p);
+        });
+
+        var resFin = 0, agregados = 0, deducciones = 0, ded14E = 0;
+        filas.forEach(function (f) {
+            if (f.C6_tipoAjuste === 9) resFin += f.C5_monto;
+            else if (f.C6_tipoAjuste === 1) agregados += f.C5_monto;
+            else if (f.C6_tipoAjuste === 2) deducciones += f.C5_monto;
+            else if (f.C6_tipoAjuste === 4) ded14E += f.C5_monto;
+        });
+        var rliFinal = d.baseImponibleRli != null
+            ? enteroConSigno(d.baseImponibleRli)
+            : (resFin + agregados - deducciones - ded14E);
+
+        var csv = ['Nro (C0);Concepto RLI (C2);Cuenta Clasificador Sec. III (C3);Descripcion Ajuste (C4);Monto (C5);Tipo Ajuste (C6)'];
+        filas.forEach(function (f) {
+            csv.push([f.C0_n, f.C2_conceptoRli, f.C3_clasificadorSecIII, f.C4_descripcion.replace(/;/g, ' '), f.C5_monto, f.C6_tipoAjuste].join(';'));
+        });
+
+        return {
+            ok: true,
+            codigoDj: '1926',
+            anioTributario: vAt.anioTributario,
+            regimen: regNorm,
+            obligado: obligado,
+            esProvisorio: !!vAt.esProvisorio,
+            avisoProvisorio: vAt.avisoProvisorio || '',
+            notaNormativa: obligado
+                ? 'Obligatoria para contribuyentes en Art. 14 letra A LIR. Tipo ajuste C6: 9 Resultado Financiero, 1 Agregado, 2 Deduccion, 4 Art. 14 E.'
+                : 'No obligatoria en regimen ProPyme (Art. 14 D N°3 / N°8); vista referencial equivalente al esquema de conciliacion SII.',
+            filas: filas,
+            totales: {
+                resultadoFinanciero: resFin,
+                agregados: agregados,
+                deducciones: deducciones,
+                deducciones14E: ded14E,
+                rliFinalC1690: rliFinal
+            },
+            csv: csv.join('\n')
+        };
+    }
+
+    function generarDj1837(datos, opciones) {
+        var opts = opciones || {};
+        var vAt = validarAnioTributario(opts.anioTributario || ANIO_TRIBUTARIO_MAXIMO, opts);
+        if (!vAt.ok) {
+            return { ok: false, bloqueado: true, error: vAt.motivo };
+        }
+        var d = datos || {};
+        var regNorm = String(d.regimen || opts.regimen || '14D3').toUpperCase();
+        var tipoEntidad = String(d.tipoEntidad || opts.tipoEntidad || 'SOC_PERSONAS').toUpperCase();
+        var entidadesObligadas = ['EIRL', 'SOC_PERSONAS', 'SOC_HECHO', 'PROFESIONALES', 'COMUNIDAD'];
+        var esTransparente = /^14D8/.test(regNorm);
+        var aplica = !esTransparente && entidadesObligadas.indexOf(tipoEntidad) >= 0;
+
+        var montoTotalPpm = aplica ? entero(d.ppmDisponible != null ? d.ppmDisponible : d.montoPpmTotal) : 0;
+        var socios = Array.isArray(d.socios) && d.socios.length
+            ? d.socios
+            : [{ rut: '12.345.678-5', nombre: 'Socio titular', porcentaje: 100 }];
+
+        var filas = [];
+        if (aplica) {
+            var sumaPct = socios.reduce(function (acc, s) { return acc + Math.max(0, Number(s && s.porcentaje) || 0); }, 0) || 100;
+            var acumulado = 0;
+            filas = socios.map(function (s, idx) {
+                var pct = Math.max(0, Number(s && s.porcentaje) || 0);
+                var monto = idx === socios.length - 1
+                    ? Math.max(0, montoTotalPpm - acumulado)
+                    : Math.round(montoTotalPpm * (pct / sumaPct));
+                acumulado += monto;
+                return {
+                    C1_numero: idx + 1,
+                    C2_rutSocio: formatearRut(s && s.rut),
+                    nombreSocio: String((s && s.nombre) || 'Socio').trim(),
+                    C3_montoCreditoPpm: monto
+                };
+            });
+        }
+
+        // Anexo 16 Res. Ex. 116: C1 Nro, C2 RUT Socio/Comunero, C3 Monto Credito/PPM en pesos (sin columna de porcentaje)
+        var csv = ['Nro (C1);RUT Socio o Comunero (C2);Monto Credito PPM Puesto a Disposicion (C3)'];
+        filas.forEach(function (f) {
+            csv.push([f.C1_numero, f.C2_rutSocio, f.C3_montoCreditoPpm].join(';'));
+        });
+
+        var motivoNoAplica = '';
+        if (esTransparente) {
+            motivoNoAplica = 'Regimen ProPyme Transparente (Art. 14 D N°8) excluido de DJ 1837: el PPM a disposicion se informa en DJ 1947.';
+        } else if (entidadesObligadas.indexOf(tipoEntidad) < 0) {
+            motivoNoAplica = 'Tipo societario ' + tipoEntidad + ' excluido: S.A., SpA y SCPA no presentan DJ 1837 (solo EIRL, Soc. de Personas, Soc. de Hecho, Soc. de Profesionales y Comunidades).';
+        }
+
+        return {
+            ok: true,
+            codigoDj: '1837',
+            anioTributario: vAt.anioTributario,
+            regimen: regNorm,
+            tipoEntidad: tipoEntidad,
+            aplica: aplica,
+            esProvisorio: !!vAt.esProvisorio,
+            avisoProvisorio: vAt.avisoProvisorio || '',
+            motivoNoAplica: motivoNoAplica,
+            notaNormativa: aplica
+                ? 'Seccion B DJ 1837: C1 N°, C2 RUT socio/comunero, C3 Monto Credito/PPM puesto a disposicion (sin columna % en formato SII).'
+                : motivoNoAplica,
+            filas: filas,
+            totales: {
+                socios: filas.length,
+                montoTotalPpmPuesto: filas.reduce(function (acc, f) { return acc + f.C3_montoCreditoPpm; }, 0)
+            },
+            csv: csv.join('\n')
+        };
+    }
+
     var api = {
         ANIO_TRIBUTARIO_MAXIMO: ANIO_TRIBUTARIO_MAXIMO,
         validarAnioTributario: validarAnioTributario,
@@ -562,8 +862,11 @@
         generarDj1887: generarDj1887,
         generarDj1879: generarDj1879,
         generarDj1947o1948: generarDj1947o1948,
+        generarDj1847: generarDj1847,
+        generarDj1926: generarDj1926,
+        generarDj1837: generarDj1837,
         calcularCptSimplificado: calcularCptSimplificado,
-        version: '1.1.0'
+        version: '1.2.0'
     };
 
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
