@@ -52,19 +52,37 @@
       "offers": [
         {
           "@type": "Offer",
-          "name": "Contador independiente (precio de lanzamiento prepago anual, hasta 10 empresas, 1 usuario)",
+          "name": "Contador independiente mensual (sin permanencia, hasta 10 empresas, 1 usuario)",
+          "price": "16900",
+          "priceCurrency": "CLP"
+        },
+        {
+          "@type": "Offer",
+          "name": "Contador independiente anual (prepago anual, hasta 10 empresas, 1 usuario)",
           "price": "149900",
           "priceCurrency": "CLP"
         },
         {
           "@type": "Offer",
-          "name": "Estudio (precio de lanzamiento prepago anual, hasta 30 empresas, 3 usuarios)",
+          "name": "Estudio mensual (sin permanencia, hasta 30 empresas, 3 usuarios)",
+          "price": "32900",
+          "priceCurrency": "CLP"
+        },
+        {
+          "@type": "Offer",
+          "name": "Estudio anual (prepago anual, hasta 30 empresas, 3 usuarios)",
           "price": "299900",
           "priceCurrency": "CLP"
         },
         {
           "@type": "Offer",
-          "name": "Estudio ilimitado (precio de lanzamiento prepago anual, empresas sin tope, 5 usuarios)",
+          "name": "Estudio ilimitado mensual (sin permanencia, empresas sin tope, 5 usuarios)",
+          "price": "59900",
+          "priceCurrency": "CLP"
+        },
+        {
+          "@type": "Offer",
+          "name": "Estudio ilimitado anual (prepago anual, empresas sin tope, 5 usuarios)",
           "price": "549900",
           "priceCurrency": "CLP"
         }
@@ -139,10 +157,10 @@
         },
         {
           "@type": "Question",
-          "name": "¿Cómo funciona el acceso anticipado de 90 días y los planes anuales?",
+          "name": "¿Cómo funciona el acceso anticipado de 90 días y los planes mensuales y anuales?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Contamos con acceso anticipado de 90 días gratis desde el alta para los primeros 20 estudios, sin tarjeta ni cobro automático y con aviso 15 días antes de cumplir los 90 días. Los planes anuales con precio de lanzamiento para los primeros estudios (alcance actual por carga de archivos, activación mediante facturación manual en 24 horas) son $149.900 (10 empresas, 1 usuario), $299.900 (30 empresas, 3 usuarios) y $549.900 + IVA al año (empresas sin tope, 5 usuarios), con $0 de habilitación."
+            "text": "Contamos con acceso anticipado de 90 días gratis desde el alta para los primeros 20 estudios, sin tarjeta ni cobro automático y con aviso 15 días antes de cumplir los 90 días. Luego puedes elegir modalidad mensual sin permanencia ($16.900, $32.900 o $59.900 + IVA al mes) o prepago anual ($149.900, $299.900 o $549.900 + IVA al año), con $0 de habilitación y activación en 24 horas hábiles."
           }
         },
         {
@@ -303,6 +321,9 @@ window.addEventListener('load', function () {
     .ap-piloto-t { font-size: 1.02rem !important; font-weight: 800; color: #00382E !important; }
 
     .ap-planes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .sc-ciclo-wrap { display: inline-flex; gap: 4px; padding: 4px; background: #e8f0ee; border-radius: 999px; margin: .85rem 0 0; flex-wrap: wrap; }
+    .sc-ciclo-btn { border: 0; background: transparent; color: #0f172a; font-weight: 700; font-size: .86rem; padding: .5rem 1rem; border-radius: 999px; cursor: pointer; min-height: 38px; transition: background-color .15s ease, color .15s ease; }
+    .sc-ciclo-btn.activo { background: #00382E; color: #ffffff; }
     .ap-plan { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.2rem; display: flex; flex-direction: column; gap: .5rem; }
     .ap-plan h3 { margin: 0 !important; font-size: 1rem !important; font-weight: 750; color: #0f172a; }
     .ap-plan-precio { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 1.5rem; font-weight: 800; color: #00382E; margin: 0 !important; line-height: 1.15; }
@@ -677,7 +698,7 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <li><a href="#que-hace">Qué puedes hacer hoy</a></li>
 <li><a href="#sin-claves">Trabajo por archivos o conexión SII opcional</a></li>
 <li><a href="#comparativa">Condiciones operativas</a></li>
-<li><a href="#planes">Planes anuales y acceso anticipado</a></li>
+<li><a href="#planes">Planes mensuales, anuales y acceso anticipado</a></li>
 <li><a href="#no-hace">Qué no hace esta herramienta</a></li>
 <li><a href="#preguntas">Preguntas frecuentes</a></li>
 </ol>
@@ -759,8 +780,8 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <tbody>
 <tr class="sc-dest">
 <td><strong>Precio y modalidad</strong></td>
-<td>$149.900 a $549.900 + IVA/año (precio de lanzamiento para los primeros estudios · prepago anual dividido en 12 meses)</td>
-<td>Acceso anticipado de 90 días gratis (cupo 20 estudios); activación pagada vía facturación manual en 24 horas</td>
+<td>Desde $16.900 a $59.900 + IVA/mes (sin permanencia ni cargos automáticos) o prepago anual de $149.900 a $549.900 + IVA/año</td>
+<td>Acceso anticipado de 90 días gratis (cupo 20 estudios); activación pagada vía facturación manual en 24 horas hábiles</td>
 </tr>
 <tr>
 <td><strong>Costo de habilitación (setup)</strong></td>
@@ -789,47 +810,52 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 </section>
 
 <section id="planes" class="ls-section">
-<h2>Planes anuales de lanzamiento y acceso anticipado</h2>
+<h2>Planes mensuales y anuales de lanzamiento</h2>
 <div class="ap-piloto">
 <p class="ap-piloto-t">Precio de lanzamiento para los primeros estudios · 90 días gratis de acceso anticipado</p>
-<p>Corresponde al alcance actual por carga de archivos (Excel/CSV, Previred 105 campos, LRE 147 columnas, F29 desde RCV y contabilidad) mientras sumamos conexiones automáticas. Quien contrata en esta etapa mantiene su valor durante todo el año pagado (facturación manual en 24 horas). Además, si postulas al cupo inicial (20 estudios), puedes partir con <strong>90 días gratis desde el alta</strong>, sin tarjeta ni cobro automático.</p>
+<p>Corresponde al alcance actual por carga de archivos (Excel/CSV, Previred 105 campos, LRE 147 columnas, F29 desde RCV y contabilidad) mientras sumamos conexiones automáticas. Puedes pagar <strong>mes a mes sin permanencia</strong> ni cargos automáticos, o elegir <strong>prepago anual</strong> manteniendo tu valor durante todo el año (facturación manual en 24 horas hábiles). Además, si postulas al cupo inicial (20 estudios), partes con <strong>90 días gratis desde el alta</strong>, sin tarjeta.</p>
+</div>
+
+<div class="sc-ciclo-wrap" role="tablist" aria-label="Modalidad de pago de Suite Contadores">
+<button type="button" class="sc-ciclo-btn activo" role="tab" aria-selected="true" data-sc-ciclo="mensual">Pago mensual (sin permanencia)</button>
+<button type="button" class="sc-ciclo-btn" role="tab" aria-selected="false" data-sc-ciclo="anual">Prepago anual</button>
 </div>
 
 <div class="ap-planes">
 <div class="ap-plan">
 <h3>Contador independiente</h3>
-<p class="ap-plan-precio">$149.900 <span style="font-size:.82rem;font-weight:600;color:#475569;">+ IVA/año</span></p>
-<p class="ap-plan-mes">Equivale a $12.492/mes (/12) · $1.249 por empresa/mes</p>
+<p class="ap-plan-precio" data-sc-precio data-mensual="$16.900" data-anual="$149.900">$16.900 <span style="font-size:.82rem;font-weight:600;color:#475569;" data-sc-unidad>+ IVA/mes</span></p>
+<p class="ap-plan-mes" data-sc-sub data-mensual="Sin permanencia · o $149.900 + IVA/año ($12.492/mes)" data-anual="Equivale a $12.492/mes (/12) · o $16.900 + IVA/mes sin permanencia">Sin permanencia · o $149.900 + IVA/año ($12.492/mes)</p>
 <ul>
-<li>Hasta 10 empresas clientes (empresa extra: $14.900 + IVA/año)</li>
-<li>1 usuario del estudio (usuario extra: $59.900 + IVA/año)</li>
+<li>Hasta 10 empresas clientes (extra: $1.900/mes o $14.900/año + IVA)</li>
+<li>1 usuario del estudio (extra: $6.900/mes o $59.900/año + IVA)</li>
 <li>Nómina, Previred, LRE, F29, BHE, Conciliación, Balance 8 col., RLI y DDJJ</li>
 </ul>
 </div>
 <div class="ap-plan ap-plan-dest">
 <h3>Estudio</h3>
-<p class="ap-plan-precio">$299.900 <span style="font-size:.82rem;font-weight:600;color:#475569;">+ IVA/año</span></p>
-<p class="ap-plan-mes">Equivale a $24.992/mes (/12) · $833 por empresa/mes</p>
+<p class="ap-plan-precio" data-sc-precio data-mensual="$32.900" data-anual="$299.900">$32.900 <span style="font-size:.82rem;font-weight:600;color:#475569;" data-sc-unidad>+ IVA/mes</span></p>
+<p class="ap-plan-mes" data-sc-sub data-mensual="Sin permanencia · o $299.900 + IVA/año ($24.992/mes)" data-anual="Equivale a $24.992/mes (/12) · o $32.900 + IVA/mes sin permanencia">Sin permanencia · o $299.900 + IVA/año ($24.992/mes)</p>
 <ul>
-<li>Hasta 30 empresas clientes (empresa extra: $9.900 + IVA/año)</li>
-<li>Hasta 3 usuarios del estudio (usuario extra: $59.900 + IVA/año)</li>
+<li>Hasta 30 empresas clientes (extra: $1.200/mes o $9.900/año + IVA)</li>
+<li>Hasta 3 usuarios del estudio (extra: $6.900/mes o $59.900/año + IVA)</li>
 <li>Incluye el <a href="monitor-tributario-previsional" class="font-semibold text-[#00382E] underline">Monitor Tributario y Previsional</a> por empresa cliente</li>
 <li>Incluye Portal Cliente Marca Blanca, conexión SII opcional y conector MCP</li>
 </ul>
 </div>
 <div class="ap-plan">
 <h3>Estudio ilimitado</h3>
-<p class="ap-plan-precio">$549.900 <span style="font-size:.82rem;font-weight:600;color:#475569;">+ IVA/año</span></p>
-<p class="ap-plan-mes">Equivale a $45.742/mes (/12) · Empresas sin tope</p>
+<p class="ap-plan-precio" data-sc-precio data-mensual="$59.900" data-anual="$549.900">$59.900 <span style="font-size:.82rem;font-weight:600;color:#475569;" data-sc-unidad>+ IVA/mes</span></p>
+<p class="ap-plan-mes" data-sc-sub data-mensual="Empresas sin tope · o $549.900 + IVA/año ($45.742/mes)" data-anual="Equivale a $45.742/mes (/12) · o $59.900 + IVA/mes sin permanencia">Empresas sin tope · o $549.900 + IVA/año ($45.742/mes)</p>
 <ul>
 <li>Empresas clientes sin tope</li>
-<li>Hasta 5 usuarios del estudio (usuario extra: $59.900 + IVA/año)</li>
+<li>Hasta 5 usuarios del estudio (extra: $6.900/mes o $59.900/año + IVA)</li>
 <li>Incluye el <a href="monitor-tributario-previsional" class="font-semibold text-[#00382E] underline">Monitor Tributario y Previsional</a> por empresa cliente</li>
 <li>Pensado para carteras amplias con cierres mensuales en lote y soporte prioritario</li>
 </ul>
 </div>
 </div>
-<p class="ls-note">Equivalencias mensuales calculadas dividiendo el prepago anual único por 12 meses. Costo de habilitación: $0. Usuario adicional en cualquier tramo: $59.900 + IVA/año ($4.992/mes). Habilitación de planes pagados mediante facturación manual dentro de 24 horas hábiles; al sumar integraciones automáticas, los nuevos ingresos se publicarán con tarifa actualizada.</p>
+<p class="ls-note">Pago mensual sin permanencia (mes a mes, sin cargos automáticos) o prepago anual único (equivalencia mensual dividida por 12). Costo de habilitación: $0. Usuario adicional en cualquier tramo: $6.900 + IVA/mes o $59.900 + IVA/año. Habilitación de planes pagados mediante facturación manual dentro de 24 horas hábiles; al sumar integraciones automáticas, los nuevos ingresos se publicarán con tarifa actualizada.</p>
 
 <div id="acceso-anticipado" class="sc-form-box">
 <p style="margin:0 0 .25rem;font-weight:800;color:#0f172a;font-size:1.05rem;">Postular a los 90 días de acceso anticipado</p>
@@ -905,8 +931,8 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <p>Si administras internamente una sola empresa y buscas fichas de trabajadores, avisos de vencimientos, contratos y anexos en Word, te conviene usar el <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a>. Suite Contadores está enfocada en contadores y estudios que llevan varios clientes: nómina y Previred/LRE en lote, RCV y F29, BHE, conciliación bancaria, Diario/Mayor, Balance 8 Columnas, DDJJ y Portal Marca Blanca.</p>
 </details>
 <details>
-<summary>¿Por qué los planes se expresan como prepago anual?</summary>
-<p>El cobro opera como prepago anual único en pesos más IVA ($149.900, $299.900 o $549.900 + IVA al año según tramo, $0 de habilitación, facturación manual en 24 horas), sin suscripción automática. Además, el acceso anticipado entrega 90 días gratis para los primeros 20 estudios antes de decidir contratar.</p>
+<summary>¿Cómo funcionan los planes mensuales y el prepago anual?</summary>
+<p>Puedes elegir pago mensual sin permanencia ($16.900, $32.900 o $59.900 + IVA al mes según tramo; pagas mes a mes sin cargos automáticos) o prepago anual único ($149.900, $299.900 o $549.900 + IVA al año), siempre con $0 de habilitación y activación por facturación manual en 24 horas hábiles. Además, el acceso anticipado entrega 90 días gratis para los primeros 20 estudios antes de decidir contratar.</p>
 </details>
 <details>
 <summary>¿Los borradores reemplazan la revisión en Previred, Mi DT o el SII?</summary>
@@ -1014,6 +1040,25 @@ document.addEventListener('DOMContentLoaded', function () {
             if (typeof window.gtag === 'function') {
                 window.gtag('event', 'suite_demo_click', { ubicacion: el.getAttribute('data-cta-slot') || 'suite_contadores' });
             }
+        });
+    });
+
+    document.querySelectorAll('[data-sc-ciclo]').forEach(function (btnC) {
+        btnC.addEventListener('click', function () {
+            var ciclo = btnC.getAttribute('data-sc-ciclo') === 'anual' ? 'anual' : 'mensual';
+            document.querySelectorAll('[data-sc-ciclo]').forEach(function (b) {
+                var act = b === btnC;
+                b.classList.toggle('activo', act);
+                b.setAttribute('aria-selected', act ? 'true' : 'false');
+            });
+            document.querySelectorAll('[data-sc-precio]').forEach(function (pEl) {
+                var val = pEl.getAttribute('data-' + ciclo) || '';
+                var uni = ciclo === 'anual' ? '+ IVA/año' : '+ IVA/mes';
+                pEl.innerHTML = val + ' <span style="font-size:.82rem;font-weight:600;color:#475569;" data-sc-unidad>' + uni + '</span>';
+            });
+            document.querySelectorAll('[data-sc-sub]').forEach(function (sEl) {
+                sEl.textContent = sEl.getAttribute('data-' + ciclo) || '';
+            });
         });
     });
 
