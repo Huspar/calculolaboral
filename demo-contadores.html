@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.6">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.7">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -1244,23 +1244,60 @@
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Bancos y Conciliación</h1>
-            <p class="v-sub">Cruza cartolas bancarias con tus facturas RCV del SII, controla la cartera CxC/CxP y ajusta tus parámetros de tesorería.</p>
+            <p class="v-sub">Compara tu cartola bancaria con tus facturas y deja cuadrada la contabilidad.</p>
           </div>
-          <div class="v-acciones">
-            <button type="button" class="btn btn-primario" id="btn-bancos-subir-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir Cartola (CSV / Excel)</button>
+          <div class="v-acciones bancos-head-acciones">
+            <label class="sr-only" for="bancos-cuenta-select">Cuenta bancaria</label>
+            <select id="bancos-cuenta-select" class="bancos-cuenta-select" aria-label="Cuenta bancaria activa">
+              <option value="principal" selected>Banco Principal (11010)</option>
+              <option value="secundaria">Cuenta Secundaria / Caja (11012)</option>
+            </select>
+            <button type="button" class="btn btn-primario" id="btn-bancos-subir-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir cartola (CSV/Excel)</button>
             <input type="file" id="file-bancos-cartola" accept=".csv,.txt,.tsv,.xlsx,.xls" class="sr-only" aria-label="Subir cartola bancaria CSV o Excel">
-            <button type="button" class="btn" id="btn-bancos-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar cartola ejemplo</button>
+            <button type="button" class="btn" id="btn-bancos-pegar-excel"><span class="material-icons" aria-hidden="true">content_paste</span>Pegar desde Excel</button>
+            <button type="button" class="btn" id="btn-bancos-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo</button>
           </div>
         </div>
 
-        <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
-          <div class="fin-kpi" id="conc-kpi-card-movs"><span class="fin-kpi-label">Movimientos cartola</span><span class="fin-kpi-val mono" id="conc-k-movs">0</span><span class="fin-kpi-meta" id="conc-k-movs-meta">Sube CSV o cartola ejemplo</span></div>
-          <div class="fin-kpi" id="conc-kpi-card-pct"><span class="fin-kpi-label">Conciliación automática</span><span class="fin-kpi-val mono ok" id="conc-k-pct">0%</span><span class="fin-kpi-meta" id="conc-k-pct-meta">Cruce con RCV y reglas</span></div>
-          <div class="fin-kpi" id="conc-kpi-card-cxc"><span class="fin-kpi-label">CxC pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxc">$0</span><span class="fin-kpi-meta" id="conc-k-cxc-meta">Por cobrar</span></div>
-          <div class="fin-kpi fin-kpi-destacado" id="conc-kpi-card-cxp"><span class="fin-kpi-label">CxP pendientes (RCV)</span><span class="fin-kpi-val mono" id="conc-k-cxp">$0</span><span class="fin-kpi-meta" id="conc-k-cxp-meta">Por pagar</span></div>
-        </div>
+        <!-- Termómetro de 3 tarjetas limpias -->
+        <div class="bancos-termometro" style="margin-bottom:14px">
+          <div class="fin-kpi bancos-kpi-card" id="conc-kpi-card-cuadre">
+            <div class="bancos-kpi-top">
+              <span class="fin-kpi-label">Cuadratura de saldo</span>
+              <span class="sello sello-guardada" id="conc-cuadre-sello">Sin cartola</span>
+            </div>
+            <div class="bancos-cuadre-cifras">
+              <div><span class="bancos-mini-lbl">Cartola</span><strong class="mono" id="conc-saldo-cartola">$0</strong></div>
+              <div><span class="bancos-mini-lbl">Contabilidad</span><strong class="mono" id="conc-saldo-libro">$0</strong></div>
+            </div>
+            <span class="fin-kpi-meta" id="conc-cuadre-meta">Sube o pega una cartola para comparar tu saldo</span>
+          </div>
 
-        <div class="suite-graf-card" id="aging-grafico-resumen" aria-label="Comparación visual de Antigüedad CxC y CxP"></div>
+          <div class="fin-kpi bancos-kpi-card" id="conc-kpi-card-pct">
+            <div class="bancos-kpi-top">
+              <span class="fin-kpi-label">Movimientos por revisar</span>
+              <span class="fin-kpi-val mono ok" id="conc-k-pct" style="font-size:16px">0%</span>
+            </div>
+            <div class="bancos-pend-linea">
+              <strong class="mono" id="conc-k-movs">0</strong>
+              <span class="fin-kpi-meta" id="conc-k-pct-meta">Sin movimientos cargados</span>
+            </div>
+            <div class="bancos-prog-track" aria-hidden="true"><div class="bancos-prog-fill" id="conc-prog-fill" style="width:0%"></div></div>
+            <span class="fin-kpi-meta" id="conc-k-movs-meta">Sube CSV/Excel o carga un ejemplo</span>
+          </div>
+
+          <button type="button" class="fin-kpi bancos-kpi-card bancos-kpi-btn" id="conc-kpi-card-cartera" title="Ver facturas por cobrar y por pagar">
+            <div class="bancos-kpi-top">
+              <span class="fin-kpi-label">Facturas pendientes</span>
+              <span class="material-icons" aria-hidden="true" style="font-size:18px;color:var(--syn-muted)">arrow_forward</span>
+            </div>
+            <div class="bancos-cuadre-cifras">
+              <div><span class="bancos-mini-lbl">Por cobrar</span><strong class="mono" id="conc-k-cxc">$0</strong></div>
+              <div><span class="bancos-mini-lbl">Por pagar</span><strong class="mono" id="conc-k-cxp">$0</strong></div>
+            </div>
+            <span class="fin-kpi-meta"><span id="conc-k-cxc-meta">Sin pendientes</span> · <span id="conc-k-cxp-meta">Al día</span></span>
+          </button>
+        </div>
 
         <div class="suite-preval-strip ok" id="bancos-buzon-alerta" hidden role="status" aria-live="polite">
           <span class="suite-preval-strip-izq">
@@ -1270,73 +1307,40 @@
           <button type="button" class="btn btn-chico btn-primario" id="btn-bancos-ver-buzon">Revisar envíos</button>
         </div>
 
-        <div class="fin-filtros" role="tablist" aria-label="Subvistas de bancos y conciliación">
-          <button type="button" class="fin-chip activo" data-subbanco="conciliacion" role="tab" aria-selected="true" aria-controls="sub-conciliacion">Conciliación Bancaria</button>
-          <button type="button" class="fin-chip" data-subbanco="cartera" role="tab" aria-selected="false" aria-controls="sub-bancos-cartera">Cartera CxC / CxP (Aging)</button>
-          <button type="button" class="fin-chip" data-subbanco="tesoreria" role="tab" aria-selected="false" aria-controls="sub-tesoreria">Tesorería y Parámetros</button>
+        <div class="fin-filtros" role="tablist" aria-label="Secciones de bancos y conciliación">
+          <button type="button" class="fin-chip activo" data-subbanco="conciliacion" role="tab" aria-selected="true" aria-controls="sub-conciliacion">Movimientos del Banco</button>
+          <button type="button" class="fin-chip" data-subbanco="cartera" role="tab" aria-selected="false" aria-controls="sub-bancos-cartera">Facturas por Cobrar y Pagar</button>
+          <button type="button" class="fin-chip" data-subbanco="tesoreria" role="tab" aria-selected="false" aria-controls="sub-tesoreria">Reglas y Estimación</button>
         </div>
 
-        <!-- Subvista Conciliación Inteligente -->
+        <!-- Pestaña 1: Movimientos del Banco (Cara a Cara) -->
         <div id="sub-conciliacion">
           <div class="panel" style="margin-bottom:16px">
-            <div class="panel-head">
-              <div>
-                <h2>Conciliación Bancaria con Reglas de Contraparte</h2>
-                <p class="panel-ayuda">Cruza automáticamente tu cartola CSV o Excel (.xlsx/.xls) con facturas RCV (±$100) y reglas repetitivas (Transbank, SII, Previred, comisiones).</p>
+            <div class="panel-head bancos-toolbar-head">
+              <div class="conc-bandeja-tabs" id="conc-resumen-bar" role="group" aria-label="Filtrar movimientos por estado">
+                <button type="button" class="btn btn-chico conc-filtro-btn activo" data-conc-filtro="todos" aria-pressed="true">Todos</button>
+                <button type="button" class="btn btn-chico conc-filtro-btn" data-conc-filtro="pendiente" aria-pressed="false">Pendientes (<span class="mono" id="conc-sum-pend">0</span>)</button>
+                <button type="button" class="btn btn-chico conc-filtro-btn" data-conc-filtro="sugerido" aria-pressed="false">Sugeridos (<span class="mono" id="conc-sum-sug">0</span>)</button>
+                <button type="button" class="btn btn-chico conc-filtro-btn" data-conc-filtro="conciliado" aria-pressed="false">Listos (<span class="mono" id="conc-sum-ok">0</span>)</button>
               </div>
-              <div class="v-acciones">
-                <button type="button" class="btn btn-chico" id="btn-conc-aprobar-sugeridos" disabled>Aprobar sugeridos (<span id="conc-cnt-sugeridos">0</span>)</button>
-                <button type="button" class="btn btn-chico btn-primario" id="btn-conc-centralizar">Centralizar conciliados en Diario</button>
+              <div class="bancos-toolbar-der">
+                <input type="search" id="conc-buscar" class="bancos-buscar-input" placeholder="Buscar texto o monto..." aria-label="Buscar movimiento bancario">
+                <label class="bancos-switch-contador" for="chk-conc-vista-contador" title="Mostrar códigos de cuenta y asiento Debe/Haber">
+                  <input type="checkbox" id="chk-conc-vista-contador">
+                  <span>Vista contador</span>
+                </label>
+                <button type="button" class="btn btn-chico" id="btn-conc-ir-reglas">Reglas (<span id="conc-reglas-cnt-btn">7</span>)</button>
+                <button type="button" class="btn btn-chico btn-primario" id="btn-conc-centralizar">Guardar listos en Contabilidad</button>
               </div>
             </div>
+
             <div class="panel-cuerpo">
-              <div class="conc-graf-banda" id="conc-graf-banda">
-                <div class="conc-donut-wrap" id="conc-grafico-panel" aria-label="Proporción de movimientos bancarios conciliados"></div>
-                <div class="conc-resumen-col">
-                  <div class="conc-resumen-bar" id="conc-resumen-bar" aria-live="polite">
-                    <span class="conc-resumen-item conc-item-ok">Conciliados: <strong class="mono" id="conc-sum-ok">0</strong></span>
-                    <span class="conc-resumen-sep" aria-hidden="true">·</span>
-                    <span class="conc-resumen-item conc-item-sug">Sugeridos: <strong class="mono" id="conc-sum-sug">0</strong></span>
-                    <span class="conc-resumen-sep" aria-hidden="true">·</span>
-                    <span class="conc-resumen-item conc-item-pend">Sin regla: <strong class="mono" id="conc-sum-pend">0</strong></span>
-                  </div>
-                  <details class="suite-acordeon" id="conc-reglas-acordeon">
-                    <summary class="suite-acordeon-head">
-                      <span><span class="material-icons" aria-hidden="true">rule</span>Reglas automáticas de contraparte (<span id="conc-reglas-cnt">7</span>) · Crear nueva</span>
-                      <span class="material-icons suite-acordeon-ico" aria-hidden="true">expand_more</span>
-                    </summary>
-                    <div class="suite-acordeon-body">
-                      <div class="suite-plan-nuevo-fila" style="margin-bottom:10px">
-                        <div class="lq-field"><label for="regla-tipo">Movimiento</label>
-                          <select id="regla-tipo" class="lq-select">
-                            <option value="cargo">Cargo (egreso)</option>
-                            <option value="abono">Abono (ingreso)</option>
-                            <option value="ambos">Ambos</option>
-                          </select>
-                        </div>
-                        <div class="lq-field"><label for="regla-patron">Palabra clave en glosa</label><input type="text" id="regla-patron" placeholder="Ej: arriendo bodega|entel"></div>
-                        <div class="lq-field"><label for="regla-cuenta">Cuenta contable</label>
-                          <select id="regla-cuenta" class="lq-select">
-                            <option value="42040">42040 · Gastos generales</option>
-                            <option value="11050">11050 · Clientes por cobrar</option>
-                            <option value="21010">21010 · Proveedores por pagar</option>
-                            <option value="21070">21070 · Impuestos F29</option>
-                            <option value="21035">21035 · Previred por pagar</option>
-                            <option value="21030">21030 · Sueldos por pagar</option>
-                            <option value="21025">21025 · Honorarios por pagar</option>
-                            <option value="11018">11018 · Cuenta puente traspasos</option>
-                            <option value="11012">11012 · Caja y otros bancos</option>
-                            <option value="21015">21015 · Tarjeta de crédito corporativa</option>
-                          </select>
-                        </div>
-                        <div class="lq-field"><label for="regla-motivo">Descripción regla</label><input type="text" id="regla-motivo" placeholder="Pago servicio mensual"></div>
-                        <div class="lq-field" style="align-self:end"><button type="button" class="btn" id="btn-regla-agregar">Guardar regla</button></div>
-                      </div>
-                      <div class="suite-reglas-chips" id="conc-reglas-lista"></div>
-                    </div>
-                  </details>
-                </div>
+              <!-- Tira rápida para confirmar sugerencias en 1 clic -->
+              <div class="bancos-sug-banner" id="conc-sug-banner" hidden role="status" aria-live="polite">
+                <span><strong id="conc-cnt-sugeridos">0</strong> coincidencias encontradas automáticamente y listas para confirmar.</span>
+                <button type="button" class="btn btn-chico btn-primario" id="btn-conc-aprobar-sugeridos">Confirmar sugeridos</button>
               </div>
+
               <div class="conc-tira-alertas" id="conc-tira-alertas" hidden aria-live="polite">
                 <div class="conc-alerta-item conc-alerta-dif" id="conc-alerta-dif" hidden>
                   <span class="material-icons" aria-hidden="true">warning</span>
@@ -1344,17 +1348,15 @@
                 </div>
                 <div class="conc-sug-reglas" id="conc-sug-reglas" hidden></div>
               </div>
-              <div class="tabla-contable-wrap" style="margin-top:10px">
-                <table class="tabla-contable compacta">
+
+              <div class="tabla-contable-wrap conc-tabla-wrap" id="conc-tabla-wrap">
+                <table class="tabla-contable compacta conc-cara-tabla">
                   <thead>
                     <tr>
-                      <th scope="col">Fecha</th>
-                      <th scope="col">Glosa bancaria</th>
-                      <th scope="col">Tipo</th>
-                      <th scope="col" class="num">Monto ($)</th>
-                      <th scope="col">Cruce / Match</th>
-                      <th scope="col">Cuenta / Asiento</th>
-                      <th scope="col">Estado / 1-Clic</th>
+                      <th scope="col">Lo que dice el banco</th>
+                      <th scope="col" class="num">Monto</th>
+                      <th scope="col">A qué corresponde</th>
+                      <th scope="col" class="num">Acción</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-conciliacion"></tbody>
@@ -1364,26 +1366,27 @@
           </div>
         </div>
 
-        <!-- Subvista Cartera CxC / CxP (Aging) -->
+        <!-- Pestaña 2: Facturas por Cobrar y Pagar -->
         <div id="sub-bancos-cartera" hidden>
+          <div class="suite-graf-card" id="aging-grafico-resumen" aria-label="Antigüedad de facturas por cobrar y por pagar" style="margin-bottom:14px"></div>
           <div class="fin-cols-2 fin-cols-2-tablas">
             <div class="panel">
-              <div class="panel-head"><div><h2>Antigüedad Cuentas por Cobrar (CxC)</h2><p class="panel-ayuda" id="aging-cxc-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
+              <div class="panel-head"><div><h2>Te deben (Facturas por Cobrar)</h2><p class="panel-ayuda" id="aging-cxc-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
               <div class="panel-cuerpo">
                 <div class="tabla-contable-wrap">
                   <table class="tabla-contable compacta">
-                    <thead><tr><th scope="col">Documento</th><th scope="col">Tramo</th><th scope="col" class="num">Pendiente ($)</th><th scope="col">Estado</th><th scope="col" class="num">Acción</th></tr></thead>
+                    <thead><tr><th scope="col">Cliente y factura</th><th scope="col">Atraso</th><th scope="col" class="num">Pendiente</th><th scope="col">Estado</th><th scope="col" class="num">Acción</th></tr></thead>
                     <tbody id="tbody-aging-cxc"></tbody>
                   </table>
                 </div>
               </div>
             </div>
             <div class="panel">
-              <div class="panel-head"><div><h2>Antigüedad Cuentas por Pagar (CxP)</h2><p class="panel-ayuda" id="aging-cxp-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
+              <div class="panel-head"><div><h2>Debes (Facturas por Pagar)</h2><p class="panel-ayuda" id="aging-cxp-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
               <div class="panel-cuerpo">
                 <div class="tabla-contable-wrap">
                   <table class="tabla-contable compacta">
-                    <thead><tr><th scope="col">Documento</th><th scope="col">Tramo</th><th scope="col" class="num">Pendiente ($)</th><th scope="col">Estado</th><th scope="col" class="num">Acción</th></tr></thead>
+                    <thead><tr><th scope="col">Proveedor y factura</th><th scope="col">Atraso</th><th scope="col" class="num">Pendiente</th><th scope="col">Estado</th><th scope="col" class="num">Acción</th></tr></thead>
                     <tbody id="tbody-aging-cxp"></tbody>
                   </table>
                 </div>
@@ -1392,15 +1395,65 @@
           </div>
         </div>
 
-        <!-- Subvista Tesorería -->
+        <!-- Pestaña 3: Reglas Automáticas y Estimación sin Cartola -->
         <div id="sub-tesoreria" hidden>
+          <div class="suite-preval-strip ok" id="tes-modo-aviso" hidden role="status" aria-live="polite" style="margin-bottom:14px">
+            <span class="suite-preval-strip-izq">
+              <span class="material-icons" aria-hidden="true">check_circle</span>
+              <span id="tes-modo-aviso-txt">Cartola real guardada en Contabilidad: los porcentajes estimados de cobro y pago están pausados automáticamente para no duplicar tu saldo de banco.</span>
+            </span>
+          </div>
+
+          <div class="panel" style="margin-bottom:16px">
+            <div class="panel-head">
+              <div>
+                <h2>Reglas automáticas de clasificación (<span id="conc-reglas-cnt">7</span>)</h2>
+                <p class="panel-ayuda">Cuando un movimiento del banco incluya estas palabras, se clasificará solo en futuros cierres.</p>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="suite-plan-nuevo-fila" style="margin-bottom:12px">
+                <div class="lq-field"><label for="regla-tipo">Movimiento</label>
+                  <select id="regla-tipo" class="lq-select">
+                    <option value="cargo">Egreso (salida)</option>
+                    <option value="abono">Ingreso (entrada)</option>
+                    <option value="ambos">Ambos</option>
+                  </select>
+                </div>
+                <div class="lq-field"><label for="regla-patron">Palabra clave en la cartola</label><input type="text" id="regla-patron" placeholder="Ej: arriendo bodega|entel"></div>
+                <div class="lq-field"><label for="regla-cuenta">Categoría / Cuenta</label>
+                  <select id="regla-cuenta" class="lq-select">
+                    <option value="42040">42040 · Gastos generales</option>
+                    <option value="11050">11050 · Clientes por cobrar</option>
+                    <option value="21010">21010 · Proveedores por pagar</option>
+                    <option value="21070">21070 · Impuestos F29</option>
+                    <option value="21035">21035 · Previred por pagar</option>
+                    <option value="21030">21030 · Sueldos por pagar</option>
+                    <option value="21025">21025 · Honorarios por pagar</option>
+                    <option value="11018">11018 · Traspaso entre cuentas</option>
+                    <option value="11012">11012 · Caja y otros bancos</option>
+                    <option value="21015">21015 · Tarjeta de crédito corporativa</option>
+                  </select>
+                </div>
+                <div class="lq-field"><label for="regla-motivo">Descripción</label><input type="text" id="regla-motivo" placeholder="Ej: Pago arriendo mensual"></div>
+                <div class="lq-field" style="align-self:end"><button type="button" class="btn btn-primario" id="btn-regla-agregar">Guardar regla</button></div>
+              </div>
+              <div class="suite-reglas-chips" id="conc-reglas-lista"></div>
+            </div>
+          </div>
+
           <div class="panel">
-            <div class="panel-head"><h2>Parámetros de cobro, pago y banco para RLI y Flujo</h2></div>
+            <div class="panel-head">
+              <div>
+                <h2>Parámetros de saldo inicial y estimación sin cartola</h2>
+                <p class="panel-ayuda">Solo se usan los porcentajes estimados cuando todavía no guardas una cartola bancaria real en Contabilidad.</p>
+              </div>
+            </div>
             <div class="panel-cuerpo">
               <div class="fin-form-grid" style="margin-bottom:16px">
                 <div class="lq-field">
                   <div class="f29-remanente-head">
-                    <label for="tes-banco-ini">Saldo inicial Banco</label>
+                    <label for="tes-banco-ini">Saldo inicial del banco</label>
                     <button type="button" class="btn-micro-calculo" id="btn-tes-traer-saldo-ant" hidden title="Importar saldo final de banco del período anterior">
                       <span class="material-icons" aria-hidden="true">history</span><span>Traer cierre anterior</span>
                     </button>
@@ -1411,14 +1464,14 @@
                   </div>
                 </div>
                 <div class="lq-field">
-                  <label for="tes-pct-cobro">Ventas del mes cobradas</label>
+                  <label for="tes-pct-cobro">Ventas del mes cobradas (estimado)</label>
                   <div class="campo-unidad">
                     <input type="text" id="tes-pct-cobro" inputmode="decimal" data-tipo="dec" value="80">
                     <span class="campo-addon sufijo" aria-hidden="true">%</span>
                   </div>
                 </div>
                 <div class="lq-field">
-                  <label for="tes-pct-pago">Compras del giro pagadas</label>
+                  <label for="tes-pct-pago">Compras del giro pagadas (estimado)</label>
                   <div class="campo-unidad">
                     <input type="text" id="tes-pct-pago" inputmode="decimal" data-tipo="dec" value="75">
                     <span class="campo-addon sufijo" aria-hidden="true">%</span>
@@ -1435,6 +1488,33 @@
           </div>
         </div>
       </section>
+
+      <!-- Modal Pegar cartola desde Excel (estilo Laudus) -->
+      <dialog class="app-dialogo app-dialogo-medio" id="dlg-bancos-pegar" aria-labelledby="bancos-pegar-titulo">
+        <div class="midt-cabeza">
+          <div>
+            <h2 id="bancos-pegar-titulo">Pegar cartola desde Excel o Banco web</h2>
+            <p class="midt-sub">Copia las filas de tu banco o planilla (Fecha, Descripción, Cargo, Abono) y pégalas aquí abajo.</p>
+          </div>
+          <button type="button" class="app-icono-btn" id="btn-cerrar-bancos-pegar" aria-label="Cerrar ventana">
+            <span class="material-icons" aria-hidden="true">close</span>
+          </button>
+        </div>
+        <div class="dialogo-cuerpo">
+          <div class="lq-field">
+            <label for="bancos-pegar-texto">Filas copiadas (separadas por tabulador o punto y coma)</label>
+            <textarea id="bancos-pegar-texto" rows="8" placeholder="Fecha&#9;Descripción&#9;Cargo&#9;Abono&#10;2026-11-03&#9;Transferencia Cliente Factura 1042&#9;&#9;1450000&#10;2026-11-07&#9;Pago Proveedor Harinas del Sur&#9;620000&#9;"></textarea>
+          </div>
+          <div id="bancos-pegar-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite" style="margin-top:10px"></div>
+          <div class="sii-dlg-acciones" style="margin-top:14px">
+            <div class="sii-acciones-izq"></div>
+            <div class="sii-acciones-der">
+              <button type="button" class="btn" id="btn-bancos-pegar-cancelar">Cancelar</button>
+              <button type="button" class="btn btn-primario" id="btn-bancos-pegar-importar">Importar movimientos</button>
+            </div>
+          </div>
+        </div>
+      </dialog>
 
       <!-- ==================== VISTA 4: CONTABILIDAD GENERAL ==================== -->
       <section class="vista" id="suite-libros" hidden>
@@ -3869,12 +3949,12 @@
 <script src="/js/contadores_prevalidador.js?v=1.2.0"></script>
 <script src="/js/demo_liquidaciones.js?v=2.13.0"></script>
 <script src="/js/contadores_f29.js?v=1.2.0"></script>
-<script src="/js/contadores_contabilidad.js?v=1.3.1"></script>
+<script src="/js/contadores_contabilidad.js?v=2.1.1.3.1"></script>
 <script src="/js/contadores_importadores.js?v=1.1.0"></script>
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.4.0"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.0.5"></script>
+<script src="/js/demo_suite.js?v=3.0.6"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

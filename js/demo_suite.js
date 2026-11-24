@@ -38,6 +38,9 @@
     var ui = {
         modulo: 'dashboard',
         subLibro: 'diario',
+        concFiltro: 'todos',
+        concBuscar: '',
+        concVistaContador: false,
         subBanco: 'conciliacion',
         subBalance: 'balance8',
         balAlcance: 'mes',
@@ -2453,7 +2456,9 @@
 
         if ($('conc-reglas-lista')) {
             var reglasUsr = Array.isArray(est.reglasConciliacion) ? est.reglasConciliacion : [];
-            if ($('conc-reglas-cnt')) $('conc-reglas-cnt').textContent = reglasUsr.length + (Pro ? Pro.REGLAS_CONCILIACION_DEFECTO.length : 0);
+            var totalReglas = reglasUsr.length + (Pro ? Pro.REGLAS_CONCILIACION_DEFECTO.length : 0);
+            if ($('conc-reglas-cnt')) $('conc-reglas-cnt').textContent = totalReglas;
+            if ($('conc-reglas-cnt-btn')) $('conc-reglas-cnt-btn').textContent = totalReglas;
             var chipsUsr = reglasUsr.map(function (r) {
                 return '<span class="suite-regla-chip">' +
                     '<span class="suite-regla-chip-tipo">' + D.esc(r.tipo || 'ambos') + '</span>' +
@@ -2498,9 +2503,49 @@
         if ($('conc-sum-sug')) $('conc-sum-sug').textContent = sugCnt;
         if ($('conc-sum-pend')) $('conc-sum-pend').textContent = pendCnt;
         if ($('conc-cnt-sugeridos')) $('conc-cnt-sugeridos').textContent = sugCnt;
+        if ($('conc-sug-banner')) $('conc-sug-banner').hidden = bloqueado || sugCnt === 0;
         if ($('btn-conc-aprobar-sugeridos')) {
             $('btn-conc-aprobar-sugeridos').disabled = bloqueado || sugCnt === 0;
-            $('btn-conc-aprobar-sugeridos').classList.toggle('btn-primario', !bloqueado && sugCnt > 0);
+        }
+        if ($('conc-prog-fill')) {
+            $('conc-prog-fill').style.width = Math.max(0, Math.min(100, pctConc)) + '%';
+        }
+        // Cuadratura: Saldo Cartola vs Saldo Contabilidad (cuenta 11010)
+        var saldoIniBco = Number((est.tesoreria && est.tesoreria.saldoInicialBanco) || 0);
+        var netoCartola = (conc.filas || []).reduce(function (acc, f) {
+            return acc + (f.tipo === 'abono' ? Number(f.monto || 0) : -Number(f.monto || 0));
+        }, 0);
+        var saldoCartola = saldoIniBco + netoCartola;
+        var filaBcoLibro = ((m.balance && m.balance.filas) || []).find(function (fl) { return String(fl.codigo) === '11010'; });
+        var saldoLibro = filaBcoLibro ? Math.round((Number(filaBcoLibro.deudor || 0) - Number(filaBcoLibro.acreedor || 0))) : saldoIniBco;
+        var diffSaldo = Math.round(saldoCartola - saldoLibro);
+        var hayReal = Array.isArray(est.manuales) && est.manuales.some(function (a) { return a && /^MAN-CONC-/.test(String(a.id || '')); });
+        if ($('tes-modo-aviso')) $('tes-modo-aviso').hidden = !hayReal;
+        if ($('conc-saldo-cartola')) $('conc-saldo-cartola').textContent = D.money(saldoCartola);
+        if ($('conc-saldo-libro')) $('conc-saldo-libro').textContent = D.money(saldoLibro);
+        if ($('conc-cuadre-sello')) {
+            if (!totMovConc) {
+                $('conc-cuadre-sello').className = 'sello sello-guardada';
+                $('conc-cuadre-sello').textContent = 'Sin cartola';
+            } else if (Math.abs(diffSaldo) <= 10) {
+                $('conc-cuadre-sello').className = 'sello sello-emitida';
+                $('conc-cuadre-sello').textContent = 'Cuadrado ($0)';
+            } else {
+                $('conc-cuadre-sello').className = 'sello sello-preparada';
+                $('conc-cuadre-sello').textContent = 'Diferencia ' + moneySigno(diffSaldo);
+            }
+        }
+        if ($('conc-cuadre-meta')) {
+            if (!totMovConc) {
+                $('conc-cuadre-meta').textContent = 'Sube o pega una cartola para comparar tu saldo';
+            } else if (Math.abs(diffSaldo) <= 10) {
+                $('conc-cuadre-meta').textContent = 'Tu banco coincide con Contabilidad';
+            } else {
+                $('conc-cuadre-meta').textContent = hayReal ? 'Confirma los pendientes y vuelve a guardar en Contabilidad' : 'Guarda tus movimientos listos en Contabilidad para cuadrar';
+            }
+        }
+        if ($('sub-conciliacion')) {
+            $('sub-conciliacion').classList.toggle('conc-modo-contador', !!ui.concVistaContador);
         }
 
         if ($('conc-tira-alertas')) {
@@ -2532,21 +2577,60 @@
 
         if ($('tbody-conciliacion')) {
             var cuentasPlan = (C && C.obtenerPlanCuentas) ? C.obtenerPlanCuentas() : [];
-            $('tbody-conciliacion').innerHTML = conc.filas.length
-                ? conc.filas.map(function (f) {
-                    var badgeHtml = '';
-                    if (f.matchTipo === 'A') badgeHtml = '<span class="sello-match-a"><span class="material-icons" aria-hidden="true">verified</span>Match A · RUT + Monto</span>';
-                    else if (f.matchTipo === 'B') badgeHtml = '<span class="sello-match-b"><span class="material-icons" aria-hidden="true">help_outline</span>Sugerencia B · Monto</span>';
-                    else if (f.matchTipo === 'C') badgeHtml = '<span class="sello-match-c"><span class="material-icons" aria-hidden="true">layers</span>Match C · Agrupado</span>';
-                    else if (f.matchTipo === 'TRASPASO') badgeHtml = '<span class="conc-tag conc-tag-traspaso">Traspaso interno</span>';
-                    else if (f.matchTipo === 'BHE' || f.matchTipo === 'F29' || f.matchTipo === 'PREVIRED') badgeHtml = '<span class="sello-match-b"><span class="material-icons" aria-hidden="true">auto_awesome</span>Sugerido · ' + D.esc(f.matchTipo) + '</span>';
-                    else if (f.metodo === 'regla') badgeHtml = '<span class="conc-pill conc-pill-regla">Regla auto</span>';
-                    else if (f.metodo === 'manual') badgeHtml = '<span class="conc-pill conc-pill-ok">Confirmado</span>';
-                    else badgeHtml = '<span class="conc-pill conc-pill-pend">Sin match</span>';
+            var qConc = String(ui.concBuscar || '').trim().toLowerCase();
+            var fEstConc = ui.concFiltro || 'todos';
+            var filasVisibles = (conc.filas || []).filter(function (f) {
+                if (fEstConc === 'pendiente' && f.estado !== 'sin_conciliar' && f.estado !== 'pendiente') return false;
+                if (fEstConc === 'sugerido' && f.estado !== 'sugerido') return false;
+                if (fEstConc === 'conciliado' && f.estado !== 'conciliado') return false;
+                if (qConc) {
+                    var txtBusq = (String(f.glosa || '') + ' ' + String(f.detalleMatch || '') + ' ' + String(f.monto || '') + ' ' + String(f.fecha || '')).toLowerCase();
+                    if (txtBusq.indexOf(qConc) < 0) return false;
+                }
+                return true;
+            });
 
-                    var difInlineHtml = f.alertaDiferencia
-                        ? '<div class="conc-dif-inline mono">Dif. ' + moneySigno(f.alertaDiferencia.diferencia) + ' vs ' + D.esc(f.alertaDiferencia.docTipo) + ' F.' + D.esc(f.alertaDiferencia.folio) + '</div>'
-                        : '';
+            if (!conc.filas.length) {
+                $('tbody-conciliacion').innerHTML = '<tr class="conc-vacio-row"><td colspan="4">' +
+                    '<div class="conc-vacio-box">' +
+                    '<strong>Aún no cargas movimientos bancarios</strong>' +
+                    '<p>Sube tu cartola en CSV/Excel, pega las filas directo desde tu banco o carga un ejemplo para ver cómo se cruzan con tus facturas.</p>' +
+                    '<div class="conc-vacio-btns">' +
+                    '<button type="button" class="btn btn-chico btn-primario" id="btn-conc-vacio-pegar">Pegar desde Excel</button>' +
+                    '<button type="button" class="btn btn-chico" id="btn-conc-vacio-ejemplo">Cargar ejemplo</button>' +
+                    '</div></div></td></tr>';
+            } else if (!filasVisibles.length) {
+                $('tbody-conciliacion').innerHTML = '<tr class="conc-vacio-row"><td colspan="4" class="texto-ayuda" style="text-align:center;padding:24px">No hay movimientos en este filtro. Prueba cambiando a "Todos".</td></tr>';
+            } else {
+                var CAT_SIMPLE = {
+                    '11050': 'Cobro a cliente',
+                    '21010': 'Pago a proveedor',
+                    '42040': 'Gasto del negocio',
+                    '21070': 'Impuesto SII (F29)',
+                    '21035': 'Cotizaciones Previred',
+                    '21030': 'Pago de sueldos',
+                    '21025': 'Pago de honorarios',
+                    '11018': 'Traspaso entre cuentas',
+                    '11012': 'Movimiento de caja',
+                    '21015': 'Tarjeta corporativa'
+                };
+                $('tbody-conciliacion').innerHTML = filasVisibles.map(function (f) {
+                    var esAbono = f.tipo === 'abono';
+                    var montoSigno = (esAbono ? '+' : '-') + D.money(f.monto);
+                    var montoCls = esAbono ? 'conc-monto-pos' : 'conc-monto-neg';
+                    var tipoLbl = esAbono ? 'Ingreso' : 'Egreso';
+
+                    var estadoBadge = '';
+                    if (f.estado === 'conciliado') estadoBadge = '<span class="sello sello-emitida">Listo</span>';
+                    else if (f.estado === 'sugerido') estadoBadge = '<span class="sello sello-preparada">Sugerido</span>';
+                    else estadoBadge = '<span class="sello sello-guardada">Por revisar</span>';
+
+                    var difInlineHtml = '';
+                    if (f.alertaDiferencia) {
+                        var absDif = Math.abs(Number(f.alertaDiferencia.diferencia || 0));
+                        difInlineHtml = '<div class="conc-dif-inline mono">Diferencia de ' + D.money(absDif) + ' frente a ' + D.esc(f.alertaDiferencia.docTipo) + ' #' + D.esc(f.alertaDiferencia.folio) + '</div>' +
+                            (f.estado !== 'conciliado' ? '<button type="button" class="btn-texto conc-btn-comision" data-conc-confirmar="' + D.esc(f.id) + '">Aceptar diferencia como comisión y confirmar</button>' : '');
+                    }
 
                     var hayCuentaEnPlan = cuentasPlan.some(function (cp) { return String(cp.codigo) === String(f.cuenta); });
                     var optsPlan = cuentasPlan.map(function (cp) {
@@ -2557,43 +2641,49 @@
                         optsPlan = '<option value="' + D.esc(f.cuenta) + '" selected>' + D.esc(f.cuenta) + '</option>' + optsPlan;
                     }
                     var asi = f.asientoPropuesto || {
-                        debe: f.tipo === 'abono' ? '11010' : f.cuenta,
-                        haber: f.tipo === 'abono' ? f.cuenta : '11010',
+                        debe: esAbono ? '11010' : f.cuenta,
+                        haber: esAbono ? f.cuenta : '11010',
                         monto: f.monto
                     };
-                    var cuentaHtml = '<div class="conc-cuenta-celda">' +
-                        '<select class="lq-select conc-cuenta-select" data-conc-cuenta="' + D.esc(f.id) + '" aria-label="Cuenta contable para ' + D.esc(f.glosa || f.id) + '">' + optsPlan + '</select>' +
-                        '<div class="conc-asiento-preview mono">Debe <span class="conc-debe">' + D.esc(asi.debe) + '</span> · Haber <span class="conc-haber">' + D.esc(asi.haber) + '</span> · ' + D.money(asi.monto) + '</div>' +
+                    var catNombre = CAT_SIMPLE[String(f.cuenta)] || (cuentasPlan.find(function (cp) { return String(cp.codigo) === String(f.cuenta); }) || {}).nombre || 'Gasto o movimiento';
+                    var fraseSimple = (f.detalleMatch && f.detalleMatch !== 'Sin coincidencia automática')
+                        ? f.detalleMatch
+                        : catNombre;
+
+                    var aprenderDefault = (f.matchTipo === 'PENDIENTE' || f.matchTipo === 'F29' || f.matchTipo === 'PREVIRED' || f.matchTipo === 'BHE');
+                    var corrHtml = '<div class="conc-corr-wrap">' +
+                        '<div class="conc-corr-top">' + estadoBadge + ' <strong class="conc-corr-frase">' + D.esc(fraseSimple) + '</strong></div>' +
+                        difInlineHtml +
+                        (f.estado !== 'conciliado'
+                            ? '<div class="conc-corr-controles">' +
+                                '<select class="lq-select conc-cat-simple" data-conc-cuenta="' + D.esc(f.id) + '" aria-label="Categoría para ' + D.esc(f.glosa || f.id) + '">' + optsPlan + '</select>' +
+                                '<label class="conc-aprender-chk"><input type="checkbox" class="conc-chk-aprender" data-conc-aprender="' + D.esc(f.id) + '"' + (aprenderDefault ? ' checked' : '') + '><span>Recordar siempre este texto</span></label>' +
+                              '</div>'
+                            : '<div class="conc-contador-extra"><select class="lq-select conc-cuenta-select" data-conc-cuenta="' + D.esc(f.id) + '" aria-label="Cuenta contable para ' + D.esc(f.glosa || f.id) + '">' + optsPlan + '</select></div>') +
+                        '<div class="conc-asiento-preview conc-contador-extra mono">Debe <span class="conc-debe">' + D.esc(asi.debe) + '</span> / Haber <span class="conc-haber">' + D.esc(asi.haber) + '</span> · ' + D.money(asi.monto) + '</div>' +
                         '</div>';
 
                     var accionHtml = '';
                     if (f.estado === 'conciliado') {
                         accionHtml = '<div class="conc-accion-celda">' +
-                            '<span class="conc-pill conc-pill-ok">Conciliado</span>' +
-                            '<button type="button" class="btn-texto btn-conc-reabrir" data-conc-reabrir="' + D.esc(f.id) + '">Editar</button>' +
+                            '<button type="button" class="btn btn-chico btn-conc-reabrir" data-conc-reabrir="' + D.esc(f.id) + '">Reabrir</button>' +
                             '</div>';
                     } else {
                         var esSug = f.estado === 'sugerido';
-                        var aprenderDefault = (f.matchTipo === 'PENDIENTE' || f.matchTipo === 'F29' || f.matchTipo === 'PREVIRED' || f.matchTipo === 'BHE');
                         accionHtml = '<div class="conc-accion-celda">' +
-                            '<span class="conc-pill conc-pill-pend">' + (esSug ? 'Sugerido' : 'Sin regla') + '</span>' +
-                            '<label class="conc-aprender-chk"><input type="checkbox" class="conc-chk-aprender" data-conc-aprender="' + D.esc(f.id) + '"' + (aprenderDefault ? ' checked' : '') + '><span>Aprender regla</span></label>' +
                             '<button type="button" class="btn btn-chico btn-primario btn-conc-confirmar" data-conc-confirmar="' + D.esc(f.id) + '"><span class="material-icons" aria-hidden="true">check</span>Confirmar</button>' +
                             (esSug ? '<button type="button" class="btn-texto btn-match-descartar" data-match-descartar="' + D.esc(f.id) + '">Descartar</button>' : '') +
                             '</div>';
                     }
 
-                    return '<tr data-conc-fila="' + D.esc(f.id) + '" data-conc-tipo="' + D.esc(f.tipo) + '">' +
-                        '<td class="mono" data-label="Fecha">' + D.esc(f.fecha || '-') + '</td>' +
-                        '<td data-label="Glosa">' + D.esc(f.glosa || '-') + '</td>' +
-                        '<td class="cap" data-label="Tipo">' + D.esc(f.tipo) + '</td>' +
-                        '<td class="mono num" data-label="Monto">' + D.money(f.monto) + '</td>' +
-                        '<td data-label="Cruce">' + badgeHtml + difInlineHtml + '<div class="texto-ayuda" style="margin-top:3px">' + D.esc(f.detalleMatch) + '</div></td>' +
-                        '<td data-label="Cuenta / Asiento">' + cuentaHtml + '</td>' +
-                        '<td data-label="Estado / 1-Clic">' + accionHtml + '</td>' +
+                    return '<tr class="conc-mov-row" data-conc-fila="' + D.esc(f.id) + '" data-conc-tipo="' + D.esc(f.tipo) + '">' +
+                        '<td data-label="Banco"><div class="conc-banco-cell"><span class="mono conc-fecha">' + D.esc(f.fecha || '-') + '</span> <span class="conc-tipo-txt">' + tipoLbl + '</span><strong class="conc-glosa">' + D.esc(f.glosa || '-') + '</strong></div></td>' +
+                        '<td class="mono num ' + montoCls + '" data-label="Monto">' + montoSigno + '</td>' +
+                        '<td data-label="Corresponde">' + corrHtml + '</td>' +
+                        '<td class="num" data-label="Acción">' + accionHtml + '</td>' +
                         '</tr>';
-                }).join('')
-                : '<tr><td colspan="7" class="texto-ayuda">Sin movimientos bancarios aún. Haz clic en "Subir Cartola CSV" o "Cargar cartola ejemplo".</td></tr>';
+                }).join('');
+            }
         }
 
         function renderFilasCartera(lista, tipoCartera, msgVacio) {
@@ -2609,12 +2699,15 @@
                     : (parcial ? 'Parcial' : (pagada ? 'Pagada' : 'Pendiente'));
                 var nextEst = pagada ? 'PENDIENTE' : 'PAGADA';
                 var btnTxt = pagada ? 'Reabrir' : 'Marcar pagada';
+                var cobrarHtml = (tipoCartera === 'cxc' && !pagada)
+                    ? '<button type="button" class="btn-texto btn-cartera-cobrar" data-cobrar-cliente="' + D.esc(it.razonSocial) + '" data-cobrar-folio="' + D.esc(it.folio) + '" data-cobrar-monto="' + D.esc(D.money(it.saldoPendiente)) + '">Recordar cobro</button>'
+                    : '';
                 return '<tr>' +
                     '<td>DTE ' + D.esc(it.tipoDoc) + ' #' + D.esc(it.folio) + '<br><span class="texto-ayuda">' + D.esc(it.razonSocial) + ' · <span class="mono">' + D.esc(it.rut || '-') + '</span></span></td>' +
                     '<td class="mono">' + it.dias + 'd (' + D.esc(it.tramo) + ')</td>' +
                     '<td class="mono num">' + D.money(it.saldoPendiente) + ((pagada || parcial) ? '<br><span class="texto-ayuda">Orig. ' + D.money(it.montoOriginal) + '</span>' : '') + '</td>' +
                     '<td><span class="sello ' + selloCls + '">' + selloTxt + '</span></td>' +
-                    '<td class="num"><button type="button" class="btn btn-chico btn-cartera-toggle" data-cartera-tipo="' + tipoCartera + '" data-cartera-key="' + D.esc(it.docKey) + '" data-cartera-next="' + nextEst + '">' + btnTxt + '</button></td>' +
+                    '<td class="num"><div class="match-acciones-fila" style="justify-content:flex-end">' + cobrarHtml + '<button type="button" class="btn btn-chico btn-cartera-toggle" data-cartera-tipo="' + tipoCartera + '" data-cartera-key="' + D.esc(it.docKey) + '" data-cartera-next="' + nextEst + '">' + btnTxt + '</button></div></td>' +
                     '</tr>';
             }).join('');
         }
@@ -5602,6 +5695,104 @@
                 ui.subLibro = 'diario';
                 cambiarModulo('libros');
                 D.avisar('Se centralizaron ' + nuevos.length + ' movimientos conciliados en Libro Diario.');
+            });
+        }
+
+        // Filtros bandeja, búsqueda, Vista contador, acceso rápido a Reglas y Cartera, Pegar desde Excel y Recordar cobro
+        if ($('conc-resumen-bar')) {
+            $('conc-resumen-bar').addEventListener('click', function (ev) {
+                var b = ev.target.closest('[data-conc-filtro]');
+                if (!b) return;
+                ui.concFiltro = b.getAttribute('data-conc-filtro') || 'todos';
+                Array.prototype.forEach.call($('conc-resumen-bar').querySelectorAll('[data-conc-filtro]'), function (btn) {
+                    var act = btn === b;
+                    btn.classList.toggle('activo', act);
+                    btn.setAttribute('aria-pressed', act ? 'true' : 'false');
+                });
+                pintarConciliacionYAgenda(calcularModelo());
+            });
+        }
+        if ($('conc-buscar')) {
+            $('conc-buscar').addEventListener('input', function () {
+                ui.concBuscar = $('conc-buscar').value || '';
+                pintarConciliacionYAgenda(calcularModelo());
+            });
+        }
+        if ($('chk-conc-vista-contador')) {
+            $('chk-conc-vista-contador').addEventListener('change', function () {
+                ui.concVistaContador = !!$('chk-conc-vista-contador').checked;
+                if ($('sub-conciliacion')) $('sub-conciliacion').classList.toggle('conc-modo-contador', ui.concVistaContador);
+            });
+        }
+        if ($('btn-conc-ir-reglas')) {
+            $('btn-conc-ir-reglas').addEventListener('click', function () {
+                var tabTes = document.querySelector('[data-subbanco="tesoreria"]');
+                if (tabTes) tabTes.click();
+            });
+        }
+        if ($('conc-kpi-card-cartera')) {
+            $('conc-kpi-card-cartera').addEventListener('click', function () {
+                var tabCar = document.querySelector('[data-subbanco="cartera"]');
+                if (tabCar) tabCar.click();
+            });
+        }
+        function abrirModalPegarExcel() {
+            var dlg = $('dlg-bancos-pegar');
+            if (!dlg) return;
+            if ($('bancos-pegar-feedback')) $('bancos-pegar-feedback').hidden = true;
+            if (typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
+            else dlg.setAttribute('open', 'open');
+            if ($('bancos-pegar-texto')) $('bancos-pegar-texto').focus();
+        }
+        function cerrarModalPegarExcel() {
+            var dlg = $('dlg-bancos-pegar');
+            if (!dlg) return;
+            if (dlg.open && typeof dlg.close === 'function') dlg.close();
+            else dlg.removeAttribute('open');
+        }
+        if ($('btn-bancos-pegar-excel')) $('btn-bancos-pegar-excel').addEventListener('click', abrirModalPegarExcel);
+        if ($('btn-cerrar-bancos-pegar')) $('btn-cerrar-bancos-pegar').addEventListener('click', cerrarModalPegarExcel);
+        if ($('btn-bancos-pegar-cancelar')) $('btn-bancos-pegar-cancelar').addEventListener('click', cerrarModalPegarExcel);
+        if ($('btn-bancos-pegar-importar')) {
+            $('btn-bancos-pegar-importar').addEventListener('click', function () {
+                var txt = $('bancos-pegar-texto') ? $('bancos-pegar-texto').value.trim() : '';
+                var fb = $('bancos-pegar-feedback');
+                if (!txt) {
+                    if (fb) { fb.hidden = false; fb.className = 'sii-feedback-box error'; fb.textContent = 'Pega primero las filas de tu cartola desde Excel o el banco.'; }
+                    return;
+                }
+                var bytes = new TextEncoder().encode(txt);
+                var ok = window.CLSuiteSiiBridge && window.CLSuiteSiiBridge.importarCartolaBuffer
+                    ? window.CLSuiteSiiBridge.importarCartolaBuffer('cartola_pegada.csv', bytes.buffer)
+                    : false;
+                if (ok) {
+                    if ($('bancos-pegar-texto')) $('bancos-pegar-texto').value = '';
+                    cerrarModalPegarExcel();
+                } else if (fb) {
+                    fb.hidden = false;
+                    fb.className = 'sii-feedback-box error';
+                    fb.textContent = 'No reconocimos columnas de fecha y monto. Incluye la fila de encabezados (Fecha, Descripción, Cargo, Abono).';
+                }
+            });
+        }
+        if ($('tbody-conciliacion')) {
+            $('tbody-conciliacion').addEventListener('click', function (ev) {
+                if (ev.target.closest('#btn-conc-vacio-pegar')) { abrirModalPegarExcel(); return; }
+                if (ev.target.closest('#btn-conc-vacio-ejemplo')) {
+                    if ($('btn-bancos-ejemplo')) $('btn-bancos-ejemplo').click();
+                }
+            });
+        }
+        if ($('tbody-aging-cxc')) {
+            $('tbody-aging-cxc').addEventListener('click', function (ev) {
+                var btnCob = ev.target.closest('.btn-cartera-cobrar');
+                if (!btnCob) return;
+                var cli = btnCob.getAttribute('data-cobrar-cliente') || 'Cliente';
+                var fol = btnCob.getAttribute('data-cobrar-folio') || '';
+                var mto = btnCob.getAttribute('data-cobrar-monto') || '';
+                var msg = 'Hola equipo de ' + cli + ',\n\nTe escribimos para recordar el pago pendiente de la factura #' + fol + ' por ' + mto + '. Si ya realizaste la transferencia, por favor envíanos el comprobante.\n\nMuchas gracias.';
+                var waUrl = 'https://wa.me/?text=' + encodeURIComponent(msg);
+                window.open(waUrl, '_blank', 'noopener');
             });
         }
 

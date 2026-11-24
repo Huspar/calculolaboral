@@ -261,9 +261,13 @@
         }
 
         // 6. Movimientos de Banco / Tesoreria del periodo (cobranza y pagos efectivos)
+        // Si ya existen asientos reales de conciliacion bancaria (MAN-CONC-*), omitimos los estimados 80%/75% para evitar doble conteo en Banco 11010.
+        var hayConciliacionReal = Array.isArray(e.manuales) && e.manuales.some(function (m) {
+            return m && /^MAN-CONC-/.test(String(m.id || ''));
+        });
         var pctCobro = Math.max(0, Math.min(100, Number(tes.pctVentasCobradas)));
         var cobroClientes = totalBrutoVentas > 0 ? Math.round(totalBrutoVentas * (pctCobro / 100)) : 0;
-        if (cobroClientes > 0) {
+        if (!hayConciliacionReal && cobroClientes > 0) {
             var aCob = crearAsiento(sigId('BCO'), finFecha, 'Recaudacion transferencias de clientes (' + pctCobro + '% cobrado)', 'automatico', [
                 { cuenta: '11010', debe: cobroClientes, haber: 0 },
                 { cuenta: '11050', debe: 0, haber: cobroClientes }
@@ -283,7 +287,7 @@
         var pagoHonorarios = tes.honorariosPagados ? honLiquido : 0;
         var totalEgresosBanco = pagoProveedores + pagoSueldos + pagoCotiz + pagoHonorarios;
 
-        if (totalEgresosBanco > 0) {
+        if (!hayConciliacionReal && totalEgresosBanco > 0) {
             var aEgr = crearAsiento(sigId('BCO'), finFecha, 'Egresos bancarios del mes (proveedores, nomina y honorarios)', 'automatico', [
                 { cuenta: '21010', debe: pagoProveedores, haber: 0 },
                 { cuenta: '21030', debe: pagoSueldos, haber: 0 },
