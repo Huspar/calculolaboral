@@ -298,12 +298,93 @@
         novedades: 'Novedades sueldo',
         otro: 'Documento'
     };
+    var K_BUZON_DEMO = 'cl_suite_buzon_demo_items';
+    var K_BUZON_SAL = 'cl_suite_buzon_salientes';
+    var buzonCache = [];
+    var buzonPlantillaActiva = 'portal';
 
     function base64ABytes(b64) {
         var bin = window.atob(String(b64 || ''));
         var arr = new Uint8Array(bin.length);
         for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
         return arr;
+    }
+
+    function textoABase64(str) {
+        try {
+            return window.btoa(unescape(encodeURIComponent(String(str || ''))));
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function feedbackVistaBuzon(texto, tipo) {
+        var box = $('buzon-vista-feedback');
+        if (!box) return;
+        if (!texto) {
+            box.hidden = true;
+            box.textContent = '';
+            return;
+        }
+        box.hidden = false;
+        box.className = 'sii-feedback-box ' + (tipo === 'error' ? 'error' : 'ok');
+        box.textContent = texto;
+    }
+
+    function leerItemsDemo() {
+        try {
+            var raw = window.localStorage.getItem(K_BUZON_DEMO);
+            var arr = raw ? JSON.parse(raw) : [];
+            return Array.isArray(arr) ? arr : [];
+        } catch (e) { return []; }
+    }
+
+    function guardarItemsDemo(lista) {
+        try {
+            window.localStorage.setItem(K_BUZON_DEMO, JSON.stringify(lista || []));
+        } catch (e) { /* silencioso */ }
+    }
+
+    function crearEnviosDemo() {
+        var br = window.CLSuiteSiiBridge;
+        var cli = (br && br.clienteNombre && br.clienteNombre()) || val('liq-cliente', 'Panadería San Isidro SpA');
+        var per = (br && br.periodoActual && br.periodoActual()) || '2026-11';
+        var csvCartola = [
+            'Fecha;Descripcion;Cargo;Abono;Saldo',
+            per + '-03;Transferencia Cliente Factura 1042;;1450000;3820000',
+            per + '-07;Pago Proveedor Harinas del Sur;620000;;3200000',
+            per + '-12;Pago Imposiciones Previred;485000;;2715000',
+            per + '-18;Abono Transbank Ventas Pos;;980000;3695000'
+        ].join('\n');
+        var novTxt = 'Novedades ' + per + ': 1 licencia medica tipo 1 (3 dias) y bono de produccion $85.000 para jefe de turno.';
+        return [
+            {
+                id: 'demo-cartola-' + per,
+                demo: true,
+                clienteNombre: cli,
+                periodo: per,
+                tipo: 'cartola',
+                nombreArchivo: 'cartola_banco_chile_' + per + '.csv',
+                mimeType: 'text/csv',
+                nota: 'Cartola cuenta corriente del mes para conciliación.',
+                estado: 'nuevo',
+                creado: new Date().toISOString(),
+                contenidoBase64: textoABase64(csvCartola)
+            },
+            {
+                id: 'demo-nov-' + per,
+                demo: true,
+                clienteNombre: cli,
+                periodo: per,
+                tipo: 'novedades',
+                nombreArchivo: 'novedades_sueldo_' + per + '.txt',
+                mimeType: 'text/plain',
+                nota: 'Licencia médica de 3 días y bono de producción.',
+                estado: 'nuevo',
+                creado: new Date(Date.now() - 3600000 * 5).toISOString(),
+                contenidoBase64: textoABase64(novTxt)
+            }
+        ];
     }
 
     function actualizarAlertasBuzon(items) {
@@ -317,6 +398,12 @@
             var mPer = !perAct || !x.periodo || x.periodo === perAct;
             return mCli && mPer;
         });
+
+        var navBadge = $('nav-buzon-pend');
+        if (navBadge) {
+            navBadge.hidden = pendientes.length === 0;
+            navBadge.textContent = String(pendientes.length);
+        }
 
         var alertaBancos = $('bancos-buzon-alerta');
         var alertaTxt = $('bancos-buzon-txt');
@@ -336,29 +423,88 @@
         }
     }
 
+    function poblarFiltrosBuzon(items) {
+        var selCli = $('buzon-filtro-cliente');
+        var selPer = $('buzon-filtro-periodo');
+        if (selCli) {
+            var prevC = selCli.value;
+            var clis = {};
+            items.forEach(function (it) { if (it && it.clienteNombre) clis[it.clienteNombre] = true; });
+            var htmlC = '<option value="">Todos los clientes</option>' + Object.keys(clis).sort().map(function (c) {
+                return '<option value="' + esc(c) + '">' + esc(c) + '</option>';
+            }).join('');
+            selCli.innerHTML = htmlC;
+            if (prevC && clis[prevC]) selCli.value = prevC;
+        }
+        if (selPer) {
+            var prevP = selPer.value;
+            var pers = {};
+            items.forEach(function (it) { if (it && it.periodo) pers[it.periodo] = true; });
+            var htmlP = '<option value="">Todos los períodos</option>' + Object.keys(pers).sort().reverse().map(function (p) {
+                return '<option value="' + esc(p) + '">' + esc(p) + '</option>';
+            }).join('');
+            selPer.innerHTML = htmlP;
+            if (prevP && pers[prevP]) selPer.value = prevP;
+        }
+    }
+
+    function filtrarItemsBuzon(items) {
+        var fCli = $('buzon-filtro-cliente') ? $('buzon-filtro-cliente').value : '';
+        var fPer = $('buzon-filtro-periodo') ? $('buzon-filtro-periodo').value : '';
+        var fTipo = $('buzon-filtro-tipo') ? $('buzon-filtro-tipo').value : '';
+        var fEst = $('buzon-filtro-estado') ? $('buzon-filtro-estado').value : 'pendiente';
+        return items.filter(function (it) {
+            if (!it) return false;
+            if (fCli && it.clienteNombre !== fCli) return false;
+            if (fPer && it.periodo !== fPer) return false;
+            if (fTipo && it.tipo !== fTipo) return false;
+            var proc = it.estado === 'procesado';
+            if (fEst === 'pendiente' && proc) return false;
+            if (fEst === 'procesado' && !proc) return false;
+            return true;
+        });
+    }
+
     function pintarTablaBuzon(items) {
-        var tbody = $('tbody-portal-buzon');
-        var vacio = $('portal-buzon-vacio');
-        var wrap = $('portal-buzon-tabla-wrap');
+        buzonCache = Array.isArray(items) ? items : [];
+        actualizarAlertasBuzon(buzonCache);
+        poblarFiltrosBuzon(buzonCache);
+
+        var demoStrip = $('buzon-demo-strip');
+        if (demoStrip) demoStrip.hidden = sesion.autenticado;
+
+        var filtrados = filtrarItemsBuzon(buzonCache);
+        var conteo = $('buzon-resumen-conteo');
+        if (conteo) {
+            conteo.textContent = filtrados.length + (filtrados.length === 1 ? ' archivo' : ' archivos');
+        }
+
+        var tbody = $('tbody-suite-buzon');
+        var movil = $('buzon-movil-lista');
+        var wrap = $('buzon-tabla-wrap');
+        var vacio = $('buzon-vacio');
         if (!tbody) return;
-        var lista = Array.isArray(items) ? items : [];
-        actualizarAlertasBuzon(lista);
-        if (!lista.length) {
+
+        if (!filtrados.length) {
             tbody.innerHTML = '';
-            if (vacio) vacio.hidden = false;
+            if (movil) { movil.innerHTML = ''; movil.hidden = true; }
             if (wrap) wrap.hidden = true;
+            if (vacio) vacio.hidden = false;
             return;
         }
         if (vacio) vacio.hidden = true;
         if (wrap) wrap.hidden = false;
-        tbody.innerHTML = lista.map(function (it) {
+        if (movil) movil.hidden = false;
+
+        tbody.innerHTML = filtrados.map(function (it) {
             var proc = it.estado === 'procesado';
             var selloCls = proc ? 'sello-emitida' : 'sello-preparada';
             var selloTxt = proc ? 'Procesado' : 'Pendiente';
             var esCartola = it.tipo === 'cartola' && /\.(csv|txt|tsv|xlsx|xls)$/i.test(String(it.nombreArchivo || ''));
+            var fechaTxt = it.creado ? fechaCorta(it.creado) : '';
             return '<tr>' +
                 '<td><strong>' + esc(it.nombreArchivo) + '</strong><br><span class="texto-ayuda">' + esc(it.clienteNombre) + ' · <span class="mono">' + esc(it.periodo) + '</span> · ' + esc(TIPO_BUZON_LBL[it.tipo] || it.tipo) + '</span></td>' +
-                '<td>' + (it.nota ? esc(it.nota) : '<span class="texto-ayuda">Sin nota</span>') + '</td>' +
+                '<td>' + (it.nota ? esc(it.nota) : '<span class="texto-ayuda">Sin nota</span>') + (fechaTxt ? '<br><span class="texto-ayuda mono">' + esc(fechaTxt) + '</span>' : '') + '</td>' +
                 '<td><span class="sello ' + selloCls + '">' + selloTxt + '</span></td>' +
                 '<td class="num"><div class="match-acciones-fila" style="justify-content:flex-end">' +
                 (esCartola ? '<button type="button" class="btn btn-chico btn-primario" data-buzon-aplicar="' + esc(it.id) + '">Aplicar a período</button>' : '') +
@@ -367,11 +513,116 @@
                 '</div></td>' +
                 '</tr>';
         }).join('');
+
+        if (movil) {
+            movil.innerHTML = filtrados.map(function (it) {
+                var proc = it.estado === 'procesado';
+                var selloCls = proc ? 'sello-emitida' : 'sello-preparada';
+                var selloTxt = proc ? 'Procesado' : 'Pendiente';
+                var esCartola = it.tipo === 'cartola' && /\.(csv|txt|tsv|xlsx|xls)$/i.test(String(it.nombreArchivo || ''));
+                var fechaTxt = it.creado ? fechaCorta(it.creado) : '';
+                return '<article class="buzon-movil-item">' +
+                    '<div class="buzon-movil-head">' +
+                    '<div><strong>' + esc(it.nombreArchivo) + '</strong><p class="texto-ayuda" style="margin:2px 0 0">' + esc(it.clienteNombre) + ' · <span class="mono">' + esc(it.periodo) + '</span> · ' + esc(TIPO_BUZON_LBL[it.tipo] || it.tipo) + '</p></div>' +
+                    '<span class="sello ' + selloCls + '">' + selloTxt + '</span>' +
+                    '</div>' +
+                    (it.nota ? '<p class="buzon-movil-nota">' + esc(it.nota) + '</p>' : '') +
+                    (fechaTxt ? '<p class="texto-ayuda mono" style="margin:0">' + esc(fechaTxt) + '</p>' : '') +
+                    '<div class="buzon-movil-acciones">' +
+                    (esCartola ? '<button type="button" class="btn btn-primario" data-buzon-aplicar="' + esc(it.id) + '">Aplicar a período</button>' : '') +
+                    '<button type="button" class="btn" data-buzon-descargar="' + esc(it.id) + '">Descargar</button>' +
+                    '<button type="button" class="btn-texto" data-buzon-estado="' + esc(it.id) + '" data-buzon-next="' + (proc ? 'nuevo' : 'procesado') + '">' + (proc ? 'Reabrir' : 'Marcar procesado') + '</button>' +
+                    '</div>' +
+                    '</article>';
+            }).join('');
+        }
+    }
+
+    function generarPlantillaSaliente(tipo) {
+        buzonPlantillaActiva = tipo || 'portal';
+        var br = window.CLSuiteSiiBridge;
+        var cli = (br && br.clienteNombre && br.clienteNombre()) || val('liq-cliente', 'Empresa Cliente');
+        var per = (br && br.periodoActual && br.periodoActual()) || '2026-11';
+        var est = leerIdentidadEstudio();
+        var m = br && br.calcularModelo ? br.calcularModelo() : null;
+        var f29Total = m && m.f29 ? Math.round(Number(m.f29.total || 0)) : 0;
+        var f29Fmt = '$' + f29Total.toLocaleString('es-CL');
+
+        var badgeCli = $('buzon-sal-cliente');
+        if (badgeCli) badgeCli.textContent = cli;
+
+        Array.prototype.forEach.call(document.querySelectorAll('.buzon-tpl-btn'), function (b) {
+            var act = b.getAttribute('data-buzon-tpl') === buzonPlantillaActiva;
+            b.classList.toggle('activo', act);
+            b.setAttribute('aria-pressed', act ? 'true' : 'false');
+        });
+
+        var asunto = '';
+        var cuerpo = '';
+        if (buzonPlantillaActiva === 'cartola') {
+            asunto = 'Solicitud de cartola bancaria y respaldos ' + per + ' - ' + cli;
+            cuerpo = 'Hola equipo de ' + cli + ',\n\nPara avanzar con la conciliación y el cierre de ' + per + ', necesitamos tu cartola bancaria (CSV o Excel) y novedades de sueldo del mes.\n\nPuedes subir los archivos de forma segura desde tu Portal Cliente Marca Blanca.\n\nSaludos,\n' + est.nombre;
+        } else if (buzonPlantillaActiva === 'f29') {
+            asunto = 'Recordatorio Formulario 29 período ' + per + ' - ' + cli;
+            cuerpo = 'Hola equipo de ' + cli + ',\n\nTe compartimos el resumen preliminar del F29 para ' + per + ' (total estimado: ' + f29Fmt + '). Recuerda que el vencimiento legal para facturador electrónico con pago por Internet es el día 20 (día 12 regla general / día 28 sin pago).\n\nRevisa el detalle actualizado en tu Portal Cliente.\n\nSaludos,\n' + est.nombre;
+        } else {
+            asunto = 'Portal Cliente ' + per + ' disponible - ' + cli;
+            cuerpo = 'Hola equipo de ' + cli + ',\n\nYa está disponible tu resumen mensual (' + per + ') en el Portal Cliente de ' + est.nombre + ': F29, Estado de Resultados, resumen laboral y buzón para subir respaldos.\n\n(Pega aquí el enlace seguro generado en Configurar Portal Cliente)\n\nSaludos,\n' + est.nombre;
+        }
+        if ($('buzon-sal-asunto')) $('buzon-sal-asunto').value = asunto;
+        if ($('buzon-sal-mensaje')) $('buzon-sal-mensaje').value = cuerpo;
+    }
+
+    function leerSalientes() {
+        try {
+            var raw = window.localStorage.getItem(K_BUZON_SAL);
+            var arr = raw ? JSON.parse(raw) : [];
+            return Array.isArray(arr) ? arr : [];
+        } catch (e) { return []; }
+    }
+
+    function registrarSaliente(canal, asunto) {
+        var br = window.CLSuiteSiiBridge;
+        var cli = (br && br.clienteNombre && br.clienteNombre()) || val('liq-cliente', 'Empresa Cliente');
+        var per = (br && br.periodoActual && br.periodoActual()) || '2026-11';
+        var lista = leerSalientes();
+        lista.unshift({
+            fecha: new Date().toISOString(),
+            cliente: cli,
+            periodo: per,
+            canal: canal,
+            asunto: asunto
+        });
+        try {
+            window.localStorage.setItem(K_BUZON_SAL, JSON.stringify(lista.slice(0, 12)));
+        } catch (e) { /* silencioso */ }
+        pintarSalientes();
+    }
+
+    function pintarSalientes() {
+        var ul = $('buzon-sal-lista');
+        var vacio = $('buzon-sal-vacio');
+        if (!ul) return;
+        var lista = leerSalientes();
+        if (!lista.length) {
+            ul.innerHTML = '';
+            if (vacio) vacio.hidden = false;
+            return;
+        }
+        if (vacio) vacio.hidden = true;
+        ul.innerHTML = lista.slice(0, 5).map(function (it) {
+            return '<li class="buzon-sal-item">' +
+                '<div><strong>' + esc(it.asunto) + '</strong><span class="texto-ayuda">' + esc(it.cliente) + ' · ' + esc(it.canal) + '</span></div>' +
+                '<span class="texto-ayuda mono">' + esc(fechaCorta(it.fecha)) + '</span>' +
+                '</li>';
+        }).join('');
     }
 
     async function cargarBuzonEstudio() {
+        generarPlantillaSaliente(buzonPlantillaActiva);
+        pintarSalientes();
         if (!sesion.autenticado) {
-            actualizarAlertasBuzon([]);
+            pintarTablaBuzon(leerItemsDemo());
             return;
         }
         try {
@@ -397,10 +648,10 @@
         if (sinSes) sinSes.hidden = sesion.autenticado;
         if (btnGen) btnGen.disabled = !sesion.autenticado;
         if (wrap) wrap.hidden = !sesion.autenticado;
-        if (buzonWrap) buzonWrap.hidden = !sesion.autenticado;
+        if (buzonWrap) buzonWrap.hidden = false;
 
         if (!sesion.autenticado) {
-            actualizarAlertasBuzon([]);
+            await cargarBuzonEstudio();
             return;
         }
         try {
@@ -506,10 +757,24 @@
         var dlg = $('dlg-portal-estudio');
         if (!dlg) return;
 
-        ['btn-rep-abrir-portal', 'btn-torre-portal', 'btn-bancos-ver-buzon'].forEach(function (id) {
+        ['btn-rep-abrir-portal', 'btn-torre-portal', 'btn-buzon-abrir-portal', 'btn-buzon-vacio-portal'].forEach(function (id) {
             var b = $(id);
             if (b) b.addEventListener('click', abrirDialogoPortal);
         });
+        if ($('btn-bancos-ver-buzon')) {
+            $('btn-bancos-ver-buzon').addEventListener('click', function () {
+                var br = window.CLSuiteSiiBridge;
+                if (br && br.cambiarModulo) br.cambiarModulo('buzon');
+                else abrirDialogoPortal();
+            });
+        }
+        if ($('btn-portal-ir-buzon')) {
+            $('btn-portal-ir-buzon').addEventListener('click', function () {
+                cerrar();
+                var br = window.CLSuiteSiiBridge;
+                if (br && br.cambiarModulo) br.cambiarModulo('buzon');
+            });
+        }
 
         function cerrar() {
             limpiarEnlaceTemporal();
@@ -544,78 +809,155 @@
             });
         }
 
-        if ($('tbody-portal-buzon')) {
-            $('tbody-portal-buzon').addEventListener('click', async function (ev) {
-                var btnAp = ev.target.closest('[data-buzon-aplicar]');
-                var btnDesc = ev.target.closest('[data-buzon-descargar]');
-                var btnEst = ev.target.closest('[data-buzon-estado]');
+        async function manejarAccionBuzon(ev) {
+            var btnAp = ev.target.closest('[data-buzon-aplicar]');
+            var btnDesc = ev.target.closest('[data-buzon-descargar]');
+            var btnEst = ev.target.closest('[data-buzon-estado]');
+            if (!btnAp && !btnDesc && !btnEst) return;
 
-                if (btnEst) {
-                    var idE = btnEst.getAttribute('data-buzon-estado');
-                    var nextE = btnEst.getAttribute('data-buzon-next') || 'procesado';
-                    try {
-                        var rEst = await fetch('/api/pyme/portal-estudio-buzon?id=' + encodeURIComponent(idE), {
-                            method: 'PUT',
-                            credentials: 'same-origin',
-                            headers: headersEstudio(true),
-                            body: JSON.stringify({ id: idE, estado: nextE })
-                        });
-                        var jEst = await rEst.json().catch(function () { return {}; });
-                        if (!rEst.ok || jEst.ok === false) throw new Error(jEst.error || 'No pudimos cambiar el estado.');
-                        await cargarBuzonEstudio();
-                    } catch (err) {
-                        feedback((err && err.message) || 'Error al actualizar estado.', 'error');
-                    }
+            feedbackVistaBuzon('');
+            if (btnEst) {
+                var idE = btnEst.getAttribute('data-buzon-estado');
+                var nextE = btnEst.getAttribute('data-buzon-next') || 'procesado';
+                var localE = buzonCache.find(function (x) { return x && x.id === idE && x.demo; });
+                if (localE) {
+                    var demos = leerItemsDemo().map(function (x) {
+                        return x.id === idE ? Object.assign({}, x, { estado: nextE }) : x;
+                    });
+                    guardarItemsDemo(demos);
+                    pintarTablaBuzon(demos);
                     return;
                 }
-
-                var idItem = (btnAp && btnAp.getAttribute('data-buzon-aplicar')) || (btnDesc && btnDesc.getAttribute('data-buzon-descargar'));
-                if (!idItem) return;
-
                 try {
+                    var rEst = await fetch('/api/pyme/portal-estudio-buzon?id=' + encodeURIComponent(idE), {
+                        method: 'PUT',
+                        credentials: 'same-origin',
+                        headers: headersEstudio(true),
+                        body: JSON.stringify({ id: idE, estado: nextE })
+                    });
+                    var jEst = await rEst.json().catch(function () { return {}; });
+                    if (!rEst.ok || jEst.ok === false) throw new Error(jEst.error || 'No pudimos cambiar el estado.');
+                    await cargarBuzonEstudio();
+                } catch (err) {
+                    feedbackVistaBuzon((err && err.message) || 'Error al actualizar estado.', 'error');
+                }
+                return;
+            }
+
+            var idItem = (btnAp && btnAp.getAttribute('data-buzon-aplicar')) || (btnDesc && btnDesc.getAttribute('data-buzon-descargar'));
+            if (!idItem) return;
+
+            try {
+                var it = buzonCache.find(function (x) { return x && x.id === idItem && x.demo; });
+                if (!it) {
                     var rIt = await fetch('/api/pyme/portal-estudio-buzon?id=' + encodeURIComponent(idItem), {
                         credentials: 'same-origin',
                         headers: headersEstudio(false)
                     });
                     var jIt = await rIt.json().catch(function () { return {}; });
                     if (!rIt.ok || jIt.ok === false || !jIt.item) throw new Error(jIt.error || 'No pudimos descargar el archivo.');
-                    var it = jIt.item;
+                    it = jIt.item;
+                }
 
-                    if (btnAp) {
-                        var br = window.CLSuiteSiiBridge;
-                        if (!br || !br.importarCartolaBuffer) throw new Error('El importador bancario no está disponible.');
-                        if (it.clienteNombre && br.cambiarACliente && String(br.clienteNombre() || '').trim().toLowerCase() !== String(it.clienteNombre).trim().toLowerCase()) {
-                            br.cambiarACliente(it.clienteNombre);
-                        }
-                        var bytes = it.contenidoBase64 ? base64ABytes(it.contenidoBase64) : new TextEncoder().encode(it.nota || '');
-                        var okCart = br.importarCartolaBuffer(it.nombreArchivo, bytes.buffer);
-                        if (okCart) {
+                if (btnAp) {
+                    var br = window.CLSuiteSiiBridge;
+                    if (!br || !br.importarCartolaBuffer) throw new Error('El importador bancario no está disponible.');
+                    if (it.clienteNombre && br.cambiarACliente && String(br.clienteNombre() || '').trim().toLowerCase() !== String(it.clienteNombre).trim().toLowerCase()) {
+                        br.cambiarACliente(it.clienteNombre);
+                    }
+                    var bytes = it.contenidoBase64 ? base64ABytes(it.contenidoBase64) : new TextEncoder().encode(it.nota || '');
+                    var okCart = br.importarCartolaBuffer(it.nombreArchivo, bytes.buffer);
+                    if (okCart) {
+                        if (it.demo) {
+                            var demosUp = leerItemsDemo().map(function (x) {
+                                return x.id === it.id ? Object.assign({}, x, { estado: 'procesado' }) : x;
+                            });
+                            guardarItemsDemo(demosUp);
+                            pintarTablaBuzon(demosUp);
+                        } else {
                             await fetch('/api/pyme/portal-estudio-buzon?id=' + encodeURIComponent(it.id), {
                                 method: 'PUT',
                                 credentials: 'same-origin',
                                 headers: headersEstudio(true),
                                 body: JSON.stringify({ id: it.id, estado: 'procesado' })
                             });
-                            cerrar();
-                            if (br.cambiarModulo) br.cambiarModulo('bancos');
                             await cargarBuzonEstudio();
                         }
-                    } else if (btnDesc) {
-                        var blob = it.contenidoBase64
-                            ? new Blob([base64ABytes(it.contenidoBase64)], { type: it.mimeType || 'application/octet-stream' })
-                            : new Blob([it.nota || ''], { type: 'text/plain;charset=utf-8' });
-                        var url = URL.createObjectURL(blob);
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = it.nombreArchivo || 'archivo-cliente';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+                        if (br.cambiarModulo) br.cambiarModulo('bancos');
+                        if (D && D.avisar) D.avisar('Cartola aplicada en Bancos y marcada como procesada.');
                     }
-                } catch (err) {
-                    feedback((err && err.message) || 'No pudimos procesar el archivo.', 'error');
+                } else if (btnDesc) {
+                    var blob = it.contenidoBase64
+                        ? new Blob([base64ABytes(it.contenidoBase64)], { type: it.mimeType || 'application/octet-stream' })
+                        : new Blob([it.nota || ''], { type: 'text/plain;charset=utf-8' });
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = it.nombreArchivo || 'archivo-cliente';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
                 }
+            } catch (err) {
+                feedbackVistaBuzon((err && err.message) || 'No pudimos procesar el archivo.', 'error');
+            }
+        }
+
+        if ($('tbody-suite-buzon')) $('tbody-suite-buzon').addEventListener('click', manejarAccionBuzon);
+        if ($('buzon-movil-lista')) $('buzon-movil-lista').addEventListener('click', manejarAccionBuzon);
+
+        ['buzon-filtro-cliente', 'buzon-filtro-periodo', 'buzon-filtro-tipo', 'buzon-filtro-estado'].forEach(function (id) {
+            var el = $(id);
+            if (el) el.addEventListener('change', function () { pintarTablaBuzon(buzonCache); });
+        });
+
+        if ($('btn-buzon-cargar-demo')) {
+            $('btn-buzon-cargar-demo').addEventListener('click', function () {
+                var demos = crearEnviosDemo();
+                guardarItemsDemo(demos);
+                if ($('buzon-filtro-estado')) $('buzon-filtro-estado').value = 'pendiente';
+                pintarTablaBuzon(demos);
+                feedbackVistaBuzon('Envíos de ejemplo cargados. Puedes probar "Aplicar a período" en la cartola CSV.', 'ok');
+            });
+        }
+        if ($('btn-buzon-iniciar-sesion')) {
+            $('btn-buzon-iniciar-sesion').addEventListener('click', function () {
+                var btnEntrar = $('btn-entrar');
+                if (btnEntrar) btnEntrar.click();
+                else window.open('/app', '_blank');
+            });
+        }
+
+        Array.prototype.forEach.call(document.querySelectorAll('.buzon-tpl-btn'), function (b) {
+            b.addEventListener('click', function () {
+                generarPlantillaSaliente(b.getAttribute('data-buzon-tpl'));
+            });
+        });
+        if ($('btn-buzon-copiar-msg')) {
+            $('btn-buzon-copiar-msg').addEventListener('click', async function () {
+                var asunto = $('buzon-sal-asunto') ? $('buzon-sal-asunto').value.trim() : '';
+                var msg = $('buzon-sal-mensaje') ? $('buzon-sal-mensaje').value.trim() : '';
+                if (!msg) return;
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(msg);
+                    }
+                    registrarSaliente('Copiado', asunto || 'Mensaje al cliente');
+                    if (D && D.avisar) D.avisar('Mensaje copiado para enviar por WhatsApp o correo.');
+                } catch (e) {
+                    feedbackVistaBuzon('Selecciona el mensaje y cópialo con Ctrl+C.', 'error');
+                }
+            });
+        }
+        if ($('btn-buzon-abrir-mailto')) {
+            $('btn-buzon-abrir-mailto').addEventListener('click', function () {
+                var correo = $('buzon-sal-correo') ? $('buzon-sal-correo').value.trim() : '';
+                var asunto = $('buzon-sal-asunto') ? $('buzon-sal-asunto').value.trim() : '';
+                var msg = $('buzon-sal-mensaje') ? $('buzon-sal-mensaje').value.trim() : '';
+                var href = 'mailto:' + encodeURIComponent(correo) + '?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(msg);
+                registrarSaliente(correo ? ('Correo (' + correo + ')') : 'Correo', asunto || 'Mensaje al cliente');
+                window.location.href = href;
             });
         }
 
@@ -630,6 +972,7 @@
 
     window.CLDemoPortalEstudio = {
         abrirDialogoPortal: abrirDialogoPortal,
-        construirSnapshot: construirSnapshot
+        construirSnapshot: construirSnapshot,
+        refrescarBuzon: cargarBuzonEstudio
     };
 })();

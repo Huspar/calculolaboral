@@ -215,27 +215,40 @@
 
     function seleccionarArchivoBuzon(file) {
         var estEl = $('pe-buzon-file-estado');
+        var dropEl = $('pe-buzon-drop');
+        var titEl = $('pe-buzon-drop-titulo');
+        var btnQuitar = $('btn-pe-buzon-quitar');
+        if (dropEl) {
+            dropEl.classList.remove('tiene-archivo', 'tiene-error');
+        }
+        if (btnQuitar) btnQuitar.hidden = true;
         if (!file) {
             buzonState.archivo = null;
-            if (estEl) estEl.textContent = 'Ningún archivo seleccionado · Máx. 1 MB';
+            if (titEl) titEl.textContent = 'Arrastra tu archivo o haz clic para seleccionarlo';
+            if (estEl) estEl.textContent = 'Ningún archivo seleccionado · Máx. 1 MB (.csv, .xlsx, .xls, .pdf, .txt)';
             return;
         }
         if (!EXT_PERMITIDAS.test(file.name)) {
             buzonState.archivo = null;
-            if (estEl) estEl.textContent = 'Formato no admitido';
+            if (dropEl) dropEl.classList.add('tiene-error');
+            if (estEl) estEl.textContent = 'Formato no admitido (' + file.name + ')';
             feedbackBuzon('Usa archivos CSV, Excel (.xlsx/.xls), TXT o PDF.', 'error');
             return;
         }
         if (file.size > MAX_ARCHIVO_BYTES) {
             buzonState.archivo = null;
-            if (estEl) estEl.textContent = 'Archivo supera 1 MB';
+            if (dropEl) dropEl.classList.add('tiene-error');
+            if (estEl) estEl.textContent = 'Archivo supera el máximo de 1 MB';
             feedbackBuzon('El archivo supera el límite de 1 MB. Comprime o exporta solo el mes.', 'error');
             return;
         }
         feedbackBuzon('');
         buzonState.archivo = file;
         var kb = Math.max(1, Math.round(file.size / 1024));
-        if (estEl) estEl.textContent = file.name + ' (' + kb + ' KB)';
+        if (dropEl) dropEl.classList.add('tiene-archivo');
+        if (titEl) titEl.textContent = 'Archivo listo para enviar';
+        if (estEl) estEl.textContent = file.name + ' · ' + kb + ' KB';
+        if (btnQuitar) btnQuitar.hidden = false;
     }
 
     function leerArchivoBase64(file) {
@@ -308,8 +321,19 @@
 
         var drop = $('pe-buzon-drop');
         var inp = $('pe-buzon-archivo');
+        var btnQuitar = $('btn-pe-buzon-quitar');
+        if (btnQuitar) {
+            btnQuitar.addEventListener('click', function (ev) {
+                ev.stopPropagation();
+                if (inp) inp.value = '';
+                seleccionarArchivoBuzon(null);
+            });
+        }
         if (drop && inp) {
-            drop.addEventListener('click', function () { inp.click(); });
+            drop.addEventListener('click', function (ev) {
+                if (ev.target && ev.target.closest && ev.target.closest('#btn-pe-buzon-quitar')) return;
+                inp.click();
+            });
             drop.addEventListener('keydown', function (ev) {
                 if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); inp.click(); }
             });

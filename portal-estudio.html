@@ -13,9 +13,9 @@
 <link rel="preload" href="/assets/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/app.css?v=1.25.1">
+<link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=1.16.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.5">
 </head>
 <body class="app-body">
 <main class="pe-shell" id="pe-shell">
@@ -135,10 +135,11 @@
               <option value="otro">Otro documento o respaldo del mes</option>
             </select>
           </div>
-          <div class="fin-dropzone" id="pe-buzon-drop" role="button" tabindex="0" aria-label="Adjuntar archivo para el estudio contable">
+          <div class="fin-dropzone pe-buzon-drop" id="pe-buzon-drop" role="button" tabindex="0" aria-label="Adjuntar archivo para el estudio contable">
             <span class="material-icons" aria-hidden="true">cloud_upload</span>
-            <strong>Arrastra tu archivo o haz clic para seleccionarlo</strong>
+            <strong id="pe-buzon-drop-titulo">Arrastra tu archivo o haz clic para seleccionarlo</strong>
             <span class="rcv-drop-estado" id="pe-buzon-file-estado">Ningún archivo seleccionado · Máx. 1 MB (.csv, .xlsx, .xls, .pdf, .txt)</span>
+            <button type="button" class="btn-texto pe-buzon-quitar" id="btn-pe-buzon-quitar" hidden>Quitar archivo</button>
             <input type="file" id="pe-buzon-archivo" accept=".csv,.xlsx,.xls,.pdf,.txt,.tsv,.json" class="sr-only" tabindex="-1" aria-label="Archivo para enviar al estudio">
           </div>
           <div class="lq-field">
@@ -167,6 +168,6 @@
     </footer>
   </div>
 </main>
-<script src="/js/portal_estudio.js?v=1.1.0"></script>
+<script src="/js/portal_estudio.js?v=1.2.0"></script>
 </body>
 </html>

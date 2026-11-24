@@ -7040,3 +7040,278 @@ dialog.app-dialogo {
     border: 1px solid var(--syn-border, var(--line));
     background: var(--syn-surface, #FFFFFF);
 }
+
+/* ==========================================================================
+   BUZÓN DEL ESTUDIO (#suite-buzon) + ALINEACIÓN /portal-estudio (Impeccable)
+   ========================================================================== */
+.buzon-demo-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.buzon-demo-txt {
+    flex: 1 1 280px;
+    font-size: 13px;
+    line-height: 1.45;
+}
+.buzon-demo-txt strong {
+    display: block;
+    margin-bottom: 2px;
+}
+.buzon-demo-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.buzon-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+.buzon-filtros {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.buzon-vacio {
+    padding: 28px 18px;
+    text-align: center;
+    border: 1px dashed var(--syn-border, var(--line-2));
+    border-radius: 12px;
+    background: var(--syn-canvas, var(--surface-2));
+}
+.buzon-vacio-ico {
+    font-size: 28px;
+    color: var(--syn-muted, var(--muted));
+    margin-bottom: 6px;
+}
+.buzon-vacio h3 {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--syn-ink, var(--ink));
+}
+.buzon-vacio p {
+    margin: 0 auto 14px;
+    max-width: 48ch;
+    font-size: 13px;
+    color: var(--syn-ink-2, var(--muted));
+    line-height: 1.5;
+}
+.buzon-vacio-acciones {
+    display: flex;
+    justify-content: center;
+}
+.buzon-movil-lista {
+    display: none;
+}
+.buzon-movil-item {
+    padding: 12px 0;
+    border-top: 1px solid var(--syn-border, var(--line));
+    display: grid;
+    gap: 8px;
+}
+.buzon-movil-item:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+.buzon-movil-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+.buzon-movil-nota {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--syn-ink, var(--ink));
+}
+.buzon-movil-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.buzon-movil-acciones .btn,
+.buzon-movil-acciones .btn-texto {
+    min-height: 44px;
+}
+.buzon-plantillas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.buzon-tpl-btn.activo {
+    background: var(--syn-ink, #141518);
+    color: #FFFFFF;
+    border-color: var(--syn-ink, #141518);
+}
+.buzon-sal-form {
+    display: grid;
+    gap: 10px;
+}
+.buzon-sal-form textarea {
+    min-height: 120px;
+    height: auto;
+    padding: 10px 12px;
+    line-height: 1.45;
+    resize: vertical;
+}
+.buzon-sal-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+.buzon-sal-acciones .btn {
+    flex: 1 1 130px;
+    justify-content: center;
+    min-height: 42px;
+}
+.buzon-historial-salientes {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--syn-border, var(--line));
+}
+.buzon-sal-lista {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+}
+.buzon-sal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-top: 1px solid var(--syn-border, var(--line));
+    font-size: 13px;
+}
+.buzon-sal-item:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+.buzon-sal-item strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--syn-ink, var(--ink));
+}
+.portal-ir-buzon-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Alineación explícita de formularios y buzón en /portal-estudio (.pe-shell) */
+.pe-buzon-form .lq-field select,
+.pe-buzon-form .lq-field textarea {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--line-2, #CBD5E1);
+    border-radius: 10px;
+    background: #FFFFFF;
+    color: var(--ink, #141518);
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.4;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.pe-buzon-form .lq-field select {
+    min-height: 44px;
+    cursor: pointer;
+}
+.pe-buzon-form .lq-field textarea {
+    min-height: 82px;
+    resize: vertical;
+}
+.pe-buzon-form .lq-field select:focus-visible,
+.pe-buzon-form .lq-field textarea:focus-visible {
+    outline: 2px solid var(--forest, #00382E);
+    outline-offset: 2px;
+    border-color: var(--forest, #00382E);
+}
+.pe-buzon-drop {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: border-color .15s ease, background-color .15s ease;
+}
+.pe-buzon-drop.tiene-archivo {
+    border-color: var(--forest-700, #065F46);
+    background: var(--ok-bg, #ECFDF5);
+}
+.pe-buzon-drop.tiene-error {
+    border-color: var(--risk, #BE123C);
+    background: var(--risk-bg, #FFF1F2);
+}
+.pe-buzon-quitar {
+    margin-top: 4px;
+    min-height: 36px;
+    font-size: 13px;
+}
+.pe-buzon-lista {
+    display: block;
+    gap: 0;
+}
+.pe-buzon-item {
+    border: 0;
+    border-top: 1px solid var(--line, #E5E7EB);
+    border-radius: 0;
+    background: transparent;
+    padding: 12px 0;
+}
+.pe-buzon-item:first-child {
+    border-top: 0;
+    padding-top: 4px;
+}
+
+@media screen and (max-width: 960px) {
+    .buzon-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .buzon-filtros {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media screen and (max-width: 768px) {
+    .buzon-tabla-escritorio {
+        display: none !important;
+    }
+    .buzon-movil-lista:not([hidden]) {
+        display: block;
+    }
+    .pe-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .pe-cliente-bloque {
+        text-align: left;
+    }
+}
+@media screen and (max-width: 520px) {
+    .buzon-filtros {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .buzon-demo-acciones,
+    .buzon-sal-acciones {
+        width: 100%;
+    }
+    .buzon-demo-acciones .btn,
+    .buzon-sal-acciones .btn {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+    }
+}

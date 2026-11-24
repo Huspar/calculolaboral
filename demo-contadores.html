@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.4">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.5">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -68,6 +68,11 @@
       <button type="button" class="suite-mod-btn" data-modulo="importador" aria-current="false">
         <span class="material-icons" aria-hidden="true">cloud_upload</span>
         <span>Carga Masiva SII</span>
+      </button>
+      <button type="button" class="suite-mod-btn" data-modulo="buzon" aria-current="false">
+        <span class="material-icons" aria-hidden="true">inbox</span>
+        <span>Buzón</span>
+        <span class="app-nav-chip" id="nav-buzon-pend" hidden>0</span>
       </button>
 
       <p class="app-nav-grupo">Nómina y Laboral</p>
@@ -2586,6 +2591,155 @@
       </section>
 
       <!-- ==================== VISTA 9: REPORTES PDF CON MEMBRETE ==================== -->
+      <!-- ====================================================
+           MÓDULO BUZÓN DEL ESTUDIO (Documentos del Portal + Envíos)
+           ==================================================== -->
+      <section class="vista" id="suite-buzon" hidden>
+        <div class="v-head">
+          <div>
+            <h1>Buzón del Estudio</h1>
+            <p class="v-sub">Documentos recibidos desde el Portal Cliente Marca Blanca y envíos de seguimiento del período.</p>
+          </div>
+          <div class="v-acciones">
+            <button type="button" class="btn btn-primario" id="btn-buzon-abrir-portal">
+              <span class="material-icons" aria-hidden="true">share</span>Configurar Portal Cliente
+            </button>
+          </div>
+        </div>
+
+        <div class="suite-preval-strip buzon-demo-strip" id="buzon-demo-strip" hidden role="status" aria-live="polite">
+          <span class="material-icons" aria-hidden="true">info</span>
+          <div class="buzon-demo-txt">
+            <strong>Modo demostración sin sesión activa.</strong>
+            <span>Inicia sesión para recibir archivos reales desde el Portal Cliente, o carga envíos de ejemplo para probar el flujo hacia Bancos.</span>
+          </div>
+          <div class="buzon-demo-acciones">
+            <button type="button" class="btn btn-chico" id="btn-buzon-cargar-demo">Cargar envíos de ejemplo</button>
+            <button type="button" class="btn btn-chico btn-primario" id="btn-buzon-iniciar-sesion">Iniciar sesión</button>
+          </div>
+        </div>
+
+        <div class="buzon-layout">
+          <div class="panel buzon-recibidos-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Documentos recibidos</h2>
+                <p class="panel-ayuda">Cartolas bancarias, novedades de sueldo y respaldos enviados por tus clientes.</p>
+              </div>
+              <span class="texto-ayuda mono" id="buzon-resumen-conteo">0 archivos</span>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="buzon-filtros" role="region" aria-label="Filtros del buzón">
+                <div class="lq-field">
+                  <label for="buzon-filtro-cliente">Cliente</label>
+                  <select id="buzon-filtro-cliente">
+                    <option value="">Todos los clientes</option>
+                  </select>
+                </div>
+                <div class="lq-field">
+                  <label for="buzon-filtro-periodo">Período</label>
+                  <select id="buzon-filtro-periodo">
+                    <option value="">Todos los períodos</option>
+                  </select>
+                </div>
+                <div class="lq-field">
+                  <label for="buzon-filtro-tipo">Tipo</label>
+                  <select id="buzon-filtro-tipo">
+                    <option value="">Todos</option>
+                    <option value="cartola">Cartola bancaria</option>
+                    <option value="novedades">Novedades sueldo</option>
+                    <option value="otro">Otro documento</option>
+                  </select>
+                </div>
+                <div class="lq-field">
+                  <label for="buzon-filtro-estado">Estado</label>
+                  <select id="buzon-filtro-estado">
+                    <option value="pendiente">Pendientes</option>
+                    <option value="procesado">Procesados</option>
+                    <option value="">Todos</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="buzon-vista-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite"></div>
+
+              <div class="tabla-contable-wrap buzon-tabla-escritorio" id="buzon-tabla-wrap" hidden>
+                <table class="tabla-contable compacta buzon-tabla">
+                  <thead>
+                    <tr>
+                      <th scope="col">Documento y cliente</th>
+                      <th scope="col">Nota y fecha</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col" class="num">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-suite-buzon"></tbody>
+                </table>
+              </div>
+
+              <div class="buzon-movil-lista" id="buzon-movil-lista" hidden aria-label="Documentos recibidos en vista móvil"></div>
+
+              <div class="buzon-vacio" id="buzon-vacio">
+                <span class="material-icons buzon-vacio-ico" aria-hidden="true">inbox</span>
+                <h3>Sin documentos pendientes</h3>
+                <p>Cuando tus clientes suban cartolas bancarias (CSV o Excel), novedades de sueldo o respaldos desde su Portal Marca Blanca, aparecerán aquí listos para aplicar o descargar.</p>
+                <div class="buzon-vacio-acciones">
+                  <button type="button" class="btn btn-primario" id="btn-buzon-vacio-portal">
+                    <span class="material-icons" aria-hidden="true">send</span>Enviar enlace del Portal al cliente
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="panel buzon-salientes-panel" aria-label="Envíos salientes al cliente">
+            <div class="panel-head">
+              <div>
+                <h2>Envíos al cliente</h2>
+                <p class="panel-ayuda">Mensajes listos para copiar o abrir en tu correo.</p>
+              </div>
+              <span class="sello sello-guardada" id="buzon-sal-cliente">Cliente activo</span>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="buzon-plantillas" role="group" aria-label="Tipo de mensaje rápido">
+                <button type="button" class="btn btn-chico buzon-tpl-btn activo" data-buzon-tpl="portal" aria-pressed="true">Enviar enlace del Portal</button>
+                <button type="button" class="btn btn-chico buzon-tpl-btn" data-buzon-tpl="cartola" aria-pressed="false">Solicitar cartola</button>
+                <button type="button" class="btn btn-chico buzon-tpl-btn" data-buzon-tpl="f29" aria-pressed="false">Recordatorio F29</button>
+              </div>
+
+              <div class="buzon-sal-form">
+                <div class="lq-field">
+                  <label for="buzon-sal-correo">Correo del cliente (opcional)</label>
+                  <input type="email" id="buzon-sal-correo" placeholder="contacto@empresa.cl" autocomplete="email">
+                </div>
+                <div class="lq-field">
+                  <label for="buzon-sal-asunto">Asunto</label>
+                  <input type="text" id="buzon-sal-asunto" maxlength="160">
+                </div>
+                <div class="lq-field">
+                  <label for="buzon-sal-mensaje">Mensaje editable</label>
+                  <textarea id="buzon-sal-mensaje" rows="6"></textarea>
+                </div>
+                <div class="buzon-sal-acciones">
+                  <button type="button" class="btn" id="btn-buzon-copiar-msg">
+                    <span class="material-icons" aria-hidden="true">content_copy</span>Copiar mensaje
+                  </button>
+                  <button type="button" class="btn btn-primario" id="btn-buzon-abrir-mailto">
+                    <span class="material-icons" aria-hidden="true">mail</span>Abrir en correo
+                  </button>
+                </div>
+              </div>
+
+              <div class="buzon-historial-salientes">
+                <h3 class="preval-bloque-titulo">Últimos envíos del período</h3>
+                <ul class="buzon-sal-lista" id="buzon-sal-lista"></ul>
+                <p class="texto-ayuda" id="buzon-sal-vacio">Aún no registras envíos en este período.</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
       <section class="vista" id="suite-reportes" hidden>
         <div class="v-head">
           <div>
@@ -3384,23 +3538,14 @@
       <p class="texto-ayuda" id="portal-enlaces-vacio" hidden>No hay enlaces activos emitidos para este estudio.</p>
     </div>
 
-    <div class="mcp-tokens-wrap" id="portal-buzon-wrap">
-      <h3 class="preval-bloque-titulo">Buzón de documentos recibidos</h3>
-      <div class="tabla-contable-wrap" id="portal-buzon-tabla-wrap" hidden>
-        <table class="tabla-contable compacta">
-          <thead>
-            <tr>
-              <th scope="col">Recibido</th>
-              <th scope="col">Cliente / Tipo</th>
-              <th scope="col">Archivo</th>
-              <th scope="col">Estado</th>
-              <th scope="col" class="num">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tbody-portal-buzon"></tbody>
-        </table>
+    <div class="mcp-tokens-wrap portal-ir-buzon-box" id="portal-buzon-wrap">
+      <div>
+        <h3 class="preval-bloque-titulo" style="margin-bottom:4px">Buzón de documentos recibidos</h3>
+        <p class="texto-ayuda" style="margin:0">Revisa, filtra y aplica las cartolas o respaldos enviados por tus clientes desde la sección Buzón.</p>
       </div>
-      <p class="texto-ayuda" id="portal-buzon-vacio">Todavía no hay archivos recibidos en el buzón del cliente.</p>
+      <button type="button" class="btn btn-chico" id="btn-portal-ir-buzon">
+        <span class="material-icons" aria-hidden="true">inbox</span>Abrir Buzón del estudio
+      </button>
     </div>
 
     <div id="portal-dlg-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite"></div>
@@ -3717,11 +3862,11 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.4.0"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.0.4"></script>
+<script src="/js/demo_suite.js?v=3.0.5"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>
-<script src="/js/demo_portal_estudio.js?v=1.1.0"></script>
+<script src="/js/demo_portal_estudio.js?v=1.2.0"></script>
 <script src="/js/demo_midt.js?v=1.1.0"></script>
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
 <script src="/js/bandeja_lre.js?v=1.0.0"></script>

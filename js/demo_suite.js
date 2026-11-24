@@ -24,6 +24,7 @@
         dashboard: 'Dashboard',
         torre: 'Cartera de Clientes',
         importador: 'Carga Masiva SII',
+        buzon: 'Buzón',
         remuneraciones: 'Remuneraciones',
         f29: 'Impuestos Mensuales (F29)',
         ddjj: 'Renta F22 y DDJJ',
@@ -1889,12 +1890,12 @@
         }
     }
 
-    var MODULOS_VALIDOS = /^(dashboard|torre|importador|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)$/;
+    var MODULOS_VALIDOS = /^(dashboard|torre|importador|buzon|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)$/;
 
     function moduloDesdeUbicacion() {
         var hash = String(location.hash || '').replace(/^#/, '');
         if (MODULOS_VALIDOS.test(hash)) return hash;
-        var modUrl = (/[?&]mod=(dashboard|torre|importador|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)/.exec(location.search) || [])[1];
+        var modUrl = (/[?&]mod=(dashboard|torre|importador|buzon|remuneraciones|f29|ddjj|bancos|libros|balance|pnl|reportes)/.exec(location.search) || [])[1];
         return modUrl || 'dashboard';
     }
 
@@ -1905,6 +1906,7 @@
             dashboard: $('suite-dashboard'),
             torre: $('suite-torre'),
             importador: $('suite-importador'),
+            buzon: $('suite-buzon'),
             remuneraciones: $('suite-remuneraciones'),
             f29: $('suite-f29'),
             ddjj: $('suite-ddjj'),
@@ -1938,6 +1940,9 @@
             }
         }
         refrescarTodo();
+        if (modNorm === 'buzon' && window.CLDemoPortalEstudio && window.CLDemoPortalEstudio.refrescarBuzon) {
+            window.CLDemoPortalEstudio.refrescarBuzon();
+        }
     }
 
     function pintarEstadoPuentePyme(est) {
