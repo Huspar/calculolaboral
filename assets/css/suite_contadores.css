@@ -939,17 +939,6 @@
     padding: 12px 14px;
     margin-bottom: 14px;
 }
-.rcv-guia-head {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--forest);
-    font-size: 13.5px;
-    margin-bottom: 10px;
-}
-.rcv-guia-head .material-icons {
-    font-size: 18px;
-}
 .rcv-guia-pasos {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -993,38 +982,6 @@
     .rcv-guia-pasos {
         grid-template-columns: 1fr;
     }
-}
-
-/* ---------- Estado de homologación y códigos ERP ---------- */
-.suite-status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 38px;
-    padding: 6px 12px;
-    border-radius: 6px;
-    background: #F0FDF4;
-    border: 1px solid #BBF7D0;
-    color: #166534;
-    font-size: 12.5px;
-    font-weight: 500;
-}
-.suite-status-pill .material-icons {
-    font-size: 17px;
-    color: #16A34A;
-}
-.input-codigo-mapeo {
-    height: 30px;
-    font-size: 12px;
-    padding: 0 8px;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    width: 140px;
-    background: #FFFFFF;
-    color: var(--ink);
-}
-.input-codigo-mapeo:focus-visible {
-    outline: 2px solid var(--amber);
 }
 
 /* Ajuste de altura en laptops (1366x768) sin encoger los módulos */
@@ -4684,18 +4641,6 @@
     color: var(--ink-2);
     white-space: nowrap;
 }
-.traza-origen-nomina,
-.traza-origen-rcv,
-.traza-origen-f29 {
-    background: #EEF6F3;
-    border-color: #D6EBE4;
-    color: #064A3E;
-}
-.traza-origen-cartola {
-    background: #FFF8E6;
-    border-color: #FDE68A;
-    color: #92400E;
-}
 .traza-movs {
     display: grid;
     gap: 8px;
@@ -4735,20 +4680,6 @@
 
 @media screen and (max-width: 768px) {
     .traza-cuenta-btn { min-height: 44px; display: inline-flex; align-items: center; }
-    .ddjj-filtros {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        padding-bottom: 4px;
-        max-width: 100%;
-    }
-    .ddjj-filtros::-webkit-scrollbar { display: none; }
-    .ddjj-filtros .fin-chip {
-        flex: 0 0 auto;
-        white-space: nowrap;
-        min-height: 44px;
-    }
 }
 
 /* ==========================================================================
@@ -5494,9 +5425,6 @@
 }
 
 /* 3. Unificar sistema KPI entre escritorio y móvil */
-.suite-contadores-app .tabla-resumen-movil {
-    display: none !important;
-}
 .suite-contadores-app .fin-kpi-label {
     font-size: 12.5px;
     line-height: 1.25;
@@ -5538,23 +5466,6 @@
     margin: 0;
 }
 
-/* Gráfico SVG anual 12 meses F29 */
-.f29-anual-svg-wrap {
-    width: 100%;
-    overflow: hidden;
-}
-.f29-anual-svg {
-    width: 100%;
-    height: 132px;
-    display: block;
-}
-.f29-anual-leyenda {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 14px;
-    font-size: 11.5px;
-    color: var(--ink-2);
-}
 .f29-ley-item {
     display: inline-flex;
     align-items: center;
@@ -5570,15 +5481,6 @@
 }
 .torre-seg-barra {
     background: #E2E8F0;
-}
-.torre-seg-barra .torre-seg-warn {
-    background: repeating-linear-gradient(
-        -45deg,
-        #F59E0B,
-        #F59E0B 6px,
-        #FDE68A 6px,
-        #FDE68A 12px
-    );
 }
 
 /* Bandas SII + TGR compactas lado a lado en F29 */
@@ -5691,45 +5593,40 @@
         font-size: 11.5px;
     }
 
-    /* Banner demo comprimido en 1 sola fila móvil */
+    /* Banner demo limpio en móvil (sin solapamiento) */
     .suite-contadores-app .suite-bar-compacta {
-        padding: 6px 10px;
+        padding: 8px 10px;
         margin-bottom: 10px;
     }
     .suite-contadores-app .suite-bar-compacta .suite-bar-fila {
         flex-direction: row;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        gap: 6px;
+        gap: 8px;
     }
     .suite-contadores-app .suite-bar-compacta .suite-bar-izq {
         flex: 1 1 auto;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         min-width: 0;
     }
     .suite-contadores-app .suite-bar-compacta .suite-bar-txt {
-        font-size: 0;
-        line-height: 1;
+        font-size: 12.5px;
+        line-height: 1.3;
     }
     .suite-contadores-app .suite-bar-compacta .suite-bar-link {
-        font-size: 12px;
+        font-size: 12.5px;
     }
     .suite-contadores-app .suite-bar-compacta .suite-bar-der {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         flex-shrink: 0;
     }
     .suite-contadores-app .suite-bar-compacta .suite-bar-toggle,
     .suite-contadores-app .suite-bar-compacta .suite-bar-cta {
         display: none;
-    }
-    .suite-contadores-app .suite-bar-compacta #btn-cargar-ejemplo-todo {
-        min-height: 36px;
-        padding: 4px 8px;
-        font-size: 12px;
     }
 
     /* Master tabs ajustadas para que se note el scroll o quepan limpias */
@@ -5904,9 +5801,8 @@ dialog.syn-modal[data-syn-accent="indigo"] {
 #pm-panel.syn-theme #suite-modulos .suite-mod-btn {
     color: var(--syn-ink-2);
     border-radius: 8px;
-    border-left: 3px solid transparent;
     font-weight: 500;
-    transition: background-color var(--syn-dur-fast) var(--syn-ease), color var(--syn-dur-fast) var(--syn-ease), border-color var(--syn-dur-fast) var(--syn-ease);
+    transition: background-color var(--syn-dur-fast) var(--syn-ease), color var(--syn-dur-fast) var(--syn-ease);
 }
 #pm-panel.syn-theme #suite-modulos .suite-mod-btn .material-icons {
     color: var(--syn-muted) !important;
@@ -5920,7 +5816,6 @@ dialog.syn-modal[data-syn-accent="indigo"] {
     background: #EFEFF2;
     color: var(--syn-ink);
     font-weight: 600;
-    border-left-color: var(--syn-accent);
 }
 #pm-panel.syn-theme #suite-modulos .suite-mod-btn.activo .material-icons {
     color: var(--syn-accent-ink) !important;
@@ -6094,7 +5989,7 @@ dialog.syn-modal[data-syn-accent="indigo"] {
     align-items: center;
     gap: 6px;
     min-height: 36px;
-    max-width: 185px;
+    max-width: 245px;
     min-width: 0;
     overflow: hidden;
     flex: 0 1 auto;
@@ -6337,7 +6232,6 @@ dialog.syn-modal[data-syn-accent="indigo"] {
 }
 #pm-panel.syn-theme .fin-kpi {
     border: 1px solid var(--syn-border);
-    border-top: 3px solid var(--syn-border-2);
     border-radius: 16px;
     padding: 14px 16px;
     background: var(--syn-surface);
@@ -6345,19 +6239,19 @@ dialog.syn-modal[data-syn-accent="indigo"] {
 }
 #pm-panel.syn-theme .fin-kpi.fin-kpi-marca,
 #pm-panel.syn-theme .fin-kpi.fin-kpi-destacado {
-    border-top-color: var(--syn-accent);
-    background: var(--syn-surface);
+    border-color: var(--syn-accent-line);
+    background: var(--syn-accent-soft);
 }
 #pm-panel.syn-theme .fin-kpi.fin-kpi-ok {
-    border-top-color: #0F766E;
+    border-color: #99F6E4;
     background: #F4FBF8;
 }
 #pm-panel.syn-theme .fin-kpi.fin-kpi-warn {
-    border-top-color: #D97706;
+    border-color: #FDE68A;
     background: #FFFDF5;
 }
 #pm-panel.syn-theme .fin-kpi.fin-kpi-risk {
-    border-top-color: #BE123C;
+    border-color: #FECDD3;
     background: #FFF8F9;
 }
 #pm-panel.syn-theme .btn-primario {
@@ -7012,21 +6906,16 @@ dialog.syn-modal[open] {
 @media screen and (max-width: 1420px) {
     #pm-panel.syn-theme .syn-bc-estudio,
     #pm-panel.syn-theme .syn-bc-sep,
-    #pm-panel.syn-theme #suite-avance-modulos,
-    #pm-panel.syn-theme #cuenta-estado,
     #pm-panel.syn-theme .cloud-sync-txt,
     #pm-panel.syn-theme #btn-equipo-estudio .top-btn-txt {
         display: none;
     }
     #pm-panel.syn-theme .syn-ctx-trigger {
-        max-width: 142px;
-    }
-    #pm-panel.syn-theme .syn-ctx-trigger-meta {
-        display: none;
+        max-width: 215px;
     }
     #pm-panel.syn-theme #suite-estado-badge {
-        padding: 3px 7px;
-        font-size: 11px;
+        padding: 4px 9px;
+        font-size: 12px;
     }
     #pm-panel.syn-theme .app-mes select {
         max-width: 136px;
@@ -7087,15 +6976,14 @@ dialog.syn-modal[open] {
     #pm-panel.syn-theme .syn-search-input {
         min-height: 44px;
     }
-    #pm-panel.syn-theme .syn-accent-btn-txt,
+    #pm-panel.syn-theme #suite-estado-badge {
+        display: inline-flex;
+        padding: 4px 8px;
+        font-size: 12px;
+    }
     #pm-panel.syn-theme #btn-equipo-estudio,
     #pm-panel.syn-theme #cloud-sync-pill {
         display: none;
-    }
-    #pm-panel.syn-theme .syn-accent-btn {
-        min-width: 44px;
-        min-height: 44px;
-        justify-content: center;
     }
     #pm-panel.syn-theme .app-content {
         padding: 14px 12px 92px;
@@ -7121,4 +7009,34 @@ dialog.syn-modal[open] {
     .syn-modal-kpis {
         grid-template-columns: minmax(0, 1fr);
     }
+}
+
+/* Acciones secundarias colapsables en Remuneraciones + alineación de modales */
+.acciones-liq-secundarias {
+    margin-top: 4px;
+    padding: 10px 12px;
+    border: 1px solid var(--syn-border, var(--line));
+    border-radius: 12px;
+    background: var(--syn-canvas, var(--canvas));
+}
+.acciones-liq-summary {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--syn-ink-2, var(--ink-2));
+    list-style: none;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+}
+.acciones-liq-summary::-webkit-details-marker {
+    display: none;
+}
+.suite-bar-compacta #btn-cargar-ejemplo-todo {
+    display: none !important;
+}
+dialog.app-dialogo {
+    border-radius: 16px;
+    border: 1px solid var(--syn-border, var(--line));
+    background: var(--syn-surface, #FFFFFF);
 }

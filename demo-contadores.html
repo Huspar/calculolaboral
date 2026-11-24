@@ -186,33 +186,9 @@
 
       <!-- Zona Derecha de la Topbar -->
       <div class="app-top-der">
-        <span class="suite-avance-modulos" id="suite-avance-modulos" title="Módulos del período con datos listos">0 de 6 listos</span>
         <span class="sello sello-activo" id="suite-estado-badge" title="Estado de cierre tributario">
-          <span class="material-icons" aria-hidden="true">lock_open</span>Período abierto
+          <span class="material-icons" aria-hidden="true">lock_open</span><span class="estado-badge-txt">Período abierto</span>
         </span>
-
-        <!-- Selector de Acento de Color para el Usuario -->
-        <div class="syn-accent-wrap" id="syn-accent-wrap">
-          <button type="button" class="btn btn-chico syn-accent-btn" id="btn-syn-accent" aria-expanded="false" aria-controls="syn-accent-popover" title="Cambiar color de acento">
-            <span class="syn-accent-swatch" aria-hidden="true"></span>
-            <span class="syn-accent-btn-txt">Color</span>
-          </button>
-          <div class="syn-accent-popover" id="syn-accent-popover" hidden role="group" aria-label="Color de acento de la interfaz">
-            <p class="syn-pop-titulo">Color de acento</p>
-            <button type="button" class="syn-accent-opt" data-set-accent="naranja" aria-pressed="true">
-              <span class="syn-swatch-dot" style="background:#F97316" aria-hidden="true"></span>
-              <span>Naranja (Synchro)</span>
-            </button>
-            <button type="button" class="syn-accent-opt" data-set-accent="ambar" aria-pressed="false">
-              <span class="syn-swatch-dot" style="background:#D97706" aria-hidden="true"></span>
-              <span>Ámbar Fiscal</span>
-            </button>
-            <button type="button" class="syn-accent-opt" data-set-accent="indigo" aria-pressed="false">
-              <span class="syn-swatch-dot" style="background:#4F46E5" aria-hidden="true"></span>
-              <span>Índigo Studio</span>
-            </button>
-          </div>
-        </div>
 
         <button type="button" class="cloud-sync-pill" id="cloud-sync-pill" aria-label="Modo local sin sesión. Clic para iniciar sesión.">
           <span class="material-icons" aria-hidden="true">cloud_queue</span>
@@ -221,7 +197,6 @@
 
         <div class="app-cuenta">
           <select id="estudio-selector" class="top-estudio-select" hidden aria-label="Estudio contable activo"></select>
-          <span id="cuenta-estado" class="mono" style="font-size:12.5px;color:var(--muted)">sin sesión</span>
           <button type="button" class="btn btn-chico" id="btn-equipo-estudio" title="Administrar miembros del estudio">
             <span class="material-icons" aria-hidden="true">group</span><span class="top-btn-txt">Equipo</span>
           </button>
@@ -322,7 +297,7 @@
             <p class="suite-bar-txt">Datos locales sin claves SII · <a href="/suite-contadores" class="suite-bar-link">Ver planes</a></p>
           </div>
           <div class="suite-bar-der">
-            <button type="button" class="btn btn-chico" id="btn-cargar-ejemplo-todo" title="Carga datos reales en Nómina, Finiquitos, F29, BHE, Bancos, Balance, P&amp;L y DDJJ en un clic">
+            <button type="button" class="btn btn-chico" id="btn-cargar-ejemplo-todo" hidden aria-hidden="true" tabindex="-1">
               <span class="material-icons" aria-hidden="true">play_arrow</span>
               <span>Cargar datos de ejemplo</span>
             </button>
@@ -771,22 +746,24 @@
               <div id="liq-lre-post-strip" class="suite-preval-strip ok" hidden role="status" aria-live="polite"></div>
               <div class="acciones-liq-bloques">
                 <div class="acciones-liq-grupo">
-                  <span class="acciones-liq-etiqueta">Entregables oficiales</span>
+                  <span class="acciones-liq-etiqueta">Flujo principal del mes</span>
                   <button class="btn btn-primario" type="button" id="btn-print-liq"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del mes</button>
                   <button class="btn" type="button" id="btn-previred-liq"><span class="material-icons" aria-hidden="true">cloud_download</span>Archivo Previred <span class="preval-btn-badge" id="badge-err-previred" hidden>0</span></button>
                   <button class="btn" type="button" id="btn-lre-liq"><span class="material-icons" aria-hidden="true">description</span>Libro LRE <span class="preval-btn-badge" id="badge-err-lre" hidden>0</span></button>
-                  <button class="btn" type="button" id="btn-midt-lre-guia"><span class="material-icons" aria-hidden="true">checklist</span>Guía subir LRE a Mi DT</button>
-                  <button class="btn" type="button" id="btn-liq-ir-bandeja-lre"><span class="material-icons" aria-hidden="true">fact_check</span>Bandeja LRE cartera</button>
+                  <button class="btn" type="button" id="btn-asiento-liq"><span class="material-icons" aria-hidden="true">account_balance</span>Asiento centralización</button>
+                  <button class="btn" type="button" id="btn-cerrar-mes">Cerrar nómina</button>
                   <span class="sello sello-guardada" id="liq-lre-estado-pill">LRE: Pendiente de subir</span>
                 </div>
-                <div class="acciones-liq-grupo">
-                  <span class="acciones-liq-etiqueta">Contabilidad y cierre</span>
-                  <button class="btn" type="button" id="btn-csv-liq">Exportar Excel</button>
-                  <button class="btn" type="button" id="btn-nomina-liq"><span class="material-icons" aria-hidden="true">table_view</span>Nómina banco</button>
-                  <button class="btn" type="button" id="btn-asiento-liq"><span class="material-icons" aria-hidden="true">account_balance</span>Asiento centralización</button>
-                  <button class="btn" type="button" id="btn-asistente-liq"><span class="material-icons" aria-hidden="true">send</span>Enviar a Asistente Pyme</button>
-                  <button class="btn" type="button" id="btn-cerrar-mes">Cerrar nómina</button>
-                </div>
+                <details class="acciones-liq-secundarias">
+                  <summary class="acciones-liq-summary">Más herramientas y exportaciones (Excel, banco, Mi DT)</summary>
+                  <div class="acciones-liq-grupo" style="margin-top:8px">
+                    <button class="btn" type="button" id="btn-csv-liq">Exportar Excel</button>
+                    <button class="btn" type="button" id="btn-nomina-liq"><span class="material-icons" aria-hidden="true">table_view</span>Nómina banco</button>
+                    <button class="btn" type="button" id="btn-midt-lre-guia"><span class="material-icons" aria-hidden="true">checklist</span>Guía subir LRE a Mi DT</button>
+                    <button class="btn" type="button" id="btn-liq-ir-bandeja-lre"><span class="material-icons" aria-hidden="true">fact_check</span>Bandeja LRE cartera</button>
+                    <button class="btn" type="button" id="btn-asistente-liq"><span class="material-icons" aria-hidden="true">send</span>Enviar a Asistente Pyme</button>
+                  </div>
+                </details>
               </div>
               <div class="preval-botones-aviso" id="preval-botones-aviso" hidden role="status" aria-live="polite"></div>
             </div>
