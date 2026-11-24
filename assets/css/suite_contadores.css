@@ -7155,6 +7155,30 @@ dialog.app-dialogo {
     display: grid;
     gap: 10px;
 }
+.buzon-sal-contactos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+.buzon-sal-form input[type="tel"] {
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14px;
+}
+.buzon-sal-alt {
+    margin-top: 2px;
+    text-align: right;
+}
+.buzon-sal-alt .btn-texto {
+    font-size: 12.5px;
+}
 .buzon-sal-form textarea {
     min-height: 120px;
     height: auto;
@@ -7301,7 +7325,8 @@ dialog.app-dialogo {
     }
 }
 @media screen and (max-width: 520px) {
-    .buzon-filtros {
+    .buzon-filtros,
+    .buzon-sal-contactos {
         grid-template-columns: minmax(0, 1fr);
     }
     .buzon-demo-acciones,

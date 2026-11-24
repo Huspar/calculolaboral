@@ -950,13 +950,46 @@
                 }
             });
         }
+        function normalizarTelefonoWhatsApp(raw) {
+            var digits = String(raw || '').replace(/\D+/g, '');
+            if (!digits) return '';
+            if (digits.length === 9 && digits.charAt(0) === '9') return '56' + digits;
+            if (digits.length === 8) return '569' + digits;
+            return digits;
+        }
+        if ($('btn-buzon-abrir-gmail')) {
+            $('btn-buzon-abrir-gmail').addEventListener('click', function () {
+                var correo = $('buzon-sal-correo') ? $('buzon-sal-correo').value.trim() : '';
+                var asunto = $('buzon-sal-asunto') ? $('buzon-sal-asunto').value.trim() : '';
+                var msg = $('buzon-sal-mensaje') ? $('buzon-sal-mensaje').value.trim() : '';
+                if (!msg) return;
+                var url = 'https://mail.google.com/mail/?view=cm&fs=1' +
+                    (correo ? '&to=' + encodeURIComponent(correo) : '') +
+                    '&su=' + encodeURIComponent(asunto) +
+                    '&body=' + encodeURIComponent(msg);
+                registrarSaliente(correo ? ('Gmail (' + correo + ')') : 'Gmail', asunto || 'Mensaje al cliente');
+                window.open(url, '_blank', 'noopener');
+            });
+        }
+        if ($('btn-buzon-abrir-whatsapp')) {
+            $('btn-buzon-abrir-whatsapp').addEventListener('click', function () {
+                var fonoRaw = $('buzon-sal-whatsapp') ? $('buzon-sal-whatsapp').value.trim() : '';
+                var fono = normalizarTelefonoWhatsApp(fonoRaw);
+                var asunto = $('buzon-sal-asunto') ? $('buzon-sal-asunto').value.trim() : '';
+                var msg = $('buzon-sal-mensaje') ? $('buzon-sal-mensaje').value.trim() : '';
+                if (!msg) return;
+                var url = 'https://wa.me/' + encodeURIComponent(fono) + '?text=' + encodeURIComponent(msg);
+                registrarSaliente(fono ? ('WhatsApp (+' + fono + ')') : 'WhatsApp', asunto || 'Mensaje al cliente');
+                window.open(url, '_blank', 'noopener');
+            });
+        }
         if ($('btn-buzon-abrir-mailto')) {
             $('btn-buzon-abrir-mailto').addEventListener('click', function () {
                 var correo = $('buzon-sal-correo') ? $('buzon-sal-correo').value.trim() : '';
                 var asunto = $('buzon-sal-asunto') ? $('buzon-sal-asunto').value.trim() : '';
                 var msg = $('buzon-sal-mensaje') ? $('buzon-sal-mensaje').value.trim() : '';
                 var href = 'mailto:' + encodeURIComponent(correo) + '?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(msg);
-                registrarSaliente(correo ? ('Correo (' + correo + ')') : 'Correo', asunto || 'Mensaje al cliente');
+                registrarSaliente(correo ? ('Correo local (' + correo + ')') : 'Correo local', asunto || 'Mensaje al cliente');
                 window.location.href = href;
             });
         }

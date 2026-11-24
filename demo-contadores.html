@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.5">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.6">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -2708,12 +2708,18 @@
               </div>
 
               <div class="buzon-sal-form">
-                <div class="lq-field">
-                  <label for="buzon-sal-correo">Correo del cliente (opcional)</label>
-                  <input type="email" id="buzon-sal-correo" placeholder="contacto@empresa.cl" autocomplete="email">
+                <div class="buzon-sal-contactos">
+                  <div class="lq-field">
+                    <label for="buzon-sal-correo">Correo (opcional)</label>
+                    <input type="email" id="buzon-sal-correo" placeholder="contacto@empresa.cl" autocomplete="email">
+                  </div>
+                  <div class="lq-field">
+                    <label for="buzon-sal-whatsapp">WhatsApp (opcional)</label>
+                    <input type="tel" id="buzon-sal-whatsapp" placeholder="+56 9 1234 5678" autocomplete="tel">
+                  </div>
                 </div>
                 <div class="lq-field">
-                  <label for="buzon-sal-asunto">Asunto</label>
+                  <label for="buzon-sal-asunto">Asunto (para correo)</label>
                   <input type="text" id="buzon-sal-asunto" maxlength="160">
                 </div>
                 <div class="lq-field">
@@ -2721,12 +2727,18 @@
                   <textarea id="buzon-sal-mensaje" rows="6"></textarea>
                 </div>
                 <div class="buzon-sal-acciones">
+                  <button type="button" class="btn btn-primario" id="btn-buzon-abrir-gmail">
+                    <span class="material-icons" aria-hidden="true">mail</span>Abrir en Gmail
+                  </button>
+                  <button type="button" class="btn" id="btn-buzon-abrir-whatsapp">
+                    <span class="material-icons" aria-hidden="true">chat</span>WhatsApp
+                  </button>
                   <button type="button" class="btn" id="btn-buzon-copiar-msg">
-                    <span class="material-icons" aria-hidden="true">content_copy</span>Copiar mensaje
+                    <span class="material-icons" aria-hidden="true">content_copy</span>Copiar
                   </button>
-                  <button type="button" class="btn btn-primario" id="btn-buzon-abrir-mailto">
-                    <span class="material-icons" aria-hidden="true">mail</span>Abrir en correo
-                  </button>
+                </div>
+                <div class="buzon-sal-alt">
+                  <button type="button" class="btn-texto" id="btn-buzon-abrir-mailto">Usar app de correo del equipo (Outlook / Mail)</button>
                 </div>
               </div>
 
@@ -3866,7 +3878,7 @@
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>
-<script src="/js/demo_portal_estudio.js?v=1.2.0"></script>
+<script src="/js/demo_portal_estudio.js?v=1.2.1"></script>
 <script src="/js/demo_midt.js?v=1.1.0"></script>
 <script src="/js/feriados_cl.js?v=1.0.0"></script>
 <script src="/js/bandeja_lre.js?v=1.0.0"></script>
