@@ -7614,3 +7614,143 @@ dialog.app-dialogo {
         justify-content: center;
     }
 }
+
+/* ==========================================================================
+   CHECKLIST CIERRE 4 PASOS (#dash-cierre-4pasos) + APERTURA (#sub-apertura)
+   ========================================================================== */
+.dash-cierre-panel {
+    margin-bottom: 16px;
+}
+.dash-cierre-head {
+    flex-wrap: wrap;
+}
+.dash-cierre-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.dash-cierre-paso {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px 16px;
+    border: 0;
+    border-right: 1px solid var(--syn-border, var(--line));
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    min-height: 44px;
+    transition: background-color .15s ease;
+}
+.dash-cierre-paso:last-child {
+    border-right: 0;
+}
+.dash-cierre-paso:hover {
+    background: var(--syn-canvas, #F6F7F9);
+}
+.dash-cierre-paso:focus-visible {
+    outline: 2px solid var(--syn-ink, #141518);
+    outline-offset: -2px;
+}
+.dash-cierre-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+.dash-cierre-tit {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--syn-ink, #141518);
+}
+.dash-cierre-desc {
+    font-size: 12.5px;
+    color: var(--syn-ink-2, #4B5563);
+    line-height: 1.4;
+}
+
+.apertura-cuadre-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border: 1px solid var(--syn-border, var(--line));
+    border-radius: 12px;
+    background: var(--syn-canvas, #F6F7F9);
+}
+.apertura-totales {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    font-size: 13.5px;
+}
+.apertura-acciones-guardar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.ap-inp-num {
+    width: 130px;
+    text-align: right;
+}
+.apertura-mig-preview {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--syn-border, var(--line));
+    border-radius: 10px;
+    background: var(--syn-canvas, #F6F7F9);
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+}
+
+@media screen and (max-width: 900px) {
+    .dash-cierre-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .dash-cierre-paso {
+        border-right: 0;
+        border-top: 1px solid var(--syn-border, var(--line));
+    }
+    .dash-cierre-paso:first-child {
+        border-top: 0;
+    }
+}
+@media screen and (max-width: 768px) {
+    .apertura-tabla thead {
+        display: none;
+    }
+    .apertura-tabla,
+    .apertura-tabla tbody,
+    .apertura-tabla tr,
+    .apertura-tabla td {
+        display: block;
+        width: 100%;
+    }
+    .apertura-tabla tr {
+        padding: 10px 0;
+        border-bottom: 1px solid var(--syn-border, var(--line));
+    }
+    .apertura-tabla td {
+        padding: 4px 0;
+        border: 0;
+        text-align: left !important;
+    }
+    .ap-inp-num,
+    .ap-sel-cuenta {
+        width: 100%;
+        min-height: 44px !important;
+    }
+    .apertura-acciones-guardar {
+        width: 100%;
+    }
+    .apertura-acciones-guardar .btn {
+        flex: 1 1 140px;
+        min-height: 44px;
+        justify-content: center;
+    }
+}

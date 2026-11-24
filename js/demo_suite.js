@@ -199,6 +199,7 @@
             f29: hayMov ? f29 : null,
             nomina: nomina,
             tesoreria: tes,
+            asientoApertura: st.asientoApertura || null,
             manuales: st.manuales || [],
             auditados: st.auditados || {}
         });
@@ -550,6 +551,7 @@
             f29: hayMovimientos ? f29 : null,
             nomina: nomina,
             tesoreria: est.tesoreria,
+            asientoApertura: est.asientoApertura || null,
             manuales: est.manuales,
             auditados: est.auditados
         });
@@ -1414,7 +1416,13 @@
         $('sub-diario').hidden = subLib !== 'diario';
         $('sub-mayor').hidden = subLib !== 'mayor';
         if ($('sub-plan')) $('sub-plan').hidden = subLib !== 'plan';
+        if ($('sub-apertura')) $('sub-apertura').hidden = subLib !== 'apertura';
+        if ($('diario-aviso-apertura')) {
+            var tieneApReal = Array.isArray(m.estado && m.estado.asientoApertura) && m.estado.asientoApertura.length >= 2;
+            $('diario-aviso-apertura').hidden = tieneApReal;
+        }
         pintarPlanCuentas();
+        pintarApertura(m.estado);
 
         var totalDebe = m.asientos.reduce(function (s, a) { return s + a.debe; }, 0);
         var totalHaber = m.asientos.reduce(function (s, a) { return s + a.haber; }, 0);
@@ -2977,7 +2985,179 @@
         try { window.localStorage.setItem(K_SYN_ACCENT, norm); } catch (e) { }
     }
 
+    function pintarChecklistCierre4Pasos(m) {
+        if (!$('dash-cierre-4pasos')) return;
+        var est = m.estado || {};
+        var cliNom = (D && D.clienteNombre) ? D.clienteNombre() : (val('liq-cliente', 'Cliente activo'));
+        if ($('dash-cierre-cliente')) $('dash-cierre-cliente').textContent = cliNom;
+
+        var hayRcv = !!((m.ventas && m.ventas.documentos && m.ventas.documentos.length) || (m.compras && m.compras.documentos && m.compras.documentos.length) || (m.bhe && m.bhe.documentos && m.bhe.documentos.length));
+        var hayNom = !!(m.nomina && m.nomina.cantidad > 0);
+        var concRes = (m.conciliacion && m.conciliacion.resumen) || { totalMovimientos: 0, pctConciliado: 0 };
+        var hayConcReal = Array.isArray(est.manuales) && est.manuales.some(function (a) { return a && /^MAN-CONC-/.test(String(a.id || '')); });
+        var bcoListo = hayConcReal || (concRes.totalMovimientos > 0 && concRes.pctConciliado >= 95);
+        var bcoCurso = !bcoListo && concRes.totalMovimientos > 0;
+        var cerrado = !!est.cerradoTributario;
+        var balListo = cerrado;
+        var balCurso = !cerrado && (hayRcv || hayNom || hayConcReal);
+
+        function setPaso(num, estado, desc) {
+            var elEst = $('cierre-p' + num + '-estado');
+            var elDesc = $('cierre-p' + num + '-desc');
+            if (elEst) {
+                elEst.textContent = estado;
+                elEst.className = 'sello ' + (estado === 'Listo' ? 'sello-emitida' : (estado === 'En curso' ? 'sello-preparada' : 'sello-guardada'));
+            }
+            if (elDesc) elDesc.textContent = desc;
+        }
+
+        setPaso(1, hayRcv ? 'Listo' : 'Pendiente', hayRcv ? 'RCV y BHE cargados en el mes' : 'Sube RCV de ventas/compras y BHE');
+        setPaso(2, hayNom ? 'Listo' : 'Pendiente', hayNom ? (m.nomina.cantidad + ' liquidaciones listas') : 'Calcula liquidaciones, Previred y LRE');
+        setPaso(3, bcoListo ? 'Listo' : (bcoCurso ? 'En curso' : 'Pendiente'),
+            bcoListo ? 'Cartola guardada en Contabilidad' : (bcoCurso ? (concRes.pctConciliado + '% conciliado en Bancos') : 'Cruza tu cartola bancaria con facturas'));
+        setPaso(4, balListo ? 'Listo' : (balCurso ? 'En curso' : 'Pendiente'),
+            balListo ? 'Período cerrado y cuadrado' : (balCurso ? 'Balance listo para revisión final' : 'Revisa Balance 8 Col. y cierra el período'));
+
+        var listos = (hayRcv ? 1 : 0) + (hayNom ? 1 : 0) + (bcoListo ? 1 : 0) + (balListo ? 1 : 0);
+        if ($('dash-cierre-avance')) {
+            $('dash-cierre-avance').textContent = listos + ' de 4 listos';
+            $('dash-cierre-avance').className = 'sello ' + (listos === 4 ? 'sello-emitida' : (listos > 0 ? 'sello-preparada' : 'sello-guardada'));
+        }
+    }
+
+    var aperturaDraft = null;
+    var migradorPreviewRows = [];
+
+    function renderTablaApertura() {
+        var tbody = $('tbody-apertura');
+        if (!tbody) return;
+        var filas = Array.isArray(aperturaDraft) ? aperturaDraft : [];
+        var cuentasPlan = (C && C.obtenerPlanCuentas) ? C.obtenerPlanCuentas() : [];
+
+        if (!filas.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="texto-ayuda" style="text-align:center;padding:20px">Sin saldos iniciales cargados. Haz clic en "+ Agregar cuenta", "Cargar apertura de ejemplo" o "Importar desde Excel / Nubox".</td></tr>';
+        } else {
+            tbody.innerHTML = filas.map(function (f, idx) {
+                var opts = cuentasPlan.map(function (cp) {
+                    var sel = String(cp.codigo) === String(f.cuenta) ? ' selected' : '';
+                    return '<option value="' + D.esc(cp.codigo) + '"' + sel + '>' + D.esc(cp.codigo) + ' · ' + D.esc(cp.nombre) + '</option>';
+                }).join('');
+                if (f.cuenta && !cuentasPlan.some(function (cp) { return String(cp.codigo) === String(f.cuenta); })) {
+                    opts = '<option value="' + D.esc(f.cuenta) + '" selected>' + D.esc(f.cuenta) + ' · ' + D.esc(f.nombre || 'Cuenta personalizada') + '</option>' + opts;
+                }
+                return '<tr data-ap-idx="' + idx + '">' +
+                    '<td data-label="Cuenta"><select class="lq-select ap-sel-cuenta" data-ap-campo="cuenta" aria-label="Cuenta contable fila ' + (idx + 1) + '">' + opts + '</select></td>' +
+                    '<td data-label="Debe ($)" class="num"><input type="number" min="0" step="1" class="ap-inp-num mono" data-ap-campo="debe" value="' + (Number(f.debe) || '') + '" placeholder="0" aria-label="Debe fila ' + (idx + 1) + '"></td>' +
+                    '<td data-label="Haber ($)" class="num"><input type="number" min="0" step="1" class="ap-inp-num mono" data-ap-campo="haber" value="' + (Number(f.haber) || '') + '" placeholder="0" aria-label="Haber fila ' + (idx + 1) + '"></td>' +
+                    '<td data-label="Quitar" class="num"><button type="button" class="btn-texto ap-btn-quitar" data-ap-quitar="' + idx + '" aria-label="Quitar fila">Quitar</button></td>' +
+                    '</tr>';
+            }).join('');
+        }
+        actualizarResumenApertura();
+    }
+
+    function actualizarResumenApertura() {
+        var filas = Array.isArray(aperturaDraft) ? aperturaDraft : [];
+        var sumD = filas.reduce(function (s, f) { return s + Math.max(0, Math.round(Number(f.debe) || 0)); }, 0);
+        var sumH = filas.reduce(function (s, f) { return s + Math.max(0, Math.round(Number(f.haber) || 0)); }, 0);
+        var dif = sumD - sumH;
+        if ($('ap-total-debe')) $('ap-total-debe').textContent = D.money(sumD);
+        if ($('ap-total-haber')) $('ap-total-haber').textContent = D.money(sumH);
+        var cuadrado = filas.length >= 2 && sumD > 0 && dif === 0;
+        if ($('ap-estado-cuadre')) {
+            if (!filas.length || (sumD === 0 && sumH === 0)) {
+                $('ap-estado-cuadre').className = 'sello sello-guardada';
+                $('ap-estado-cuadre').textContent = 'Sin saldos';
+            } else if (cuadrado) {
+                $('ap-estado-cuadre').className = 'sello sello-emitida';
+                $('ap-estado-cuadre').textContent = 'Cuadrado ($0)';
+            } else {
+                $('ap-estado-cuadre').className = 'sello sello-preparada';
+                $('ap-estado-cuadre').textContent = 'Diferencia ' + D.money(Math.abs(dif));
+            }
+        }
+        if ($('ap-dif-msg')) {
+            if (!filas.length || (sumD === 0 && sumH === 0)) {
+                $('ap-dif-msg').textContent = 'Ingresa saldos en Debe y Haber o importa una planilla de Nubox/Excel.';
+            } else if (cuadrado) {
+                $('ap-dif-msg').textContent = 'Partida doble cuadrada. Pulsa "Guardar Asiento de Apertura" para aplicarlo a tu Balance.';
+            } else if (dif > 0) {
+                $('ap-dif-msg').textContent = 'Faltan ' + D.money(dif) + ' al Haber para cuadrar el asiento.';
+            } else {
+                $('ap-dif-msg').textContent = 'Faltan ' + D.money(Math.abs(dif)) + ' al Debe para cuadrar el asiento.';
+            }
+        }
+        if ($('btn-apertura-guardar')) {
+            $('btn-apertura-guardar').disabled = !cuadrado;
+        }
+    }
+
+    function pintarApertura(est) {
+        if (!$('tbody-apertura')) return;
+        if (aperturaDraft === null) {
+            aperturaDraft = Array.isArray(est && est.asientoApertura)
+                ? est.asientoApertura.map(function (x) { return { cuenta: String(x.cuenta || '11010'), nombre: x.nombre || '', debe: Number(x.debe) || 0, haber: Number(x.haber) || 0 }; })
+                : [];
+        }
+        renderTablaApertura();
+    }
+
+    function parsearTextoMigradorApertura(texto) {
+        var lineas = String(texto || '').split(/\r?\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+        var out = [];
+        function limpiarNum(v) {
+            var s = String(v || '').replace(/[$.\s]/g, '').replace(',', '.');
+            var n = Math.round(Number(s));
+            return isFinite(n) && n > 0 ? n : 0;
+        }
+        lineas.forEach(function (lin) {
+            var cols = lin.indexOf('\t') >= 0 ? lin.split('\t') : (lin.indexOf(';') >= 0 ? lin.split(';') : lin.split(','));
+            if (cols.length < 3) return;
+            var c0 = String(cols[0] || '').trim();
+            if (/^(cod|código|codigo|cuenta|nro)/i.test(c0) && !/\d/.test(c0)) return;
+            var codigo = c0.replace(/[^0-9A-Za-z.-]/g, '');
+            if (!codigo || !/\d/.test(codigo)) return;
+            var nombre = String(cols[1] || '').trim();
+            var debe = limpiarNum(cols[2]);
+            var haber = cols.length >= 4 ? limpiarNum(cols[3]) : 0;
+            if (debe === 0 && haber === 0) return;
+            out.push({ cuenta: codigo, nombre: nombre || ('Cuenta ' + codigo), debe: debe, haber: haber });
+        });
+        return out;
+    }
+
+    function actualizarPreviewMigrador(texto) {
+        var box = $('apertura-mig-preview');
+        var btnAp = $('btn-ap-mig-aplicar');
+        var rows = parsearTextoMigradorApertura(texto);
+        migradorPreviewRows = rows;
+        if (!box) return;
+        if (!rows.length) {
+            box.hidden = true;
+            if (btnAp) btnAp.disabled = true;
+            return;
+        }
+        var plan = (C && C.obtenerPlanCuentas) ? C.obtenerPlanCuentas() : [];
+        var existentes = 0;
+        var nuevas = 0;
+        var sumD = 0;
+        var sumH = 0;
+        rows.forEach(function (r) {
+            if (plan.some(function (p) { return String(p.codigo) === String(r.cuenta); })) existentes++;
+            else nuevas++;
+            sumD += r.debe;
+            sumH += r.haber;
+        });
+        var dif = sumD - sumH;
+        box.hidden = false;
+        box.innerHTML = '<strong>Vista previa: ' + rows.length + ' cuentas detectadas</strong>' +
+            '<span>' + existentes + ' ya existen en tu Plan de Cuentas · ' + nuevas + ' cuentas nuevas se agregarán automáticamente.</span>' +
+            '<span class="mono">Debe ' + D.money(sumD) + ' · Haber ' + D.money(sumH) + (dif === 0 ? ' · Cuadrado ($0)' : (' · Diferencia ' + D.money(Math.abs(dif)))) + '</span>';
+        if (btnAp) btnAp.disabled = false;
+    }
+
     function pintarDashboardYClientesRapidos(m) {
+        pintarChecklistCierre4Pasos(m);
         var per = m.periodo;
         var todo = leerTodoAlmacen();
         var listaClientes = (D && D.clientes) ? D.clientes() : [];
@@ -4464,6 +4644,171 @@
                 refrescarTodo();
             });
         });
+
+        // Eventos de Saldos Iniciales (Apertura) y Migrador Excel / Nubox
+        if ($('btn-diario-ir-apertura')) {
+            $('btn-diario-ir-apertura').addEventListener('click', function () {
+                ui.subLibro = 'apertura';
+                refrescarTodo();
+            });
+        }
+        if ($('btn-apertura-agregar-fila')) {
+            $('btn-apertura-agregar-fila').addEventListener('click', function () {
+                if (!Array.isArray(aperturaDraft)) aperturaDraft = [];
+                aperturaDraft.push({ cuenta: '11010', nombre: '', debe: 0, haber: 0 });
+                renderTablaApertura();
+            });
+        }
+        if ($('btn-apertura-ejemplo')) {
+            $('btn-apertura-ejemplo').addEventListener('click', function () {
+                aperturaDraft = [
+                    { cuenta: '11010', nombre: 'Banco Cuenta Corriente', debe: 6500000, haber: 0 },
+                    { cuenta: '11050', nombre: 'Clientes por Cobrar', debe: 2400000, haber: 0 },
+                    { cuenta: '12010', nombre: 'Maquinaria y Equipos', debe: 3800000, haber: 0 },
+                    { cuenta: '21010', nombre: 'Proveedores por Pagar', debe: 0, haber: 1700000 },
+                    { cuenta: '31010', nombre: 'Capital Pagado', debe: 0, haber: 8000000 },
+                    { cuenta: '32010', nombre: 'Resultados Acumulados', debe: 0, haber: 3000000 }
+                ];
+                renderTablaApertura();
+                D.avisar('Apertura de ejemplo cargada ($12.700.000 cuadrado). Pulsa Guardar para aplicarla.');
+            });
+        }
+        if ($('tbody-apertura')) {
+            $('tbody-apertura').addEventListener('input', function (ev) {
+                var tr = ev.target.closest('tr[data-ap-idx]');
+                if (!tr || !Array.isArray(aperturaDraft)) return;
+                var idx = Number(tr.getAttribute('data-ap-idx'));
+                var campo = ev.target.getAttribute('data-ap-campo');
+                if (!aperturaDraft[idx] || !campo) return;
+                var valNum = Math.max(0, Math.round(Number(ev.target.value) || 0));
+                if (campo === 'debe') {
+                    aperturaDraft[idx].debe = valNum;
+                    if (valNum > 0) {
+                        aperturaDraft[idx].haber = 0;
+                        var hInp = tr.querySelector('[data-ap-campo="haber"]');
+                        if (hInp) hInp.value = '';
+                    }
+                } else if (campo === 'haber') {
+                    aperturaDraft[idx].haber = valNum;
+                    if (valNum > 0) {
+                        aperturaDraft[idx].debe = 0;
+                        var dInp = tr.querySelector('[data-ap-campo="debe"]');
+                        if (dInp) dInp.value = '';
+                    }
+                }
+                actualizarResumenApertura();
+            });
+            $('tbody-apertura').addEventListener('change', function (ev) {
+                var tr = ev.target.closest('tr[data-ap-idx]');
+                if (!tr || !Array.isArray(aperturaDraft)) return;
+                var idx = Number(tr.getAttribute('data-ap-idx'));
+                if (ev.target.getAttribute('data-ap-campo') === 'cuenta' && aperturaDraft[idx]) {
+                    aperturaDraft[idx].cuenta = ev.target.value;
+                }
+            });
+            $('tbody-apertura').addEventListener('click', function (ev) {
+                var btnQ = ev.target.closest('[data-ap-quitar]');
+                if (!btnQ || !Array.isArray(aperturaDraft)) return;
+                var idx = Number(btnQ.getAttribute('data-ap-quitar'));
+                aperturaDraft.splice(idx, 1);
+                renderTablaApertura();
+            });
+        }
+        if ($('btn-apertura-guardar')) {
+            $('btn-apertura-guardar').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
+                var limpias = (aperturaDraft || []).filter(function (x) { return x.cuenta && (x.debe > 0 || x.haber > 0); });
+                var sumD = limpias.reduce(function (s, x) { return s + Math.round(Number(x.debe) || 0); }, 0);
+                var sumH = limpias.reduce(function (s, x) { return s + Math.round(Number(x.haber) || 0); }, 0);
+                if (limpias.length < 2 || sumD <= 0 || sumD !== sumH) {
+                    D.avisar('El asiento de apertura debe cuadrar exactamente (Debe = Haber).');
+                    return;
+                }
+                guardarEstadoActual(function (est) {
+                    est.asientoApertura = limpias;
+                });
+                refrescarTodo();
+                D.avisar('Asiento de Apertura guardado y aplicado al Libro Diario y Balance.');
+            });
+        }
+        if ($('btn-apertura-limpiar')) {
+            $('btn-apertura-limpiar').addEventListener('click', function () {
+                if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado.'); return; }
+                aperturaDraft = [];
+                guardarEstadoActual(function (est) {
+                    delete est.asientoApertura;
+                });
+                refrescarTodo();
+                D.avisar('Apertura personalizada eliminada. Se usa la apertura automática simple.');
+            });
+        }
+        function abrirMigradorApertura() {
+            var dlg = $('dlg-apertura-migrador');
+            if (!dlg) return;
+            if (typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
+            else dlg.setAttribute('open', 'open');
+            if ($('apertura-mig-texto')) $('apertura-mig-texto').focus();
+        }
+        function cerrarMigradorApertura() {
+            var dlg = $('dlg-apertura-migrador');
+            if (!dlg) return;
+            if (dlg.open && typeof dlg.close === 'function') dlg.close();
+            else dlg.removeAttribute('open');
+        }
+        if ($('btn-apertura-migrar')) $('btn-apertura-migrar').addEventListener('click', abrirMigradorApertura);
+        if ($('btn-cerrar-ap-mig')) $('btn-cerrar-ap-mig').addEventListener('click', cerrarMigradorApertura);
+        if ($('btn-ap-mig-cancelar')) $('btn-ap-mig-cancelar').addEventListener('click', cerrarMigradorApertura);
+        if ($('apertura-mig-texto')) {
+            $('apertura-mig-texto').addEventListener('input', function () {
+                actualizarPreviewMigrador($('apertura-mig-texto').value);
+            });
+        }
+        if ($('btn-ap-mig-archivo') && $('file-apertura-migrador')) {
+            $('btn-ap-mig-archivo').addEventListener('click', function () { $('file-apertura-migrador').click(); });
+            $('file-apertura-migrador').addEventListener('change', function () {
+                var f = $('file-apertura-migrador').files && $('file-apertura-migrador').files[0];
+                if (!f) return;
+                var rd = new FileReader();
+                rd.onload = function () {
+                    var txt = '';
+                    if (/\.(xlsx|xls)$/i.test(f.name) && typeof XLSX !== 'undefined') {
+                        try {
+                            var wb = XLSX.read(new Uint8Array(rd.result), { type: 'array' });
+                            var sh = wb.Sheets[wb.SheetNames[0]];
+                            var rows = XLSX.utils.sheet_to_json(sh, { header: 1, defval: '' });
+                            txt = rows.map(function (r) { return r.join('\t'); }).join('\n');
+                        } catch (e) { txt = ''; }
+                    } else {
+                        txt = new TextDecoder('utf-8').decode(new Uint8Array(rd.result));
+                    }
+                    if ($('apertura-mig-texto')) $('apertura-mig-texto').value = txt;
+                    actualizarPreviewMigrador(txt);
+                };
+                rd.readAsArrayBuffer(f);
+            });
+        }
+        if ($('btn-ap-mig-aplicar')) {
+            $('btn-ap-mig-aplicar').addEventListener('click', function () {
+                if (!migradorPreviewRows.length) return;
+                var plan = (C && C.obtenerPlanCuentas) ? C.obtenerPlanCuentas() : [];
+                var nuevas = 0;
+                migradorPreviewRows.forEach(function (r) {
+                    if (!plan.some(function (p) { return String(p.codigo) === String(r.cuenta); }) && C && C.guardarCuentaPlan) {
+                        var pref = String(r.cuenta).charAt(0);
+                        var tipo = pref === '1' ? 'activo' : (pref === '2' ? 'pasivo' : (pref === '3' ? 'patrimonio' : (pref === '4' ? 'gasto' : 'ingreso')));
+                        C.guardarCuentaPlan({ codigo: r.cuenta, nombre: r.nombre, tipo: tipo });
+                        nuevas++;
+                    }
+                });
+                aperturaDraft = migradorPreviewRows.map(function (r) {
+                    return { cuenta: r.cuenta, nombre: r.nombre, debe: r.debe, haber: r.haber };
+                });
+                cerrarMigradorApertura();
+                renderTablaApertura();
+                D.avisar('Importadas ' + aperturaDraft.length + ' cuentas (' + nuevas + ' nuevas al Plan). Revisa el cuadre y pulsa Guardar.');
+            });
+        }
+        document.addEventListener('demo:cliente', function () { aperturaDraft = null; });
 
         // Acciones sobre asientos (auditar / borrar)
         if ($('diario-lista')) {

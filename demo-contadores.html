@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.7">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.8">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -400,6 +400,47 @@
         </div>
 
         <!-- Bento Principal 2 Columnas -->
+        <!-- Ruta de Cierre Mensual en 4 pasos (por cliente activo) -->
+        <section class="panel syn-panel dash-cierre-panel" id="dash-cierre-4pasos" aria-labelledby="dash-cierre-titulo">
+          <div class="panel-head dash-cierre-head">
+            <div>
+              <h2 id="dash-cierre-titulo">Ruta de cierre del mes: <span id="dash-cierre-cliente">Cliente activo</span></h2>
+              <p class="panel-ayuda">Sigue estos 4 pasos en orden para dejar listo el mes de la empresa seleccionada.</p>
+            </div>
+            <span class="sello sello-guardada" id="dash-cierre-avance">0 de 4 listos</span>
+          </div>
+          <div class="dash-cierre-grid" role="list">
+            <button type="button" class="dash-cierre-paso" data-dash-ir="f29" role="listitem">
+              <div class="dash-cierre-top">
+                <strong class="dash-cierre-tit">1. Documentos SII</strong>
+                <span class="sello sello-guardada" id="cierre-p1-estado">Pendiente</span>
+              </div>
+              <span class="dash-cierre-desc" id="cierre-p1-desc">Sube RCV de ventas/compras y BHE</span>
+            </button>
+            <button type="button" class="dash-cierre-paso" data-dash-ir="remuneraciones" role="listitem">
+              <div class="dash-cierre-top">
+                <strong class="dash-cierre-tit">2. Nómina y Previred</strong>
+                <span class="sello sello-guardada" id="cierre-p2-estado">Pendiente</span>
+              </div>
+              <span class="dash-cierre-desc" id="cierre-p2-desc">Calcula liquidaciones, Previred y LRE</span>
+            </button>
+            <button type="button" class="dash-cierre-paso" data-dash-ir="bancos" role="listitem">
+              <div class="dash-cierre-top">
+                <strong class="dash-cierre-tit">3. Banco y Conciliación</strong>
+                <span class="sello sello-guardada" id="cierre-p3-estado">Pendiente</span>
+              </div>
+              <span class="dash-cierre-desc" id="cierre-p3-desc">Cruza tu cartola bancaria con facturas</span>
+            </button>
+            <button type="button" class="dash-cierre-paso" data-dash-ir="balance" role="listitem">
+              <div class="dash-cierre-top">
+                <strong class="dash-cierre-tit">4. F29, Balance y Cierre</strong>
+                <span class="sello sello-guardada" id="cierre-p4-estado">Pendiente</span>
+              </div>
+              <span class="dash-cierre-desc" id="cierre-p4-desc">Revisa Balance 8 Col. y cierra el período</span>
+            </button>
+          </div>
+        </section>
+
         <div class="syn-dash-grid">
           <div class="syn-dash-main">
             <!-- Calendario Fiscal del Mes (reemplaza Gantt social) -->
@@ -1516,6 +1557,38 @@
         </div>
       </dialog>
 
+      <!-- Modal Migrador de Plan de Cuentas y Saldos Iniciales (Excel / Nubox) -->
+      <dialog class="app-dialogo app-dialogo-medio" id="dlg-apertura-migrador" aria-labelledby="ap-mig-titulo">
+        <div class="midt-cabeza">
+          <div>
+            <h2 id="ap-mig-titulo">Importar saldos iniciales desde Excel o Nubox</h2>
+            <p class="midt-sub">Sube un archivo CSV/Excel o pega las filas de tu Balance de cierre anterior (Código, Cuenta, Debe, Haber).</p>
+          </div>
+          <button type="button" class="app-icono-btn" id="btn-cerrar-ap-mig" aria-label="Cerrar ventana">
+            <span class="material-icons" aria-hidden="true">close</span>
+          </button>
+        </div>
+        <div class="dialogo-cuerpo">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+            <button type="button" class="btn btn-chico" id="btn-ap-mig-archivo"><span class="material-icons" aria-hidden="true">upload_file</span>Subir archivo CSV / Excel</button>
+            <input type="file" id="file-apertura-migrador" accept=".csv,.txt,.tsv,.xlsx,.xls" class="sr-only" aria-label="Subir archivo de saldos iniciales">
+            <span class="texto-ayuda" style="align-self:center">O pega directamente tus columnas abajo:</span>
+          </div>
+          <div class="lq-field">
+            <label for="apertura-mig-texto">Filas de cierre anterior (Código ; Nombre cuenta ; Debe ; Haber)</label>
+            <textarea id="apertura-mig-texto" rows="7" placeholder="11010&#9;Banco Cuenta Corriente&#9;6500000&#9;0&#10;11050&#9;Clientes por Cobrar&#9;2400000&#9;0&#10;12010&#9;Maquinaria y Equipos&#9;3800000&#9;0&#10;21010&#9;Proveedores por Pagar&#9;0&#9;1700000&#10;31010&#9;Capital Pagado&#9;0&#9;8000000&#10;32010&#9;Resultados Acumulados&#9;0&#9;3000000"></textarea>
+          </div>
+          <div class="apertura-mig-preview" id="apertura-mig-preview" hidden role="status" aria-live="polite"></div>
+          <div class="sii-dlg-acciones" style="margin-top:14px">
+            <div class="sii-acciones-izq"></div>
+            <div class="sii-acciones-der">
+              <button type="button" class="btn" id="btn-ap-mig-cancelar">Cancelar</button>
+              <button type="button" class="btn btn-primario" id="btn-ap-mig-aplicar" disabled>Importar cuentas y cargar apertura</button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+
       <!-- ==================== VISTA 4: CONTABILIDAD GENERAL ==================== -->
       <section class="vista" id="suite-libros" hidden>
         <div class="conta-master-tabs" role="navigation" aria-label="Secciones de Contabilidad y Balance">
@@ -1545,10 +1618,18 @@
           <button type="button" class="fin-chip activo" data-sublibro="diario" role="tab" aria-selected="true" aria-controls="sub-diario">Libro Diario</button>
           <button type="button" class="fin-chip" data-sublibro="mayor" role="tab" aria-selected="false" aria-controls="sub-mayor">Libro Mayor</button>
           <button type="button" class="fin-chip" data-sublibro="plan" role="tab" aria-selected="false" aria-controls="sub-plan">Plan de Cuentas</button>
+          <button type="button" class="fin-chip" data-sublibro="apertura" role="tab" aria-selected="false" aria-controls="sub-apertura">Saldos iniciales (Apertura)</button>
         </div>
 
         <!-- Subvista Diario -->
         <div id="sub-diario">
+          <div class="suite-preval-strip" id="diario-aviso-apertura" style="margin-bottom:12px">
+            <span class="suite-preval-strip-izq">
+              <span class="material-icons" aria-hidden="true">account_balance_wallet</span>
+              <span>¿Vienes de Nubox o Excel? Carga los saldos iniciales reales del 1 de enero para que tu Balance arranque cuadrado.</span>
+            </span>
+            <button type="button" class="btn btn-chico" id="btn-diario-ir-apertura">Cargar saldos iniciales</button>
+          </div>
           <div class="asiento-lista" id="diario-lista" style="margin-bottom:18px"></div>
           <div class="panel" id="form-nuevo-asiento-wrap">
             <div class="panel-head"><h2>Registrar asiento manual o ajuste contable</h2><span class="texto-ayuda">Partida doble obligatoria</span></div>
@@ -1579,6 +1660,53 @@
         </div>
 
         <!-- Subvista Plan de Cuentas Editable -->
+        <!-- Subvista Saldos Iniciales (Asiento de Apertura 1 de enero + Migrador) -->
+        <div id="sub-apertura" hidden>
+          <div class="panel">
+            <div class="panel-head bancos-toolbar-head">
+              <div>
+                <h2>Saldos iniciales de apertura (1 de enero)</h2>
+                <p class="panel-ayuda">Trae los saldos del cierre anterior desde Nubox o Excel para que tu Balance arranque cuadrado.</p>
+              </div>
+              <div class="v-acciones">
+                <button type="button" class="btn btn-chico" id="btn-apertura-ejemplo">Cargar apertura de ejemplo</button>
+                <button type="button" class="btn btn-chico btn-primario" id="btn-apertura-migrar"><span class="material-icons" aria-hidden="true">upload_file</span>Importar desde Excel / Nubox</button>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="apertura-cuadre-bar" role="status" aria-live="polite">
+                <div class="apertura-totales">
+                  <span>Total Debe: <strong class="mono" id="ap-total-debe">$0</strong></span>
+                  <span>Total Haber: <strong class="mono" id="ap-total-haber">$0</strong></span>
+                  <span class="sello sello-guardada" id="ap-estado-cuadre">Sin saldos</span>
+                </div>
+                <div class="apertura-acciones-guardar">
+                  <button type="button" class="btn btn-chico" id="btn-apertura-agregar-fila">+ Agregar cuenta</button>
+                  <button type="button" class="btn btn-chico btn-primario" id="btn-apertura-guardar" disabled>Guardar Asiento de Apertura</button>
+                </div>
+              </div>
+              <p class="texto-ayuda" id="ap-dif-msg" style="margin:0 0 12px">Ingresa saldos en Debe y Haber o importa una planilla de Nubox/Excel.</p>
+
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta apertura-tabla">
+                  <thead>
+                    <tr>
+                      <th scope="col">Cuenta contable</th>
+                      <th scope="col" class="num">Debe ($)</th>
+                      <th scope="col" class="num">Haber ($)</th>
+                      <th scope="col" class="num">Quitar</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-apertura"></tbody>
+                </table>
+              </div>
+              <div style="margin-top:12px;display:flex;justify-content:flex-end">
+                <button type="button" class="btn-texto" id="btn-apertura-limpiar">Volver a apertura automática simple</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div id="sub-plan" hidden>
           <div class="panel" id="panel-plan-editable" style="margin-bottom:16px">
             <div class="panel-head">
@@ -3954,7 +4082,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=1.4.0"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.0.6"></script>
+<script src="/js/demo_suite.js?v=3.0.7"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

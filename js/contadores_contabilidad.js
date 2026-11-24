@@ -160,16 +160,30 @@
         var nro = 1;
         function sigId(pref) { return pref + '-' + (nro++); }
 
-        // 1. Apertura del periodo (Banco inicial + eventual remanente IVA anterior contra Capital/Resultados)
-        var bancoIni = entero(tes.saldoInicialBanco);
-        var remAnt = f29 ? entero(f29.codigos[504]) : 0;
-        if (bancoIni > 0 || remAnt > 0) {
-            var linAp = [];
-            if (bancoIni > 0) linAp.push({ cuenta: '11010', debe: bancoIni, haber: 0 });
-            if (remAnt > 0) linAp.push({ cuenta: '11085', debe: remAnt, haber: 0 });
-            linAp.push({ cuenta: '31010', debe: 0, haber: bancoIni + remAnt });
-            var aAp = crearAsiento(sigId('AP'), iniFecha, 'Apertura y saldos iniciales del periodo ' + periodo, 'automatico', linAp);
-            if (aAp) asientos.push(aAp);
+        // 1. Apertura del periodo (Asiento de Apertura real 1 de enero si existe, o simplificado Banco + Remanente)
+        var apReal = Array.isArray(e.asientoApertura) ? e.asientoApertura.filter(function (l) {
+            return l && l.cuenta && (entero(l.debe) > 0 || entero(l.haber) > 0);
+        }) : [];
+        var sumApD = apReal.reduce(function (s, l) { return s + entero(l.debe); }, 0);
+        var sumApH = apReal.reduce(function (s, l) { return s + entero(l.haber); }, 0);
+        if (apReal.length >= 2 && sumApD > 0 && sumApD === sumApH) {
+            var anioAp = String(periodo).slice(0, 4) || '2026';
+            var linApReal = apReal.map(function (l) {
+                return { cuenta: String(l.cuenta), debe: entero(l.debe), haber: entero(l.haber) };
+            });
+            var aApReal = crearAsiento(sigId('AP'), anioAp + '-01-01', 'Asiento de apertura y saldos iniciales (1 de enero ' + anioAp + ')', 'automatico', linApReal);
+            if (aApReal) asientos.push(aApReal);
+        } else {
+            var bancoIni = entero(tes.saldoInicialBanco);
+            var remAnt = f29 ? entero(f29.codigos[504]) : 0;
+            if (bancoIni > 0 || remAnt > 0) {
+                var linAp = [];
+                if (bancoIni > 0) linAp.push({ cuenta: '11010', debe: bancoIni, haber: 0 });
+                if (remAnt > 0) linAp.push({ cuenta: '11085', debe: remAnt, haber: 0 });
+                linAp.push({ cuenta: '31010', debe: 0, haber: bancoIni + remAnt });
+                var aAp = crearAsiento(sigId('AP'), iniFecha, 'Apertura y saldos iniciales del periodo ' + periodo, 'automatico', linAp);
+                if (aAp) asientos.push(aAp);
+            }
         }
 
         // 2. Centralizacion RCV Ventas
