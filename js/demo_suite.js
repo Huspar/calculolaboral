@@ -2988,7 +2988,7 @@
     function pintarChecklistCierre4Pasos(m) {
         if (!$('dash-cierre-4pasos')) return;
         var est = m.estado || {};
-        var cliNom = (D && D.clienteNombre) ? D.clienteNombre() : (val('liq-cliente', 'Cliente activo'));
+        var cliNom = (D && D.clienteNombre) ? D.clienteNombre() : (($('liq-cliente') && $('liq-cliente').value) || 'Cliente activo');
         if ($('dash-cierre-cliente')) $('dash-cierre-cliente').textContent = cliNom;
 
         var hayRcv = !!((m.ventas && m.ventas.documentos && m.ventas.documentos.length) || (m.compras && m.compras.documentos && m.compras.documentos.length) || (m.bhe && m.bhe.documentos && m.bhe.documentos.length));
