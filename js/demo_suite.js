@@ -6263,6 +6263,8 @@
                     var idR = btnReabrir.getAttribute('data-conc-reabrir');
                     guardarEstadoActual(function (est) {
                         est.matchesConfirmados = est.matchesConfirmados || {};
+                        est.matchesDescartados = est.matchesDescartados || {};
+                        est.matchesDescartados[idR] = true;
                         delete est.matchesConfirmados[idR];
                     });
                     refrescarTodo();

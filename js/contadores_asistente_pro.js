@@ -1006,7 +1006,7 @@
             }
 
             // 2. Reglas de contraparte (usuario primero, defecto después) si no calzó ni tiene alerta de diferencia
-            if (!match && !alertaDiferencia) {
+            if (!match && !alertaDiferencia && !descartados[movId]) {
                 for (var r = 0; r < todasReglas.length; r++) {
                     var regla = todasReglas[r];
                     var tipoOk = !regla.tipo || regla.tipo === 'ambos' || regla.tipo === tipo;
