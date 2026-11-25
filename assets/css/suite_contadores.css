@@ -8323,3 +8323,11 @@ dialog.app-dialogo .btn-primario,
 #pm-panel.syn-theme .syn-logo .app-logo-isotipo svg {
     color: #FFFFFF !important;
 }
+
+/* Texto e ícono del botón + Nuevo cliente en blanco puro en las 3 paletas */
+#pm-panel.syn-theme .syn-side-cta,
+#pm-panel.syn-theme .syn-side-cta span,
+#pm-panel.syn-theme .syn-side-cta .material-icons {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+}
