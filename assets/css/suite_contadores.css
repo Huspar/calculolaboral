@@ -8945,3 +8945,27 @@ body[data-syn-theme="cobalto"] #dlg-suite-config {
     border-top: 1px solid var(--syn-border, #E2E8F0);
     font-size: 13px;
 }
+
+/* Cierre visual 1280px (Design Critic): cero recorte en Buzón y Flujo de Caja + P2 */
+#suite-buzon .tabla-contable,
+#suite-pnl .tabla-contable {
+    min-width: 0 !important;
+    width: 100% !important;
+}
+#suite-buzon .tabla-contable td,
+#suite-pnl .tabla-contable td:first-child {
+    white-space: normal;
+    word-break: break-word;
+}
+#suite-buzon .buzon-acciones-celda,
+#suite-buzon .match-acciones-fila {
+    flex-wrap: wrap;
+    gap: 4px;
+}
+#pm-panel.syn-theme .btn-primario,
+#pm-panel.syn-theme .btn-primario .material-icons {
+    color: #FFFFFF !important;
+}
+#dash-cartera-tbody .mono {
+    white-space: nowrap;
+}
