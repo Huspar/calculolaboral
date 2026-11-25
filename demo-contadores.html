@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.2.6">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.2.7">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -214,6 +214,9 @@
             <span class="material-icons" aria-hidden="true">group</span><span class="top-btn-txt">Equipo</span>
           </button>
           <button type="button" class="btn btn-chico" id="btn-entrar">Mi Estudio</button>
+          <button type="button" class="app-icono-btn" id="btn-suite-config" aria-label="Configuración de la suite" title="Configuración: paleta de colores e integraciones">
+            <span class="material-icons" aria-hidden="true">settings</span>
+          </button>
         </div>
       </div>
     </header>
@@ -2959,35 +2962,19 @@
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Informes, Membrete y Portal</h1>
-            <p class="v-sub">Identidad del estudio, paleta de documentos y emisión de certificados.</p>
+            <p class="v-sub">Membrete del estudio, emisión de certificados y portal del cliente.</p>
           </div>
         </div>
 
         <div class="fin-cols-2">
           <div class="panel">
-            <div class="panel-head"><h2>Membrete y apariencia del estudio</h2></div>
+            <div class="panel-head"><h2>Membrete y firma del estudio</h2></div>
             <div class="panel-cuerpo">
               <div class="fin-form-grid" style="margin-bottom:14px">
                 <div class="lq-field"><label for="rep-estudio-nombre">Nombre del estudio contable</label><input type="text" id="rep-estudio-nombre" value="Estudio Contable Chile"></div>
                 <div class="lq-field"><label for="rep-estudio-rut">RUT del estudio</label><input type="text" id="rep-estudio-rut" value="76.543.210-K"></div>
                 <div class="lq-field"><label for="rep-contador-nombre">Contador responsable</label><input type="text" id="rep-contador-nombre" value="Contador Auditor"></div>
                 <div class="lq-field"><label for="rep-estudio-pie">Pie de documento</label><input type="text" id="rep-estudio-pie" value="Documento de trabajo y referencia tributaria emitido para el cliente."></div>
-              </div>
-              <div class="rep-apariencia-bloque">
-                <div class="side-theme-bar rep-theme-bar" id="suite-theme-picker" role="group" aria-label="Paleta de colores de la suite y documentos">
-                  <span class="side-theme-lbl">Paleta de la suite, PDF y Excel</span>
-                  <div class="side-theme-btns">
-                    <button type="button" class="side-theme-btn activo" data-set-theme="slate" aria-pressed="true" title="Slate Profundo + Índigo">
-                      <span class="side-swatch sw-slate" aria-hidden="true"></span><span>Slate</span>
-                    </button>
-                    <button type="button" class="side-theme-btn" data-set-theme="editorial" aria-pressed="false" title="Editorial Cálido + Naranja">
-                      <span class="side-swatch sw-editorial" aria-hidden="true"></span><span>Naranja</span>
-                    </button>
-                    <button type="button" class="side-theme-btn" data-set-theme="cobalto" aria-pressed="false" title="Azul Cobalto">
-                      <span class="side-swatch sw-cobalto" aria-hidden="true"></span><span>Cobalto</span>
-                    </button>
-                  </div>
-                </div>
               </div>
               <button type="button" class="btn btn-primario" id="btn-rep-guardar-membrete">Guardar membrete</button>
               <div class="suite-membrete-preview" id="rep-preview-box" style="margin-top:14px"></div>
@@ -3037,19 +3024,6 @@
             </div>
           </div>
         </div>
-
-        <details class="suite-avanzado-det" id="rep-mcp-card" style="margin-top:14px">
-          <summary class="suite-avanzado-sum">Integraciones externas de solo lectura (API / MCP)</summary>
-          <div class="suite-avanzado-body">
-            <p class="panel-ayuda" style="margin:0">Conecta clientes externos de solo lectura para consultar F29, RCV, BHE y plazos de acuse.</p>
-            <div class="v-acciones">
-              <span class="sello sello-guardada" id="rep-mcp-sello">Solo lectura</span>
-              <button type="button" class="btn btn-chico" id="btn-rep-abrir-mcp">
-                <span class="material-icons" aria-hidden="true">hub</span>Configurar conector
-              </button>
-            </div>
-          </div>
-        </details>
       </section>
 
     </main>
@@ -3070,6 +3044,64 @@
 </div>
 
 <div id="print-area"></div>
+
+<!-- Modal de Configuración de la Suite (Apariencia e Integraciones) -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-suite-config" aria-labelledby="cfg-suite-titulo">
+  <div class="midt-cabeza">
+    <h2 id="cfg-suite-titulo">Configuración de la suite</h2>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-suite-config" aria-label="Cerrar configuración">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  <div class="cfg-suite-cuerpo">
+    <section class="cfg-suite-sec">
+      <h3>Apariencia</h3>
+      <p class="texto-ayuda">Se aplica al panel de trabajo y a los archivos PDF y Excel que generes.</p>
+      <div class="side-theme-bar cfg-theme-bar" id="suite-theme-picker" role="group" aria-label="Paleta de colores de la suite">
+        <div class="side-theme-btns">
+          <button type="button" class="side-theme-btn activo" data-set-theme="slate" aria-pressed="true">
+            <span class="side-swatch sw-slate" aria-hidden="true"></span><span>Slate</span>
+          </button>
+          <button type="button" class="side-theme-btn" data-set-theme="editorial" aria-pressed="false">
+            <span class="side-swatch sw-editorial" aria-hidden="true"></span><span>Naranja</span>
+          </button>
+          <button type="button" class="side-theme-btn" data-set-theme="cobalto" aria-pressed="false">
+            <span class="side-swatch sw-cobalto" aria-hidden="true"></span><span>Cobalto</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="cfg-suite-sec">
+      <h3>Integraciones</h3>
+      <div class="cfg-int-lista">
+        <div class="cfg-int-item">
+          <div>
+            <strong>Claude (MCP)</strong>
+            <span class="texto-ayuda">Consulta de solo lectura para F29, RCV, BHE y plazos de acuse desde Claude Desktop o web.</span>
+          </div>
+          <div class="cfg-int-acciones">
+            <span class="sello sello-guardada" id="rep-mcp-sello">Solo lectura</span>
+            <button type="button" class="btn btn-chico" id="btn-rep-abrir-mcp">
+              <span class="material-icons" aria-hidden="true">hub</span>Configurar
+            </button>
+          </div>
+        </div>
+        <div class="cfg-int-item">
+          <div>
+            <strong>Webhooks del estudio</strong>
+            <span class="texto-ayuda">Eventos firmados HMAC-SHA256 hacia tus sistemas externos.</span>
+          </div>
+          <div class="cfg-int-acciones">
+            <button type="button" class="btn btn-chico" id="btn-cfg-webhooks">
+              <span class="material-icons" aria-hidden="true">webhook</span>Configurar
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</dialog>
 
 <!-- Modal de Postulación al Acceso Anticipado -->
 <dialog class="app-dialogo app-dialogo-medio" id="dlg-postulacion-estudio" aria-labelledby="post-titulo">
@@ -4088,7 +4120,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=2.1.1"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.2.2"></script>
+<script src="/js/demo_suite.js?v=3.2.3"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

@@ -8477,60 +8477,79 @@ dialog.app-dialogo .btn-primario,
     background: var(--syn-surface-2, #F1F5F9);
 }
 
-/* Selector de paleta movido a Informes > Membrete y apariencia */
-.rep-apariencia-bloque {
-    margin: 4px 0 14px;
-    padding-top: 12px;
-    border-top: 1px solid var(--syn-border, #E2E8F0);
+/* Modal Configuración de la Suite (Apariencia e Integraciones) */
+.cfg-suite-cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 8px;
 }
-.rep-theme-bar {
+.cfg-suite-sec h3 {
+    margin: 0 0 4px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--syn-ink, #0F172A);
+}
+.cfg-suite-sec > .texto-ayuda {
+    margin: 0 0 10px;
+}
+.cfg-theme-bar {
     padding: 0;
     border: 0;
     background: transparent;
-    max-width: 380px;
 }
-.rep-theme-bar .side-theme-lbl {
-    color: var(--syn-ink-2, #334155);
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0;
-    margin-bottom: 6px;
+.cfg-theme-bar .side-theme-btns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
 }
-.rep-theme-bar .side-theme-btn {
+.cfg-theme-bar .side-theme-btn {
     background: #FFFFFF !important;
     border: 1px solid var(--syn-border, #CBD5E1) !important;
     color: var(--syn-ink, #0F172A) !important;
-    padding: 7px 10px;
-    font-size: 12.5px;
+    padding: 9px 12px;
+    font-size: 13px;
+    border-radius: 7px;
 }
-.rep-theme-bar .side-theme-btn.activo {
+.cfg-theme-bar .side-theme-btn.activo {
     background: var(--syn-accent-soft) !important;
     border-color: var(--syn-accent) !important;
     color: var(--syn-accent-ink) !important;
 }
-
-/* Integraciones avanzadas colapsadas por defecto en Informes */
-.suite-avanzado-det {
-    border: 1px solid var(--syn-border, #E2E8F0);
-    border-radius: 8px;
-    background: var(--syn-surface, #FFFFFF);
-    padding: 10px 14px;
+.cfg-int-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
-.suite-avanzado-sum {
-    cursor: pointer;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--syn-muted, #64748B);
-    user-select: none;
-}
-.suite-avanzado-body {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--syn-border, #E2E8F0);
+.cfg-int-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--syn-border, #E2E8F0);
+    border-radius: 8px;
+    background: var(--syn-surface-2, #F8FAFC);
+}
+.cfg-int-item strong {
+    display: block;
+    font-size: 13.5px;
+    color: var(--syn-ink, #0F172A);
+    margin-bottom: 2px;
+}
+.cfg-int-item .texto-ayuda {
+    display: block;
+    margin: 0;
+}
+.cfg-int-acciones {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+@media (max-width: 600px) {
+    .cfg-int-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

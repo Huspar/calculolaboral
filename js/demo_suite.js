@@ -6815,6 +6815,38 @@
             });
         }
 
+        // Modal de Configuración de la Suite (Apariencia e Integraciones)
+        (function () {
+            var btnCfg = $('btn-suite-config');
+            var dlgCfg = $('dlg-suite-config');
+            var btnCerrarCfg = $('btn-cerrar-suite-config');
+            if (!btnCfg || !dlgCfg) return;
+            btnCfg.addEventListener('click', function () {
+                if (typeof dlgCfg.showModal === 'function') dlgCfg.showModal();
+                else dlgCfg.setAttribute('open', '');
+            });
+            if (btnCerrarCfg) {
+                btnCerrarCfg.addEventListener('click', function () {
+                    if (typeof dlgCfg.close === 'function') dlgCfg.close();
+                    else dlgCfg.removeAttribute('open');
+                });
+            }
+            dlgCfg.addEventListener('click', function (ev) {
+                if (ev.target === dlgCfg && typeof dlgCfg.close === 'function') dlgCfg.close();
+            });
+            if ($('btn-rep-abrir-mcp')) {
+                $('btn-rep-abrir-mcp').addEventListener('click', function () {
+                    if (dlgCfg.open && typeof dlgCfg.close === 'function') dlgCfg.close();
+                }, true);
+            }
+            if ($('btn-cfg-webhooks')) {
+                $('btn-cfg-webhooks').addEventListener('click', function () {
+                    if (dlgCfg.open && typeof dlgCfg.close === 'function') dlgCfg.close();
+                    if ($('btn-torre-webhooks')) $('btn-torre-webhooks').click();
+                });
+            }
+        })();
+
         // Cerrar menús desplegables Exportar al elegir una opción o hacer clic fuera
         document.addEventListener('click', function (ev) {
             var menus = document.querySelectorAll('details.cl-export-menu[open]');
