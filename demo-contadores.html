@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.2.9">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.3.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -1172,7 +1172,21 @@
         </div>
 
         <div class="panel" id="f29-resultados" hidden style="margin-bottom:16px">
-          <div class="panel-head"><h2>Hoja de trabajo del Formulario 29</h2><span class="texto-ayuda">Vencimiento legal: día 20 del mes siguiente</span></div>
+          <div class="panel-head">
+            <h2>Hoja de trabajo del Formulario 29</h2>
+            <div class="f29-decl-bar" id="f29-declaracion-bar">
+              <label class="sr-only" for="f29-decl-estado">Estado F29</label>
+              <select id="f29-decl-estado" class="lq-select lq-select-sm" aria-label="Estado de declaración F29">
+                <option value="borrador">Borrador</option>
+                <option value="revisado">Revisado</option>
+                <option value="declarado">Declarado SII</option>
+              </select>
+              <label class="sr-only" for="f29-folio-sii">N° Folio F29 SII</label>
+              <input type="text" id="f29-folio-sii" class="f29-decl-input mono" placeholder="Folio SII" maxlength="20">
+              <label class="sr-only" for="f29-fecha-pago">Fecha de pago F29</label>
+              <input type="date" id="f29-fecha-pago" class="f29-decl-input" title="Fecha de declaración / pago SII">
+            </div>
+          </div>
           <div class="panel-cuerpo">
             <div class="tabla-resumen-movil" id="f29-resumen-movil" hidden>
               <div class="resumen-movil-card">
@@ -1342,6 +1356,7 @@
               <option value="principal" selected>Banco Principal (11010)</option>
               <option value="secundaria">Cuenta Secundaria / Caja (11012)</option>
             </select>
+            <button type="button" class="btn btn-chico" id="btn-bancos-nueva-cuenta" title="Agregar otra cuenta corriente o tarjeta del cliente"><span class="material-icons" aria-hidden="true">add</span>Cuenta</button>
             <button type="button" class="btn btn-primario" id="btn-bancos-subir-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir cartola (CSV/Excel)</button>
             <input type="file" id="file-bancos-cartola" accept=".csv,.txt,.tsv,.xlsx,.xls" class="sr-only" aria-label="Subir cartola bancaria CSV o Excel">
             <button type="button" class="btn" id="btn-bancos-pegar-excel"><span class="material-icons" aria-hidden="true">content_paste</span>Pegar desde Excel</button>
@@ -2390,6 +2405,8 @@
 
         <div class="suite-preval-strip ok" id="ddjj-cobertura-strip" hidden role="status" aria-live="polite"></div>
 
+        <div class="ddjj-cob-anual" id="ddjj-cobertura-meses" aria-label="Cobertura mensual de datos en el año"></div>
+
         <div class="suite-preval-strip warn" id="ddjj-preval-bar" role="status" aria-live="polite"></div>
 
         <div class="panel f29-sii-panel" id="ddjj-sii-bloque" style="margin-bottom:14px">
@@ -2546,7 +2563,25 @@
               <button type="button" class="btn" id="btn-dj194x-csv">Descargar borrador CSV</button>
             </div>
             <div class="panel-cuerpo">
-              <div class="fin-form-grid" style="margin-bottom:14px">
+              <div class="ddjj-multisocio-head">
+                <span class="texto-ayuda">Propietarios / socios del ejercicio · Participación total: <strong class="mono" id="ddjj-socios-suma-pct">100%</strong></span>
+                <button type="button" class="btn btn-chico" id="btn-ddjj-add-socio"><span class="material-icons" aria-hidden="true">person_add</span>Agregar socio</button>
+              </div>
+              <div class="tabla-contable-wrap" style="margin-bottom:14px">
+                <table class="tabla-contable compacta ddjj-socios-edit-tabla">
+                  <thead>
+                    <tr>
+                      <th scope="col">RUT Socio</th>
+                      <th scope="col">Nombre propietario</th>
+                      <th scope="col" class="num">% Part.</th>
+                      <th scope="col" class="num">Retiros / Div. ($)</th>
+                      <th scope="col" class="num"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-ddjj-socios-edit"></tbody>
+                </table>
+              </div>
+              <div class="fin-form-grid" hidden aria-hidden="true">
                 <div class="lq-field"><label for="ddjj-socios-rut">RUT Propietario principal</label><input type="text" id="ddjj-socios-rut" value="12.345.678-5"></div>
                 <div class="lq-field"><label for="ddjj-socios-nombre">Nombre propietario</label><input type="text" id="ddjj-socios-nombre" value="Socio titular"></div>
                 <div class="lq-field">
@@ -3060,6 +3095,30 @@
                 </div>
                 <pre class="suite-wa-texto" id="rep-whatsapp-texto"></pre>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="rep-paquete-card" style="margin-top:16px">
+          <div class="panel-head">
+            <div>
+              <h2>Paquete Mensual del Cliente (PDF único)</h2>
+              <p class="panel-ayuda">Combina las secciones del mes en un solo PDF con el membrete, logo y paleta del estudio.</p>
+            </div>
+            <button type="button" class="btn btn-primario" id="btn-rep-pkg-mensual">
+              <span class="material-icons" aria-hidden="true">picture_as_pdf</span>Emitir Paquete Mensual (PDF)
+            </button>
+          </div>
+          <div class="panel-cuerpo">
+            <div class="rep-pkg-checks">
+              <label><input type="checkbox" id="rep-pkg-resumen" checked><span>Resumen Ejecutivo</span></label>
+              <label><input type="checkbox" id="rep-pkg-f29" checked><span>Hoja Guía F29</span></label>
+              <label><input type="checkbox" id="rep-pkg-pnl" checked><span>Resultados y Flujo de Caja</span></label>
+              <label><input type="checkbox" id="rep-pkg-balance"><span>Balance 8 Columnas (horizontal)</span></label>
+            </div>
+            <div class="lq-field" style="margin-top:10px">
+              <label for="rep-pkg-nota">Nota o comentarios del contador para el cliente (opcional)</label>
+              <textarea id="rep-pkg-nota" rows="2" placeholder="Ej.: Este mes el IVA bajó por compra de activo fijo; recomendamos provisionar el F29 antes del día 20."></textarea>
             </div>
           </div>
         </div>
@@ -4131,6 +4190,22 @@
             <option value="14A">Semi Integrado (14 A)</option>
           </select>
         </div>
+        <div class="lq-field">
+          <label for="syn-cfg-giro">Giro comercial SII</label>
+          <input type="text" id="syn-cfg-giro" maxlength="120" placeholder="Ej.: Elaboración y venta de pan y pastelería">
+        </div>
+        <div class="lq-field">
+          <label for="syn-cfg-rep">Representante legal</label>
+          <input type="text" id="syn-cfg-rep" maxlength="100" placeholder="Nombre completo">
+        </div>
+        <div class="lq-field">
+          <label for="syn-cfg-email">Correo de contacto cliente</label>
+          <input type="email" id="syn-cfg-email" maxlength="100" placeholder="contacto@empresa.cl">
+        </div>
+        <div class="lq-field">
+          <label for="syn-cfg-responsable">Contador responsable del estudio</label>
+          <input type="text" id="syn-cfg-responsable" maxlength="80" placeholder="Ej.: Camila Soto">
+        </div>
       </div>
     </div>
 
@@ -4174,7 +4249,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=2.1.2"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.2.6"></script>
+<script src="/js/demo_suite.js?v=3.3.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

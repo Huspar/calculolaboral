@@ -585,10 +585,11 @@
                         : []));
             dj1879 = Renta.generarDj1879(bheLista, { anioTributario: ddjjAnio, modoBorrador: modoBorradorDdjj });
 
+            var sumaRetirosSocios = (est.socios || []).reduce(function (s, x) { return s + (Number(x && x.retiros) || 0); }, 0);
             dj194x = Renta.generarDj1947o1948(est.regimen, {
                 baseImponible: rliParaRenta.baseImponible,
                 ppmDisponible: ppmAnualCalc,
-                retirosTotales: (est.socios && est.socios[0] && est.socios[0].retiros) || 0,
+                retirosTotales: sumaRetirosSocios,
                 tasaIdpc: est.rliAjustes.tasaIdpc,
                 socios: est.socios
             }, { anioTributario: ddjjAnio, modoBorrador: modoBorradorDdjj });
@@ -743,6 +744,12 @@
                 $('f29-iusc-ayuda').textContent = 'Sin nómina cargada: escribe el monto manual o calcula Liquidaciones.';
             }
         }
+
+        // Sincronizar barra de Declaración F29 (Estado, Folio SII, Fecha pago)
+        var decl = est.f29Declaracion || { estado: est.cerradoTributario ? 'declarado' : 'borrador', folio: '', fechaPago: '' };
+        if ($('f29-decl-estado') && document.activeElement !== $('f29-decl-estado')) $('f29-decl-estado').value = decl.estado || 'borrador';
+        if ($('f29-folio-sii') && document.activeElement !== $('f29-folio-sii')) $('f29-folio-sii').value = decl.folio || '';
+        if ($('f29-fecha-pago') && document.activeElement !== $('f29-fecha-pago')) $('f29-fecha-pago').value = decl.fechaPago || '';
 
         $('rcv-ventas-estado').textContent = m.ventas.documentos.length
             ? (est.ventasArchivo || 'RCV Ventas') + ' · ' + m.ventas.documentos.length + ' registros'
@@ -2356,13 +2363,52 @@
                     '<tr class="fila-total"><td colspan="2"><strong>Totales DJ 1879</strong></td><td class="mono num"><strong>' + (t79.boletas || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t79.brutoTotal || 0) + '</strong></td><td class="mono num"><strong>' + D.money(t79.retenidoTotal || 0) + '</strong></td><td class="mono num">' + D.num(t79.brutoTotal > 0 ? (t79.retenidoTotal / t79.brutoTotal) * 100 : 15.25, 2) + '%</td></tr>'
                 : '<tr><td colspan="6" class="texto-ayuda">Importa tus boletas BHE SII o ingresa honorarios en F29 para poblar la DJ 1879.</td></tr>';
         }
+        // Barra de Cobertura Anual Ene-Dic en Renta y DDJJ
+        var cobMesesEl = $('ddjj-cobertura-meses');
+        if (cobMesesEl) {
+            var anioCob = String(periodoActual() || '2026-11').slice(0, 4);
+            var todoAlm = leerTodoAlmacen();
+            var cliObj = todoAlm[clienteClave()] || {};
+            var perAct = periodoActual();
+            var MES_CORTO = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            var conDatosCnt = 0;
+            var pillsHtml = MES_CORTO.map(function (nomM, idxM) {
+                var pKey = anioCob + '-' + (idxM + 1 < 10 ? '0' + (idxM + 1) : String(idxM + 1));
+                var stM = cliObj[pKey];
+                var tiene = !!(stM && (stM.ventasCsv || stM.comprasCsv || (stM.bheBoletas && stM.bheBoletas.length) || (stM.cartolaMovimientos && stM.cartolaMovimientos.length)));
+                if (tiene) conDatosCnt++;
+                return '<button type="button" class="ddjj-mes-pill' + (tiene ? ' con-datos' : '') + (pKey === perAct ? ' activo' : '') + '" data-ddjj-mes="' + pKey + '" title="' + nomM + ' ' + anioCob + (tiene ? ' (con datos)' : ' (sin carga)') + '">' + nomM + '</button>';
+            }).join('');
+            cobMesesEl.innerHTML = '<div class="ddjj-cob-lbl"><span>Cobertura ' + D.esc(anioCob) + ': <strong class="mono">' + conDatosCnt + '/12</strong> meses con datos</span></div><div class="ddjj-cob-pills">' + pillsHtml + '</div>';
+        }
+
         if (d.dj194x && d.dj194x.ok) {
             if ($('dj194x-titulo')) $('dj194x-titulo').textContent = 'DJ ' + d.dj194x.codigoDj + ' · Régimen ' + m.estado.regimen;
-            var s0 = (m.estado.socios && m.estado.socios[0]) || {};
+            var listaSocios = (Array.isArray(m.estado.socios) && m.estado.socios.length)
+                ? m.estado.socios
+                : [{ rut: '12.345.678-5', nombre: 'Socio titular', porcentaje: 100, retiros: 0 }];
+            var s0 = listaSocios[0] || {};
             if ($('ddjj-socios-rut') && document.activeElement !== $('ddjj-socios-rut')) $('ddjj-socios-rut').value = s0.rut || '12.345.678-5';
             if ($('ddjj-socios-nombre') && document.activeElement !== $('ddjj-socios-nombre')) $('ddjj-socios-nombre').value = s0.nombre || 'Socio titular';
             if ($('ddjj-socios-pct') && document.activeElement !== $('ddjj-socios-pct')) $('ddjj-socios-pct').value = s0.porcentaje != null ? s0.porcentaje : 100;
             if ($('ddjj-retiros-totales') && document.activeElement !== $('ddjj-retiros-totales')) $('ddjj-retiros-totales').value = s0.retiros || 0;
+            var sumaPct = listaSocios.reduce(function (acc, x) { return acc + (Number(x.porcentaje) || 0); }, 0);
+            if ($('ddjj-socios-suma-pct')) {
+                $('ddjj-socios-suma-pct').textContent = D.num(sumaPct, 1) + '%';
+                $('ddjj-socios-suma-pct').style.color = Math.abs(sumaPct - 100) <= 0.1 ? '#047857' : '#B45309';
+            }
+            var tbEditSoc = $('tbody-ddjj-socios-edit');
+            if (tbEditSoc && (!document.activeElement || !tbEditSoc.contains(document.activeElement))) {
+                tbEditSoc.innerHTML = listaSocios.map(function (soc, idxS) {
+                    return '<tr data-soc-idx="' + idxS + '">' +
+                        '<td><input type="text" class="ddjj-soc-in mono" data-soc-campo="rut" value="' + D.esc(soc.rut || '') + '" placeholder="12.345.678-5"></td>' +
+                        '<td><input type="text" class="ddjj-soc-in" data-soc-campo="nombre" value="' + D.esc(soc.nombre || '') + '" placeholder="Nombre socio"></td>' +
+                        '<td class="num"><input type="text" class="ddjj-soc-in mono num" data-soc-campo="porcentaje" value="' + D.esc(soc.porcentaje != null ? soc.porcentaje : 0) + '" style="max-width:72px"></td>' +
+                        '<td class="num"><input type="text" class="ddjj-soc-in mono num" data-soc-campo="retiros" value="' + D.esc(soc.retiros || 0) + '" style="max-width:120px"></td>' +
+                        '<td class="num">' + (listaSocios.length > 1 ? '<button type="button" class="btn-texto" data-soc-del="' + idxS + '" title="Quitar socio" aria-label="Quitar socio">✕</button>' : '') + '</td>' +
+                        '</tr>';
+                }).join('');
+            }
             if ($('tbody-dj194x')) {
                 $('tbody-dj194x').innerHTML = (d.dj194x.filas || []).map(function (f) {
                     var monto = d.dj194x.codigoDj === '1947' ? f.baseImponibleAsignada : f.montoRetiroODividendo;
@@ -6826,6 +6872,226 @@
                 D.avisar('Finiquitos centralizados en Libro Diario (' + D.money(asientoFin.debe) + ').');
             });
         }
+
+        // ==================== OLA 2: Multi-Socio, Cobertura Ene-Dic, Folio F29, Cuentas Dinámicas, Paquete Mensual PDF y Ficha Maestra ====================
+        // 1. Tabla Multi-Socio editable en DJ 1947/1948
+        if ($('btn-ddjj-add-socio')) {
+            $('btn-ddjj-add-socio').addEventListener('click', function () {
+                guardarEstadoActual(function (est) {
+                    var arr = (Array.isArray(est.socios) && est.socios.length) ? est.socios.slice() : [{ rut: '12.345.678-5', nombre: 'Socio titular', porcentaje: 100, retiros: 0 }];
+                    var usado = arr.reduce(function (s, x) { return s + (Number(x.porcentaje) || 0); }, 0);
+                    var resto = Math.max(0, Math.round((100 - usado) * 10) / 10);
+                    arr.push({ rut: '', nombre: 'Socio ' + (arr.length + 1), porcentaje: resto, retiros: 0 });
+                    est.socios = arr;
+                });
+                refrescarTodo();
+            });
+        }
+        if ($('tbody-ddjj-socios-edit')) {
+            $('tbody-ddjj-socios-edit').addEventListener('change', function (ev) {
+                var inp = ev.target;
+                if (!inp || !inp.getAttribute || !inp.getAttribute('data-soc-campo')) return;
+                var tr = inp.closest('tr[data-soc-idx]');
+                if (!tr) return;
+                var idx = parseInt(tr.getAttribute('data-soc-idx'), 10);
+                var campo = inp.getAttribute('data-soc-campo');
+                guardarEstadoActual(function (est) {
+                    var arr = (Array.isArray(est.socios) && est.socios.length) ? est.socios.slice() : [{ rut: '12.345.678-5', nombre: 'Socio titular', porcentaje: 100, retiros: 0 }];
+                    if (!arr[idx]) return;
+                    if (campo === 'porcentaje') arr[idx].porcentaje = Math.max(0, Math.min(100, D.parseDecimal(inp.value) || 0));
+                    else if (campo === 'retiros') arr[idx].retiros = Math.max(0, Math.round(D.parseNumber(inp.value)));
+                    else arr[idx][campo] = String(inp.value || '').trim();
+                    est.socios = arr;
+                });
+                refrescarTodo();
+            });
+            $('tbody-ddjj-socios-edit').addEventListener('click', function (ev) {
+                var btn = ev.target && ev.target.closest ? ev.target.closest('[data-soc-del]') : null;
+                if (!btn) return;
+                var idx = parseInt(btn.getAttribute('data-soc-del'), 10);
+                guardarEstadoActual(function (est) {
+                    var arr = (Array.isArray(est.socios) ? est.socios.slice() : []);
+                    if (arr.length > 1) arr.splice(idx, 1);
+                    est.socios = arr;
+                });
+                refrescarTodo();
+            });
+        }
+
+        // 2. Clic en barra de Cobertura Anual Ene-Dic
+        if ($('ddjj-cobertura-meses')) {
+            $('ddjj-cobertura-meses').addEventListener('click', function (ev) {
+                var btn = ev.target && ev.target.closest ? ev.target.closest('[data-ddjj-mes]') : null;
+                if (!btn) return;
+                var perSel = btn.getAttribute('data-ddjj-mes');
+                var selPer = $('periodo');
+                if (selPer && perSel) {
+                    if (!Array.prototype.some.call(selPer.options, function (o) { return o.value === perSel; })) {
+                        var opt = document.createElement('option');
+                        opt.value = perSel;
+                        opt.textContent = perSel;
+                        selPer.appendChild(opt);
+                    }
+                    selPer.value = perSel;
+                    selPer.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+
+        // 3. Registro de Estado / Folio SII / Fecha pago en F29
+        ['f29-decl-estado', 'f29-folio-sii', 'f29-fecha-pago'].forEach(function (id) {
+            var el = $(id);
+            if (!el) return;
+            el.addEventListener('change', function () {
+                guardarEstadoActual(function (est) {
+                    est.f29Declaracion = {
+                        estado: ($('f29-decl-estado') && $('f29-decl-estado').value) || 'borrador',
+                        folio: ($('f29-folio-sii') && $('f29-folio-sii').value.trim()) || '',
+                        fechaPago: ($('f29-fecha-pago') && $('f29-fecha-pago').value) || ''
+                    };
+                });
+                D.avisar('Estado de declaración F29 guardado.');
+            });
+        });
+
+        // 4. Cuentas bancarias dinámicas por cliente
+        (function () {
+            var sel = $('bancos-cuenta-select');
+            var btnAdd = $('btn-bancos-nueva-cuenta');
+            if (!sel || !btnAdd) return;
+            var K_CTAS = 'cl_suite_bancos_cuentas';
+            function cargarCuentasCustom() {
+                var todas = leerJsonLocal(K_CTAS, {});
+                var lista = todas[clienteClave()] || [];
+                Array.prototype.slice.call(sel.querySelectorAll('option[data-custom-cta="1"]')).forEach(function (o) { o.remove(); });
+                lista.forEach(function (c) {
+                    var opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.nombre + ' (' + c.codigo + ')';
+                    opt.setAttribute('data-custom-cta', '1');
+                    sel.appendChild(opt);
+                });
+            }
+            cargarCuentasCustom();
+            document.addEventListener('demo:cliente', cargarCuentasCustom);
+            btnAdd.addEventListener('click', function () {
+                var nom = window.prompt('Nombre de la cuenta bancaria o tarjeta (ej. Banco de Chile Cta Cte):');
+                if (!nom || !nom.trim()) return;
+                var todas = leerJsonLocal(K_CTAS, {});
+                var clave = clienteClave();
+                var lista = Array.isArray(todas[clave]) ? todas[clave].slice() : [];
+                var cod = String(11013 + lista.length);
+                var idCta = 'cta_' + Date.now();
+                lista.push({ id: idCta, nombre: nom.trim(), codigo: cod });
+                todas[clave] = lista;
+                guardarJsonLocal(K_CTAS, todas);
+                cargarCuentasCustom();
+                sel.value = idCta;
+                sel.dispatchEvent(new Event('change'));
+                D.avisar('Cuenta "' + nom.trim() + '" (' + cod + ') agregada al cliente.');
+            });
+        })();
+
+        // 5. Generador de Paquete Mensual del Cliente (1 solo PDF integral)
+        if ($('btn-rep-pkg-mensual')) {
+            $('btn-rep-pkg-mensual').addEventListener('click', function () {
+                var m = calcularModelo();
+                pintarF29(m);
+                pintarPnl(m);
+                pintarBalance(m);
+                var paginas = [];
+                var notaCont = ($('rep-pkg-nota') && $('rep-pkg-nota').value.trim()) || '';
+                var notaBloque = notaCont ? '<div class="print-flag"><strong>Nota del contador:</strong> ' + D.esc(notaCont) + '</div>' : '';
+
+                if ($('rep-pkg-balance') && $('rep-pkg-balance').checked && $('tbody-balance8') && m.balance && m.balance.filas.length) {
+                    paginas.push({
+                        titulo: 'Balance Tributario de 8 Columnas',
+                        subtitulo: m.f29.regimenNombre,
+                        paisa: true,
+                        html: '<table class="print-table print-table--compact"><thead><tr><th>Cód.</th><th>Cuenta</th><th class="r">Débito</th><th class="r">Crédito</th><th class="r">Deudor</th><th class="r">Acreedor</th><th class="r">Activo</th><th class="r">Pasivo</th><th class="r">Pérdida</th><th class="r">Ganancia</th></tr></thead><tbody>' + $('tbody-balance8').innerHTML + '</tbody></table>',
+                        nota: 'Balance de comprobación, saldos, inventario y resultado.'
+                    });
+                }
+                if ($('rep-pkg-resumen') && $('rep-pkg-resumen').checked) {
+                    var cantTrab = resultadosNominaActiva().filter(function (r) { return !r.error; }).length;
+                    paginas.push({
+                        titulo: 'Resumen Mensual para el Cliente',
+                        subtitulo: m.f29.regimenNombre,
+                        html: notaBloque +
+                            '<div class="print-data">' +
+                            '<div><b>Régimen Tributario SII:</b> ' + D.esc(m.f29.regimenNombre) + '</div>' +
+                            '<div><b>Trabajadores en nómina:</b> ' + cantTrab + '</div>' +
+                            '<div><b>Débito Fiscal IVA (cód. 538):</b> ' + D.money(m.f29.codigos[538]) + '</div>' +
+                            '<div><b>Crédito Fiscal IVA (cód. 537):</b> ' + D.money(m.f29.codigos[537]) + '</div>' +
+                            '</div>' +
+                            '<table class="print-table"><thead><tr><th>Indicador del Período</th><th class="r">Valor</th></tr></thead><tbody>' +
+                            '<tr><td>Ingresos de Explotación (P&amp;L)</td><td class="r">' + D.money(m.pnl.ingresosGiro) + '</td></tr>' +
+                            '<tr><td>Margen Bruto</td><td class="r">' + moneySigno(m.pnl.margenBruto) + ' (' + D.num(m.pnl.margenBrutoPct, 1) + '%)</td></tr>' +
+                            '<tr><td>Resultado Antes de Impuesto</td><td class="r">' + moneySigno(m.pnl.resultadoAntesImpuesto) + '</td></tr>' +
+                            '<tr><td>Base RLI ProPyme</td><td class="r">' + moneySigno(m.rli.baseImponible) + '</td></tr>' +
+                            '<tr><td>Caja Libre Proyectada</td><td class="r">' + moneySigno(m.flujo.cajaProyectadaPostImpuestos) + '</td></tr>' +
+                            '<tr class="total"><td>Total a Pagar F29 (cód. 91)</td><td class="r">' + D.money(m.f29.codigos[91]) + '</td></tr>' +
+                            '</tbody></table>',
+                        nota: 'Paquete mensual consolidado emitido por el estudio.'
+                    });
+                }
+                if ($('rep-pkg-f29') && $('rep-pkg-f29').checked && $('tbody-f29')) {
+                    paginas.push({
+                        titulo: 'Hoja Guía Formulario 29',
+                        subtitulo: m.f29.regimenNombre,
+                        html: '<table class="print-table"><thead><tr><th>Concepto</th><th class="r">Cant.</th><th class="r">Código</th><th class="r">Monto</th></tr></thead><tbody>' + $('tbody-f29').innerHTML + '</tbody></table>',
+                        nota: 'Borrador referencial para revisión antes de declarar en sii.cl.'
+                    });
+                }
+                if ($('rep-pkg-pnl') && $('rep-pkg-pnl').checked && $('tbody-pnl') && $('tbody-flujo')) {
+                    paginas.push({
+                        titulo: 'Estado de Resultados y Flujo de Caja',
+                        subtitulo: m.f29.regimenNombre,
+                        html: '<div class="print-h3">Estado de Resultados (Base Devengada)</div>' +
+                            '<table class="print-table"><thead><tr><th>Partida</th><th class="r">Monto</th></tr></thead><tbody>' + $('tbody-pnl').innerHTML + '</tbody></table>' +
+                            '<div class="print-h3" style="margin-top:14px">Flujo de Caja Operativo y Tributario</div>' +
+                            '<table class="print-table"><thead><tr><th>Concepto</th><th class="r">Monto</th></tr></thead><tbody>' + $('tbody-flujo').innerHTML + '</tbody></table>',
+                        nota: 'Estado financiero gerencial del período.'
+                    });
+                }
+                if (!paginas.length) {
+                    D.avisar('Selecciona al menos una sección para emitir el Paquete Mensual.');
+                    return;
+                }
+                imprimirHtmlModulo('Paquete Mensual del Cliente', m.f29.regimenNombre, '', '', { paginas: paginas });
+            });
+        }
+
+        // 6. Ficha Maestra del Cliente (campos extra: giro, representante, correo, responsable)
+        (function () {
+            var K_FICHA = 'cl_suite_ficha_extra';
+            var dlg = $('dlg-syn-detalle');
+            if (!dlg) return;
+            function cargarCamposFicha() {
+                var k = normalizarNombreCliente(clienteModalActual || clienteNombre());
+                var extra = (leerJsonLocal(K_FICHA, {}) || {})[k] || {};
+                if ($('syn-cfg-giro')) $('syn-cfg-giro').value = extra.giro || '';
+                if ($('syn-cfg-rep')) $('syn-cfg-rep').value = extra.rep || '';
+                if ($('syn-cfg-email')) $('syn-cfg-email').value = extra.email || '';
+                if ($('syn-cfg-responsable')) $('syn-cfg-responsable').value = extra.responsable || '';
+            }
+            if (typeof MutationObserver !== 'undefined') {
+                new MutationObserver(function () { if (dlg.open) cargarCamposFicha(); }).observe(dlg, { attributes: true, attributeFilter: ['open'] });
+            }
+            if ($('btn-syn-dlg-guardar')) {
+                $('btn-syn-dlg-guardar').addEventListener('click', function () {
+                    var k = normalizarNombreCliente(clienteModalActual || clienteNombre());
+                    var todo = leerJsonLocal(K_FICHA, {});
+                    todo[k] = {
+                        giro: ($('syn-cfg-giro') && $('syn-cfg-giro').value.trim()) || '',
+                        rep: ($('syn-cfg-rep') && $('syn-cfg-rep').value.trim()) || '',
+                        email: ($('syn-cfg-email') && $('syn-cfg-email').value.trim()) || '',
+                        responsable: ($('syn-cfg-responsable') && $('syn-cfg-responsable').value.trim()) || ''
+                    };
+                    guardarJsonLocal(K_FICHA, todo);
+                }, true);
+            }
+        })();
 
         // Subpestañas de Impuestos Mes (F29): Hoja F29 | RCV y Parámetros | Acuses 8 días | Honorarios (BHE)
         (function () {
