@@ -17,6 +17,7 @@
     var K_PLAN_CUENTAS = 'cl-plan-cuentas-estudio';
     var K_MEMBRETE = 'cl-membrete-estudio';
     var K_SYN_ACCENT = 'cl_suite_accent';
+    var K_SYN_THEME = 'cl_suite_theme';
     var K_SYN_NOTAS = 'cl_suite_notas';
     var K_SYN_FAVS = 'cl_suite_favs';
 
@@ -2973,6 +2974,20 @@
         try { window.localStorage.setItem(clave, JSON.stringify(val)); } catch (e) { }
     }
 
+    function aplicarTemaSuite(tema) {
+        var norm = (tema === 'editorial' || tema === 'cobalto') ? tema : 'slate';
+        var panel = $('pm-panel');
+        var dlg = $('dlg-syn-detalle');
+        if (panel) panel.setAttribute('data-syn-theme', norm);
+        if (dlg) dlg.setAttribute('data-syn-theme', norm);
+        Array.prototype.forEach.call(document.querySelectorAll('[data-set-theme]'), function (btn) {
+            var act = btn.getAttribute('data-set-theme') === norm;
+            btn.classList.toggle('activo', act);
+            btn.setAttribute('aria-pressed', act ? 'true' : 'false');
+        });
+        try { window.localStorage.setItem(K_SYN_THEME, norm); } catch (e) { }
+    }
+
     function aplicarAcentoSyn(acento) {
         var validos = { naranja: 'naranja', ambar: 'ambar', indigo: 'indigo' };
         var norm = validos[acento] || 'naranja';
@@ -4428,6 +4443,19 @@
                 if ($('btn-syn-accent')) $('btn-syn-accent').setAttribute('aria-expanded', 'false');
                 if ($('syn-search-dropdown')) $('syn-search-dropdown').hidden = true;
             }
+        });
+
+        // Inicializar paleta de colores guardada (3 temas WCAG AA: slate, editorial, cobalto)
+        var temaGuardado = 'slate';
+        try { temaGuardado = window.localStorage.getItem(K_SYN_THEME) || 'slate'; } catch (e) { }
+        aplicarTemaSuite(temaGuardado);
+        Array.prototype.forEach.call(document.querySelectorAll('[data-set-theme]'), function (btnT) {
+            btnT.addEventListener('click', function () {
+                var t = btnT.getAttribute('data-set-theme');
+                aplicarTemaSuite(t);
+                var nombresT = { slate: 'Slate Profundo + Índigo', editorial: 'Editorial Cálido + Naranja', cobalto: 'Banca Moderna + Cobalto' };
+                if (D && D.avisar) D.avisar('Paleta cambiada a ' + (nombresT[t] || t) + '.');
+            });
         });
 
         // Inicializar acento visual guardado + selector

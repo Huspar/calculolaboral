@@ -16,12 +16,12 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.1.1">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.2.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
 
-<div id="pm-panel" class="app suite-contadores-app syn-theme" data-syn-accent="naranja">
+<div id="pm-panel" class="app suite-contadores-app syn-theme" data-syn-theme="slate" data-syn-accent="indigo">
 
   <!-- ========================================================
        1. SIDEBAR LATERAL CLARA ESTILO SYNCHRO (#app-side)
@@ -114,6 +114,20 @@
 
     <!-- Pie del Sidebar limpio estilo SaaS -->
     <div class="app-side-pie" id="suite-side-pie">
+      <div class="side-theme-bar" id="suite-theme-picker" role="group" aria-label="Paleta de colores de la suite">
+        <span class="side-theme-lbl">Tema</span>
+        <div class="side-theme-btns">
+          <button type="button" class="side-theme-btn activo" data-set-theme="slate" aria-pressed="true" title="Slate Profundo + Índigo Fintech">
+            <span class="side-swatch sw-slate" aria-hidden="true"></span><span>Slate</span>
+          </button>
+          <button type="button" class="side-theme-btn" data-set-theme="editorial" aria-pressed="false" title="Editorial Cálido + Naranja Marca">
+            <span class="side-swatch sw-editorial" aria-hidden="true"></span><span>Naranja</span>
+          </button>
+          <button type="button" class="side-theme-btn" data-set-theme="cobalto" aria-pressed="false" title="Banca Moderna + Azul Cobalto">
+            <span class="side-swatch sw-cobalto" aria-hidden="true"></span><span>Cobalto</span>
+          </button>
+        </div>
+      </div>
       <details class="side-tools-menu" id="side-tools-menu">
         <summary class="side-tools-summary">
           <span class="material-icons" aria-hidden="true">tune</span>
@@ -4070,7 +4084,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=2.1.1"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.1.1"></script>
+<script src="/js/demo_suite.js?v=3.2.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

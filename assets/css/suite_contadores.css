@@ -8038,3 +8038,254 @@ dialog.app-dialogo .btn-primario,
         max-width: 250px;
     }
 }
+
+/* ==========================================================================
+   SISTEMA DE 3 PALETAS WCAG AA (>=5.18:1) SELECCIONABLES POR EL USUARIO
+   1. slate     : Slate Profundo (#0F172A) + Índigo Fintech (#4F46E5) [Default]
+   2. editorial : Editorial Cálido (#F7F6F3) + Naranja Marca (#C2410C)
+   3. cobalto   : Banca Moderna (#F1F5F9) + Azul Cobalto (#1D4ED8)
+   ========================================================================== */
+
+/* Tokens por tema */
+#pm-panel.syn-theme[data-syn-theme="slate"] {
+    --syn-canvas: #F4F6FA;
+    --syn-surface: #FFFFFF;
+    --syn-surface-2: #EEF2F7;
+    --syn-border: #E2E8F0;
+    --syn-ink: #0F172A;
+    --syn-ink-2: #334155;
+    --syn-muted: #64748B;
+    --syn-accent: #4F46E5;
+    --syn-accent-hover: #4338CA;
+    --syn-accent-soft: #EEF2FF;
+    --syn-accent-ink: #3730A3;
+    --syn-sage: #0D9488;
+    --syn-dark: #4F46E5;
+}
+
+#pm-panel.syn-theme[data-syn-theme="editorial"] {
+    --syn-canvas: #F7F6F3;
+    --syn-surface: #FFFFFF;
+    --syn-surface-2: #F0EEE9;
+    --syn-border: #E7E5E4;
+    --syn-ink: #1C1917;
+    --syn-ink-2: #44403C;
+    --syn-muted: #78716C;
+    --syn-accent: #C2410C;
+    --syn-accent-hover: #9A3412;
+    --syn-accent-soft: #FFF7ED;
+    --syn-accent-ink: #9A3412;
+    --syn-sage: #0F766E;
+    --syn-dark: #C2410C;
+}
+
+#pm-panel.syn-theme[data-syn-theme="cobalto"] {
+    --syn-canvas: #F1F5F9;
+    --syn-surface: #FFFFFF;
+    --syn-surface-2: #E8EEF5;
+    --syn-border: #E2E8F0;
+    --syn-ink: #0F172A;
+    --syn-ink-2: #334155;
+    --syn-muted: #64748B;
+    --syn-accent: #1D4ED8;
+    --syn-accent-hover: #1E40AF;
+    --syn-accent-soft: #EFF6FF;
+    --syn-accent-ink: #1E40AF;
+    --syn-sage: #0891B2;
+    --syn-dark: #1D4ED8;
+}
+
+/* Lienzo, botones primarios, barras de progreso, tabs activos y focos usan el acento del tema */
+#pm-panel.syn-theme,
+#pm-panel.syn-theme .app-main {
+    background: var(--syn-canvas);
+}
+#pm-panel.syn-theme .btn-primario,
+#pm-panel.syn-theme .syn-side-cta {
+    background: var(--syn-accent) !important;
+    border-color: var(--syn-accent) !important;
+    color: #FFFFFF !important;
+}
+#pm-panel.syn-theme .btn-primario:hover,
+#pm-panel.syn-theme .syn-side-cta:hover {
+    background: var(--syn-accent-hover) !important;
+    border-color: var(--syn-accent-hover) !important;
+}
+#pm-panel.syn-theme .fin-chip.activo,
+#pm-panel.syn-theme .conc-filtro-btn.activo,
+#pm-panel.syn-theme .buzon-tpl-btn.activo {
+    background: var(--syn-accent) !important;
+    border-color: var(--syn-accent) !important;
+    color: #FFFFFF !important;
+}
+#pm-panel.syn-theme .saas-mini-fill,
+#pm-panel.syn-theme .bancos-prog-fill,
+#pm-panel.syn-theme .syn-cli-prog-fill {
+    background: var(--syn-accent) !important;
+}
+#pm-panel.syn-theme :focus-visible {
+    outline: 2px solid var(--syn-accent) !important;
+    outline-offset: 2px;
+}
+
+/* Señales cromáticas sutiles en KPIs (tarjetas blancas limpias, cifra crítica con color semántico) */
+#pm-panel.syn-theme #dash-kpi-f29-card .fin-kpi-val {
+    color: var(--syn-accent);
+}
+#pm-panel.syn-theme #dash-kpi-acuses-card.fin-kpi-warn .fin-kpi-val,
+#pm-panel.syn-theme #dash-kpi-acuses-card .fin-kpi-val[data-alerta="1"] {
+    color: #B45309;
+}
+
+/* Armonía de gráficos (Serie 1 = Acento principal, Serie 2 = Complementario sobrio) */
+#pm-panel.syn-theme .syn-bar-2,
+#pm-panel.syn-theme .syn-leg-dot.s2 {
+    fill: var(--syn-accent);
+    background: var(--syn-accent);
+}
+#pm-panel.syn-theme .syn-bar-1,
+#pm-panel.syn-theme .syn-leg-dot.s1 {
+    fill: var(--syn-sage);
+    background: var(--syn-sage);
+}
+
+/* TEMA 1: Sidebar Oscuro Slate Profundo (#0F172A) */
+#pm-panel.syn-theme[data-syn-theme="slate"] .app-side {
+    background: #0F172A;
+    border-right-color: #1E293B;
+    color: #E2E8F0;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .app-logo-texto,
+#pm-panel.syn-theme[data-syn-theme="slate"] .app-empresa strong {
+    color: #FFFFFF;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .app-logo-texto span {
+    color: #818CF8;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .syn-study-sub,
+#pm-panel.syn-theme[data-syn-theme="slate"] .app-nav-grupo {
+    color: #94A3B8;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .suite-mod-btn {
+    color: #CBD5E1;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .suite-mod-btn .material-icons {
+    color: #94A3B8;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .suite-mod-btn:hover {
+    background: #1E293B;
+    color: #FFFFFF;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .suite-mod-btn.activo {
+    background: #1E293B;
+    color: #FFFFFF;
+    box-shadow: inset 3px 0 0 #6366F1;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .suite-mod-btn.activo .material-icons {
+    color: #818CF8;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .app-nav-chip {
+    background: #1E293B;
+    color: #E2E8F0;
+    border-color: #334155;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .app-side-pie {
+    border-top-color: #1E293B;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .side-tools-summary {
+    color: #CBD5E1;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .side-tools-summary:hover {
+    background: #1E293B;
+    color: #FFFFFF;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .side-tools-body .btn,
+#pm-panel.syn-theme[data-syn-theme="slate"] .side-tools-body .suite-link-pyme {
+    background: #1E293B;
+    border-color: #334155;
+    color: #E2E8F0;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .side-theme-lbl {
+    color: #94A3B8;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .side-theme-btn {
+    background: #1E293B;
+    border-color: #334155;
+    color: #CBD5E1;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] .side-theme-btn.activo {
+    background: #312E81;
+    border-color: #6366F1;
+    color: #FFFFFF;
+}
+
+/* TEMA 2 (Editorial Cálido) & TEMA 3 (Cobalto): Sidebar claro tintado */
+#pm-panel.syn-theme[data-syn-theme="editorial"] .app-side {
+    background: #FFFFFF;
+    border-right-color: #E7E5E4;
+}
+#pm-panel.syn-theme[data-syn-theme="cobalto"] .app-side {
+    background: #F8FAFC;
+    border-right-color: #E2E8F0;
+}
+#pm-panel.syn-theme[data-syn-theme="editorial"] .suite-mod-btn.activo,
+#pm-panel.syn-theme[data-syn-theme="cobalto"] .suite-mod-btn.activo {
+    background: var(--syn-accent-soft);
+    color: var(--syn-accent-ink);
+    box-shadow: inset 3px 0 0 var(--syn-accent);
+}
+#pm-panel.syn-theme[data-syn-theme="editorial"] .suite-mod-btn.activo .material-icons,
+#pm-panel.syn-theme[data-syn-theme="cobalto"] .suite-mod-btn.activo .material-icons {
+    color: var(--syn-accent);
+}
+
+/* Selector compacto de 3 paletas en el pie del sidebar */
+.side-theme-bar {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+.side-theme-lbl {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--syn-muted, #64748B);
+}
+.side-theme-btns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+}
+.side-theme-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 30px;
+    padding: 0 6px;
+    border-radius: 8px;
+    border: 1px solid var(--syn-border, #E2E8F0);
+    background: var(--syn-surface, #FFFFFF);
+    color: var(--syn-ink-2, #334155);
+    font-size: 11.5px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.side-theme-btn.activo {
+    background: var(--syn-accent-soft);
+    border-color: var(--syn-accent);
+    color: var(--syn-accent-ink);
+    font-weight: 600;
+}
+.side-swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+.sw-slate { background: linear-gradient(135deg, #0F172A 50%, #4F46E5 50%); }
+.sw-editorial { background: #C2410C; }
+.sw-cobalto { background: #1D4ED8; }
