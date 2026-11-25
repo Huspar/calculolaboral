@@ -7057,7 +7057,9 @@
                 // Comparativo mensual (mes anterior guardado vs mes actual)
                 if ($('tbody-pnl-comp')) {
                     var mAct = calcularModelo();
-                    var perAnt = sumarMesesPeriodo(periodoActual(), -1);
+                    var pPts = String(periodoActual() || '2026-11').split('-');
+                    var dPrev = new Date(Number(pPts[0]) || 2026, (Number(pPts[1]) || 1) - 2, 1);
+                    var perAnt = dPrev.getFullYear() + '-' + (dPrev.getMonth() + 1 < 10 ? '0' + (dPrev.getMonth() + 1) : String(dPrev.getMonth() + 1));
                     var stAnt = leerEstadoParaCliente(clienteNombre(), perAnt);
                     var tieneAnt = !!(stAnt && (stAnt.ventasCsv || stAnt.comprasCsv));
                     var antIng = 0, antMb = 0, antRes = 0;
