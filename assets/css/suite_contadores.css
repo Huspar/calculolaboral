@@ -8047,7 +8047,7 @@ dialog.app-dialogo .btn-primario,
    ========================================================================== */
 
 /* Tokens por tema */
-#pm-panel.syn-theme[data-syn-theme="slate"] {
+#pm-panel.syn-theme[data-syn-theme="slate"][data-syn-accent], #pm-panel.syn-theme[data-syn-theme="slate"] {
     --syn-canvas: #F4F6FA;
     --syn-surface: #FFFFFF;
     --syn-surface-2: #EEF2F7;
@@ -8063,7 +8063,7 @@ dialog.app-dialogo .btn-primario,
     --syn-dark: #4F46E5;
 }
 
-#pm-panel.syn-theme[data-syn-theme="editorial"] {
+#pm-panel.syn-theme[data-syn-theme="editorial"][data-syn-accent], #pm-panel.syn-theme[data-syn-theme="editorial"] {
     --syn-canvas: #F7F6F3;
     --syn-surface: #FFFFFF;
     --syn-surface-2: #F0EEE9;
@@ -8079,7 +8079,7 @@ dialog.app-dialogo .btn-primario,
     --syn-dark: #C2410C;
 }
 
-#pm-panel.syn-theme[data-syn-theme="cobalto"] {
+#pm-panel.syn-theme[data-syn-theme="cobalto"][data-syn-accent], #pm-panel.syn-theme[data-syn-theme="cobalto"] {
     --syn-canvas: #F1F5F9;
     --syn-surface: #FFFFFF;
     --syn-surface-2: #E8EEF5;
