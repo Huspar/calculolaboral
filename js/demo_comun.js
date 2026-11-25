@@ -305,6 +305,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         var radios = Array.prototype.slice.call(document.querySelectorAll('input[name="modo"]'));
         var panes = {
+            trabajadores: [document.getElementById('pane-trabajadores')],
             finiquitos: [document.getElementById('pane-finiquitos'), document.getElementById('results-fin')],
             liquidaciones: [document.getElementById('pane-liquidaciones'), document.getElementById('results-liq')],
             'bandeja-lre': [document.getElementById('pane-bandeja-lre')]

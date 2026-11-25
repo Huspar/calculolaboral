@@ -6873,6 +6873,319 @@
             });
         }
 
+        // ==================== OLA 3: Legajo Trabajadores, Caja Chica, Centros de Costo, P&L Comparativo y Cierre Anual ====================
+        (function () {
+            var K_TRAB = 'cl_suite_trabajadores';
+            var K_CC = 'cl_suite_centros_costo';
+            var K_CAJA = 'cl_suite_caja_chica';
+            var CC_DEF = ['Casa Matriz', 'Sucursal 2', 'Proyectos'];
+
+            function leerCentros() {
+                var all = leerJsonLocal(K_CC, {});
+                var list = all[clienteClave()];
+                return (Array.isArray(list) && list.length) ? list : CC_DEF.slice();
+            }
+            function guardarCentros(list) {
+                var all = leerJsonLocal(K_CC, {});
+                all[clienteClave()] = list;
+                guardarJsonLocal(K_CC, all);
+            }
+            function leerCaja() {
+                var all = leerJsonLocal(K_CAJA, {});
+                var key = clienteClave() + '|' + periodoActual();
+                return Array.isArray(all[key]) ? all[key] : [];
+            }
+            function guardarCaja(list) {
+                var all = leerJsonLocal(K_CAJA, {});
+                all[clienteClave() + '|' + periodoActual()] = list;
+                guardarJsonLocal(K_CAJA, all);
+            }
+            function leerTrabajadores() {
+                var all = leerJsonLocal(K_TRAB, {});
+                return Array.isArray(all[clienteClave()]) ? all[clienteClave()] : [];
+            }
+            function guardarTrabajadores(list) {
+                var all = leerJsonLocal(K_TRAB, {});
+                all[clienteClave()] = list;
+                guardarJsonLocal(K_TRAB, all);
+            }
+            function calcularVacDisp(fechaIng, tomadas) {
+                if (!fechaIng) return Math.max(0, 15 - (Number(tomadas) || 0));
+                var d0 = new Date(fechaIng + 'T12:00:00');
+                if (isNaN(d0)) return 0;
+                var d1 = new Date();
+                var meses = Math.max(0, (d1.getFullYear() - d0.getFullYear()) * 12 + (d1.getMonth() - d0.getMonth()));
+                return Math.max(0, Math.round((meses * 1.25 - (Number(tomadas) || 0)) * 10) / 10);
+            }
+
+            // 1. Legajo de Trabajadores
+            function pintarTrabajadores() {
+                var tb = $('tbody-trabajadores');
+                if (!tb) return;
+                var list = leerTrabajadores();
+                if (!list.length) {
+                    tb.innerHTML = '<tr><td colspan="9" class="texto-ayuda">Sin trabajadores en el legajo de este cliente. Usa «Importar desde Liquidaciones» o «Agregar trabajador».</td></tr>';
+                    return;
+                }
+                tb.innerHTML = list.map(function (t, i) {
+                    var vacDisp = calcularVacDisp(t.ingreso, t.vacTomadas);
+                    return '<tr>' +
+                        '<td class="mono">' + D.esc(t.rut || '-') + '</td>' +
+                        '<td><strong>' + D.esc(t.nombre) + '</strong>' + (t.cargo ? '<br><span class="texto-ayuda">' + D.esc(t.cargo) + '</span>' : '') + '</td>' +
+                        '<td class="mono">' + D.esc(t.ingreso || '-') + '</td>' +
+                        '<td>' + D.esc(t.contrato || 'Indefinido') + '</td>' +
+                        '<td class="mono num">' + D.money(t.sueldo || 0) + '</td>' +
+                        '<td>' + D.esc(t.afp || '-') + ' · ' + D.esc(t.salud || 'Fonasa') + '</td>' +
+                        '<td class="mono num"><strong>' + D.num(vacDisp, 1) + ' d</strong></td>' +
+                        '<td class="mono num">' + (Number(t.licencias) || 0) + ' d</td>' +
+                        '<td class="num"><button type="button" class="btn-texto" data-trab-del="' + i + '" aria-label="Eliminar trabajador">✕</button></td>' +
+                        '</tr>';
+                }).join('');
+            }
+            if ($('btn-trab-nuevo') && $('trab-form-wrap')) {
+                $('btn-trab-nuevo').addEventListener('click', function () { $('trab-form-wrap').hidden = !$('trab-form-wrap').hidden; });
+            }
+            if ($('btn-trab-cancelar') && $('trab-form-wrap')) {
+                $('btn-trab-cancelar').addEventListener('click', function () { $('trab-form-wrap').hidden = true; });
+            }
+            if ($('btn-trab-guardar')) {
+                $('btn-trab-guardar').addEventListener('click', function () {
+                    var nom = ($('trab-nombre') && $('trab-nombre').value.trim()) || '';
+                    if (!nom) { D.avisar('Ingresa el nombre del trabajador.'); return; }
+                    var list = leerTrabajadores();
+                    list.push({
+                        rut: ($('trab-rut') && $('trab-rut').value.trim()) || '',
+                        nombre: nom,
+                        cargo: ($('trab-cargo') && $('trab-cargo').value.trim()) || '',
+                        ingreso: ($('trab-ingreso') && $('trab-ingreso').value) || '',
+                        contrato: ($('trab-contrato') && $('trab-contrato').value) || 'Indefinido',
+                        sueldo: Math.max(0, Math.round(D.parseNumber($('trab-sueldo') && $('trab-sueldo').value))),
+                        afp: ($('trab-afp') && $('trab-afp').value.trim()) || 'Habitat',
+                        salud: ($('trab-salud') && $('trab-salud').value) || 'Fonasa',
+                        vacTomadas: Math.max(0, Number($('trab-vac-tomadas') && $('trab-vac-tomadas').value) || 0),
+                        licencias: Math.max(0, Math.round(Number($('trab-licencias') && $('trab-licencias').value) || 0))
+                    });
+                    guardarTrabajadores(list);
+                    if ($('trab-form-wrap')) $('trab-form-wrap').hidden = true;
+                    if ($('trab-nombre')) $('trab-nombre').value = '';
+                    if ($('trab-rut')) $('trab-rut').value = '';
+                    pintarTrabajadores();
+                    D.avisar('Ficha de trabajador guardada.');
+                });
+            }
+            if ($('btn-trab-importar-liq')) {
+                $('btn-trab-importar-liq').addEventListener('click', function () {
+                    var nomRes = resultadosNominaActiva().filter(function (r) { return r && !r.error && r.record; });
+                    if (!nomRes.length) { D.avisar('Calcula primero las liquidaciones del mes para importar el legajo.'); return; }
+                    var list = leerTrabajadores();
+                    var ruts = {};
+                    list.forEach(function (t) { if (t.rut) ruts[t.rut] = true; });
+                    var agregados = 0;
+                    nomRes.forEach(function (r) {
+                        var rec = r.record;
+                        if (rec.rut && ruts[rec.rut]) return;
+                        list.push({
+                            rut: rec.rut || '',
+                            nombre: rec.nombre || 'Trabajador',
+                            cargo: rec.cargo || '',
+                            ingreso: rec.ingreso || '',
+                            contrato: rec.contrato === 'plazo' ? 'Plazo fijo' : 'Indefinido',
+                            sueldo: Math.round(rec.sueldo || 0),
+                            afp: rec.afp || 'Habitat',
+                            salud: rec.salud === 'isapre' ? 'Isapre' : 'Fonasa',
+                            vacTomadas: 0,
+                            licencias: Math.round(rec.licenciaDias || 0)
+                        });
+                        if (rec.rut) ruts[rec.rut] = true;
+                        agregados++;
+                    });
+                    guardarTrabajadores(list);
+                    pintarTrabajadores();
+                    D.avisar(agregados ? (agregados + ' trabajador(es) importados al legajo.') : 'Todos los trabajadores de la nómina ya están en el legajo.');
+                });
+            }
+            if ($('tbody-trabajadores')) {
+                $('tbody-trabajadores').addEventListener('click', function (ev) {
+                    var b = ev.target && ev.target.closest ? ev.target.closest('[data-trab-del]') : null;
+                    if (!b) return;
+                    var idx = parseInt(b.getAttribute('data-trab-del'), 10);
+                    var list = leerTrabajadores();
+                    list.splice(idx, 1);
+                    guardarTrabajadores(list);
+                    pintarTrabajadores();
+                });
+            }
+
+            // 2. Caja Chica + Centros de Costo + P&L Comparativo
+            function pintarCajaYCentros() {
+                var centros = leerCentros();
+                var selCc = $('cc-gasto-centro');
+                if (selCc) {
+                    var prevCc = selCc.value;
+                    selCc.innerHTML = centros.map(function (c) {
+                        return '<option value="' + D.esc(c) + '"' + (c === prevCc ? ' selected' : '') + '>' + D.esc(c) + '</option>';
+                    }).join('');
+                }
+                if ($('pnl-cc-tags')) {
+                    $('pnl-cc-tags').innerHTML = centros.map(function (c) {
+                        return '<span class="cc-tag-pill">' + D.esc(c) + '</span>';
+                    }).join('');
+                }
+                var gastos = leerCaja();
+                var total = gastos.reduce(function (s, g) { return s + (Number(g.monto) || 0); }, 0);
+                if ($('caja-chica-total')) $('caja-chica-total').textContent = D.money(total);
+                if ($('tbody-caja-chica')) {
+                    $('tbody-caja-chica').innerHTML = gastos.length
+                        ? gastos.map(function (g, i) {
+                            return '<tr><td class="mono">' + D.esc(g.fecha || '-') + '</td><td>' + D.esc(g.concepto) + '</td><td><span class="cc-tag-pill">' + D.esc(g.centro || 'Casa Matriz') + '</span></td><td class="mono num">' + D.money(g.monto) + '</td><td class="num"><button type="button" class="btn-texto" data-cc-del="' + i + '">✕</button></td></tr>';
+                        }).join('')
+                        : '<tr><td colspan="5" class="texto-ayuda">Sin gastos menores rendidos en este período.</td></tr>';
+                }
+                if ($('tbody-pnl-cc')) {
+                    var agg = {};
+                    centros.forEach(function (c) { agg[c] = { cnt: 0, monto: 0 }; });
+                    gastos.forEach(function (g) {
+                        var k = g.centro || centros[0] || 'Casa Matriz';
+                        if (!agg[k]) agg[k] = { cnt: 0, monto: 0 };
+                        agg[k].cnt++;
+                        agg[k].monto += Number(g.monto) || 0;
+                    });
+                    $('tbody-pnl-cc').innerHTML = Object.keys(agg).map(function (k) {
+                        return '<tr><td><strong>' + D.esc(k) + '</strong></td><td class="mono num">' + agg[k].cnt + '</td><td class="mono num">' + D.money(agg[k].monto) + '</td></tr>';
+                    }).join('');
+                }
+                // Comparativo mensual (mes anterior guardado vs mes actual)
+                if ($('tbody-pnl-comp')) {
+                    var mAct = calcularModelo();
+                    var perAnt = sumarMesesPeriodo(periodoActual(), -1);
+                    var stAnt = leerEstadoParaCliente(clienteNombre(), perAnt);
+                    var tieneAnt = !!(stAnt && (stAnt.ventasCsv || stAnt.comprasCsv));
+                    var antIng = 0, antMb = 0, antRes = 0;
+                    if (tieneAnt && F29 && C) {
+                        var vAnt = F29.parsearRcv(stAnt.ventasCsv || '', 'ventas');
+                        var cAnt = F29.parsearRcv(stAnt.comprasCsv || '', 'compras');
+                        antIng = Math.round(vAnt.netoTotal || 0);
+                        antMb = Math.round(antIng - (cAnt.netoGiro || 0));
+                        antRes = antMb;
+                    }
+                    var filasComp = [
+                        ['Ingresos de explotación', antIng, mAct.pnl.ingresosGiro],
+                        ['Margen bruto', antMb, mAct.pnl.margenBruto],
+                        ['Resultado operacional', antRes, mAct.pnl.resultadoOperacional],
+                        ['Caja libre proyectada', 0, mAct.flujo.cajaProyectadaPostImpuestos]
+                    ];
+                    $('tbody-pnl-comp').innerHTML = filasComp.map(function (f) {
+                        var diff = f[2] - f[1];
+                        var varTxt = f[1] ? ((diff >= 0 ? '+' : '') + D.num((diff / Math.abs(f[1])) * 100, 1) + '%') : (tieneAnt ? moneySigno(diff) : 'Sin mes ant.');
+                        return '<tr><td>' + D.esc(f[0]) + '</td><td class="mono num">' + (tieneAnt ? moneySigno(f[1]) : '-') + '</td><td class="mono num"><strong>' + moneySigno(f[2]) + '</strong></td><td class="mono num">' + varTxt + '</td></tr>';
+                    }).join('');
+                }
+            }
+
+            if ($('btn-cc-gasto-agregar')) {
+                $('btn-cc-gasto-agregar').addEventListener('click', function () {
+                    var conc = ($('cc-gasto-concepto') && $('cc-gasto-concepto').value.trim()) || '';
+                    var monto = Math.max(0, Math.round(D.parseNumber($('cc-gasto-monto') && $('cc-gasto-monto').value)));
+                    if (!conc || monto <= 0) { D.avisar('Ingresa concepto y monto mayor a $0.'); return; }
+                    var list = leerCaja();
+                    list.push({
+                        fecha: ($('cc-gasto-fecha') && $('cc-gasto-fecha').value) || (periodoActual() + '-15'),
+                        concepto: conc,
+                        monto: monto,
+                        centro: ($('cc-gasto-centro') && $('cc-gasto-centro').value) || 'Casa Matriz'
+                    });
+                    guardarCaja(list);
+                    if ($('cc-gasto-concepto')) $('cc-gasto-concepto').value = '';
+                    if ($('cc-gasto-monto')) $('cc-gasto-monto').value = '';
+                    pintarCajaYCentros();
+                });
+            }
+            if ($('tbody-caja-chica')) {
+                $('tbody-caja-chica').addEventListener('click', function (ev) {
+                    var b = ev.target && ev.target.closest ? ev.target.closest('[data-cc-del]') : null;
+                    if (!b) return;
+                    var list = leerCaja();
+                    list.splice(parseInt(b.getAttribute('data-cc-del'), 10), 1);
+                    guardarCaja(list);
+                    pintarCajaYCentros();
+                });
+            }
+            if ($('btn-caja-chica-centralizar')) {
+                $('btn-caja-chica-centralizar').addEventListener('click', function () {
+                    if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
+                    var gastos = leerCaja();
+                    var total = gastos.reduce(function (s, g) { return s + (Number(g.monto) || 0); }, 0);
+                    if (total <= 0) { D.avisar('Agrega al menos un gasto de caja chica para centralizar.'); return; }
+                    guardarEstadoActual(function (est) {
+                        var idA = 'MAN-CAJA-CHICA-' + periodoActual();
+                        est.manuales = (est.manuales || []).filter(function (a) { return String(a.id || '') !== idA; });
+                        est.manuales.push({
+                            id: idA,
+                            fecha: periodoActual() + '-28',
+                            glosa: 'Rendición Caja Chica ' + periodoActual() + ' (' + gastos.length + ' boletas)',
+                            origen: 'ajuste',
+                            lineas: [
+                                { cuenta: '42040', debe: total, haber: 0 },
+                                { cuenta: '11012', debe: 0, haber: total }
+                            ]
+                        });
+                    });
+                    refrescarTodo();
+                    D.avisar('Caja Chica centralizada en Libro Diario (' + D.money(total) + ').');
+                });
+            }
+            if ($('btn-cc-agregar')) {
+                $('btn-cc-agregar').addEventListener('click', function () {
+                    var nom = window.prompt('Nombre del nuevo Centro de Costo (ej. Sucursal Providencia, Obra Norte):');
+                    if (!nom || !nom.trim()) return;
+                    var list = leerCentros();
+                    if (list.indexOf(nom.trim()) < 0) list.push(nom.trim());
+                    guardarCentros(list);
+                    pintarCajaYCentros();
+                    D.avisar('Centro de Costo "' + nom.trim() + '" agregado.');
+                });
+            }
+
+            // 3. Asiento de Cierre Anual desde Balance 8 Columnas
+            if ($('btn-balance-cierre-anual')) {
+                $('btn-balance-cierre-anual').addEventListener('click', function () {
+                    if (leerEstadoActual().cerradoTributario) { D.avisar('El período está cerrado tributariamente.'); return; }
+                    var m = calcularModelo();
+                    var b = (ui.balAlcance === 'anual' && m.anual) ? m.anual.balance : m.balance;
+                    if (!b || !b.filas || !b.filas.length) { D.avisar('No hay saldos de resultado para generar el cierre anual.'); return; }
+                    var lineas = [];
+                    var sumDebe = 0, sumHaber = 0;
+                    b.filas.forEach(function (f) {
+                        if (f.ganancia > 0) { lineas.push({ cuenta: f.codigo, debe: Math.round(f.ganancia), haber: 0 }); sumDebe += Math.round(f.ganancia); }
+                        if (f.perdida > 0) { lineas.push({ cuenta: f.codigo, debe: 0, haber: Math.round(f.perdida) }); sumHaber += Math.round(f.perdida); }
+                    });
+                    if (!lineas.length) { D.avisar('No hay cuentas de resultado con saldo para cerrar.'); return; }
+                    var diff = sumDebe - sumHaber;
+                    if (diff > 0) lineas.push({ cuenta: '32020', debe: 0, haber: diff });
+                    else if (diff < 0) lineas.push({ cuenta: '32020', debe: Math.abs(diff), haber: 0 });
+                    guardarEstadoActual(function (est) {
+                        var idC = 'MAN-CIERRE-ANUAL-' + periodoActual().slice(0, 4);
+                        est.manuales = (est.manuales || []).filter(function (a) { return String(a.id || '') !== idC; });
+                        est.manuales.push({
+                            id: idC,
+                            fecha: periodoActual().slice(0, 4) + '-12-31',
+                            glosa: 'Asiento de Cierre Anual de Cuentas de Resultado ' + periodoActual().slice(0, 4),
+                            origen: 'ajuste',
+                            lineas: lineas
+                        });
+                    });
+                    ui.subLibro = 'diario';
+                    cambiarModulo('libros');
+                    D.avisar('Asiento de Cierre Anual generado y cuadrado en Libro Diario.');
+                });
+            }
+
+            pintarTrabajadores();
+            pintarCajaYCentros();
+            document.addEventListener('demo:cliente', function () { pintarTrabajadores(); pintarCajaYCentros(); });
+            if ($('periodo')) $('periodo').addEventListener('change', function () { setTimeout(pintarCajaYCentros, 50); });
+        })();
+
         // ==================== OLA 2: Multi-Socio, Cobertura Ene-Dic, Folio F29, Cuentas Dinámicas, Paquete Mensual PDF y Ficha Maestra ====================
         // 1. Tabla Multi-Socio editable en DJ 1947/1948
         if ($('btn-ddjj-add-socio')) {

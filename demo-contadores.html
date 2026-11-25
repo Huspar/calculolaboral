@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.3.0">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.3.1">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -498,8 +498,9 @@
           </div>
           <div class="v-acciones">
             <div class="segmento" aria-label="Tipo de documento laboral">
-              <label><input type="radio" name="modo" value="finiquitos"><span>Finiquitos</span></label>
+              <label><input type="radio" name="modo" value="trabajadores"><span>Trabajadores</span></label>
               <label><input type="radio" name="modo" value="liquidaciones" checked><span>Liquidaciones</span></label>
+              <label><input type="radio" name="modo" value="finiquitos"><span>Finiquitos</span></label>
               <label><input type="radio" name="modo" value="bandeja-lre"><span>Bandeja LRE (Mi DT) <em class="lre-tab-badge" id="lre-tab-badge" hidden>0</em></span></label>
             </div>
           </div>
@@ -623,6 +624,59 @@
         </div>
 
         <!-- Panel Liquidaciones de Sueldo -->
+        <div id="pane-trabajadores" hidden>
+          <div class="panel" style="margin-bottom:16px">
+            <div class="panel-head">
+              <div>
+                <h2>Ficha de Trabajadores y Saldo de Vacaciones</h2>
+                <p class="panel-ayuda">Legajo persistente por empresa. Feriado legal base referencial: 1,25 días hábiles por mes trabajado (Art. 67 CT).</p>
+              </div>
+              <div class="v-acciones">
+                <button type="button" class="btn btn-chico" id="btn-trab-importar-liq"><span class="material-icons" aria-hidden="true">sync</span>Importar desde Liquidaciones</button>
+                <button type="button" class="btn btn-chico btn-primario" id="btn-trab-nuevo"><span class="material-icons" aria-hidden="true">person_add</span>Agregar trabajador</button>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div id="trab-form-wrap" class="ola3-form-box" hidden>
+                <div class="fin-form-grid">
+                  <div class="lq-field"><label for="trab-rut">RUT</label><input type="text" id="trab-rut" placeholder="12.345.678-5"></div>
+                  <div class="lq-field"><label for="trab-nombre">Nombre completo</label><input type="text" id="trab-nombre" placeholder="Ej.: Camila Rojas Soto"></div>
+                  <div class="lq-field"><label for="trab-cargo">Cargo</label><input type="text" id="trab-cargo" placeholder="Ej.: Vendedora / Analista"></div>
+                  <div class="lq-field"><label for="trab-ingreso">Fecha ingreso</label><input type="date" id="trab-ingreso" value="2024-03-01"></div>
+                  <div class="lq-field"><label for="trab-contrato">Contrato</label><select id="trab-contrato"><option value="Indefinido">Indefinido</option><option value="Plazo fijo">Plazo fijo</option></select></div>
+                  <div class="lq-field"><label for="trab-sueldo">Sueldo base ($)</label><input type="text" id="trab-sueldo" inputmode="numeric" placeholder="750000"></div>
+                  <div class="lq-field"><label for="trab-afp">AFP</label><input type="text" id="trab-afp" value="Habitat"></div>
+                  <div class="lq-field"><label for="trab-salud">Salud</label><select id="trab-salud"><option value="Fonasa">Fonasa</option><option value="Isapre">Isapre</option></select></div>
+                  <div class="lq-field"><label for="trab-vac-tomadas">Vacaciones tomadas (días)</label><input type="number" id="trab-vac-tomadas" min="0" step="0.5" value="0"></div>
+                  <div class="lq-field"><label for="trab-licencias">Licencias mes (días)</label><input type="number" id="trab-licencias" min="0" max="30" step="1" value="0"></div>
+                </div>
+                <div class="form-acciones" style="margin-top:10px">
+                  <button type="button" class="btn btn-chico btn-primario" id="btn-trab-guardar">Guardar ficha</button>
+                  <button type="button" class="btn btn-chico" id="btn-trab-cancelar">Cancelar</button>
+                </div>
+              </div>
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">RUT</th>
+                      <th scope="col">Trabajador / Cargo</th>
+                      <th scope="col">Ingreso</th>
+                      <th scope="col">Contrato</th>
+                      <th scope="col" class="num">Sueldo base</th>
+                      <th scope="col">AFP / Salud</th>
+                      <th scope="col" class="num">Vac. disponibles</th>
+                      <th scope="col" class="num">Licencias</th>
+                      <th scope="col" class="num"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-trabajadores"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div id="pane-liquidaciones">
           <div class="panel" style="margin-bottom:16px">
             <div class="panel-head"><h2>Parámetros previsionales y carga de nómina mensual</h2></div>
@@ -1862,6 +1916,7 @@
               <div class="cl-export-popover">
                 <button class="cl-export-item" type="button" id="btn-balance-csv"><span class="material-icons" aria-hidden="true">table_view</span>Excel Balance 8 Columnas</button>
                 <button class="cl-export-item" type="button" id="btn-rli-csv"><span class="material-icons" aria-hidden="true">calculate</span>Excel Hoja RLI ProPyme</button>
+                <button class="cl-export-item" type="button" id="btn-balance-cierre-anual"><span class="material-icons" aria-hidden="true">lock_clock</span>Generar Asiento de Cierre Anual</button>
               </div>
             </details>
           </div>
@@ -2152,6 +2207,57 @@
                     </tr>
                   </thead>
                   <tbody id="tbody-flujo"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fin-cols-2" style="margin-top:16px">
+          <div class="panel" id="pnl-cc-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Centros de Costo (etiquetas)</h2>
+                <p class="panel-ayuda">Distribución de gastos rendidos y ajustes por sucursal o proyecto.</p>
+              </div>
+              <button type="button" class="btn btn-chico" id="btn-cc-agregar"><span class="material-icons" aria-hidden="true">add</span>Centro</button>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="cc-tags-bar" id="pnl-cc-tags"></div>
+              <div class="tabla-contable-wrap" style="margin-top:10px">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Centro de Costo</th>
+                      <th scope="col" class="num">Movimientos</th>
+                      <th scope="col" class="num">Monto acumulado ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-pnl-cc"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" id="pnl-comp-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Comparativo Mensual</h2>
+                <p class="panel-ayuda">Mes anterior guardado vs período activo.</p>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Indicador</th>
+                      <th scope="col" class="num">Mes anterior</th>
+                      <th scope="col" class="num">Mes actual</th>
+                      <th scope="col" class="num">Variación</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-pnl-comp"></tbody>
                 </table>
               </div>
             </div>
@@ -3017,6 +3123,44 @@
               </div>
             </div>
           </aside>
+        </div>
+
+        <div class="panel" id="buzon-caja-chica-panel" style="margin-top:16px">
+          <div class="panel-head">
+            <div>
+              <h2>Caja Chica y Rendiciones (gastos sin factura)</h2>
+              <p class="panel-ayuda">Registra boletas menores, peajes o viáticos del mes y centralízalos al Libro Diario en 1 clic.</p>
+            </div>
+            <div class="v-acciones">
+              <span class="texto-ayuda">Total rendido: <strong class="mono" id="caja-chica-total">$0</strong></span>
+              <button type="button" class="btn btn-chico btn-primario" id="btn-caja-chica-centralizar">
+                <span class="material-icons" aria-hidden="true">menu_book</span>Centralizar en Diario
+              </button>
+            </div>
+          </div>
+          <div class="panel-cuerpo">
+            <div class="caja-chica-form">
+              <input type="date" id="cc-gasto-fecha" class="f29-decl-input" aria-label="Fecha del gasto">
+              <input type="text" id="cc-gasto-concepto" class="ddjj-soc-in" placeholder="Concepto (ej. Peajes despacho, insumos aseo, boleta ferretería)">
+              <input type="text" id="cc-gasto-monto" class="f29-decl-input mono" inputmode="numeric" placeholder="Monto ($)">
+              <select id="cc-gasto-centro" class="lq-select lq-select-sm" aria-label="Centro de costo"></select>
+              <button type="button" class="btn btn-chico" id="btn-cc-gasto-agregar"><span class="material-icons" aria-hidden="true">add</span>Agregar</button>
+            </div>
+            <div class="tabla-contable-wrap" style="margin-top:10px">
+              <table class="tabla-contable compacta">
+                <thead>
+                  <tr>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Concepto</th>
+                    <th scope="col">Centro de Costo</th>
+                    <th scope="col" class="num">Monto ($)</th>
+                    <th scope="col" class="num"></th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-caja-chica"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -4228,7 +4372,7 @@
 <script src="/js/liquidacion_valores.js?v=1.4.0"></script>
 <script src="/assets/vendor/xlsx.full.min.js"></script>
 <script src="/js/pyme_excel.js?v=2.1.1"></script>
-<script src="/js/demo_comun.js?v=1.2.4"></script>
+<script src="/js/demo_comun.js?v=1.2.5"></script>
 <script src="/js/demo_contadores.js?v=1.6.0"></script>
 <script src="/js/previred_generador.js?v=1.5.0"></script>
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
@@ -4249,7 +4393,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=2.1.2"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.3.0"></script>
+<script src="/js/demo_suite.js?v=3.4.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

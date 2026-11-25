@@ -8898,3 +8898,39 @@ body[data-syn-theme="cobalto"] #dlg-suite-config {
     color: var(--syn-ink, #0F172A);
     cursor: pointer;
 }
+
+/* Ola 3: Legajo Trabajadores, Caja Chica y Centros de Costo */
+.ola3-form-box {
+    background: var(--syn-surface-2, #F8FAFC);
+    border: 1px solid var(--syn-border, #E2E8F0);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 14px;
+}
+.caja-chica-form {
+    display: grid;
+    grid-template-columns: 135px 1fr 120px 150px auto;
+    gap: 8px;
+    align-items: center;
+}
+.cc-tags-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.cc-tag-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--syn-surface-2, #F1F5F9);
+    color: var(--syn-ink-2, #334155);
+    border: 1px solid var(--syn-border, #E2E8F0);
+}
+@media (max-width: 820px) {
+    .caja-chica-form {
+        grid-template-columns: 1fr;
+    }
+}
