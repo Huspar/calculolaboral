@@ -2992,7 +2992,8 @@
         if ($('dash-cierre-cliente')) $('dash-cierre-cliente').textContent = cliNom;
 
         var hayRcv = !!((m.ventas && m.ventas.documentos && m.ventas.documentos.length) || (m.compras && m.compras.documentos && m.compras.documentos.length) || (m.bhe && m.bhe.documentos && m.bhe.documentos.length));
-        var hayNom = !!(m.nomina && m.nomina.cantidad > 0);
+        var nomCnt = (m.nomina && (m.nomina.cantidad || m.nomina.trabajadores)) || 0;
+        var hayNom = !!(nomCnt > 0 || (m.nomina && m.nomina.totalDebe > 0));
         var concRes = (m.conciliacion && m.conciliacion.resumen) || { totalMovimientos: 0, pctConciliado: 0 };
         var hayConcReal = Array.isArray(est.manuales) && est.manuales.some(function (a) { return a && /^MAN-CONC-/.test(String(a.id || '')); });
         var bcoListo = hayConcReal || (concRes.totalMovimientos > 0 && concRes.pctConciliado >= 95);
@@ -3012,7 +3013,7 @@
         }
 
         setPaso(1, hayRcv ? 'Listo' : 'Pendiente', hayRcv ? 'RCV y BHE cargados en el mes' : 'Sube RCV de ventas/compras y BHE');
-        setPaso(2, hayNom ? 'Listo' : 'Pendiente', hayNom ? (m.nomina.cantidad + ' liquidaciones listas') : 'Calcula liquidaciones, Previred y LRE');
+        setPaso(2, hayNom ? 'Listo' : 'Pendiente', hayNom ? (nomCnt + ' liquidaciones listas') : 'Liquidaciones, Previred y LRE');
         setPaso(3, bcoListo ? 'Listo' : (bcoCurso ? 'En curso' : 'Pendiente'),
             bcoListo ? 'Cartola guardada en Contabilidad' : (bcoCurso ? (concRes.pctConciliado + '% conciliado en Bancos') : 'Cruza tu cartola bancaria con facturas'));
         setPaso(4, balListo ? 'Listo' : (balCurso ? 'En curso' : 'Pendiente'),
@@ -3254,6 +3255,24 @@
                 '<div class="syn-cal-hito"><span class="syn-cal-hito-dia mono">Día 15 hábil</span><div class="syn-cal-barra-wrap"><button type="button" class="syn-cal-pill ' + (nomListo ? 'ok' : '') + '" data-dash-ir="remuneraciones">Libro LRE Mi DT · ' + (nomListo ? 'Borrador CSV listo' : 'Sin nómina') + '</button></div><span class="texto-ayuda">Mi DT</span></div>' +
                 '<div class="syn-cal-hito"><span class="syn-cal-hito-dia mono">Día 20</span><div class="syn-cal-barra-wrap"><button type="button" class="syn-cal-pill ' + (m.estado.cerradoTributario ? 'ok' : (f29Ok ? 'warn' : '')) + '" data-dash-ir="f29">Declaración F29 · ' + (m.estado.cerradoTributario ? 'Cerrado' : (f29Ok ? D.money(m.f29.codigos[91]) : 'Sin RCV')) + '</button></div><span class="texto-ayuda">' + (concOk ? 'Banco OK' : 'Bancos') + '</span></div>' +
                 '</div></div>';
+        }
+
+        var carteraTbody = $('dash-cartera-tbody');
+        if (carteraTbody) {
+            carteraTbody.innerHTML = resumenClientes.slice(0, 8).map(function (c) {
+                var estCls = c.cerrado ? 'sello-emitida' : (c.pctAvance > 0 ? 'sello-preparada' : 'sello-guardada');
+                var estTxt = c.cerrado ? 'Cerrado' : (c.pctAvance > 0 ? 'En curso' : 'Pendiente');
+                return '<tr' + (c.esActivo ? ' class="saas-row-activo"' : '') + '>' +
+                    '<td><strong>' + D.esc(c.nombre) + '</strong><br><span class="texto-ayuda mono">' + D.esc(c.regimen) + (c.rut ? ' · ' + D.esc(c.rut) : '') + '</span></td>' +
+                    '<td><div class="saas-mini-prog"><div class="saas-mini-track"><div class="saas-mini-fill" style="width:' + c.pctAvance + '%"></div></div><span class="mono">' + c.pctAvance + '%</span></div></td>' +
+                    '<td class="mono num"><strong>' + D.money(c.f29Total) + '</strong></td>' +
+                    '<td><span class="sello ' + estCls + '">' + estTxt + '</span></td>' +
+                    '<td class="num"><div class="match-acciones-fila" style="justify-content:flex-end">' +
+                    '<button type="button" class="btn btn-chico" data-syn-ficha="' + D.esc(c.nombre) + '">Ficha</button>' +
+                    (!c.esActivo ? '<button type="button" class="btn btn-chico btn-primario" data-side-cli="' + D.esc(c.nombre) + '">Abrir</button>' : '') +
+                    '</div></td>' +
+                    '</tr>';
+            }).join('');
         }
 
         var cardsEl = $('dash-clientes-cards');
@@ -4455,6 +4474,25 @@
         if ($('btn-dash-ejemplo')) {
             $('btn-dash-ejemplo').addEventListener('click', function () {
                 if ($('btn-cargar-ejemplo-todo')) $('btn-cargar-ejemplo-todo').click();
+            });
+        }
+        if ($('btn-side-planes')) {
+            $('btn-side-planes').addEventListener('click', function () {
+                if ($('btn-abrir-postulacion')) $('btn-abrir-postulacion').click();
+            });
+        }
+        if ($('dash-cartera-tbody')) {
+            $('dash-cartera-tbody').addEventListener('click', function (ev) {
+                var btnF = ev.target.closest('[data-syn-ficha]');
+                if (btnF) {
+                    abrirModalDetalleSyn(btnF.getAttribute('data-syn-ficha'));
+                    return;
+                }
+                var btnCli = ev.target.closest('[data-side-cli]');
+                if (btnCli && D && D.seleccionarCliente) {
+                    D.seleccionarCliente(btnCli.getAttribute('data-side-cli'));
+                    refrescarTodo();
+                }
             });
         }
 
@@ -6671,6 +6709,15 @@
             }
         });
 
+        try {
+            var yaInit = localStorage.getItem('cl-suite-demo-autoseed-v1');
+            var rawStore = localStorage.getItem('cl-suite-contable');
+            var vacio = !rawStore || rawStore === '{}' || rawStore.length < 40;
+            if (!yaInit && vacio && $('btn-cargar-ejemplo-todo')) {
+                localStorage.setItem('cl-suite-demo-autoseed-v1', '1');
+                $('btn-cargar-ejemplo-todo').click();
+            }
+        } catch (e) { /* silencioso */ }
         cambiarModulo(moduloDesdeUbicacion());
     });
 })();

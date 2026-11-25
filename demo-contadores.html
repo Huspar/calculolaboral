@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.0.8">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.1.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -97,12 +97,12 @@
       <p class="app-nav-grupo">Contabilidad y Finanzas</p>
       <button type="button" class="suite-mod-btn" data-modulo="bancos" aria-current="false">
         <span class="material-icons" aria-hidden="true">sync_alt</span>
-        <span>Bancos y Cartolas</span>
+        <span>Bancos</span>
         <span class="app-nav-chip" id="nav-bancos-pct">0%</span>
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="libros" aria-current="false">
         <span class="material-icons" aria-hidden="true">account_balance</span>
-        <span>Contabilidad y Balance</span>
+        <span>Contabilidad</span>
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="reportes" aria-current="false">
         <span class="material-icons" aria-hidden="true">picture_as_pdf</span>
@@ -113,24 +113,36 @@
       <div class="syn-side-clientes" id="side-clientes-rapidos" aria-label="Cambio rápido de cliente"></div>
     </nav>
 
-    <!-- Pie del Sidebar con Respaldo, Puente Pyme y Enlace al Asistente Pyme -->
+    <!-- Pie del Sidebar limpio estilo SaaS -->
     <div class="app-side-pie" id="suite-side-pie">
-      <div class="suite-respaldo-fila">
-        <button type="button" class="btn btn-chico" id="btn-respaldo">Respaldo</button>
-        <button type="button" class="btn btn-chico" id="btn-restaurar">Restaurar</button>
-        <input type="file" id="file-respaldo" accept=".json" class="sr-only" aria-label="Restaurar archivo de respaldo JSON">
-      </div>
-      <button type="button" class="btn btn-chico suite-btn-importar" id="btn-importar-pyme" title="Importar paquete-contador-YYYY-MM.json exportado desde /app">
-        <span class="material-icons" aria-hidden="true">drive_folder_upload</span>Importar paquete Pyme
-      </button>
-      <input type="file" id="file-paquete-pyme" accept=".json,application/json" class="sr-only" aria-label="Importar archivo paquete Pyme JSON">
-      <button type="button" class="btn btn-chico suite-btn-importar" id="btn-side-mcp" title="Conectar cartera del estudio con Claude (MCP)">
-        <span class="material-icons" aria-hidden="true">hub</span>Conectar Claude (MCP)
-      </button>
+      <details class="side-tools-menu" id="side-tools-menu">
+        <summary class="side-tools-summary">
+          <span class="material-icons" aria-hidden="true">tune</span>
+          <span>Herramientas y respaldo</span>
+          <span class="material-icons side-tools-chev" aria-hidden="true">expand_more</span>
+        </summary>
+        <div class="side-tools-body">
+          <div class="suite-respaldo-fila">
+            <button type="button" class="btn btn-chico" id="btn-respaldo">Respaldo</button>
+            <button type="button" class="btn btn-chico" id="btn-restaurar">Restaurar</button>
+            <input type="file" id="file-respaldo" accept=".json" class="sr-only" aria-label="Restaurar archivo de respaldo JSON">
+          </div>
+          <button type="button" class="btn btn-chico suite-btn-importar" id="btn-importar-pyme" title="Importar paquete-contador-YYYY-MM.json exportado desde /app">
+            <span class="material-icons" aria-hidden="true">drive_folder_upload</span>Importar paquete Pyme
+          </button>
+          <input type="file" id="file-paquete-pyme" accept=".json,application/json" class="sr-only" aria-label="Importar archivo paquete Pyme JSON">
+          <button type="button" class="btn btn-chico suite-btn-importar" id="btn-side-mcp" title="Conectar cartera del estudio con Claude (MCP)">
+            <span class="material-icons" aria-hidden="true">hub</span>Conectar Claude (MCP)
+          </button>
+          <button type="button" class="btn btn-chico suite-btn-importar" id="btn-side-planes">
+            <span class="material-icons" aria-hidden="true">workspace_premium</span>Planes · 90 días gratis
+          </button>
+          <a href="/app" class="suite-link-pyme">
+            <span class="material-icons" aria-hidden="true">arrow_back</span>Ir al Asistente Pyme
+          </a>
+        </div>
+      </details>
       <p id="puente-pyme-estado" hidden class="suite-puente-texto"></p>
-      <a href="/app" class="suite-link-pyme">
-        <span class="material-icons" aria-hidden="true">arrow_back</span>Ir al Asistente Pyme
-      </a>
     </div>
   </aside>
 
@@ -295,7 +307,7 @@
     <main class="app-content" id="app-content">
 
       <!-- Tira compacta Modo Demo (descartable, sin competir con acciones contables) -->
-      <section class="suite-bar-compacta" id="suite-header-venta" aria-label="Información de modo demo y acceso anticipado">
+      <section class="suite-bar-compacta" id="suite-header-venta" hidden aria-label="Información de modo demo y acceso anticipado">
         <div class="suite-bar-fila">
           <div class="suite-bar-izq">
             <span class="suite-bar-badge">Modo demo</span>
@@ -342,139 +354,117 @@
         </div>
       </section>
 
-      <!-- ==================== VISTA 0: DASHBOARD DEL ESTUDIO (SYNCHRO) ==================== -->
+      <!-- ==================== VISTA 0: DASHBOARD DEL ESTUDIO (MESA DE TRABAJO SAAS) ==================== -->
       <section class="vista" id="suite-dashboard">
-        <div class="v-head">
+        <div class="v-head saas-dash-head">
           <div>
-            <h1 class="v-titulo">Dashboard del Estudio</h1>
-            <p class="v-sub">Resumen operativo del período <strong class="mono" id="dash-periodo-lbl">2026-11</strong>, vencimientos tributarios y cartera de clientes.</p>
+            <h1 class="v-titulo">Resumen del Estudio</h1>
+            <p class="v-sub">Período <strong class="mono" id="dash-periodo-lbl">2026-11</strong> · Estado operativo de tu cartera y vencimientos del mes.</p>
           </div>
           <div class="v-acciones">
-            <button type="button" class="btn btn-primario" id="btn-dash-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar datos de ejemplo</button>
-            <button type="button" class="btn" id="btn-dash-nuevo-cliente"><span class="material-icons" aria-hidden="true">add_business</span>Nuevo cliente</button>
+            <button type="button" class="btn btn-chico" id="btn-dash-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar datos de ejemplo</button>
           </div>
         </div>
 
-        <!-- 4 Acciones Rápidas -->
-        <div class="syn-quick-grid" aria-label="Accesos directos del período">
-          <button type="button" class="syn-quick-card" data-dash-ir="f29">
-            <span class="syn-quick-ico" aria-hidden="true"><span class="material-icons">receipt</span></span>
-            <span class="syn-quick-txt"><strong>Declarar F29</strong><span>Subir RCV ventas y compras</span></span>
-          </button>
-          <button type="button" class="syn-quick-card" data-dash-ir="remuneraciones">
-            <span class="syn-quick-ico" aria-hidden="true"><span class="material-icons">receipt_long</span></span>
-            <span class="syn-quick-txt"><strong>Calcular Nómina</strong><span>Liquidaciones, Previred y LRE</span></span>
-          </button>
-          <button type="button" class="syn-quick-card" data-dash-ir="bancos">
-            <span class="syn-quick-ico" aria-hidden="true"><span class="material-icons">sync_alt</span></span>
-            <span class="syn-quick-txt"><strong>Conciliar Cartola</strong><span>Cruce bancario y Aging CxC/CxP</span></span>
-          </button>
-          <button type="button" class="syn-quick-card" data-dash-ir="reportes">
-            <span class="syn-quick-ico" aria-hidden="true"><span class="material-icons">picture_as_pdf</span></span>
-            <span class="syn-quick-txt"><strong>Informe Mensual</strong><span>PDF cliente y Portal estudio</span></span>
-          </button>
-        </div>
-
-        <!-- 4 KPIs Limpios -->
-        <div class="fin-kpis fin-kpis-4" style="margin-bottom:18px">
-          <div class="fin-kpi" id="dash-kpi-card-clientes">
-            <span class="fin-kpi-label">Empresas en cartera</span>
-            <span class="fin-kpi-val mono" id="dash-k-clientes">1</span>
-            <span class="fin-kpi-meta" id="dash-k-clientes-meta">Cliente activo en período</span>
+        <!-- 4 KPIs limpios en superficie blanca uniforme (sin fondos pastel) -->
+        <div class="fin-kpis fin-kpis-4 saas-kpi-row" style="margin-bottom:16px">
+          <div class="fin-kpi syn-kpi-card" id="dash-kpi-clientes-card">
+            <span class="fin-kpi-label">Empresas activas</span>
+            <span class="fin-kpi-val saas-kpi-num" id="dash-k-clientes">1</span>
+            <span class="fin-kpi-meta" id="dash-k-clientes-meta">Activo: Panadería San Isidro SpA</span>
           </div>
-          <div class="fin-kpi fin-kpi-marca" id="dash-kpi-card-f29">
-            <span class="fin-kpi-label">F29 consolidado (cód. 91)</span>
-            <span class="fin-kpi-val mono" id="dash-k-f29">$0</span>
-            <span class="fin-kpi-meta" id="dash-k-f29-meta">Total estimado cartera</span>
+          <div class="fin-kpi syn-kpi-card" id="dash-kpi-f29-card">
+            <span class="fin-kpi-label">F29 estimado cartera</span>
+            <span class="fin-kpi-val saas-kpi-num" id="dash-k-f29">$0</span>
+            <span class="fin-kpi-meta" id="dash-k-f29-meta">Consolidado cód. 91</span>
           </div>
-          <div class="fin-kpi" id="dash-kpi-card-alertas">
-            <span class="fin-kpi-label">Acuses y alertas SII</span>
-            <span class="fin-kpi-val mono" id="dash-k-alertas">0</span>
-            <span class="fin-kpi-meta" id="dash-k-alertas-meta">Plazo 8 días Ley 19.983</span>
+          <div class="fin-kpi syn-kpi-card" id="dash-kpi-acuses-card">
+            <span class="fin-kpi-label">Acuses RCV por vencer</span>
+            <span class="fin-kpi-val saas-kpi-num" id="dash-k-acuses">0</span>
+            <span class="fin-kpi-meta" id="dash-k-acuses-meta">Plazo 8 días Ley 19.983</span>
           </div>
-          <div class="fin-kpi" id="dash-kpi-card-cerrados">
+          <div class="fin-kpi syn-kpi-card" id="dash-kpi-cierre-card">
             <span class="fin-kpi-label">Períodos cerrados</span>
-            <span class="fin-kpi-val mono" id="dash-k-cerrados">0 / 1</span>
+            <span class="fin-kpi-val saas-kpi-num" id="dash-k-cerrados">0 / 1</span>
             <span class="fin-kpi-meta" id="dash-k-cerrados-meta">Cierre tributario mensual</span>
           </div>
         </div>
 
-        <!-- Bento Principal 2 Columnas -->
-        <!-- Ruta de Cierre Mensual en 4 pasos (por cliente activo) -->
-        <section class="panel syn-panel dash-cierre-panel" id="dash-cierre-4pasos" aria-labelledby="dash-cierre-titulo">
-          <div class="panel-head dash-cierre-head">
-            <div>
-              <h2 id="dash-cierre-titulo">Ruta de cierre del mes: <span id="dash-cierre-cliente">Cliente activo</span></h2>
-              <p class="panel-ayuda">Sigue estos 4 pasos en orden para dejar listo el mes de la empresa seleccionada.</p>
-            </div>
-            <span class="sello sello-guardada" id="dash-cierre-avance">0 de 4 listos</span>
-          </div>
-          <div class="dash-cierre-grid" role="list">
-            <button type="button" class="dash-cierre-paso" data-dash-ir="f29" role="listitem">
-              <div class="dash-cierre-top">
-                <strong class="dash-cierre-tit">1. Documentos SII</strong>
-                <span class="sello sello-guardada" id="cierre-p1-estado">Pendiente</span>
-              </div>
-              <span class="dash-cierre-desc" id="cierre-p1-desc">Sube RCV de ventas/compras y BHE</span>
-            </button>
-            <button type="button" class="dash-cierre-paso" data-dash-ir="remuneraciones" role="listitem">
-              <div class="dash-cierre-top">
-                <strong class="dash-cierre-tit">2. Nómina y Previred</strong>
-                <span class="sello sello-guardada" id="cierre-p2-estado">Pendiente</span>
-              </div>
-              <span class="dash-cierre-desc" id="cierre-p2-desc">Calcula liquidaciones, Previred y LRE</span>
-            </button>
-            <button type="button" class="dash-cierre-paso" data-dash-ir="bancos" role="listitem">
-              <div class="dash-cierre-top">
-                <strong class="dash-cierre-tit">3. Banco y Conciliación</strong>
-                <span class="sello sello-guardada" id="cierre-p3-estado">Pendiente</span>
-              </div>
-              <span class="dash-cierre-desc" id="cierre-p3-desc">Cruza tu cartola bancaria con facturas</span>
-            </button>
-            <button type="button" class="dash-cierre-paso" data-dash-ir="balance" role="listitem">
-              <div class="dash-cierre-top">
-                <strong class="dash-cierre-tit">4. F29, Balance y Cierre</strong>
-                <span class="sello sello-guardada" id="cierre-p4-estado">Pendiente</span>
-              </div>
-              <span class="dash-cierre-desc" id="cierre-p4-desc">Revisa Balance 8 Col. y cierra el período</span>
-            </button>
-          </div>
-        </section>
-
+        <!-- Grilla principal 2/3 mesa de trabajo + 1/3 vencimientos y actividad -->
         <div class="syn-dash-grid">
           <div class="syn-dash-main">
-            <!-- Calendario Fiscal del Mes (reemplaza Gantt social) -->
-            <section class="panel syn-panel" aria-labelledby="dash-cal-titulo">
-              <div class="panel-head">
-                <div>
-                  <h2 id="dash-cal-titulo">Mapa de vencimientos fiscales del mes</h2>
-                  <p class="panel-ayuda">Hitos SII, PreviRed y Mi DT del período activo con estado de avance.</p>
-                </div>
-                <span class="mono syn-pill-neutro" id="dash-cal-mes-tag">Nov 2026</span>
-              </div>
-              <div class="panel-cuerpo" id="dash-timeline-fiscal"></div>
-            </section>
-
-            <!-- Clientes en Cartera con Progreso y Modal Detalle -->
+            <!-- Tabla operativa de Cartera del período -->
             <section class="panel syn-panel" aria-labelledby="dash-cli-titulo">
               <div class="panel-head">
                 <div>
-                  <h2 id="dash-cli-titulo">Clientes prioritarios</h2>
-                  <p class="panel-ayuda">Haz clic en «Ver ficha» para revisar resumen, notas del estudio y ajustes rápidos.</p>
+                  <h2 id="dash-cli-titulo">Cartera del período</h2>
+                  <p class="panel-ayuda">Avance mensual por empresa con acceso directo a ficha y módulos.</p>
                 </div>
-                <div class="v-acciones">
-                  <button type="button" class="btn btn-primario btn-chico" id="btn-dash-panel-nuevo"><span class="material-icons" aria-hidden="true">add</span>Nuevo cliente</button>
-                  <button type="button" class="btn btn-chico" data-dash-ir="torre">Ver toda la cartera</button>
-                </div>
+                <button type="button" class="btn btn-chico" data-dash-ir="torre">Ver toda la cartera</button>
               </div>
-              <div class="panel-cuerpo">
-                <div class="syn-clientes-grid" id="dash-clientes-cards"></div>
+              <div class="panel-cuerpo" style="padding:0">
+                <div class="tabla-contable-wrap">
+                  <table class="tabla-contable compacta saas-cartera-tabla">
+                    <thead>
+                      <tr>
+                        <th scope="col">Empresa</th>
+                        <th scope="col">Avance</th>
+                        <th scope="col" class="num">F29 estimado</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col" class="num">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-cartera-tbody"></tbody>
+                  </table>
+                </div>
+                <div id="dash-clientes-cards" hidden></div>
               </div>
             </section>
 
-            <!-- Gráfico Comparativo con Tooltip Oscuro + Control Segmentado de Rango -->
+            <!-- Gráfico Principal con Tooltip Oscuro + Selector de Rango -->
             <section class="panel syn-panel" aria-labelledby="dash-chart-titulo">
               <div class="panel-cuerpo" id="dash-milestone-chart" aria-live="polite"></div>
+            </section>
+
+            <!-- Ruta de Cierre Mensual en 4 pasos (compacta para cliente activo) -->
+            <section class="panel syn-panel dash-cierre-panel" id="dash-cierre-4pasos" aria-labelledby="dash-cierre-titulo">
+              <div class="panel-head dash-cierre-head">
+                <div>
+                  <h2 id="dash-cierre-titulo">Ruta de cierre: <span id="dash-cierre-cliente">Panadería San Isidro SpA</span></h2>
+                  <p class="panel-ayuda">4 pasos en orden para cerrar el mes de la empresa activa.</p>
+                </div>
+                <span class="sello sello-guardada" id="dash-cierre-avance">0 de 4 listos</span>
+              </div>
+              <div class="dash-cierre-grid" role="list">
+                <button type="button" class="dash-cierre-paso" data-dash-ir="f29" role="listitem">
+                  <div class="dash-cierre-top">
+                    <strong class="dash-cierre-tit">1. Documentos SII</strong>
+                    <span class="sello sello-guardada" id="cierre-p1-estado">Pendiente</span>
+                  </div>
+                  <span class="dash-cierre-desc" id="cierre-p1-desc">RCV ventas/compras y BHE</span>
+                </button>
+                <button type="button" class="dash-cierre-paso" data-dash-ir="remuneraciones" role="listitem">
+                  <div class="dash-cierre-top">
+                    <strong class="dash-cierre-tit">2. Nómina y Previred</strong>
+                    <span class="sello sello-guardada" id="cierre-p2-estado">Pendiente</span>
+                  </div>
+                  <span class="dash-cierre-desc" id="cierre-p2-desc">Liquidaciones, Previred y LRE</span>
+                </button>
+                <button type="button" class="dash-cierre-paso" data-dash-ir="bancos" role="listitem">
+                  <div class="dash-cierre-top">
+                    <strong class="dash-cierre-tit">3. Bancos</strong>
+                    <span class="sello sello-guardada" id="cierre-p3-estado">Pendiente</span>
+                  </div>
+                  <span class="dash-cierre-desc" id="cierre-p3-desc">Cartola y conciliación</span>
+                </button>
+                <button type="button" class="dash-cierre-paso" data-dash-ir="balance" role="listitem">
+                  <div class="dash-cierre-top">
+                    <strong class="dash-cierre-tit">4. Balance y Cierre</strong>
+                    <span class="sello sello-guardada" id="cierre-p4-estado">Pendiente</span>
+                  </div>
+                  <span class="dash-cierre-desc" id="cierre-p4-desc">Balance 8 Col. y cierre</span>
+                </button>
+              </div>
             </section>
           </div>
 
@@ -482,7 +472,7 @@
             <section class="panel syn-panel">
               <div class="panel-head">
                 <h2>Próximos vencimientos</h2>
-                <span class="mono syn-pill-neutro">Chile SII/DT</span>
+                <span class="mono syn-pill-neutro" id="dash-cal-mes-tag">Nov 2026</span>
               </div>
               <div class="panel-cuerpo">
                 <div class="syn-venc-lista" id="dash-vencimientos-lista"></div>
@@ -494,1603 +484,13 @@
                 <h2>Actividad reciente</h2>
               </div>
               <div class="panel-cuerpo">
-                <ul class="syn-activity-lista" id="dash-actividad-lista"></ul>
+                <div class="syn-act-lista" id="dash-actividad-lista"></div>
               </div>
             </section>
           </aside>
         </div>
       </section>
 
-      <!-- ==================== VISTA 1: REMUNERACIONES ==================== -->
-      <section class="vista" id="suite-remuneraciones" hidden>
-        <div class="v-head">
-          <div>
-            <h1 class="v-titulo">Remuneraciones y Nómina</h1>
-            <p class="v-sub">Liquidaciones de sueldo, finiquitos en lote, archivo Previred y centralización de leyes sociales.</p>
-          </div>
-          <div class="v-acciones">
-            <div class="segmento" aria-label="Tipo de documento laboral">
-              <label><input type="radio" name="modo" value="finiquitos"><span>Finiquitos</span></label>
-              <label><input type="radio" name="modo" value="liquidaciones" checked><span>Liquidaciones</span></label>
-              <label><input type="radio" name="modo" value="bandeja-lre"><span>Bandeja LRE (Mi DT) <em class="lre-tab-badge" id="lre-tab-badge" hidden>0</em></span></label>
-            </div>
-          </div>
-        </div>
-
-        <section class="panel rem-previred-card" id="rem-previred-card" aria-labelledby="rem-previred-titulo" style="margin-bottom:14px">
-          <div class="rem-previred-cabeza">
-            <div class="rem-previred-info">
-              <div class="rem-previred-titulo-fila">
-                <h2 id="rem-previred-titulo" class="rem-previred-h2">Estado PreviRed sincronizado</h2>
-                <span class="sello sello-guardada" id="rem-previred-sello">
-                  <span class="material-icons" aria-hidden="true">cloud_off</span>
-                  <span id="rem-previred-sello-txt">Sin consultar</span>
-                </span>
-              </div>
-              <p class="texto-ayuda" id="rem-previred-meta">Conecta la clave PreviRed de la empresa para verificar cotizaciones declaradas y pagadas.</p>
-            </div>
-            <div class="rem-previred-cifras">
-              <div class="rem-previred-dato">
-                <span class="f29-tgr-lbl">Deuda estimada</span>
-                <strong class="mono" id="rem-previred-deuda">$0</strong>
-              </div>
-              <div class="rem-previred-dato">
-                <span class="f29-tgr-lbl">Período consultado</span>
-                <strong class="mono" id="rem-previred-periodo">Sin sync</strong>
-              </div>
-            </div>
-            <div class="rem-previred-acciones">
-              <button type="button" class="btn btn-chico" id="btn-rem-previred-cred">
-                <span class="material-icons" aria-hidden="true">vpn_key</span><span>Clave PreviRed</span>
-              </button>
-              <button type="button" class="btn btn-chico btn-primario" id="btn-rem-previred-sync">
-                <span class="material-icons" aria-hidden="true">sync</span><span>Consultar PreviRed</span>
-              </button>
-            </div>
-          </div>
-          <div class="rem-ley-bustos-alerta" id="rem-ley-bustos-alert" hidden role="alert">
-            <span class="material-icons" aria-hidden="true">gavel</span>
-            <div class="rem-ley-bustos-txt">
-              <strong>Riesgo Ley Bustos activo (Art. 162 Código del Trabajo)</strong>
-              <p id="rem-ley-bustos-detalle">Existen cotizaciones previsionales impagas o atrasadas. Mientras no se acrediten íntegramente antes del finiquito, el despido no pone término a la obligación de seguir pagando remuneraciones.</p>
-            </div>
-            <button type="button" class="btn btn-chico" id="btn-rem-ley-bustos-ver">Ir a Finiquitos</button>
-          </div>
-        </section>
-
-        <!-- Panel Finiquitos en Lote -->
-        <div id="pane-finiquitos" hidden>
-          <div class="panel" style="margin-bottom:16px">
-            <div class="panel-head"><h2>Parámetros y carga de finiquitos</h2></div>
-            <div class="panel-cuerpo">
-              <div class="rem-uf-strip">
-                <div class="lq-field">
-                  <label for="uf-value">Valor UF del período</label>
-                  <div class="campo-unidad">
-                    <span class="campo-addon" aria-hidden="true">$</span>
-                    <input type="text" id="uf-value" inputmode="decimal" data-tipo="uf" placeholder="41.322,93" aria-describedby="fin-uf-ayuda">
-                  </div>
-                  <span class="pm-error" id="uf-value-err" hidden role="alert"></span>
-                </div>
-                <div class="rem-uf-contexto" id="fin-uf-ayuda">
-                  <span class="material-icons" aria-hidden="true">verified</span>
-                  <span>Indicador oficial del período sincronizado con Liquidaciones (tope legal 90 UF por año).</span>
-                </div>
-              </div>
-              <div class="fin-dropzone" id="drop-fin" role="button" tabindex="0" aria-label="Subir nómina de finiquitos">
-                <span class="material-icons" aria-hidden="true">upload_file</span>
-                <strong>Arrastra la nómina de finiquitos o haz clic para buscarla</strong>
-                <span>.xlsx, .xls o .csv con una fila por trabajador</span>
-                <input type="file" id="file-fin" accept=".xlsx,.xls,.csv" class="sr-only" tabindex="-1" aria-label="Archivo de nómina de finiquitos">
-              </div>
-              <div class="form-acciones" style="margin-top:12px">
-                <button class="btn btn-chico" type="button" id="btn-sample-fin">Cargar ejemplo (12)</button>
-                <button class="btn btn-chico" type="button" id="btn-template-fin">Descargar plantilla Excel</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="demo-vacio" data-modo="finiquitos">
-            <p class="demo-vacio-t">Aún no hay finiquitos procesados en este lote</p>
-            <p class="texto-ayuda">Sube la nómina en Excel o CSV, o pulsa "Cargar ejemplo" para ver el cálculo completo con topes legales.</p>
-          </div>
-
-          <div class="panel" id="results-fin" hidden style="margin-bottom:16px">
-            <div class="panel-head"><h2>Resultado del lote de finiquitos</h2><span class="texto-ayuda" id="rows-fin"></span></div>
-            <div class="panel-cuerpo">
-              <div class="fin-kpis fin-kpis-4">
-                <div class="fin-kpi"><span class="fin-kpi-label">Trabajadores</span><span class="fin-kpi-val" id="t-workers">0</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Total a pagar</span><span class="fin-kpi-val mono ok" id="t-total">$0</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Promedio finiquito</span><span class="fin-kpi-val mono" id="t-avg">$0</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Filas con observaciones</span><span class="fin-kpi-val mono" id="t-errors">0</span></div>
-              </div>
-              <div class="tabla-wrap">
-                <table class="tabla">
-                  <thead>
-                    <tr>
-                      <th scope="col">Trabajador</th>
-                      <th scope="col">RUT</th>
-                      <th scope="col" class="num">Años</th>
-                      <th scope="col" class="num">Indemnización</th>
-                      <th scope="col" class="num">Aviso previo</th>
-                      <th scope="col" class="num">Vacaciones</th>
-                      <th scope="col" class="num">Rem. pendiente</th>
-                      <th scope="col" class="num">Total</th>
-                      <th scope="col" class="num">Editar</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-fin"></tbody>
-                </table>
-              </div>
-              <div class="demo-nota" id="warnings-fin"></div>
-              <div class="suite-preval-strip" id="fin-preval-bar" role="status" aria-live="polite" hidden></div>
-              <div class="form-acciones" style="margin-top:14px">
-                <button class="btn btn-primario" type="button" id="btn-print-fin"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del lote</button>
-                <button class="btn" type="button" id="btn-csv-fin">Exportar a Excel</button>
-                <button class="btn" type="button" id="btn-asiento-fin"><span class="material-icons" aria-hidden="true">account_balance</span>Centralizar finiquitos en Diario</button>
-                <span class="sello sello-guardada" id="fin-diario-sello">Sin centralizar</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel Liquidaciones de Sueldo -->
-        <div id="pane-liquidaciones">
-          <div class="panel" style="margin-bottom:16px">
-            <div class="panel-head"><h2>Parámetros previsionales y carga de nómina mensual</h2></div>
-            <div class="panel-cuerpo">
-              <div class="param-grupo">
-                <div class="param-grupo-head">
-                  <span class="param-grupo-titulo">Indicadores del período</span>
-                  <span class="texto-ayuda" id="liq-fuente">UF y UTM vigentes del período (editables si tu cierre usa otro día).</span>
-                </div>
-                <div class="param-bar">
-                  <div class="lq-field">
-                    <label for="liq-uf">Valor UF del período</label>
-                    <div class="campo-unidad">
-                      <span class="campo-addon" aria-hidden="true">$</span>
-                      <input type="text" id="liq-uf" inputmode="decimal" data-tipo="uf" placeholder="41.322,93" aria-describedby="liq-fuente">
-                    </div>
-                    <span class="pm-error" id="liq-uf-err" hidden role="alert"></span>
-                  </div>
-                  <div class="lq-field">
-                    <label for="liq-utm">Valor UTM del período</label>
-                    <div class="campo-unidad">
-                      <span class="campo-addon" aria-hidden="true">$</span>
-                      <input type="text" id="liq-utm" inputmode="numeric" data-tipo="pesos" placeholder="67.294" aria-describedby="liq-fuente">
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <details class="param-grupo param-grupo-details" id="liq-empresa-details">
-                <summary class="param-grupo-head">
-                  <span class="param-grupo-titulo">Datos previsionales y LRE de la empresa</span>
-                  <span class="param-grupo-summary-der">
-                    <span class="texto-ayuda mono" id="liq-empresa-resumen">Mutual de Seguridad (0,93%)</span>
-                    <span class="material-icons rcv-guia-chevron" aria-hidden="true">expand_more</span>
-                  </span>
-                </summary>
-                <div class="param-bar">
-                  <div class="lq-field"><label for="liq-mutual">Mutualidad</label><select id="liq-mutual"><option value="Mutual de Seguridad">Mutual de Seguridad</option><option value="ACHS">ACHS</option><option value="IST">IST</option><option value="ISL">ISL (sin mutual)</option></select></div>
-                  <div class="lq-field">
-                    <label for="liq-tasa-mutual">Tasa mutual</label>
-                    <div class="campo-unidad">
-                      <input type="text" id="liq-tasa-mutual" inputmode="decimal" data-tipo="dec" value="0,93">
-                      <span class="campo-addon sufijo" aria-hidden="true">%</span>
-                    </div>
-                  </div>
-                  <div class="lq-field"><label for="liq-ccaf">Caja de compensación</label><select id="liq-ccaf"><option value="">Sin CCAF</option><option value="Los Andes">Los Andes</option><option value="La Araucana">La Araucana</option><option value="Los Héroes">Los Héroes</option><option value="18 de Septiembre">18 de Septiembre</option></select></div>
-                  <div class="lq-field"><label for="liq-rut-empresa">RUT empresa (LRE)</label><input type="text" id="liq-rut-empresa" maxlength="12" placeholder="76.543.210-3" autocomplete="off"><span class="pm-error" id="liq-rut-empresa-err" hidden role="alert"></span></div>
-                  <div class="lq-field"><label for="liq-comuna">Comuna empresa (LRE)</label><input type="text" id="liq-comuna" maxlength="40" placeholder="Santiago" autocomplete="off"></div>
-                </div>
-              </details>
-              <div class="fin-dropzone" id="drop-liq" role="button" tabindex="0" aria-label="Subir nómina del mes">
-                <span class="material-icons" aria-hidden="true">upload_file</span>
-                <strong>Arrastra la nómina mensual o haz clic para buscarla</strong>
-                <span>.xlsx, .xls o .csv con una fila por trabajador</span>
-                <input type="file" id="file-liq" accept=".xlsx,.xls,.csv" class="sr-only" tabindex="-1" aria-label="Archivo de nómina mensual de liquidaciones">
-              </div>
-              <div class="form-acciones" style="margin-top:12px">
-                <button class="btn btn-chico btn-primario" type="button" id="btn-sample-liq"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo (10 trabajadores)</button>
-                <button class="btn btn-chico" type="button" id="btn-liq-traer-ant" hidden><span class="material-icons" aria-hidden="true">history</span>Traer mes anterior (<span id="liq-mes-ant-lbl">Oct</span>)</button>
-                <button class="btn btn-chico" type="button" id="btn-template-liq">Descargar plantilla</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="demo-vacio" data-modo="liquidaciones">
-            <div class="suite-preval-strip ok" id="liq-aviso-herencia" hidden style="margin-bottom:14px">
-              <span class="suite-preval-strip-izq">
-                <span class="material-icons" aria-hidden="true">history</span>
-                <span id="liq-aviso-herencia-txt">Existe una nómina guardada del mes anterior para este cliente.</span>
-              </span>
-              <button type="button" class="btn btn-chico btn-primario" id="btn-liq-banner-traer">Traer nómina anterior</button>
-            </div>
-            <p class="demo-vacio-t">Aún no hay liquidaciones calculadas en este período</p>
-            <p class="texto-ayuda">Pulsa "Cargar ejemplo (10 trabajadores)" o sube la planilla de tu cliente para calcular el lote en un clic.</p>
-          </div>
-
-          <div class="panel" id="results-liq" hidden style="margin-bottom:16px">
-            <div class="panel-head">
-              <h2>Resumen de nómina procesada</h2>
-              <div class="campo-head-acciones">
-                <span class="sello sello-guardada" id="liq-estado-guardado" hidden></span>
-                <span class="texto-ayuda" id="rows-liq"></span>
-              </div>
-            </div>
-            <div class="panel-cuerpo">
-              <div class="fin-kpis fin-kpis-4">
-                <div class="fin-kpi"><span class="fin-kpi-label">Trabajadores</span><span class="fin-kpi-val" id="l-workers">0</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Líquido a pagar</span><span class="fin-kpi-val mono ok" id="l-liquido">$0</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Total haberes</span><span class="fin-kpi-val mono" id="l-haberes">$0</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Costo empresa total</span><span class="fin-kpi-val mono" id="l-costo">$0</span></div>
-              </div>
-              <div class="tabla-wrap">
-                <table class="tabla">
-                  <thead>
-                    <tr>
-                      <th scope="col">Trabajador</th>
-                      <th scope="col">RUT</th>
-                      <th scope="col">AFP</th>
-                      <th scope="col" class="num">Haberes</th>
-                      <th scope="col" class="num">Descuentos</th>
-                      <th scope="col" class="num">Líquido</th>
-                      <th scope="col" class="num">Costo empresa</th>
-                      <th scope="col" class="num">Editar</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-liq"></tbody>
-                </table>
-              </div>
-              <div class="demo-nota" id="warnings-liq"></div>
-              <section class="preval-panel" id="preval-panel" aria-labelledby="preval-titulo" hidden>
-                <div class="preval-cabeza">
-                  <div class="preval-cabeza-izq">
-                    <span class="sello sello-emitida" id="preval-sello-general">
-                      <span class="material-icons" aria-hidden="true">verified</span>
-                      <span id="preval-sello-txt">Listo para Previred y LRE</span>
-                    </span>
-                    <div class="preval-conteo-chips" id="preval-conteo-chips" aria-live="polite">
-                      <span class="preval-chip-cnt rojo" id="preval-cnt-rojo" hidden>0 bloqueantes</span>
-                      <span class="preval-chip-cnt amarillo" id="preval-cnt-amarillo" hidden>0 avisos</span>
-                      <span class="preval-chip-cnt verde" id="preval-cnt-verde">0 OK</span>
-                    </div>
-                  </div>
-                  <button type="button" class="btn btn-chico preval-btn-toggle" id="btn-preval-toggle" aria-expanded="false" aria-controls="preval-cuerpo">
-                    <span class="material-icons" aria-hidden="true">expand_more</span>
-                    <span id="btn-preval-toggle-txt">Ver pre-validación y plazos</span>
-                  </button>
-                </div>
-                <p class="preval-subtitulo" id="preval-titulo">Pre-validación local de archivo Previred (105 campos), CSV LRE (Mi DT) y vencimientos legales 2026.</p>
-                <div class="preval-cuerpo" id="preval-cuerpo" hidden>
-                  <div class="preval-bloque" id="preval-generales-wrap" hidden>
-                    <h3 class="preval-bloque-titulo">Datos de la empresa requeridos</h3>
-                    <ul class="preval-lista-hallazgos" id="preval-generales-lista"></ul>
-                  </div>
-                  <div class="preval-bloque" id="preval-trabajadores-wrap">
-                    <div class="preval-bloque-head">
-                      <h3 class="preval-bloque-titulo">Revisión por trabajador</h3>
-                      <div class="fin-filtros preval-filtros" id="preval-filtros" role="tablist" aria-label="Filtrar hallazgos por estado">
-                        <button type="button" class="fin-chip activo" data-preval-filtro="hallazgos" role="tab" aria-selected="true">Con observaciones</button>
-                        <button type="button" class="fin-chip" data-preval-filtro="rojo" role="tab" aria-selected="false">Solo bloqueantes</button>
-                        <button type="button" class="fin-chip" data-preval-filtro="todos" role="tab" aria-selected="false">Todos</button>
-                      </div>
-                    </div>
-                    <div class="preval-trab-lista" id="preval-trabajadores-lista"></div>
-                    <p class="texto-ayuda" id="preval-trabajadores-vacio" hidden>Todos los trabajadores cumplen las validaciones previas para Previred y LRE.</p>
-                  </div>
-                  <div class="preval-bloque" id="preval-calendario-wrap">
-                    <div class="preval-bloque-head">
-                      <h3 class="preval-bloque-titulo">Calendario de vencimientos del período</h3>
-                      <span class="texto-ayuda">Plazos legales 2026 parametrizables</span>
-                    </div>
-                    <div class="preval-cal-grid" id="preval-calendario-grid"></div>
-                    <p class="texto-ayuda preval-cal-nota" id="preval-calendario-nota">Referencia 2026: Previred día 13 fijo (sin prórroga en inhábiles), LRE primeros 15 días hábiles del mes siguiente (obligatorio 5+ trab.), contratos y anexos 15 días hábiles en Mi DT, término de contrato 3/6/10 días hábiles según causal.</p>
-                  </div>
-                </div>
-              </section>
-              <div id="liq-lre-post-strip" class="suite-preval-strip ok" hidden role="status" aria-live="polite"></div>
-              <div class="acciones-liq-bloques">
-                <div class="acciones-liq-grupo">
-                  <span class="acciones-liq-etiqueta">Flujo principal del mes</span>
-                  <button class="btn btn-primario" type="button" id="btn-print-liq"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Descargar PDF del mes</button>
-                  <button class="btn" type="button" id="btn-previred-liq"><span class="material-icons" aria-hidden="true">cloud_download</span>Archivo Previred <span class="preval-btn-badge" id="badge-err-previred" hidden>0</span></button>
-                  <button class="btn" type="button" id="btn-lre-liq"><span class="material-icons" aria-hidden="true">description</span>Libro LRE <span class="preval-btn-badge" id="badge-err-lre" hidden>0</span></button>
-                  <button class="btn" type="button" id="btn-asiento-liq"><span class="material-icons" aria-hidden="true">account_balance</span>Asiento centralización</button>
-                  <button class="btn" type="button" id="btn-cerrar-mes">Cerrar nómina</button>
-                  <span class="sello sello-guardada" id="liq-lre-estado-pill">LRE: Pendiente de subir</span>
-                </div>
-                <details class="acciones-liq-secundarias">
-                  <summary class="acciones-liq-summary">Más herramientas y exportaciones (Excel, banco, Mi DT)</summary>
-                  <div class="acciones-liq-grupo" style="margin-top:8px">
-                    <button class="btn" type="button" id="btn-csv-liq">Exportar Excel</button>
-                    <button class="btn" type="button" id="btn-nomina-liq"><span class="material-icons" aria-hidden="true">table_view</span>Nómina banco</button>
-                    <button class="btn" type="button" id="btn-midt-lre-guia"><span class="material-icons" aria-hidden="true">checklist</span>Guía subir LRE a Mi DT</button>
-                    <button class="btn" type="button" id="btn-liq-ir-bandeja-lre"><span class="material-icons" aria-hidden="true">fact_check</span>Bandeja LRE cartera</button>
-                    <button class="btn" type="button" id="btn-asistente-liq"><span class="material-icons" aria-hidden="true">send</span>Enviar a Asistente Pyme</button>
-                  </div>
-                </details>
-              </div>
-              <div class="preval-botones-aviso" id="preval-botones-aviso" hidden role="status" aria-live="polite"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel Bandeja LRE (Mi DT) por empresa -->
-        <div id="pane-bandeja-lre" hidden>
-          <div class="suite-preval-strip" id="lre-plazo-banner" role="status" aria-live="polite"></div>
-          <div class="panel" style="margin-top:14px">
-            <div class="panel-head">
-              <h2>Estado LRE de la cartera</h2>
-              <span class="texto-ayuda">Marca a mano el estado de cada empresa después de subir el CSV en midt.dirtrab.cl. Sin conexión automática: nada sale de este navegador.</span>
-            </div>
-            <div class="panel-cuerpo">
-              <div class="fin-kpis fin-kpis-4">
-                <div class="fin-kpi"><span class="fin-kpi-label">Empresas en cartera</span><span class="fin-kpi-val" id="lre-k-total">0</span><span class="texto-ayuda" id="lre-k-obligatorias" style="display:block;margin:2px 0 0">0 con 5+ trab.</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Pendientes de subir</span><span class="fin-kpi-val mono" id="lre-k-pendientes">0</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Cargadas (OK)</span><span class="fin-kpi-val mono ok" id="lre-k-ok">0</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Observadas / Rectificar</span><span class="fin-kpi-val mono" id="lre-k-alerta">0</span></div>
-              </div>
-              <div class="lre-bandeja-toolbar">
-                <div class="fin-filtros" id="lre-filtros" role="tablist" aria-label="Filtrar empresas por estado LRE">
-                  <button type="button" class="fin-chip activo" data-lre-filtro="todas" role="tab" aria-selected="true">Todas</button>
-                  <button type="button" class="fin-chip" data-lre-filtro="pendiente" role="tab" aria-selected="false">Pendientes</button>
-                  <button type="button" class="fin-chip" data-lre-filtro="enviado" role="tab" aria-selected="false">En trámite (Enviado)</button>
-                  <button type="button" class="fin-chip" data-lre-filtro="alerta" role="tab" aria-selected="false">Observado / Rectificar</button>
-                  <button type="button" class="fin-chip" data-lre-filtro="cargado" role="tab" aria-selected="false">Cargado (OK)</button>
-                </div>
-                <div class="lre-bandeja-controles">
-                  <input type="search" id="lre-bandeja-buscar" placeholder="Buscar empresa o RUT" aria-label="Buscar empresa en bandeja LRE">
-                  <label class="pm-check"><input type="checkbox" id="lre-filtro-obligatorias"> Solo obligatorias (5+ trab.)</label>
-                </div>
-              </div>
-              <div class="tabla-wrap tabla-contable-wrap">
-                <table class="tabla" id="tabla-bandeja-lre">
-                  <thead>
-                    <tr>
-                      <th scope="col">Empresa / RUT</th>
-                      <th scope="col">Dotación</th>
-                      <th scope="col">Archivo CSV</th>
-                      <th scope="col">Estado LRE (manual)</th>
-                      <th scope="col">PreviRed (sync)</th>
-                      <th scope="col">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-bandeja-lre"></tbody>
-                </table>
-              </div>
-              <div class="demo-vacio" id="lre-bandeja-vacio" hidden>
-                <p class="demo-vacio-t">Aún no tienes empresas guardadas para este período</p>
-                <p class="texto-ayuda">Agrega clientes en Cartera de Clientes o calcula una nómina en Liquidaciones para iniciar el seguimiento LRE.</p>
-                <div class="form-acciones"><button class="btn btn-chico" type="button" id="btn-lre-ir-cartera">Ir a Cartera de Clientes</button></div>
-              </div>
-              <div class="demo-vacio" id="lre-bandeja-sin-filtro" hidden>
-                <p class="demo-vacio-t">Ninguna empresa coincide con el filtro seleccionado</p>
-                <div class="form-acciones"><button class="btn btn-chico" type="button" id="btn-lre-mostrar-todas">Mostrar todas</button></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== VISTA 2: FORMULARIO 29 ==================== -->
-      <section class="vista" id="suite-f29" hidden>
-        <div class="v-head">
-          <div>
-            <h1 class="v-titulo">Impuestos Mensuales (Formulario 29)</h1>
-            <p class="v-sub">Cuánto IVA y retenciones paga la empresa este mes: sube el RCV del SII y te armamos la hoja guía para el Formulario 29.</p>
-          </div>
-          <div class="v-acciones">
-            <button class="btn btn-primario" type="button" id="btn-rcv-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo F29</button>
-            <button class="btn" type="button" id="btn-limpiar-f29">Limpiar período</button>
-          </div>
-        </div>
-
-        <div id="f29-resumen-superior" class="f29-resumen-superior">
-          <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
-            <div class="fin-kpi" id="f29-kpi-card-debito">
-              <span class="fin-kpi-label">Total débito fiscal (cód. 538)</span>
-              <span class="fin-kpi-val mono" id="f29-k-debito">$0</span>
-              <span class="fin-kpi-meta" id="f29-k-debito-meta">Sube el RCV de ventas</span>
-            </div>
-            <div class="fin-kpi" id="f29-kpi-card-credito">
-              <span class="fin-kpi-label">Total crédito fiscal (cód. 537)</span>
-              <span class="fin-kpi-val mono" id="f29-k-credito">$0</span>
-              <span class="fin-kpi-meta" id="f29-k-credito-meta">Sube el RCV de compras</span>
-            </div>
-            <div class="fin-kpi" id="f29-kpi-card-iva">
-              <span class="fin-kpi-label" id="f29-k-iva-lbl">IVA determinado (cód. 89)</span>
-              <span class="fin-kpi-val mono" id="f29-k-iva">$0</span>
-              <span class="fin-kpi-meta" id="f29-k-iva-meta">Débito menos crédito</span>
-            </div>
-            <div class="fin-kpi fin-kpi-destacado" id="f29-kpi-card-total">
-              <span class="fin-kpi-label">Total a pagar en F29 (cód. 91)</span>
-              <span class="fin-kpi-val mono ok" id="f29-k-total">$0</span>
-              <span class="fin-kpi-meta" id="f29-k-total-meta">Carga RCV o ejemplo para calcular</span>
-            </div>
-          </div>
-          <div class="f29-graficos-grid" id="f29-graficos-grid" hidden>
-            <div class="suite-graf-card" id="f29-grafico-resumen" aria-label="Comparación visual Débito, Crédito, Retenciones y Total F29"></div>
-            <div class="suite-graf-card" id="f29-grafico-anual" aria-label="Evolución 12 meses de Débito, Crédito y F29 a pagar"></div>
-          </div>
-        </div>
-
-        <div class="f29-conexiones-grid">
-          <div class="panel f29-sii-panel f29-sii-compacto" id="f29-sii-bloque">
-            <div class="f29-sii-cabeza">
-              <div class="f29-sii-info">
-                <div>
-                  <span class="sello sello-guardada" id="f29-sii-sello">
-                    <span class="material-icons" aria-hidden="true">folder_open</span>Modo CSV local
-                  </span>
-                </div>
-                <p class="f29-sii-meta" id="f29-sii-meta">Operando con CSV manuales desde sii.cl o vinculación automática.</p>
-              </div>
-              <div class="f29-sii-acciones">
-                <button type="button" class="btn btn-primario btn-chico" id="btn-f29-sii-sync" hidden>
-                  <span class="material-icons" aria-hidden="true">sync</span>Sincronizar RCV y F29
-                </button>
-                <button type="button" class="btn btn-chico" id="btn-f29-sii-credenciales">
-                  <span class="material-icons" aria-hidden="true">link</span><span id="btn-f29-sii-cred-txt">Conectar al SII</span>
-                </button>
-              </div>
-            </div>
-            <div class="f29-sii-progreso" id="f29-sii-progreso" hidden role="status" aria-live="polite">
-              <span class="sii-spin material-icons" aria-hidden="true">sync</span>
-              <span id="f29-sii-progreso-txt">Consultando RCV y F29 en el SII...</span>
-            </div>
-          </div>
-
-          <div class="panel f29-tgr-panel f29-tgr-compacto" id="f29-tgr-bloque">
-            <div class="f29-tgr-cabeza">
-              <div class="f29-tgr-izq">
-                <span class="sello sello-guardada" id="f29-tgr-sello">
-                  <span class="material-icons" aria-hidden="true">account_balance</span>
-                  <span id="f29-tgr-sello-txt">TGR: Sin consultar</span>
-                </span>
-                <span class="f29-tgr-periodo mono" id="f29-tgr-periodo">Período 2026-11</span>
-                <span class="texto-ayuda" id="f29-tgr-meta">Deudas o convenios en Tesorería.</span>
-              </div>
-              <div class="f29-tgr-cifras" id="f29-tgr-cifras">
-                <div class="f29-tgr-dato">
-                  <span class="f29-tgr-lbl">Adeudado TGR</span>
-                  <strong class="mono" id="f29-tgr-total">$0</strong>
-                </div>
-                <div class="f29-tgr-dato">
-                  <span class="f29-tgr-lbl">Multas</span>
-                  <strong class="mono" id="f29-tgr-multas">$0</strong>
-                </div>
-              </div>
-              <div class="f29-tgr-acciones">
-                <button type="button" class="btn btn-chico" id="btn-f29-tgr-sync">
-                  <span class="material-icons" aria-hidden="true">sync</span><span>Actualizar TGR</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel" style="margin-bottom:16px">
-          <div class="panel-head"><h2>Carga de Registro de Compras y Ventas (RCV SII)</h2></div>
-          <div class="panel-cuerpo">
-            <div class="fin-form-grid" style="margin-bottom:14px">
-              <div class="lq-field">
-                <label for="f29-tasa-ppm">Tasa PPM cód. 115</label>
-                <div class="campo-unidad">
-                  <input type="text" id="f29-tasa-ppm" inputmode="decimal" data-tipo="dec" placeholder="0,125" aria-describedby="f29-tasa-ppm-ayuda">
-                  <span class="campo-addon sufijo" aria-hidden="true">%</span>
-                </div>
-                <span class="texto-ayuda" id="f29-tasa-ppm-ayuda">ProPyme: 0,125% o 0,25% (Ley 21.850: 0,23% transitorio).</span>
-                <span class="pm-error" id="f29-tasa-ppm-err" hidden role="alert"></span>
-              </div>
-              <div class="lq-field f29-remanente-wrap">
-                <div class="f29-remanente-head">
-                  <label for="f29-remanente">Remanente anterior cód. 504</label>
-                  <div class="campo-head-acciones">
-                    <button type="button" class="btn-micro-calculo" id="btn-f29-traer-rem-ant" hidden title="Importar remanente cód. 77 del período anterior y reajustar por UTM">
-                      <span class="material-icons" aria-hidden="true">history</span><span>Traer cód. 77 anterior</span>
-                    </button>
-                    <button type="button" class="btn-micro-calculo" id="btn-f29-asistente-utm" aria-expanded="false" aria-controls="f29-asistente-utm-card" title="Calcular reajuste oficial por variación de UTM (Art. 27 Ley de IVA)">
-                      <span class="material-icons" aria-hidden="true">calculate</span><span>Reajuste UTM</span>
-                    </button>
-                  </div>
-                </div>
-                <div class="campo-unidad">
-                  <span class="campo-addon" aria-hidden="true">$</span>
-                  <input type="text" id="f29-remanente" inputmode="numeric" data-tipo="pesos" placeholder="0" aria-describedby="f29-remanente-ayuda">
-                </div>
-                <span class="texto-ayuda" id="f29-remanente-ayuda">Reajuste UTM de presentación (evita objeción FM01).</span>
-                <div class="f29-asistente-utm-card" id="f29-asistente-utm-card" hidden>
-                  <div class="asistente-utm-cabeza">
-                    <strong>Asistente de Reajuste Art. 27 D.L. 825</strong>
-                    <button type="button" class="app-icono-btn" id="btn-cerrar-asistente-utm" aria-label="Cerrar asistente UTM"><span class="material-icons" aria-hidden="true">close</span></button>
-                  </div>
-                  <div class="asistente-utm-grid">
-                    <div class="utm-dato">
-                      <label class="utm-lbl" for="utm-calc-rem-ant">Remanente Cód. 77 previo</label>
-                      <div class="campo-unidad">
-                        <span class="campo-addon" aria-hidden="true">$</span>
-                        <input type="text" id="utm-calc-rem-ant" class="mono" inputmode="numeric" data-tipo="pesos" placeholder="120000">
-                      </div>
-                    </div>
-                    <div class="utm-dato">
-                      <label class="utm-lbl" for="utm-val-ant">UTM declar. previa (<span id="utm-mes-ant-nom">Mes prev.</span>)</label>
-                      <div class="campo-unidad">
-                        <span class="campo-addon" aria-hidden="true">$</span>
-                        <input type="text" id="utm-val-ant" class="mono" inputmode="numeric" data-tipo="pesos" value="66628">
-                      </div>
-                    </div>
-                    <div class="utm-dato">
-                      <label class="utm-lbl" for="utm-val-act">UTM declar. actual (<span id="utm-mes-act-nom">Mes decl.</span>)</label>
-                      <div class="campo-unidad">
-                        <span class="campo-addon" aria-hidden="true">$</span>
-                        <input type="text" id="utm-val-act" class="mono" inputmode="numeric" data-tipo="pesos" value="66961">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="asistente-utm-resultado">
-                    <span>Variación: <strong class="mono" id="utm-var-pct">+0,500%</strong></span>
-                    <span>Reajustado Cód. 504: <strong class="mono" id="utm-rem-reajustado">$0</strong></span>
-                  </div>
-                  <button type="button" class="btn btn-chico btn-primario" id="btn-utm-aplicar">
-                    <span class="material-icons" aria-hidden="true">check</span>Aplicar al Código 504
-                  </button>
-                </div>
-              </div>
-              <div class="lq-field">
-                <label for="f29-hon-bruto">Boletas honorarios brutas</label>
-                <div class="campo-unidad">
-                  <span class="campo-addon" aria-hidden="true">$</span>
-                  <input type="text" id="f29-hon-bruto" inputmode="numeric" data-tipo="pesos" placeholder="0">
-                </div>
-              </div>
-              <div class="lq-field fin-span-all">
-                <label for="f29-iusc-manual">Impuesto Único trabajadores cód. 48</label>
-                <div class="campo-unidad">
-                  <span class="campo-addon" aria-hidden="true">$</span>
-                  <input type="text" id="f29-iusc-manual" inputmode="numeric" data-tipo="pesos" placeholder="0" aria-describedby="f29-iusc-ayuda">
-                </div>
-                <span class="texto-ayuda" id="f29-iusc-ayuda">Se integra automáticamente cuando calculas Liquidaciones.</span>
-              </div>
-            </div>
-            <details class="rcv-guia-details">
-              <summary>
-                <span class="material-icons" aria-hidden="true">help_outline</span>
-                <span>¿Cómo descargar los archivos RCV desde el SII en 2 clics?</span>
-                <span class="material-icons rcv-guia-chevron" aria-hidden="true">expand_more</span>
-              </summary>
-              <div class="rcv-guia-card">
-                <div class="rcv-guia-pasos">
-                  <div class="rcv-paso">
-                    <span class="rcv-paso-num">1</span>
-                    <div class="rcv-paso-info">
-                      <strong>Ingresa a sii.cl &gt; Servicios Online</strong>
-                      <p>Ve a <em>Impuestos Mensuales &gt; Registro de Compras y Ventas (RCV) &gt; Ingresar al RCV</em>. Elige el mes tributario.</p>
-                    </div>
-                  </div>
-                  <div class="rcv-paso">
-                    <span class="rcv-paso-num">2</span>
-                    <div class="rcv-paso-info">
-                      <strong>Haz clic en «Descargar Detalles» (CSV o Excel)</strong>
-                      <p>Baja el archivo de <em>Ventas</em> y luego el de <em>Compras</em>. Arrástralos a las cajas de abajo; no necesitas abrirlos ni editarlos.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </details>
-            <div class="fin-split">
-              <div class="rcv-drop-box">
-                <div class="fin-dropzone" id="drop-rcv-ventas" role="button" tabindex="0" aria-label="Subir RCV Ventas SII" aria-describedby="rcv-ventas-estado">
-                  <span class="material-icons" aria-hidden="true">north_east</span>
-                  <strong>RCV Ventas SII (CSV o Excel)</strong>
-                  <span>Facturas afectas, exentas, boletas y notas de crédito</span>
-                  <span class="rcv-drop-estado" id="rcv-ventas-estado">Sin archivo cargado (.csv o .xlsx)</span>
-                  <input type="file" id="file-rcv-ventas" accept=".csv,.xlsx,.xls" class="sr-only" tabindex="-1" aria-label="Archivo RCV Ventas SII">
-                </div>
-              </div>
-              <div class="rcv-drop-box">
-                <div class="fin-dropzone" id="drop-rcv-compras" role="button" tabindex="0" aria-label="Subir RCV Compras SII" aria-describedby="rcv-compras-estado">
-                  <span class="material-icons" aria-hidden="true">south_west</span>
-                  <strong>RCV Compras SII (CSV o Excel)</strong>
-                  <span>Giro, supermercado, activo fijo y notas de crédito</span>
-                  <span class="rcv-drop-estado" id="rcv-compras-estado">Sin archivo cargado (.csv o .xlsx)</span>
-                  <input type="file" id="file-rcv-compras" accept=".csv,.xlsx,.xls" class="sr-only" tabindex="-1" aria-label="Archivo RCV Compras SII">
-                </div>
-              </div>
-            </div>
-            <div class="form-acciones" style="margin-top:12px">
-              <button class="btn btn-chico" type="button" id="btn-plantilla-rcv-ventas">Plantilla RCV Ventas</button>
-              <button class="btn btn-chico" type="button" id="btn-plantilla-rcv-compras">Plantilla RCV Compras</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel f29-auditoria-panel" id="f29-auditoria-compras" hidden>
-          <div class="panel-head">
-            <div>
-              <h2>Auditoría Preventiva de Compras RCV (Ley 19.983)</h2>
-              <p class="panel-ayuda">Monitorea el plazo de 8 días corridos desde la recepción en SII para facturas a crédito (las al contado no requieren acuse) y revisa supermercados (cód. 761 F29).</p>
-            </div>
-            <div class="f29-auditoria-badges">
-              <span class="sello sello-riesgo" id="badge-acuse-urgentes" hidden>
-                <span class="material-icons" aria-hidden="true">warning</span><span id="txt-acuse-urgentes">0 por vencer</span>
-              </span>
-              <label class="acuse-lote-check" id="f29-acuse-lote-super-wrap" hidden>
-                <input type="checkbox" id="f29-acuse-lote-super">
-                <span>Incluir supermercados y similares (cód. 761 F29)</span>
-              </label>
-              <button type="button" class="btn btn-primario btn-chico" id="btn-acuse-lote" hidden>
-                <span class="material-icons" aria-hidden="true">done_all</span>
-                Aceptar pendientes en lote (<span id="acuse-lote-cant">0</span>)
-              </button>
-            </div>
-          </div>
-          <div class="panel-cuerpo">
-            <div class="acuse-lote-estado" id="acuse-lote-estado" hidden>
-              <div class="acuse-lote-texto" id="acuse-lote-texto"></div>
-              <div class="acuse-lote-acciones">
-                <button type="button" class="btn btn-primario btn-chico" id="btn-acuse-lote-confirmar" hidden>Confirmar lote</button>
-                <button type="button" class="btn btn-chico" id="btn-acuse-lote-cancelar" hidden>Cancelar</button>
-                <button type="button" class="btn btn-chico" id="btn-acuse-lote-reintentar" hidden>Reintentar fallidas</button>
-              </div>
-            </div>
-            <div class="f29-acuse-grid" id="f29-acuse-bloque">
-              <div class="tabla-contable-wrap">
-                <table class="tabla-contable compacta">
-                  <thead>
-                    <tr>
-                      <th scope="col">Folio</th>
-                      <th scope="col">Proveedor</th>
-                      <th scope="col">Recepción SII</th>
-                      <th scope="col">Plazo Legal (8 días)</th>
-                      <th scope="col" class="num">IVA / Total ($)</th>
-                      <th scope="col" class="num">Revisión estudio</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-f29-acuse-compras"></tbody>
-                </table>
-              </div>
-            </div>
-            <div class="f29-alerta-supermercado" id="f29-alerta-supermercado" hidden>
-              <span class="material-icons" aria-hidden="true">storefront</span>
-              <div class="f29-alerta-txt">
-                <strong id="supermercado-titulo">Facturas de supermercado detectadas (Cód. 761 / 762)</strong>
-                <p id="supermercado-desc">Hay <span id="super-cant">0</span> documento(s) con IVA por <span class="mono" id="super-monto">$0</span>. Requieren relación directa con el giro para usar el crédito fiscal.</p>
-              </div>
-              <div class="f29-alerta-acciones">
-                <button type="button" class="btn btn-chico" id="btn-super-no-incluir">Excluir crédito (No Incluir)</button>
-                <button type="button" class="btn btn-chico" id="btn-super-mantener">Acreditar con giro</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="demo-vacio" id="f29-vacio">
-          <p class="demo-vacio-t">Aún no hay movimientos tributarios cargados</p>
-          <p class="texto-ayuda">Pulsa "Cargar ejemplo SII completo" para ver la hoja de trabajo del F29 con débitos, créditos y PPM al día.</p>
-        </div>
-
-        <div class="panel" id="f29-resultados" hidden style="margin-bottom:16px">
-          <div class="panel-head"><h2>Hoja de trabajo del Formulario 29</h2><span class="texto-ayuda">Vencimiento legal: día 20 del mes siguiente</span></div>
-          <div class="panel-cuerpo">
-            <div class="tabla-resumen-movil" id="f29-resumen-movil" hidden>
-              <div class="resumen-movil-card">
-                <div class="resumen-movil-head">
-                  <span class="mono resumen-movil-tag">Resumen Declaración F29</span>
-                  <span class="sello sello-activo" id="f29-m-estado">Con pago en plazo</span>
-                </div>
-                <div class="resumen-movil-grid">
-                  <div class="resumen-movil-kpi">
-                    <span class="resumen-kpi-lbl">Débito Fiscal (cód. 538)</span>
-                    <span class="resumen-kpi-val mono" id="f29-m-deb">$0</span>
-                  </div>
-                  <div class="resumen-movil-kpi">
-                    <span class="resumen-kpi-lbl">Crédito Fiscal (cód. 537)</span>
-                    <span class="resumen-kpi-val mono" id="f29-m-cred">$0</span>
-                  </div>
-                  <div class="resumen-movil-kpi">
-                    <span class="resumen-kpi-lbl" id="f29-m-iva-lbl">IVA determinado (cód. 89)</span>
-                    <span class="resumen-kpi-val mono" id="f29-m-iva">$0</span>
-                  </div>
-                  <div class="resumen-movil-kpi destacado">
-                    <span class="resumen-kpi-lbl">Total F29 a pagar (cód. 91)</span>
-                    <span class="resumen-kpi-val mono ok" id="f29-m-total">$0</span>
-                  </div>
-                </div>
-                <div class="resumen-movil-pie">
-                  <span class="texto-ayuda" id="f29-m-pie">Incluye retenciones y PPM mensual.</span>
-                </div>
-              </div>
-            </div>
-            <div class="f29-postergacion-card" id="f29-postergacion-card">
-              <div class="f29-postergacion-switch-fila">
-                <label class="pm-switch-label" for="f29-check-postergacion">
-                  <input type="checkbox" id="f29-check-postergacion" class="pm-switch-input">
-                  <span class="pm-switch-slider" aria-hidden="true"></span>
-                  <span class="pm-switch-txt">
-                    <strong>Acogerse a Postergación de Pago de IVA (Código 756)</strong>
-                    <span class="texto-ayuda" id="f29-postergacion-ayuda">Art. 64 D.L. 825 (14 D o 14 A con promedio &lt;= 100.000 UF en 3 años, sin morosidad reiterada): traslada el IVA (cód. 89) al cód. 755 (mes +2 sin intereses). PPM y retenciones se pagan en plazo.</span>
-                  </span>
-                </label>
-                <span class="sello sello-preparada" id="sello-postergacion-estado" hidden>IVA Postergado 60 días</span>
-              </div>
-              <div class="f29-postergacion-desglose" id="f29-postergacion-desglose" hidden>
-                <div class="fin-cols-3">
-                  <div class="post-item">
-                    <span class="post-lbl">IVA Postergado (Cód. 755/756)</span>
-                    <span class="post-val mono" id="post-monto-iva">$0</span>
-                    <span class="texto-ayuda" id="post-fecha-vence">Giro prorrogado +2 meses</span>
-                  </div>
-                  <div class="post-item">
-                    <span class="post-lbl">Retenciones + PPM a pagar hoy</span>
-                    <span class="post-val mono" id="post-monto-inmediato">$0</span>
-                    <span class="texto-ayuda">Cód. 48, 151 y 62 en plazo</span>
-                  </div>
-                  <div class="post-item">
-                    <span class="post-lbl">Nuevo Total F29 en plazo (Cód. 91)</span>
-                    <span class="post-val mono ok" id="post-total-final">$0</span>
-                    <span class="texto-ayuda">Monto a pagar en sii.cl</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="f29-semaforo-box" id="f29-semaforo-auditoria" hidden aria-live="polite"></div>
-            <div class="tabla-contable-wrap">
-              <table class="tabla-contable">
-                <thead>
-                  <tr>
-                    <th scope="col">Línea / Concepto tributario</th>
-                    <th scope="col" class="num">Cant. doctos.</th>
-                    <th scope="col" class="f29-celda-cod">Código SII</th>
-                    <th scope="col" class="num">Monto ($)</th>
-                  </tr>
-                </thead>
-                <tbody id="tbody-f29"></tbody>
-              </table>
-            </div>
-            <div class="demo-nota" id="f29-notas"></div>
-            <div class="f29-contraste-panel" id="f29-contraste-panel" hidden>
-              <div class="f29-contraste-head">
-                <h3>Auditoría cruzada: cálculo RCV vs. resumen F29 SII</h3>
-                <span class="sello sello-guardada" id="f29-contraste-sello">Sin comparar</span>
-              </div>
-              <p class="f29-contraste-sub" id="f29-contraste-sub"></p>
-              <div class="tabla-contable-wrap">
-                <table class="f29-contraste-tabla">
-                  <thead>
-                    <tr>
-                      <th scope="col">Concepto tributario</th>
-                      <th scope="col" class="num">Suite RCV</th>
-                      <th scope="col" class="num">Resumen SII</th>
-                      <th scope="col">Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-f29-contraste"></tbody>
-                </table>
-              </div>
-            </div>
-            <div class="form-acciones" style="margin-top:14px">
-              <button class="btn btn-primario" type="button" id="btn-f29-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Imprimir / PDF F29</button>
-              <button class="btn" type="button" id="btn-f29-csv">Exportar Excel</button>
-              <button class="btn" type="button" id="btn-f29-copiar"><span class="material-icons" aria-hidden="true">content_copy</span>Copiar códigos SII</button>
-              <button class="btn" type="button" id="btn-f29-whatsapp"><span class="material-icons" aria-hidden="true">chat</span>Copiar reporte WhatsApp</button>
-              <button class="btn" type="button" id="btn-f29-ir-diario"><span class="material-icons" aria-hidden="true">menu_book</span>Ver centralización en Diario</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== VISTA 3: BANCOS Y CONCILIACIÓN ==================== -->
-      <section class="vista" id="suite-bancos" hidden>
-        <div class="v-head">
-          <div>
-            <h1 class="v-titulo">Bancos y Conciliación</h1>
-            <p class="v-sub">Compara tu cartola bancaria con tus facturas y deja cuadrada la contabilidad.</p>
-          </div>
-          <div class="v-acciones bancos-head-acciones">
-            <label class="sr-only" for="bancos-cuenta-select">Cuenta bancaria</label>
-            <select id="bancos-cuenta-select" class="bancos-cuenta-select" aria-label="Cuenta bancaria activa">
-              <option value="principal" selected>Banco Principal (11010)</option>
-              <option value="secundaria">Cuenta Secundaria / Caja (11012)</option>
-            </select>
-            <button type="button" class="btn btn-primario" id="btn-bancos-subir-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir cartola (CSV/Excel)</button>
-            <input type="file" id="file-bancos-cartola" accept=".csv,.txt,.tsv,.xlsx,.xls" class="sr-only" aria-label="Subir cartola bancaria CSV o Excel">
-            <button type="button" class="btn" id="btn-bancos-pegar-excel"><span class="material-icons" aria-hidden="true">content_paste</span>Pegar desde Excel</button>
-            <button type="button" class="btn" id="btn-bancos-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo</button>
-          </div>
-        </div>
-
-        <!-- Termómetro de 3 tarjetas limpias -->
-        <div class="bancos-termometro" style="margin-bottom:14px">
-          <div class="fin-kpi bancos-kpi-card" id="conc-kpi-card-cuadre">
-            <div class="bancos-kpi-top">
-              <span class="fin-kpi-label">Cuadratura de saldo</span>
-              <span class="sello sello-guardada" id="conc-cuadre-sello">Sin cartola</span>
-            </div>
-            <div class="bancos-cuadre-cifras">
-              <div><span class="bancos-mini-lbl">Cartola</span><strong class="mono" id="conc-saldo-cartola">$0</strong></div>
-              <div><span class="bancos-mini-lbl">Contabilidad</span><strong class="mono" id="conc-saldo-libro">$0</strong></div>
-            </div>
-            <span class="fin-kpi-meta" id="conc-cuadre-meta">Sube o pega una cartola para comparar tu saldo</span>
-          </div>
-
-          <div class="fin-kpi bancos-kpi-card" id="conc-kpi-card-pct">
-            <div class="bancos-kpi-top">
-              <span class="fin-kpi-label">Movimientos por revisar</span>
-              <span class="fin-kpi-val mono ok" id="conc-k-pct" style="font-size:16px">0%</span>
-            </div>
-            <div class="bancos-pend-linea">
-              <strong class="mono" id="conc-k-movs">0</strong>
-              <span class="fin-kpi-meta" id="conc-k-pct-meta">Sin movimientos cargados</span>
-            </div>
-            <div class="bancos-prog-track" aria-hidden="true"><div class="bancos-prog-fill" id="conc-prog-fill" style="width:0%"></div></div>
-            <span class="fin-kpi-meta" id="conc-k-movs-meta">Sube CSV/Excel o carga un ejemplo</span>
-          </div>
-
-          <button type="button" class="fin-kpi bancos-kpi-card bancos-kpi-btn" id="conc-kpi-card-cartera" title="Ver facturas por cobrar y por pagar">
-            <div class="bancos-kpi-top">
-              <span class="fin-kpi-label">Facturas pendientes</span>
-              <span class="material-icons" aria-hidden="true" style="font-size:18px;color:var(--syn-muted)">arrow_forward</span>
-            </div>
-            <div class="bancos-cuadre-cifras">
-              <div><span class="bancos-mini-lbl">Por cobrar</span><strong class="mono" id="conc-k-cxc">$0</strong></div>
-              <div><span class="bancos-mini-lbl">Por pagar</span><strong class="mono" id="conc-k-cxp">$0</strong></div>
-            </div>
-            <span class="fin-kpi-meta"><span id="conc-k-cxc-meta">Sin pendientes</span> · <span id="conc-k-cxp-meta">Al día</span></span>
-          </button>
-        </div>
-
-        <div class="suite-preval-strip ok" id="bancos-buzon-alerta" hidden role="status" aria-live="polite">
-          <span class="suite-preval-strip-izq">
-            <span class="material-icons" aria-hidden="true">inbox</span>
-            <span id="bancos-buzon-txt">Tu cliente envió archivos desde el Portal en este período.</span>
-          </span>
-          <button type="button" class="btn btn-chico btn-primario" id="btn-bancos-ver-buzon">Revisar envíos</button>
-        </div>
-
-        <div class="fin-filtros" role="tablist" aria-label="Secciones de bancos y conciliación">
-          <button type="button" class="fin-chip activo" data-subbanco="conciliacion" role="tab" aria-selected="true" aria-controls="sub-conciliacion">Movimientos del Banco</button>
-          <button type="button" class="fin-chip" data-subbanco="cartera" role="tab" aria-selected="false" aria-controls="sub-bancos-cartera">Facturas por Cobrar y Pagar</button>
-          <button type="button" class="fin-chip" data-subbanco="tesoreria" role="tab" aria-selected="false" aria-controls="sub-tesoreria">Reglas y Estimación</button>
-        </div>
-
-        <!-- Pestaña 1: Movimientos del Banco (Cara a Cara) -->
-        <div id="sub-conciliacion">
-          <div class="panel" style="margin-bottom:16px">
-            <div class="panel-head bancos-toolbar-head">
-              <div class="conc-bandeja-tabs" id="conc-resumen-bar" role="group" aria-label="Filtrar movimientos por estado">
-                <button type="button" class="btn btn-chico conc-filtro-btn activo" data-conc-filtro="todos" aria-pressed="true">Todos</button>
-                <button type="button" class="btn btn-chico conc-filtro-btn" data-conc-filtro="pendiente" aria-pressed="false">Pendientes (<span class="mono" id="conc-sum-pend">0</span>)</button>
-                <button type="button" class="btn btn-chico conc-filtro-btn" data-conc-filtro="sugerido" aria-pressed="false">Sugeridos (<span class="mono" id="conc-sum-sug">0</span>)</button>
-                <button type="button" class="btn btn-chico conc-filtro-btn" data-conc-filtro="conciliado" aria-pressed="false">Listos (<span class="mono" id="conc-sum-ok">0</span>)</button>
-              </div>
-              <div class="bancos-toolbar-der">
-                <input type="search" id="conc-buscar" class="bancos-buscar-input" placeholder="Buscar texto o monto..." aria-label="Buscar movimiento bancario">
-                <label class="bancos-switch-contador" for="chk-conc-vista-contador" title="Mostrar códigos de cuenta y asiento Debe/Haber">
-                  <input type="checkbox" id="chk-conc-vista-contador">
-                  <span>Vista contador</span>
-                </label>
-                <button type="button" class="btn btn-chico" id="btn-conc-ir-reglas">Reglas (<span id="conc-reglas-cnt-btn">7</span>)</button>
-                <button type="button" class="btn btn-chico btn-primario" id="btn-conc-centralizar">Guardar listos en Contabilidad</button>
-              </div>
-            </div>
-
-            <div class="panel-cuerpo">
-              <!-- Tira rápida para confirmar sugerencias en 1 clic -->
-              <div class="bancos-sug-banner" id="conc-sug-banner" hidden role="status" aria-live="polite">
-                <span><strong id="conc-cnt-sugeridos">0</strong> coincidencias encontradas automáticamente y listas para confirmar.</span>
-                <button type="button" class="btn btn-chico btn-primario" id="btn-conc-aprobar-sugeridos">Confirmar sugeridos</button>
-              </div>
-
-              <div class="conc-tira-alertas" id="conc-tira-alertas" hidden aria-live="polite">
-                <div class="conc-alerta-item conc-alerta-dif" id="conc-alerta-dif" hidden>
-                  <span class="material-icons" aria-hidden="true">warning</span>
-                  <span id="conc-alerta-dif-txt"></span>
-                </div>
-                <div class="conc-sug-reglas" id="conc-sug-reglas" hidden></div>
-              </div>
-
-              <div class="tabla-contable-wrap conc-tabla-wrap" id="conc-tabla-wrap">
-                <table class="tabla-contable compacta conc-cara-tabla">
-                  <thead>
-                    <tr>
-                      <th scope="col">Lo que dice el banco</th>
-                      <th scope="col" class="num">Monto</th>
-                      <th scope="col">A qué corresponde</th>
-                      <th scope="col" class="num">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-conciliacion"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pestaña 2: Facturas por Cobrar y Pagar -->
-        <div id="sub-bancos-cartera" hidden>
-          <div class="suite-graf-card" id="aging-grafico-resumen" aria-label="Antigüedad de facturas por cobrar y por pagar" style="margin-bottom:14px"></div>
-          <div class="fin-cols-2 fin-cols-2-tablas">
-            <div class="panel">
-              <div class="panel-head"><div><h2>Te deben (Facturas por Cobrar)</h2><p class="panel-ayuda" id="aging-cxc-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
-              <div class="panel-cuerpo">
-                <div class="tabla-contable-wrap">
-                  <table class="tabla-contable compacta">
-                    <thead><tr><th scope="col">Cliente y factura</th><th scope="col">Atraso</th><th scope="col" class="num">Pendiente</th><th scope="col">Estado</th><th scope="col" class="num">Acción</th></tr></thead>
-                    <tbody id="tbody-aging-cxc"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-            <div class="panel">
-              <div class="panel-head"><div><h2>Debes (Facturas por Pagar)</h2><p class="panel-ayuda" id="aging-cxp-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
-              <div class="panel-cuerpo">
-                <div class="tabla-contable-wrap">
-                  <table class="tabla-contable compacta">
-                    <thead><tr><th scope="col">Proveedor y factura</th><th scope="col">Atraso</th><th scope="col" class="num">Pendiente</th><th scope="col">Estado</th><th scope="col" class="num">Acción</th></tr></thead>
-                    <tbody id="tbody-aging-cxp"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pestaña 3: Reglas Automáticas y Estimación sin Cartola -->
-        <div id="sub-tesoreria" hidden>
-          <div class="suite-preval-strip ok" id="tes-modo-aviso" hidden role="status" aria-live="polite" style="margin-bottom:14px">
-            <span class="suite-preval-strip-izq">
-              <span class="material-icons" aria-hidden="true">check_circle</span>
-              <span id="tes-modo-aviso-txt">Cartola real guardada en Contabilidad: los porcentajes estimados de cobro y pago están pausados automáticamente para no duplicar tu saldo de banco.</span>
-            </span>
-          </div>
-
-          <div class="panel" style="margin-bottom:16px">
-            <div class="panel-head">
-              <div>
-                <h2>Reglas automáticas de clasificación (<span id="conc-reglas-cnt">7</span>)</h2>
-                <p class="panel-ayuda">Cuando un movimiento del banco incluya estas palabras, se clasificará solo en futuros cierres.</p>
-              </div>
-            </div>
-            <div class="panel-cuerpo">
-              <div class="suite-plan-nuevo-fila" style="margin-bottom:12px">
-                <div class="lq-field"><label for="regla-tipo">Movimiento</label>
-                  <select id="regla-tipo" class="lq-select">
-                    <option value="cargo">Egreso (salida)</option>
-                    <option value="abono">Ingreso (entrada)</option>
-                    <option value="ambos">Ambos</option>
-                  </select>
-                </div>
-                <div class="lq-field"><label for="regla-patron">Palabra clave en la cartola</label><input type="text" id="regla-patron" placeholder="Ej: arriendo bodega|entel"></div>
-                <div class="lq-field"><label for="regla-cuenta">Categoría / Cuenta</label>
-                  <select id="regla-cuenta" class="lq-select">
-                    <option value="42040">42040 · Gastos generales</option>
-                    <option value="11050">11050 · Clientes por cobrar</option>
-                    <option value="21010">21010 · Proveedores por pagar</option>
-                    <option value="21070">21070 · Impuestos F29</option>
-                    <option value="21035">21035 · Previred por pagar</option>
-                    <option value="21030">21030 · Sueldos por pagar</option>
-                    <option value="21025">21025 · Honorarios por pagar</option>
-                    <option value="11018">11018 · Traspaso entre cuentas</option>
-                    <option value="11012">11012 · Caja y otros bancos</option>
-                    <option value="21015">21015 · Tarjeta de crédito corporativa</option>
-                  </select>
-                </div>
-                <div class="lq-field"><label for="regla-motivo">Descripción</label><input type="text" id="regla-motivo" placeholder="Ej: Pago arriendo mensual"></div>
-                <div class="lq-field" style="align-self:end"><button type="button" class="btn btn-primario" id="btn-regla-agregar">Guardar regla</button></div>
-              </div>
-              <div class="suite-reglas-chips" id="conc-reglas-lista"></div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-head">
-              <div>
-                <h2>Parámetros de saldo inicial y estimación sin cartola</h2>
-                <p class="panel-ayuda">Solo se usan los porcentajes estimados cuando todavía no guardas una cartola bancaria real en Contabilidad.</p>
-              </div>
-            </div>
-            <div class="panel-cuerpo">
-              <div class="fin-form-grid" style="margin-bottom:16px">
-                <div class="lq-field">
-                  <div class="f29-remanente-head">
-                    <label for="tes-banco-ini">Saldo inicial del banco</label>
-                    <button type="button" class="btn-micro-calculo" id="btn-tes-traer-saldo-ant" hidden title="Importar saldo final de banco del período anterior">
-                      <span class="material-icons" aria-hidden="true">history</span><span>Traer cierre anterior</span>
-                    </button>
-                  </div>
-                  <div class="campo-unidad">
-                    <span class="campo-addon" aria-hidden="true">$</span>
-                    <input type="text" id="tes-banco-ini" inputmode="numeric" data-tipo="pesos" value="0">
-                  </div>
-                </div>
-                <div class="lq-field">
-                  <label for="tes-pct-cobro">Ventas del mes cobradas (estimado)</label>
-                  <div class="campo-unidad">
-                    <input type="text" id="tes-pct-cobro" inputmode="decimal" data-tipo="dec" value="80">
-                    <span class="campo-addon sufijo" aria-hidden="true">%</span>
-                  </div>
-                </div>
-                <div class="lq-field">
-                  <label for="tes-pct-pago">Compras del giro pagadas (estimado)</label>
-                  <div class="campo-unidad">
-                    <input type="text" id="tes-pct-pago" inputmode="decimal" data-tipo="dec" value="75">
-                    <span class="campo-addon sufijo" aria-hidden="true">%</span>
-                  </div>
-                </div>
-              </div>
-              <div style="display:grid;gap:10px">
-                <label class="pm-check"><input type="checkbox" id="tes-af-pagado" checked> Activo fijo del período efectivamente pagado (depreciación instantánea 14 D N°3)</label>
-                <label class="pm-check"><input type="checkbox" id="tes-sueldos-pagados" checked> Sueldos líquidos pagados dentro del mes</label>
-                <label class="pm-check"><input type="checkbox" id="tes-hon-pagados" checked> Boletas de honorarios líquidas pagadas dentro del mes</label>
-                <label class="pm-check"><input type="checkbox" id="tes-cotiz-pagadas"> Cotizaciones Previred pagadas en el mismo mes (si no, vencen el día 13)</label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Modal Pegar cartola desde Excel (estilo Laudus) -->
-      <dialog class="app-dialogo app-dialogo-medio" id="dlg-bancos-pegar" aria-labelledby="bancos-pegar-titulo">
-        <div class="midt-cabeza">
-          <div>
-            <h2 id="bancos-pegar-titulo">Pegar cartola desde Excel o Banco web</h2>
-            <p class="midt-sub">Copia las filas de tu banco o planilla (Fecha, Descripción, Cargo, Abono) y pégalas aquí abajo.</p>
-          </div>
-          <button type="button" class="app-icono-btn" id="btn-cerrar-bancos-pegar" aria-label="Cerrar ventana">
-            <span class="material-icons" aria-hidden="true">close</span>
-          </button>
-        </div>
-        <div class="dialogo-cuerpo">
-          <div class="lq-field">
-            <label for="bancos-pegar-texto">Filas copiadas (separadas por tabulador o punto y coma)</label>
-            <textarea id="bancos-pegar-texto" rows="8" placeholder="Fecha&#9;Descripción&#9;Cargo&#9;Abono&#10;2026-11-03&#9;Transferencia Cliente Factura 1042&#9;&#9;1450000&#10;2026-11-07&#9;Pago Proveedor Harinas del Sur&#9;620000&#9;"></textarea>
-          </div>
-          <div id="bancos-pegar-feedback" class="sii-feedback-box" hidden role="status" aria-live="polite" style="margin-top:10px"></div>
-          <div class="sii-dlg-acciones" style="margin-top:14px">
-            <div class="sii-acciones-izq"></div>
-            <div class="sii-acciones-der">
-              <button type="button" class="btn" id="btn-bancos-pegar-cancelar">Cancelar</button>
-              <button type="button" class="btn btn-primario" id="btn-bancos-pegar-importar">Importar movimientos</button>
-            </div>
-          </div>
-        </div>
-      </dialog>
-
-      <!-- Modal Migrador de Plan de Cuentas y Saldos Iniciales (Excel / Nubox) -->
-      <dialog class="app-dialogo app-dialogo-medio" id="dlg-apertura-migrador" aria-labelledby="ap-mig-titulo">
-        <div class="midt-cabeza">
-          <div>
-            <h2 id="ap-mig-titulo">Importar saldos iniciales desde Excel o Nubox</h2>
-            <p class="midt-sub">Sube un archivo CSV/Excel o pega las filas de tu Balance de cierre anterior (Código, Cuenta, Debe, Haber).</p>
-          </div>
-          <button type="button" class="app-icono-btn" id="btn-cerrar-ap-mig" aria-label="Cerrar ventana">
-            <span class="material-icons" aria-hidden="true">close</span>
-          </button>
-        </div>
-        <div class="dialogo-cuerpo">
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
-            <button type="button" class="btn btn-chico" id="btn-ap-mig-archivo"><span class="material-icons" aria-hidden="true">upload_file</span>Subir archivo CSV / Excel</button>
-            <input type="file" id="file-apertura-migrador" accept=".csv,.txt,.tsv,.xlsx,.xls" class="sr-only" aria-label="Subir archivo de saldos iniciales">
-            <span class="texto-ayuda" style="align-self:center">O pega directamente tus columnas abajo:</span>
-          </div>
-          <div class="lq-field">
-            <label for="apertura-mig-texto">Filas de cierre anterior (Código ; Nombre cuenta ; Debe ; Haber)</label>
-            <textarea id="apertura-mig-texto" rows="7" placeholder="11010&#9;Banco Cuenta Corriente&#9;6500000&#9;0&#10;11050&#9;Clientes por Cobrar&#9;2400000&#9;0&#10;12010&#9;Maquinaria y Equipos&#9;3800000&#9;0&#10;21010&#9;Proveedores por Pagar&#9;0&#9;1700000&#10;31010&#9;Capital Pagado&#9;0&#9;8000000&#10;32010&#9;Resultados Acumulados&#9;0&#9;3000000"></textarea>
-          </div>
-          <div class="apertura-mig-preview" id="apertura-mig-preview" hidden role="status" aria-live="polite"></div>
-          <div class="sii-dlg-acciones" style="margin-top:14px">
-            <div class="sii-acciones-izq"></div>
-            <div class="sii-acciones-der">
-              <button type="button" class="btn" id="btn-ap-mig-cancelar">Cancelar</button>
-              <button type="button" class="btn btn-primario" id="btn-ap-mig-aplicar" disabled>Importar cuentas y cargar apertura</button>
-            </div>
-          </div>
-        </div>
-      </dialog>
-
-      <!-- ==================== VISTA 4: CONTABILIDAD GENERAL ==================== -->
-      <section class="vista" id="suite-libros" hidden>
-        <div class="conta-master-tabs" role="navigation" aria-label="Secciones de Contabilidad y Balance">
-          <button type="button" class="conta-master-tab activo" data-conta-ir="libros"><span class="material-icons" aria-hidden="true">menu_book</span>Libros y Plan</button>
-          <button type="button" class="conta-master-tab" data-conta-ir="balance"><span class="material-icons" aria-hidden="true">table_chart</span>Balance 8 Col. y RLI</button>
-          <button type="button" class="conta-master-tab" data-conta-ir="pnl"><span class="material-icons" aria-hidden="true">assessment</span>Estados Financieros</button>
-        </div>
-        <div class="v-head">
-          <div>
-            <h1 class="v-titulo">Contabilidad General</h1>
-            <p class="v-sub">Registro ordenado de cada movimiento contable del mes, mayor por cuenta y plan contable configurable.</p>
-          </div>
-          <div class="v-acciones">
-            <button class="btn btn-primario" type="button" id="btn-libros-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF Libro Diario</button>
-            <button class="btn" type="button" id="btn-libros-csv">Exportar Excel</button>
-          </div>
-        </div>
-
-        <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
-          <div class="fin-kpi"><span class="fin-kpi-label">Asientos del mes</span><span class="fin-kpi-val mono" id="lib-k-asientos">0</span></div>
-          <div class="fin-kpi"><span class="fin-kpi-label">Suma Debe</span><span class="fin-kpi-val mono" id="lib-k-debe">$0</span></div>
-          <div class="fin-kpi"><span class="fin-kpi-label">Suma Haber</span><span class="fin-kpi-val mono" id="lib-k-haber">$0</span></div>
-          <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Partida doble</span><span class="fin-kpi-val ok" id="lib-k-estado">Cuadrado</span></div>
-        </div>
-
-        <div class="fin-filtros" role="tablist" aria-label="Subvistas de contabilidad general">
-          <button type="button" class="fin-chip activo" data-sublibro="diario" role="tab" aria-selected="true" aria-controls="sub-diario">Libro Diario</button>
-          <button type="button" class="fin-chip" data-sublibro="mayor" role="tab" aria-selected="false" aria-controls="sub-mayor">Libro Mayor</button>
-          <button type="button" class="fin-chip" data-sublibro="plan" role="tab" aria-selected="false" aria-controls="sub-plan">Plan de Cuentas</button>
-          <button type="button" class="fin-chip" data-sublibro="apertura" role="tab" aria-selected="false" aria-controls="sub-apertura">Saldos iniciales (Apertura)</button>
-        </div>
-
-        <!-- Subvista Diario -->
-        <div id="sub-diario">
-          <div class="suite-preval-strip" id="diario-aviso-apertura" style="margin-bottom:12px">
-            <span class="suite-preval-strip-izq">
-              <span class="material-icons" aria-hidden="true">account_balance_wallet</span>
-              <span>¿Vienes de Nubox o Excel? Carga los saldos iniciales reales del 1 de enero para que tu Balance arranque cuadrado.</span>
-            </span>
-            <button type="button" class="btn btn-chico" id="btn-diario-ir-apertura">Cargar saldos iniciales</button>
-          </div>
-          <div class="asiento-lista" id="diario-lista" style="margin-bottom:18px"></div>
-          <div class="panel" id="form-nuevo-asiento-wrap">
-            <div class="panel-head"><h2>Registrar asiento manual o ajuste contable</h2><span class="texto-ayuda">Partida doble obligatoria</span></div>
-            <form id="form-nuevo-asiento" class="panel-cuerpo" novalidate>
-              <div class="fin-form-grid" style="margin-bottom:12px">
-                <div class="lq-field"><label for="manual-fecha">Fecha contable</label><input type="date" id="manual-fecha"></div>
-                <div class="lq-field fin-span-all"><label for="manual-glosa">Glosa del asiento</label><input type="text" id="manual-glosa" maxlength="120" placeholder="Ej: Apertura de caja chica, ajuste por diferencia de cambio"></div>
-              </div>
-              <div class="manual-lineas" id="manual-lineas"></div>
-              <p class="texto-ayuda" id="manual-cuadre">Ingresa montos al Debe y al Haber para cuadrar el asiento.</p>
-              <div class="form-acciones" style="margin-top:12px">
-                <button type="button" class="btn btn-chico" id="btn-manual-agregar-linea"><span class="material-icons" aria-hidden="true">add</span>Agregar línea</button>
-                <button type="submit" class="btn btn-chico btn-primario"><span class="material-icons" aria-hidden="true">check</span>Registrar asiento</button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <!-- Subvista Mayor -->
-        <div id="sub-mayor" hidden>
-          <div class="panel" style="margin-bottom:16px">
-            <div class="panel-cuerpo">
-              <label for="mayor-cuenta-filtro" class="lq-label">Filtrar cuenta del Plan de Cuentas Pyme</label>
-              <select id="mayor-cuenta-filtro" class="lq-select" style="margin-top:6px;width:100%"><option value="">Todas las cuentas con movimiento</option></select>
-            </div>
-          </div>
-          <div class="asiento-lista" id="mayor-lista"></div>
-        </div>
-
-        <!-- Subvista Plan de Cuentas Editable -->
-        <!-- Subvista Saldos Iniciales (Asiento de Apertura 1 de enero + Migrador) -->
-        <div id="sub-apertura" hidden>
-          <div class="panel">
-            <div class="panel-head bancos-toolbar-head">
-              <div>
-                <h2>Saldos iniciales de apertura (1 de enero)</h2>
-                <p class="panel-ayuda">Trae los saldos del cierre anterior desde Nubox o Excel para que tu Balance arranque cuadrado.</p>
-              </div>
-              <div class="v-acciones">
-                <button type="button" class="btn btn-chico" id="btn-apertura-ejemplo">Cargar apertura de ejemplo</button>
-                <button type="button" class="btn btn-chico btn-primario" id="btn-apertura-migrar"><span class="material-icons" aria-hidden="true">upload_file</span>Importar desde Excel / Nubox</button>
-              </div>
-            </div>
-            <div class="panel-cuerpo">
-              <div class="apertura-cuadre-bar" role="status" aria-live="polite">
-                <div class="apertura-totales">
-                  <span>Total Debe: <strong class="mono" id="ap-total-debe">$0</strong></span>
-                  <span>Total Haber: <strong class="mono" id="ap-total-haber">$0</strong></span>
-                  <span class="sello sello-guardada" id="ap-estado-cuadre">Sin saldos</span>
-                </div>
-                <div class="apertura-acciones-guardar">
-                  <button type="button" class="btn btn-chico" id="btn-apertura-agregar-fila">+ Agregar cuenta</button>
-                  <button type="button" class="btn btn-chico btn-primario" id="btn-apertura-guardar" disabled>Guardar Asiento de Apertura</button>
-                </div>
-              </div>
-              <p class="texto-ayuda" id="ap-dif-msg" style="margin:0 0 12px">Ingresa saldos en Debe y Haber o importa una planilla de Nubox/Excel.</p>
-
-              <div class="tabla-contable-wrap">
-                <table class="tabla-contable compacta apertura-tabla">
-                  <thead>
-                    <tr>
-                      <th scope="col">Cuenta contable</th>
-                      <th scope="col" class="num">Debe ($)</th>
-                      <th scope="col" class="num">Haber ($)</th>
-                      <th scope="col" class="num">Quitar</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-apertura"></tbody>
-                </table>
-              </div>
-              <div style="margin-top:12px;display:flex;justify-content:flex-end">
-                <button type="button" class="btn-texto" id="btn-apertura-limpiar">Volver a apertura automática simple</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="sub-plan" hidden>
-          <div class="panel" id="panel-plan-editable" style="margin-bottom:16px">
-            <div class="panel-head">
-              <div>
-                <h2>Plan de cuentas configurable del estudio</h2>
-                <p class="texto-ayuda">Edita nombres o agrega cuentas propias. Se guarda en tu navegador y actualiza Diario, Mayor y Balance al instante.</p>
-              </div>
-              <div class="v-acciones">
-                <select id="suite-erp-origen" class="lq-select lq-select-sm" aria-label="Formato contable de referencia">
-                  <option value="sii_estandar" selected>Plan base Suite (Estándar)</option>
-                  <option value="softland">Referencia Softland</option>
-                  <option value="transtecnia">Referencia Transtecnia</option>
-                  <option value="laudus">Referencia Laudus</option>
-                </select>
-                <button type="button" class="btn btn-chico" id="btn-plan-restaurar">Restaurar base</button>
-                <button type="button" class="btn btn-chico" id="btn-importar-plan-csv">Importar CSV</button>
-                <input type="file" id="file-plan-csv" accept=".csv,.txt" class="sr-only" aria-label="Importar archivo CSV de plan de cuentas">
-              </div>
-            </div>
-            <div class="panel-cuerpo">
-              <div class="suite-plan-nuevo-fila">
-                <div class="lq-field"><label for="plan-nuevo-codigo">Código</label><input type="text" id="plan-nuevo-codigo" placeholder="11015"></div>
-                <div class="lq-field"><label for="plan-nuevo-nombre">Nombre de cuenta</label><input type="text" id="plan-nuevo-nombre" placeholder="Banco cuenta vista"></div>
-                <div class="lq-field"><label for="plan-nuevo-tipo">Tipo</label>
-                  <select id="plan-nuevo-tipo" class="lq-select">
-                    <option value="activo">Activo</option>
-                    <option value="pasivo">Pasivo</option>
-                    <option value="patrimonio">Patrimonio</option>
-                    <option value="perdida">Pérdida</option>
-                    <option value="ganancia">Ganancia</option>
-                  </select>
-                </div>
-                <div class="lq-field"><label for="plan-nuevo-grupo">Grupo tributario</label>
-                  <select id="plan-nuevo-grupo" class="lq-select">
-                    <option value="disponible">Disponible / Banco</option>
-                    <option value="cxc">Clientes por cobrar</option>
-                    <option value="cxp">Proveedores por pagar</option>
-                    <option value="impuestos">Impuestos / F29</option>
-                    <option value="laboral">Laboral / Previred</option>
-                    <option value="costo_ventas">Costo de ventas</option>
-                    <option value="opex_admin">Gasto administración</option>
-                    <option value="ingreso_giro">Ingreso del giro</option>
-                    <option value="gasto_rechazado">Gasto rechazado</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                </div>
-                <div class="lq-field" style="align-self:end"><button type="button" class="btn btn-primario" id="btn-plan-agregar">Agregar cuenta</button></div>
-              </div>
-              <p class="panel-ayuda" id="suite-plan-estado-txt" style="margin:8px 0 12px"></p>
-              <div class="tabla-contable-wrap">
-                <table class="tabla-contable compacta">
-                  <thead>
-                    <tr>
-                      <th scope="col">Código</th>
-                      <th scope="col">Nombre contable</th>
-                      <th scope="col">Naturaleza</th>
-                      <th scope="col">Grupo</th>
-                      <th scope="col" class="num">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-plan-cuentas"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== VISTA 4: BALANCE Y RLI ==================== -->
-      <section class="vista" id="suite-balance" hidden>
-        <div class="conta-master-tabs" role="navigation" aria-label="Secciones de Contabilidad y Balance">
-          <button type="button" class="conta-master-tab" data-conta-ir="libros"><span class="material-icons" aria-hidden="true">menu_book</span>Libros y Plan</button>
-          <button type="button" class="conta-master-tab activo" data-conta-ir="balance"><span class="material-icons" aria-hidden="true">table_chart</span>Balance 8 Col. y RLI</button>
-          <button type="button" class="conta-master-tab" data-conta-ir="pnl"><span class="material-icons" aria-hidden="true">assessment</span>Estados Financieros</button>
-        </div>
-        <div class="v-head">
-          <div>
-            <h1 class="v-titulo">Balance Tributario (8 Columnas) y RLI</h1>
-            <p class="v-sub">Fotografía tributaria del año y cálculo de cuánto paga de impuesto a la renta la empresa bajo ProPyme 14 D3 o 14 D8.</p>
-          </div>
-          <div class="v-acciones">
-            <div class="segmento" id="bal-alcance-seg" role="radiogroup" aria-label="Alcance temporal del balance y RLI">
-              <label><input type="radio" name="bal-alcance" value="mes" checked><span>Mes activo (<span id="bal-seg-mes">Nov</span>)</span></label>
-              <label><input type="radio" name="bal-alcance" value="anual"><span>Acumulado anual <span id="bal-seg-anio">2026</span></span></label>
-            </div>
-            <button class="btn btn-primario" type="button" id="btn-balance-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF Balance + RLI</button>
-            <button class="btn" type="button" id="btn-balance-csv">Excel Balance</button>
-            <button class="btn" type="button" id="btn-rli-csv">Excel RLI</button>
-          </div>
-        </div>
-
-        <div class="suite-preval-strip ok" id="bal-cobertura-strip" hidden role="status" aria-live="polite"></div>
-
-        <div class="tabla-resumen-movil" id="bal-resumen-movil" hidden>
-          <div class="resumen-movil-card">
-            <div class="resumen-movil-head">
-              <span class="mono resumen-movil-tag">Balance 8 Columnas</span>
-              <span class="sello sello-activo" id="bal-m-cuadratura">Débitos = Créditos</span>
-            </div>
-            <div class="resumen-movil-grid">
-              <div class="resumen-movil-kpi">
-                <span class="resumen-kpi-lbl">Total Activo</span>
-                <span class="resumen-kpi-val mono" id="bal-m-activo">$0</span>
-              </div>
-              <div class="resumen-movil-kpi">
-                <span class="resumen-kpi-lbl">Pasivo + Patrimonio</span>
-                <span class="resumen-kpi-val mono" id="bal-m-pasivo">$0</span>
-              </div>
-              <div class="resumen-movil-kpi">
-                <span class="resumen-kpi-lbl" id="bal-m-res-lbl">Resultado ejercicio</span>
-                <span class="resumen-kpi-val mono ok" id="bal-m-resultado">$0</span>
-              </div>
-              <div class="resumen-movil-kpi destacado">
-                <span class="resumen-kpi-lbl">Base RLI ProPyme (F22)</span>
-                <span class="resumen-kpi-val mono ok" id="bal-m-rli">$0</span>
-              </div>
-            </div>
-            <div class="resumen-movil-pie">
-              <p class="texto-ayuda">Diferencia cuadratura: <strong class="mono" id="bal-m-dif">$0</strong> (Débitos = Créditos)</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
-          <div class="fin-kpi"><span class="fin-kpi-label">Total Activo</span><span class="fin-kpi-val mono" id="bal-k-activo">$0</span></div>
-          <div class="fin-kpi"><span class="fin-kpi-label">Pasivo + Patrimonio</span><span class="fin-kpi-val mono" id="bal-k-pasivo">$0</span></div>
-          <div class="fin-kpi"><span class="fin-kpi-label" id="bal-k-res-lbl">Resultado ejercicio</span><span class="fin-kpi-val mono ok" id="bal-k-resultado">$0</span></div>
-          <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Base RLI ProPyme (F22)</span><span class="fin-kpi-val mono ok" id="bal-k-rli">$0</span></div>
-        </div>
-
-        <div class="fin-filtros" role="tablist" aria-label="Subvistas de balance y RLI">
-          <button type="button" class="fin-chip activo" data-subbal="balance8" role="tab" aria-selected="true" aria-controls="sub-balance8">Balance de 8 Columnas</button>
-          <button type="button" class="fin-chip" data-subbal="rli" role="tab" aria-selected="false" aria-controls="sub-rli">Hoja RLI ProPyme (Art. 14 D N°3)</button>
-          <button type="button" class="fin-chip" data-subbal="activo_fijo" role="tab" aria-selected="false" aria-controls="sub-activo-fijo">Activo Fijo y Deprec.</button>
-        </div>
-
-        <div id="sub-balance8">
-          <div class="demo-vacio" id="bal-vacio">
-            <p class="demo-vacio-t">Balance sin movimientos registrados</p>
-            <p class="texto-ayuda">Carga el RCV en Formulario 29 o la nómina en Remuneraciones para generar el Balance de 8 Columnas con débitos iguales a créditos.</p>
-          </div>
-          <div class="panel" id="bal-tabla-panel" hidden>
-            <div class="panel-head"><h2>Balance Tributario Clasificado de 8 Columnas</h2><span class="texto-ayuda">Borrador referencial (Débitos = Créditos)</span></div>
-            <div class="panel-cuerpo">
-              <div class="tabla-contable-wrap">
-                <table class="tabla-contable balance-ocho">
-                  <thead>
-                    <tr>
-                      <th scope="col" rowspan="2">Código</th>
-                      <th scope="col" rowspan="2">Cuenta contable</th>
-                      <th scope="col" colspan="2" class="grupo-col">Sumas</th>
-                      <th scope="col" colspan="2" class="grupo-col">Saldos</th>
-                      <th scope="col" colspan="2" class="grupo-col">Inventario</th>
-                      <th scope="col" colspan="2" class="grupo-col">Resultados</th>
-                    </tr>
-                    <tr>
-                      <th scope="col" class="num">Débito</th>
-                      <th scope="col" class="num">Crédito</th>
-                      <th scope="col" class="num">Deudor</th>
-                      <th scope="col" class="num">Acreedor</th>
-                      <th scope="col" class="num">Activo</th>
-                      <th scope="col" class="num">Pasivo</th>
-                      <th scope="col" class="num">Pérdida</th>
-                      <th scope="col" class="num">Ganancia</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-balance8"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="sub-rli" hidden>
-          <div class="panel">
-            <div class="panel-head"><h2>Determinación de RLI ProPyme General (Art. 14 D N°3 LIR)</h2><span class="texto-ayuda">Flujo percibido y pagado</span></div>
-            <div class="panel-cuerpo">
-              <div class="fin-form-grid" style="margin-bottom:14px">
-                <div class="lq-field">
-                  <label for="rli-cobros-ant">Cobros ventas ejercicios ant.</label>
-                  <div class="campo-unidad">
-                    <span class="campo-addon" aria-hidden="true">$</span>
-                    <input type="text" id="rli-cobros-ant" inputmode="numeric" data-tipo="pesos" value="0">
-                  </div>
-                </div>
-                <div class="lq-field">
-                  <label for="rli-pagos-ant">Pagos egresos ejercicios ant.</label>
-                  <div class="campo-unidad">
-                    <span class="campo-addon" aria-hidden="true">$</span>
-                    <input type="text" id="rli-pagos-ant" inputmode="numeric" data-tipo="pesos" value="0">
-                  </div>
-                </div>
-                <div class="lq-field">
-                  <label for="rli-agregados">Otros agregados art. 21/31</label>
-                  <div class="campo-unidad">
-                    <span class="campo-addon" aria-hidden="true">$</span>
-                    <input type="text" id="rli-agregados" inputmode="numeric" data-tipo="pesos" value="0">
-                  </div>
-                </div>
-                <div class="lq-field">
-                  <label for="rli-tasa-idpc">Tasa IDPC referencial</label>
-                  <div class="campo-unidad">
-                    <input type="text" id="rli-tasa-idpc" inputmode="decimal" data-tipo="dec" value="12,5">
-                    <span class="campo-addon sufijo" aria-hidden="true">%</span>
-                  </div>
-                </div>
-              </div>
-              <div class="tabla-contable-wrap">
-                <table class="tabla-contable">
-                  <thead>
-                    <tr>
-                      <th scope="col">Concepto de Renta Líquida Imponible</th>
-                      <th scope="col" class="num">Monto ($)</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-rli"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Subvista Activo Fijo y Depreciación -->
-        <div id="sub-activo-fijo" hidden>
-          <div class="panel-nota-normativa" id="af-norma-banner" style="margin-bottom:14px">
-            <span class="material-icons" aria-hidden="true">info</span>
-            <span id="af-norma-txt">ProPyme 14 D N°3 y N°8: depreciación instantánea del 100% sobre el valor neto pagado (sin IVA recuperable, sin terrenos y sin CM). Régimen 14 A: normal o acelerada 1/3 para bienes nuevos >= 3 años con control DDAN.</span>
-          </div>
-          <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
-            <div class="fin-kpi"><span class="fin-kpi-label">Base depreciable</span><span class="fin-kpi-val mono" id="af-k-base">$0</span></div>
-            <div class="fin-kpi"><span class="fin-kpi-label">Deprec. tributaria ejercicio</span><span class="fin-kpi-val mono ok" id="af-k-trib">$0</span></div>
-            <div class="fin-kpi"><span class="fin-kpi-label">Diferencia DDAN (14 A)</span><span class="fin-kpi-val mono" id="af-k-ddan">$0</span></div>
-            <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Valor libro cierre</span><span class="fin-kpi-val mono" id="af-k-libro">$0</span></div>
-          </div>
-          <div class="panel">
-            <div class="panel-head">
-              <div>
-                <h2>Control de Activo Fijo Tributario</h2>
-                <p class="panel-ayuda">Agrega activos manualmente o importa las compras clasificadas como activo fijo en el RCV SII (cód. 524/525).</p>
-              </div>
-              <div class="v-acciones">
-                <button type="button" class="btn btn-chico" id="btn-af-importar-rcv">Importar desde RCV</button>
-                <button type="button" class="btn btn-chico btn-primario" id="btn-af-asiento-diario">Registrar depreciación en Diario</button>
-              </div>
-            </div>
-            <div class="panel-cuerpo">
-              <div class="fin-form-grid" style="margin-bottom:12px">
-                <div class="lq-field"><label for="af-desc">Descripción del bien</label><input type="text" id="af-desc" placeholder="Ej: Horno industrial / Furgón"></div>
-                <div class="lq-field">
-                  <label for="af-valor">Valor neto compra</label>
-                  <div class="campo-unidad">
-                    <span class="campo-addon" aria-hidden="true">$</span>
-                    <input type="text" id="af-valor" inputmode="numeric" data-tipo="pesos" placeholder="1600000">
-                  </div>
-                </div>
-                <div class="lq-field">
-                  <label for="af-iva-norec">IVA no recuperable</label>
-                  <div class="campo-unidad">
-                    <span class="campo-addon" aria-hidden="true">$</span>
-                    <input type="text" id="af-iva-norec" inputmode="numeric" data-tipo="pesos" value="0">
-                  </div>
-                </div>
-                <div class="lq-field">
-                  <label for="af-vida">Vida útil normal SII</label>
-                  <div class="campo-unidad">
-                    <input type="text" id="af-vida" inputmode="numeric" data-tipo="num" value="7">
-                    <span class="campo-addon sufijo" aria-hidden="true">años</span>
-                  </div>
-                </div>
-                <div class="lq-field">
-                  <label for="af-meses">Meses uso en ejercicio</label>
-                  <div class="campo-unidad">
-                    <input type="text" id="af-meses" inputmode="numeric" data-tipo="num" value="12">
-                    <span class="campo-addon sufijo" aria-hidden="true">meses</span>
-                  </div>
-                </div>
-                <div class="lq-field"><label for="af-mod14a">Método en Régimen 14 A</label>
-                  <select id="af-mod14a" class="lq-select">
-                    <option value="normal">Normal (Art. 31 N°5)</option>
-                    <option value="acelerada_1_3">Acelerada 1/3 (bienes nuevos >=3a)</option>
-                    <option value="ultra_1_10">Ultrarrápida 1/10 (Art. 31 N°5 bis &lt;=100k UF)</option>
-                  </select>
-                </div>
-              </div>
-              <div class="suite-af-checks" style="margin-bottom:14px">
-                <label class="pm-check"><input type="checkbox" id="af-pagado" checked> Bien pagado en el ejercicio</label>
-                <label class="pm-check"><input type="checkbox" id="af-usado"> Bien usado</label>
-                <label class="pm-check"><input type="checkbox" id="af-terreno"> Corresponde a terreno (no depreciable)</label>
-                <button type="button" class="btn btn-primario btn-chico" id="btn-af-agregar">Agregar activo fijo</button>
-              </div>
-              <div class="tabla-contable-wrap">
-                <table class="tabla-contable compacta">
-                  <thead>
-                    <tr>
-                      <th scope="col">Bien / Activo</th>
-                      <th scope="col">Regla aplicada</th>
-                      <th scope="col" class="num">Base ($)</th>
-                      <th scope="col" class="num">Deprec. Trib. ($)</th>
-                      <th scope="col" class="num">DDAN ($)</th>
-                      <th scope="col" class="num">Valor Libro ($)</th>
-                      <th scope="col" class="num">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-activo-fijo"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== VISTA 5: RESULTADOS Y FLUJO ==================== -->
-      <section class="vista" id="suite-pnl" hidden>
-        <div class="conta-master-tabs" role="navigation" aria-label="Secciones de Contabilidad y Balance">
-          <button type="button" class="conta-master-tab" data-conta-ir="libros"><span class="material-icons" aria-hidden="true">menu_book</span>Libros y Plan</button>
-          <button type="button" class="conta-master-tab" data-conta-ir="balance"><span class="material-icons" aria-hidden="true">table_chart</span>Balance 8 Col. y RLI</button>
-          <button type="button" class="conta-master-tab activo" data-conta-ir="pnl"><span class="material-icons" aria-hidden="true">assessment</span>Estados Financieros</button>
-        </div>
-        <div class="v-head">
-          <div>
-            <h1 class="v-titulo">Estados Financieros (Resultados y Flujo)</h1>
-            <p class="v-sub">Cuánto ganó o perdió realmente la empresa este mes, más la plata disponible en caja para sueldos, Previred y F29.</p>
-          </div>
-          <div class="v-acciones">
-            <button class="btn btn-primario" type="button" id="btn-pnl-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Imprimir informe ejecutivo (PDF)</button>
-            <button class="btn" type="button" id="btn-pnl-csv">Exportar Excel</button>
-          </div>
-        </div>
-
-        <div class="demo-vacio" id="pnl-vacio" style="margin-bottom:14px" hidden>
-          <p class="demo-vacio-t">Aún no hay movimientos para armar Resultados y Flujo</p>
-          <p class="texto-ayuda">Carga tu RCV de Compras/Ventas en F29 o calcula la nómina en Remuneraciones para ver márgenes y caja proyectada.</p>
-          <div class="form-acciones" style="justify-content:center;margin-top:10px">
-            <button type="button" class="btn btn-primario btn-chico" id="btn-pnl-ir-f29">Ir a F29 y RCV</button>
-            <button type="button" class="btn btn-chico" id="btn-pnl-ir-nomina">Ir a Remuneraciones</button>
-          </div>
-        </div>
-
-        <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
-          <div class="fin-kpi fin-kpi-ok"><span class="fin-kpi-label">Ingresos del giro (neto)</span><span class="fin-kpi-val mono ok" id="pnl-k-ingresos">$0</span></div>
-          <div class="fin-kpi" id="pnl-kpi-card-margen"><span class="fin-kpi-label">Margen bruto</span><span class="fin-kpi-val mono" id="pnl-k-margen">$0</span></div>
-          <div class="fin-kpi" id="pnl-kpi-card-ebit"><span class="fin-kpi-label">Resultado operacional</span><span class="fin-kpi-val mono" id="pnl-k-ebit">$0</span></div>
-          <div class="fin-kpi fin-kpi-destacado" id="pnl-kpi-card-caja"><span class="fin-kpi-label">Caja libre post Previred + F29</span><span class="fin-kpi-val mono ok" id="pnl-k-caja">$0</span></div>
-        </div>
-        <div class="suite-graf-card" id="pnl-grafico-resumen" aria-label="Gráfico comparativo de Ingresos, Costos, Gastos y Caja Libre"></div>
-
-        <div class="fin-split">
-          <div class="panel">
-            <div class="panel-head"><h2>Estado de Resultados (Base Devengada)</h2><span class="texto-ayuda">Sin IVA</span></div>
-            <div class="panel-cuerpo">
-              <div class="tabla-contable-wrap">
-                <table class="tabla-contable compacta">
-                  <thead>
-                    <tr>
-                      <th scope="col">Rubro de resultado</th>
-                      <th scope="col" class="num">Monto ($)</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-pnl"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-head"><h2>Flujo de Caja Operativo y Tributario</h2><span class="texto-ayuda">Con vencimientos día 13 y 20</span></div>
-            <div class="panel-cuerpo">
-              <div class="tabla-contable-wrap">
-                <table class="tabla-contable compacta">
-                  <thead>
-                    <tr>
-                      <th scope="col">Movimiento efectivo y compromisos</th>
-                      <th scope="col" class="num">Monto ($)</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-flujo"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== VISTA 6: TORRE DE CONTROL ==================== -->
       <section class="vista" id="suite-torre" hidden>
         <div class="v-head">
           <div>
@@ -4082,7 +2482,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=2.1.1"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.0.9"></script>
+<script src="/js/demo_suite.js?v=3.1.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

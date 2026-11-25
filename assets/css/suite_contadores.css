@@ -7754,3 +7754,132 @@ dialog.app-dialogo {
         justify-content: center;
     }
 }
+
+/* ==========================================================================
+   PULIDO SAAS PROFESIONAL (Stripe / Linear / Clay — Design Critic P0)
+   1. Superficies KPI blancas limpias (adiós arcoíris pastel)
+   2. Números KPI dominantes 28px Geist tabular-nums (sin 0 tachado)
+   3. Sidebar 252px sin scroll innecesario ni truncados + Topbar aireado
+   ========================================================================== */
+#pm-panel.syn-theme {
+    --side-w: 252px;
+}
+#pm-panel.syn-theme .app-side {
+    width: 252px;
+}
+#pm-panel.syn-theme .fin-kpi,
+#pm-panel.syn-theme .fin-kpi.fin-kpi-ok,
+#pm-panel.syn-theme .fin-kpi.fin-kpi-warn,
+#pm-panel.syn-theme .fin-kpi.fin-kpi-risk,
+#pm-panel.syn-theme .fin-kpi.fin-kpi-destacado {
+    background: #FFFFFF !important;
+    border: 1px solid var(--syn-border, #E5E7EB) !important;
+    border-top-width: 1px !important;
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+#pm-panel.syn-theme .fin-kpi .fin-kpi-label {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--syn-muted, #6B7280);
+}
+#pm-panel.syn-theme .fin-kpi .saas-kpi-num,
+#pm-panel.syn-theme .fin-kpi .fin-kpi-val {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-size: 27px;
+    font-weight: 650;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    color: var(--syn-ink, #141518);
+    margin: 4px 0 2px;
+}
+#pm-panel.syn-theme .fin-kpi.fin-kpi-risk .fin-kpi-val {
+    color: #9F1239;
+}
+#pm-panel.syn-theme .fin-kpi.fin-kpi-ok .fin-kpi-val {
+    color: var(--syn-ink, #141518);
+}
+#pm-panel.syn-theme .fin-kpi.fin-kpi-warn .fin-kpi-val {
+    color: var(--syn-ink, #141518);
+}
+
+/* Tabla operativa de cartera en Dashboard */
+.saas-cartera-tabla th,
+.saas-cartera-tabla td {
+    padding: 11px 16px;
+}
+.saas-cartera-tabla tr.saas-row-activo {
+    background: #FAFAFB;
+}
+.saas-mini-prog {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+}
+.saas-mini-track {
+    width: 72px;
+    height: 5px;
+    border-radius: 999px;
+    background: #ECEEF2;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.saas-mini-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--syn-ink, #141518);
+}
+
+/* Menú colapsable Herramientas en el pie del Sidebar (evita scroll apretado) */
+.side-tools-menu {
+    width: 100%;
+}
+.side-tools-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--syn-ink-2, #4B5563);
+    cursor: pointer;
+    list-style: none;
+    transition: background-color .15s ease;
+}
+.side-tools-summary::-webkit-details-marker {
+    display: none;
+}
+.side-tools-summary:hover {
+    background: var(--syn-surface-2, #F1F3F5);
+    color: var(--syn-ink, #141518);
+}
+.side-tools-summary .material-icons {
+    font-size: 18px;
+}
+.side-tools-chev {
+    margin-left: auto;
+    transition: transform .15s ease;
+}
+.side-tools-menu[open] .side-tools-chev {
+    transform: rotate(180deg);
+}
+.side-tools-body {
+    display: grid;
+    gap: 6px;
+    padding-top: 8px;
+}
+
+/* Topbar sin truncados innecesarios en escritorio ancho */
+#pm-panel.syn-theme .syn-bc-estudio {
+    max-width: 190px;
+}
+#pm-panel.syn-theme .syn-ctx-trigger strong {
+    max-width: 220px;
+}
+#pm-panel.syn-theme .syn-dash-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+}
