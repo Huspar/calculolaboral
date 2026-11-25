@@ -146,7 +146,83 @@
     }
 
     // ---------- Motor OOXML de estilos (XLSX.CFB) ----------
-    // Paleta CalculoLaboral: verde marca #00382E, profundo #00261F, medio #0B4F41, menta suave #EDF5F2, zebra #F8FAF9, borde #CBD5E1
+    // Soporta paleta por tema activo de la Suite (slate, editorial, cobalto) y verde marca (#00382E) por defecto para /app.
+    var PALETAS = {
+        verde: {
+            primary: 'FF00382E',
+            dark: 'FF00261F',
+            group: 'FF0B4F41',
+            headerBorder: 'FF1B5E50',
+            soft: 'FFEDF5F2',
+            totalText: 'FF00382E',
+            subText: 'FFD1FAE5',
+            zebra: 'FFF8FAF9',
+            secBg: 'FFE2E8F0',
+            subBg: 'FFF1F5F9',
+            border: 'FFCBD5E1',
+            secBorder: 'FF94A3B8'
+        },
+        slate: {
+            primary: 'FF0F172A',
+            dark: 'FF1E293B',
+            group: 'FF3730A3',
+            headerBorder: 'FF4F46E5',
+            soft: 'FFEEF2FF',
+            totalText: 'FF1E1B4B',
+            subText: 'FFC7D2FE',
+            zebra: 'FFF8FAFC',
+            secBg: 'FFE2E8F0',
+            subBg: 'FFF1F5F9',
+            border: 'FFCBD5E1',
+            secBorder: 'FF94A3B8'
+        },
+        editorial: {
+            primary: 'FF7C2D12',
+            dark: 'FF9A3412',
+            group: 'FFC2410C',
+            headerBorder: 'FFEA580C',
+            soft: 'FFFFF7ED',
+            totalText: 'FF7C2D12',
+            subText: 'FFFED7AA',
+            zebra: 'FFFAF8F5',
+            secBg: 'FFF5F0EB',
+            subBg: 'FFF3ECE4',
+            border: 'FFD6D3D1',
+            secBorder: 'FFA8A29E'
+        },
+        cobalto: {
+            primary: 'FF1E3A8A',
+            dark: 'FF172554',
+            group: 'FF1D4ED8',
+            headerBorder: 'FF2563EB',
+            soft: 'FFEFF6FF',
+            totalText: 'FF1E3A8A',
+            subText: 'FFDBEAFE',
+            zebra: 'FFF8FAFC',
+            secBg: 'FFE2E8F0',
+            subBg: 'FFF1F5F9',
+            border: 'FFCBD5E1',
+            secBorder: 'FF94A3B8'
+        }
+    };
+
+    function resolverTema(explicito) {
+        if (explicito && PALETAS[explicito]) return explicito;
+        if (typeof document !== 'undefined') {
+            var panel = document.querySelector('#pm-panel.syn-theme, [data-syn-theme]');
+            if (panel) {
+                var attr = panel.getAttribute('data-syn-theme');
+                if (attr && PALETAS[attr]) return attr;
+                try {
+                    var ls = window.localStorage && window.localStorage.getItem('cl_suite_theme');
+                    if (ls && PALETAS[ls]) return ls;
+                } catch (e) {}
+                return 'slate';
+            }
+        }
+        return 'verde';
+    }
+
     var NUM_FMTS = {
         gen: 0,
         text: 49,
@@ -163,13 +239,15 @@
         encabezado: { font: 4, fill: 2, border: 2, defAlign: 'center', wrap: 1, vAlign: 'center' },
         dato:       { font: 0, fill: 9, border: 1, defAlign: 'left',   wrap: 0, vAlign: 'center' },
         zebra:      { font: 0, fill: 5, border: 1, defAlign: 'left',   wrap: 0, vAlign: 'center' },
+        subtotal:   { font: 7, fill: 10, border: 5, defAlign: 'left',  wrap: 0, vAlign: 'center' },
         total:      { font: 5, fill: 4, border: 3, defAlign: 'left',   wrap: 0, vAlign: 'center' },
         seccion:    { font: 7, fill: 7, border: 5, defAlign: 'left',   wrap: 1, vAlign: 'center' },
         nota:       { font: 6, fill: 0, border: 0, defAlign: 'left',   wrap: 1, vAlign: 'center' },
         aviso:      { font: 6, fill: 8, border: 4, defAlign: 'left',   wrap: 1, vAlign: 'center' }
     };
 
-    function crearRegistroEstilos() {
+    function crearRegistroEstilos(temaNombre) {
+        var pal = PALETAS[resolverTema(temaNombre)] || PALETAS.verde;
         var xfs = ['<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'];
         var indice = { 'default': 0 };
 
@@ -201,33 +279,34 @@
                 '<fonts count="9">' +
                 '<font><sz val="10"/><color rgb="FF0F172A"/><name val="Calibri"/><family val="2"/></font>' +
                 '<font><b/><sz val="13"/><color rgb="FFFFFFFF"/><name val="Calibri"/><family val="2"/></font>' +
-                '<font><sz val="9.5"/><color rgb="FFD1FAE5"/><name val="Calibri"/><family val="2"/></font>' +
-                '<font><b/><sz val="10"/><color rgb="FF00382E"/><name val="Calibri"/><family val="2"/></font>' +
+                '<font><sz val="9.5"/><color rgb="' + pal.subText + '"/><name val="Calibri"/><family val="2"/></font>' +
+                '<font><b/><sz val="10"/><color rgb="' + pal.totalText + '"/><name val="Calibri"/><family val="2"/></font>' +
                 '<font><b/><sz val="10"/><color rgb="FFFFFFFF"/><name val="Calibri"/><family val="2"/></font>' +
-                '<font><b/><sz val="10.5"/><color rgb="FF00382E"/><name val="Calibri"/><family val="2"/></font>' +
+                '<font><b/><sz val="10.5"/><color rgb="' + pal.totalText + '"/><name val="Calibri"/><family val="2"/></font>' +
                 '<font><i/><sz val="9"/><color rgb="FF475569"/><name val="Calibri"/><family val="2"/></font>' +
                 '<font><b/><sz val="10"/><color rgb="FF0F172A"/><name val="Calibri"/><family val="2"/></font>' +
                 '<font><b/><sz val="10"/><color rgb="FFFFFFFF"/><name val="Calibri"/><family val="2"/></font>' +
                 '</fonts>' +
-                '<fills count="10">' +
+                '<fills count="11">' +
                 '<fill><patternFill patternType="none"/></fill>' +
                 '<fill><patternFill patternType="gray125"/></fill>' +
-                '<fill><patternFill patternType="solid"><fgColor rgb="FF00382E"/></patternFill></fill>' +
-                '<fill><patternFill patternType="solid"><fgColor rgb="FF00261F"/></patternFill></fill>' +
-                '<fill><patternFill patternType="solid"><fgColor rgb="FFEDF5F2"/></patternFill></fill>' +
-                '<fill><patternFill patternType="solid"><fgColor rgb="FFF8FAF9"/></patternFill></fill>' +
-                '<fill><patternFill patternType="solid"><fgColor rgb="FF0B4F41"/></patternFill></fill>' +
-                '<fill><patternFill patternType="solid"><fgColor rgb="FFE2E8F0"/></patternFill></fill>' +
+                '<fill><patternFill patternType="solid"><fgColor rgb="' + pal.primary + '"/></patternFill></fill>' +
+                '<fill><patternFill patternType="solid"><fgColor rgb="' + pal.dark + '"/></patternFill></fill>' +
+                '<fill><patternFill patternType="solid"><fgColor rgb="' + pal.soft + '"/></patternFill></fill>' +
+                '<fill><patternFill patternType="solid"><fgColor rgb="' + pal.zebra + '"/></patternFill></fill>' +
+                '<fill><patternFill patternType="solid"><fgColor rgb="' + pal.group + '"/></patternFill></fill>' +
+                '<fill><patternFill patternType="solid"><fgColor rgb="' + pal.secBg + '"/></patternFill></fill>' +
                 '<fill><patternFill patternType="solid"><fgColor rgb="FFFFFBEB"/></patternFill></fill>' +
                 '<fill><patternFill patternType="solid"><fgColor rgb="FFFFFFFF"/></patternFill></fill>' +
+                '<fill><patternFill patternType="solid"><fgColor rgb="' + pal.subBg + '"/></patternFill></fill>' +
                 '</fills>' +
                 '<borders count="6">' +
                 '<border><left/><right/><top/><bottom/><diagonal/></border>' +
-                '<border><left style="thin"><color rgb="FFCBD5E1"/></left><right style="thin"><color rgb="FFCBD5E1"/></right><top style="thin"><color rgb="FFCBD5E1"/></top><bottom style="thin"><color rgb="FFCBD5E1"/></bottom><diagonal/></border>' +
-                '<border><left style="thin"><color rgb="FF1B5E50"/></left><right style="thin"><color rgb="FF1B5E50"/></right><top style="thin"><color rgb="FF00382E"/></top><bottom style="medium"><color rgb="FF00261F"/></bottom><diagonal/></border>' +
-                '<border><left style="thin"><color rgb="FFCBD5E1"/></left><right style="thin"><color rgb="FFCBD5E1"/></right><top style="medium"><color rgb="FF00382E"/></top><bottom style="double"><color rgb="FF00382E"/></bottom><diagonal/></border>' +
-                '<border><left style="thin"><color rgb="FFCBD5E1"/></left><right style="thin"><color rgb="FFCBD5E1"/></right><top style="thin"><color rgb="FFCBD5E1"/></top><bottom style="thin"><color rgb="FFCBD5E1"/></bottom><diagonal/></border>' +
-                '<border><left style="thin"><color rgb="FF94A3B8"/></left><right style="thin"><color rgb="FF94A3B8"/></right><top style="thin"><color rgb="FF94A3B8"/></top><bottom style="thin"><color rgb="FF94A3B8"/></bottom><diagonal/></border>' +
+                '<border><left style="thin"><color rgb="' + pal.border + '"/></left><right style="thin"><color rgb="' + pal.border + '"/></right><top style="thin"><color rgb="' + pal.border + '"/></top><bottom style="thin"><color rgb="' + pal.border + '"/></bottom><diagonal/></border>' +
+                '<border><left style="thin"><color rgb="' + pal.headerBorder + '"/></left><right style="thin"><color rgb="' + pal.headerBorder + '"/></right><top style="thin"><color rgb="' + pal.primary + '"/></top><bottom style="medium"><color rgb="' + pal.headerBorder + '"/></bottom><diagonal/></border>' +
+                '<border><left style="thin"><color rgb="' + pal.border + '"/></left><right style="thin"><color rgb="' + pal.border + '"/></right><top style="medium"><color rgb="' + pal.primary + '"/></top><bottom style="double"><color rgb="' + pal.primary + '"/></bottom><diagonal/></border>' +
+                '<border><left style="thin"><color rgb="' + pal.border + '"/></left><right style="thin"><color rgb="' + pal.border + '"/></right><top style="thin"><color rgb="' + pal.border + '"/></top><bottom style="thin"><color rgb="' + pal.border + '"/></bottom><diagonal/></border>' +
+                '<border><left style="thin"><color rgb="' + pal.secBorder + '"/></left><right style="thin"><color rgb="' + pal.secBorder + '"/></right><top style="thin"><color rgb="' + pal.secBorder + '"/></top><bottom style="thin"><color rgb="' + pal.secBorder + '"/></bottom><diagonal/></border>' +
                 '</borders>' +
                 '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
                 '<cellXfs count="' + xfs.length + '">' + xfs.join('') + '</cellXfs>' +
@@ -262,6 +341,7 @@
         var sMeta = aConjunto(est.metaFilas);
         var sGrupo = aConjunto(est.grupoFilas);
         var encRow = typeof est.encabezadoFila === 'number' ? est.encabezadoFila : -1;
+        var sSubtot = aConjunto(est.subtotalFilas);
         var sTot = aConjunto(est.totalesFilas);
         var sSec = aConjunto(est.seccionFilas);
         var sNotas = aConjunto(est.notasFilas);
@@ -300,6 +380,7 @@
             else if (sGrupo[r]) rolFila = 'grupo';
             else if (r === encRow) rolFila = 'encabezado';
             else if (sTot[r]) rolFila = 'total';
+            else if (sSubtot[r]) rolFila = 'subtotal';
             else if (sSec[r]) rolFila = 'seccion';
             else if (sNotas[r]) rolFila = 'nota';
             else if (sAvisos[r]) rolFila = 'aviso';
@@ -329,8 +410,8 @@
                     return Math.max(mx, Math.ceil(s.length / Math.max(8, w - 2)));
                 }, 1);
                 alturas[r] = Math.min(46, Math.max(26, maxHdrLines * 14 + 10));
-            } else if (rolFila === 'total') {
-                alturas[r] = 23;
+            } else if (rolFila === 'total' || rolFila === 'subtotal') {
+                alturas[r] = rolFila === 'total' ? 23 : 21;
             } else if (rolFila === 'seccion') {
                 alturas[r] = 22;
             } else if (rolFila === 'nota' || rolFila === 'aviso') {
@@ -492,7 +573,8 @@
         if (!XLSX) throw new Error('Falta SheetJS (XLSX) para generar el archivo .xlsx.');
         var wb = XLSX.utils.book_new();
         var lista = Array.isArray(hojas) ? hojas : [hojas];
-        var regEstilos = crearRegistroEstilos();
+        var temaExplicito = (lista[0] && lista[0].tema) || (lista[0] && lista[0].estilo && lista[0].estilo.tema) || null;
+        var regEstilos = crearRegistroEstilos(temaExplicito);
         var planes = [];
 
         lista.forEach(function (h, idx) {
@@ -603,7 +685,8 @@
         filasDesdeBuffer: filasDesdeBuffer,
         descargarBytes: descargarBytes,
         descargarXlsx: descargarXlsx,
-        version: '2.0.0'
+        resolverTema: resolverTema,
+        version: '2.1.0'
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CLPymeExcel = api;

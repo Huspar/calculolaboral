@@ -5014,8 +5014,10 @@
                 ];
                 var md = 0, mh = 0, msd = 0, msa = 0;
                 (m.mayor || []).forEach(function (c) {
-                    var d = Math.round(c.debe || 0), h = Math.round(c.haber || 0);
-                    var sd = d > h ? (d - h) : 0, sa = h > d ? (h - d) : 0;
+                    var d = Math.round(c.debito != null ? c.debito : (c.debe || 0));
+                    var h = Math.round(c.credito != null ? c.credito : (c.haber || 0));
+                    var sd = c.saldoDeudor != null ? Math.round(c.saldoDeudor) : (d > h ? (d - h) : 0);
+                    var sa = c.saldoAcreedor != null ? Math.round(c.saldoAcreedor) : (h > d ? (h - d) : 0);
                     md += d; mh += h; msd += sd; msa += sa;
                     filasMayor.push([c.codigo, c.nombre, d, h, sd, sa]);
                 });
@@ -5189,21 +5191,34 @@
                 b.filas.forEach(function (f) {
                     filas.push([f.codigo, f.nombre, f.debito, f.credito, f.deudor, f.acreedor, f.activo, f.pasivo, f.perdida, f.ganancia]);
                 });
+                var t = b.totales || {};
+                var fr = b.filaResultado || {};
                 var si = b.sumasIguales;
+                var etRes = b.resultado >= 0 ? 'Utilidad del ejercicio' : 'Pérdida del ejercicio';
+                var idxSub1 = filas.length;
+                filas.push(['', 'Sumas parciales', t.debito || 0, t.credito || 0, t.deudor || 0, t.acreedor || 0, t.activo || 0, t.pasivo || 0, t.perdida || 0, t.ganancia || 0]);
+                var idxSub2 = filas.length;
+                filas.push(['', etRes, '', '', '', '', fr.activo || '', fr.pasivo || '', fr.perdida || '', fr.ganancia || '']);
+                var idxTot = filas.length;
                 filas.push(['', 'SUMAS IGUALES', si.debito, si.credito, si.deudor, si.acreedor, si.activo, si.pasivo, si.perdida, si.ganancia]);
+                filas.push([]);
+                var idxNota = filas.length;
+                filas.push(['Balance de comprobación, saldos, inventario y resultado por naturaleza contable. Documento de trabajo generado con CálculoLaboral.']);
                 D.descargarXlsx('balance-8-columnas-' + per + '.xlsx', null, null, {
                     nombreHoja: 'Balance 8 Columnas',
                     filasCompletas: filas,
                     textos: { 0: true },
                     monedas: { 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true },
                     alinear: { 0: 'center', 1: 'left' },
-                    anchos: { 0: 11, 1: 32, 2: 14, 3: 14, 4: 14, 5: 14, 6: 14, 7: 14, 8: 14, 9: 14 },
+                    anchos: { 0: 11, 1: 34, 2: 15, 3: 15, 4: 15, 5: 15, 6: 15, 7: 15, 8: 15, 9: 15 },
                     estilo: {
                         tituloFilas: [0],
                         metaFilas: [1],
                         grupoFilas: [3],
                         encabezadoFila: 4,
-                        totalesFilas: [filas.length - 1],
+                        subtotalFilas: [idxSub1, idxSub2],
+                        totalesFilas: [idxTot],
+                        notasFilas: [idxNota],
                         merges: [
                             { s: { r: 3, c: 0 }, e: { r: 4, c: 0 } },
                             { s: { r: 3, c: 1 }, e: { r: 4, c: 1 } },
@@ -6514,11 +6529,81 @@
                     ['RAI estimado de cierre', cpt ? cpt.raiEstimado : 0]
                 ]);
 
+                var f22TotFilas = [];
+                (f22.lineasF22 || []).forEach(function (ln, idx) {
+                    if (ln.destacado) f22TotFilas.push(4 + idx);
+                });
                 window.CLPymeExcel.descargarXlsx('Paquete_Renta_' + clienteSlug() + '_AT' + f22.anioTributario + '.xlsx', [
-                    { nombre: 'Resumen Cliente', filas: hojaResumen, monedas: { 2: true }, estilo: { tituloFilas: [0], encabezadoFila: 3 } },
-                    { nombre: 'Propuesta F22', filas: hojaF22, monedas: { 2: true }, estilo: { tituloFilas: [0], encabezadoFila: 3 } },
-                    { nombre: 'DJ ' + codDj, filas: hojaDj, monedas: codDj === '1947' ? { 3: true, 4: true, 5: true } : { 3: true, 5: true, 6: true }, estilo: { tituloFilas: [0], encabezadoFila: 3 } },
-                    { nombre: 'CPT Simplificado', filas: hojaCpt, monedas: { 1: true }, estilo: { tituloFilas: [0], encabezadoFila: 3 } }
+                    {
+                        nombre: 'Resumen Cliente',
+                        filas: hojaResumen,
+                        monedas: { 2: true },
+                        alinear: { 0: 'left', 1: 'left', 2: 'right' },
+                        anchos: { 0: 42, 1: 38, 2: 20 },
+                        estilo: {
+                            tituloFilas: [0],
+                            metaFilas: [1],
+                            encabezadoFila: 3,
+                            totalesFilas: [8],
+                            notasFilas: [hojaResumen.length - 1],
+                            congelarFila: 4,
+                            orientacion: 'portrait',
+                            zebra: true
+                        }
+                    },
+                    {
+                        nombre: 'Propuesta F22',
+                        filas: hojaF22,
+                        textos: { 0: true },
+                        monedas: { 2: true },
+                        alinear: { 0: 'center', 1: 'left', 2: 'right' },
+                        anchos: { 0: 20, 1: 48, 2: 20 },
+                        estilo: {
+                            tituloFilas: [0],
+                            metaFilas: [1],
+                            encabezadoFila: 3,
+                            totalesFilas: f22TotFilas,
+                            congelarFila: 4,
+                            orientacion: 'portrait',
+                            zebra: true
+                        }
+                    },
+                    {
+                        nombre: 'DJ ' + codDj,
+                        filas: hojaDj,
+                        textos: { 0: true },
+                        decimales: codDj === '1947' ? { 2: true } : { 2: true, 4: true },
+                        monedas: codDj === '1947' ? { 3: true, 4: true, 5: true } : { 3: true, 5: true, 6: true },
+                        alinear: { 0: 'center', 1: 'left', 2: 'right' },
+                        anchos: codDj === '1947'
+                            ? { 0: 16, 1: 30, 2: 11, 3: 20, 4: 20, 5: 20 }
+                            : { 0: 16, 1: 30, 2: 11, 3: 20, 4: 13, 5: 20, 6: 20 },
+                        estilo: {
+                            tituloFilas: [0],
+                            metaFilas: [1],
+                            encabezadoFila: 3,
+                            congelarFila: 4,
+                            orientacion: 'landscape',
+                            zebra: true
+                        }
+                    },
+                    {
+                        nombre: 'CPT Simplificado',
+                        filas: hojaCpt,
+                        monedas: { 1: true },
+                        alinear: { 0: 'left', 1: 'right' },
+                        anchos: { 0: 52, 1: 20 },
+                        estilo: {
+                            tituloFilas: [0],
+                            metaFilas: [1],
+                            encabezadoFila: 3,
+                            totalesFilas: [hojaCpt.length - 2],
+                            subtotalFilas: [hojaCpt.length - 1],
+                            congelarFila: 4,
+                            orientacion: 'portrait',
+                            zebra: true
+                        }
+                    }
                 ]);
                 D.avisar('Paquete Excel del cliente generado (F22 + DJ ' + codDj + ' + CPT).');
             });
@@ -6557,12 +6642,12 @@
                     return '<tr' + (idx === 4 ? ' class="total"' : '') + '><td>' + r[0] + '</td><td class="r">' + moneySigno(r[1]) + '</td></tr>';
                 }).join('');
 
-                var htmlPkg = '<p style="font-size:12px;margin-bottom:10px">' + D.esc(txt.encabezado) + '</p>' +
-                    '<h3 style="margin:12px 0 6px;font-size:14px">1. Propuesta Preliminar F22 (IDPC vs PPM Cód. 36 L85)</h3>' +
+                var htmlPkg = '<p style="font-size:8.5pt;color:#475569;margin:0 0 10px">' + D.esc(txt.encabezado) + '</p>' +
+                    '<div class="print-h3">1. Propuesta Preliminar F22 (IDPC vs PPM Cód. 36 L85)</div>' +
                     '<table class="print-table"><thead><tr><th>Línea / Código</th><th>Concepto</th><th class="r">Monto ($)</th></tr></thead><tbody>' + f22Rows + '</tbody></table>' +
-                    '<h3 style="margin:14px 0 6px;font-size:14px">2. DJ ' + D.esc(codDj) + ' Vinculada (' + (codDj === '1947' ? 'Base Imponible y PPM socios' : 'Retiros / Dividendos y Crédito IDPC') + ')</h3>' +
+                    '<div class="print-h3">2. DJ ' + D.esc(codDj) + ' Vinculada (' + (codDj === '1947' ? 'Base Imponible y PPM socios' : 'Retiros / Dividendos y Crédito IDPC') + ')</div>' +
                     '<table class="print-table"><thead><tr><th>RUT</th><th>Propietario</th><th class="r">%</th><th class="r">' + (codDj === '1947' ? 'Base asignada' : 'Retiro / Dividendo') + '</th><th class="r">' + (codDj === '1947' ? 'PPM Cód. 1645' : (/^14A/.test(reg) ? 'Crédito Bruto 27/73' : 'Crédito IDPC')) + '</th></tr></thead><tbody>' + djRows + '</tbody></table>' +
-                    '<h3 style="margin:14px 0 6px;font-size:14px">3. Capital Propio Tributario Simplificado (Circular SII 62/2020)</h3>' +
+                    '<div class="print-h3">3. Capital Propio Tributario Simplificado (Circular SII 62/2020)</div>' +
                     '<table class="print-table"><thead><tr><th>Componente</th><th class="r">Monto ($)</th></tr></thead><tbody>' + cptRows + '</tbody></table>';
 
                 imprimirHtmlModulo(

@@ -219,12 +219,73 @@
         'se calcularon con los indicadores del período y deben ser revisados por el profesional responsable antes de su firma. ' +
         'CálculoLaboral no presta asesoría legal.</div>';
 
+    function sincronizarTemaImpresion() {
+        var panel = document.querySelector('#pm-panel[data-syn-theme], [data-syn-theme]');
+        var tema = (panel && panel.getAttribute('data-syn-theme')) || 'slate';
+        if (document.body) document.body.setAttribute('data-syn-theme', tema);
+        var pa = document.getElementById('print-area');
+        if (pa) pa.setAttribute('data-syn-theme', tema);
+        return tema;
+    }
+
+    function aplicarOrientacionImpresion(paginas) {
+        var prev = document.getElementById('cl-print-page-override');
+        if (prev) prev.remove();
+        var lista = (paginas || []).slice();
+        if (!lista.length) return lista;
+
+        var esPaisa = lista.map(function (html) {
+            return /class="[^"]*\bprint-page--paisa\b/.test(String(html || ''));
+        });
+        var primeraPaisa = !!esPaisa[0];
+
+        if (primeraPaisa) {
+            // Evita la página 1 en blanco de Chromium: si la primera página es horizontal,
+            // el @page por defecto pasa a landscape y las páginas verticales usan @page retrato.
+            var st = document.createElement('style');
+            st.id = 'cl-print-page-override';
+            st.textContent = '@page { size: letter landscape; margin: 10mm 10mm 11mm 10mm; }\n' +
+                '@page retrato { size: letter portrait; margin: 13mm 12mm 14mm 12mm; }';
+            (document.head || document.documentElement).appendChild(st);
+        }
+
+        return lista.map(function (html, idx) {
+            var s = String(html || '');
+            var paisaActual = esPaisa[idx];
+            var paisaSiguiente = idx + 1 < lista.length ? esPaisa[idx + 1] : paisaActual;
+            if (primeraPaisa) {
+                if (paisaActual) {
+                    s = s.replace(/\bprint-page--paisa\b/g, '').replace(/class="\s+/g, 'class="').replace(/\s{2,}/g, ' ');
+                } else {
+                    s = s.replace(/class="([^"]*\bprint-page\b[^"]*)"/, 'class="$1 print-page--retrato"');
+                }
+            }
+            // Si la página siguiente cambia de orientación (nombre de @page), el cambio ya genera salto de página.
+            if (idx + 1 < lista.length && paisaActual !== paisaSiguiente) {
+                s = s.replace(/class="([^"]*\bprint-page\b[^"]*)"/, 'class="$1 print-page--sin-salto"');
+            }
+            return s;
+        });
+    }
+
+    function limpiarOrientacionImpresion() {
+        var st = document.getElementById('cl-print-page-override');
+        if (st) st.remove();
+    }
+
+    if (typeof window !== 'undefined' && window.addEventListener) {
+        window.addEventListener('beforeprint', sincronizarTemaImpresion);
+        window.addEventListener('afterprint', limpiarOrientacionImpresion);
+    }
+
     function imprimir(paginas) {
         if (!paginas || !paginas.length) {
             avisar('No hay información lista para generar el PDF.');
             return;
         }
-        document.getElementById('print-area').innerHTML = paginas.join('');
+        sincronizarTemaImpresion();
+        var ajustadas = aplicarOrientacionImpresion(paginas);
+        document.getElementById('print-area').innerHTML = ajustadas.join('');
         window.print();
     }
 
