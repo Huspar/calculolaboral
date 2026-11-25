@@ -514,6 +514,46 @@
             ? F29.parsearRcv(est.comprasRows, 'compras')
             : F29.parsearRcv(est.comprasCsv || '', 'compras');
 
+        // Factor de Proporcionalidad IVA (Art. 23 N°3 D.L. 825 / Art. 43 D.S. 55/1977)
+        var vAfectas = Math.max(0, Number(ventas.netoAfecto || ventas.netoGiro || 0));
+        var vExentas = Math.max(0, Number(ventas.netoExento || 0));
+        var factorPropIva = (vAfectas + vExentas > 0 && vExentas > 0)
+            ? Math.round((vAfectas / (vAfectas + vExentas)) * 10000) / 10000
+            : 1;
+        compras.factorProporcionalidad = factorPropIva;
+
+        // Aplicar reclasificaciones manuales por factura RCV (cód. 519/520, 761/762, 524/525, Uso Común proporcional, Sin crédito)
+        var reclasif = est.rcvReclasificaciones || {};
+        if (compras.documentos && compras.documentos.length && Object.keys(reclasif).length) {
+            var rCantGiro = 0, rIvaGiro = 0, rNetoGiro = 0, rCantSup = 0, rIvaSup = 0, rCantAf = 0, rIvaAf = 0, rNetoAf = 0, rCantNc = 0, rIvaNc = 0, rNetoNc = 0;
+            compras.documentos.forEach(function (doc, idxD) {
+                var kDoc = (doc.folio || idxD) + '|' + (doc.rut || '');
+                var tipoDoc = String(doc.tipo || '33');
+                var ivaDoc = Math.abs(Math.round(Number(doc.iva || doc.ivaRecuperable || 0)));
+                var netoDoc = Math.abs(Math.round(Number(doc.neto || 0)));
+                if (tipoDoc === '61') { rCantNc++; rIvaNc += ivaDoc; rNetoNc += netoDoc; return; }
+                var defCat = doc.esActivoFijo ? 'activo_fijo' : (doc.esSupermercado ? 'supermercado' : 'giro');
+                var cat = reclasif[kDoc] || defCat;
+                doc.clasificacionActual = cat;
+                if (cat === 'sin_credito') return;
+                if (cat === 'supermercado') { rCantSup++; rIvaSup += ivaDoc; rNetoGiro += netoDoc; }
+                else if (cat === 'activo_fijo') { rCantAf++; rIvaAf += ivaDoc; rNetoAf += netoDoc; }
+                else if (cat === 'uso_comun') { rCantGiro++; rIvaGiro += Math.round(ivaDoc * factorPropIva); rNetoGiro += netoDoc; }
+                else { rCantGiro++; rIvaGiro += ivaDoc; rNetoGiro += netoDoc; }
+            });
+            compras.cantFacturasGiro = rCantGiro;
+            compras.ivaGiro = rIvaGiro;
+            compras.netoGiro = rNetoGiro;
+            compras.cantSupermercado = rCantSup;
+            compras.ivaSupermercado = rIvaSup;
+            compras.cantActivoFijo = rCantAf;
+            compras.ivaActivoFijo = rIvaAf;
+            compras.netoActivoFijo = rNetoAf;
+            compras.cantNotasCredito = rCantNc;
+            compras.ivaNotasCredito = rIvaNc;
+            compras.netoNotasCredito = rNetoNc;
+        }
+
         var iuscAuto = nomina ? nomina.impuesto48 : 0;
         var usaIuscManual = !nomina && est.iuscManual !== '' && est.iuscManual !== null;
         var iusc48 = usaIuscManual ? D.parseNumber(est.iuscManual) : iuscAuto;
@@ -743,6 +783,40 @@
                 if (document.activeElement !== iuscInput) iuscInput.value = est.iuscManual !== '' ? est.iuscManual : '';
                 $('f29-iusc-ayuda').textContent = 'Sin nómina cargada: escribe el monto manual o calcula Liquidaciones.';
             }
+        }
+
+        // Tabla revisable y reclasificable de Compras RCV (Art. 23 D.L. 825)
+        if ($('f29-factor-prop')) {
+            $('f29-factor-prop').textContent = (m.compras && m.compras.factorProporcionalidad != null ? m.compras.factorProporcionalidad : 1).toFixed(4).replace('.', ',');
+        }
+        var tbReclas = $('tbody-f29-rcv-reclasif');
+        if (tbReclas) {
+            var docsC = (m.compras && m.compras.documentos) || [];
+            var reclasMap = est.rcvReclasificaciones || {};
+            tbReclas.innerHTML = docsC.length
+                ? docsC.slice(0, 40).map(function (doc, idxD) {
+                    var kDoc = (doc.folio || idxD) + '|' + (doc.rut || '');
+                    var defCat = doc.esActivoFijo ? 'activo_fijo' : (doc.esSupermercado ? 'supermercado' : 'giro');
+                    var cat = reclasMap[kDoc] || doc.clasificacionActual || defCat;
+                    var esNc = String(doc.tipo || '33') === '61';
+                    var selHtml = esNc
+                        ? '<span class="cc-tag-pill">Nota de Crédito (527/528)</span>'
+                        : '<select class="lq-select lq-select-sm f29-reclas-sel" data-reclas-key="' + D.esc(kDoc) + '">' +
+                          '<option value="giro"' + (cat === 'giro' ? ' selected' : '') + '>Del giro (519/520)</option>' +
+                          '<option value="supermercado"' + (cat === 'supermercado' ? ' selected' : '') + '>Supermercado (761/762)</option>' +
+                          '<option value="activo_fijo"' + (cat === 'activo_fijo' ? ' selected' : '') + '>Activo fijo (524/525)</option>' +
+                          '<option value="uso_comun"' + (cat === 'uso_comun' ? ' selected' : '') + '>Uso común (proporcional)</option>' +
+                          '<option value="sin_credito"' + (cat === 'sin_credito' ? ' selected' : '') + '>Sin derecho a crédito</option>' +
+                          '</select>';
+                    return '<tr>' +
+                        '<td class="mono">' + D.esc(doc.folio || '-') + '</td>' +
+                        '<td><span class="mono">' + D.esc(doc.rut || '-') + '</span><br><span class="texto-ayuda">' + D.esc(doc.razonSocial || doc.proveedor || 'Proveedor') + '</span></td>' +
+                        '<td class="mono num">' + D.money(doc.neto || 0) + '</td>' +
+                        '<td class="mono num">' + D.money(doc.iva || doc.ivaRecuperable || 0) + '</td>' +
+                        '<td>' + selHtml + '</td>' +
+                        '</tr>';
+                }).join('')
+                : '<tr><td colspan="5" class="texto-ayuda">Carga un RCV de Compras para revisar o reclasificar facturas individualmente.</td></tr>';
         }
 
         // Sincronizar barra de Declaración F29 (Estado, Folio SII, Fecha pago)
@@ -2296,10 +2370,44 @@
             btn.classList.toggle('activo', act);
             btn.setAttribute('aria-selected', act ? 'true' : 'false');
         });
-        ['1887', '1879', '1947', '1847', '1926', '1837', 'cpt', 'f22'].forEach(function (k) {
+        ['1887', '1879', '1947', '1847', '1926', '1837', 'cpt', 'rre', 'f22'].forEach(function (k) {
             var pan = $('subddjj-' + k);
             if (pan) pan.hidden = (ui.subDdjj !== k);
         });
+        // Render Registro de Rentas Empresariales (RRE: RAI, REX, DDAN, SAC - validado por Normativa AT 2026)
+        if ($('tbody-rre')) {
+            var regRre = String((m.estado && m.estado.regimen) || '14D3').toUpperCase();
+            var es14A = /^14A/.test(regRre);
+            var es14D8 = /^14D8/.test(regRre);
+            var rreAj = m.estado.rreAjustes || { rex: 0, sacIni: 0 };
+            if ($('rre-rex-input') && document.activeElement !== $('rre-rex-input')) $('rre-rex-input').value = rreAj.rex || 0;
+            if ($('rre-sac-ini-input') && document.activeElement !== $('rre-sac-ini-input')) $('rre-sac-ini-input').value = rreAj.sacIni || 0;
+            var cptObj = m.ddjj && m.ddjj.cpt;
+            var cptFin = cptObj ? cptObj.cptFinal : 0;
+            var capAport = cptObj ? cptObj.capitalAportadoReajustado : 0;
+            var retEj = (cptObj && cptObj.componentes && cptObj.componentes.retirosDividendos) || 0;
+            var rexVal = Math.round(Number(rreAj.rex) || 0);
+            var raiCalc = Math.max(0, Math.max(0, cptFin) + retEj + Math.max(0, -rexVal) - Math.max(0, rexVal) - capAport);
+            var idpcEj = (m.f22 && m.f22.idpcDeterminado) || 0;
+            var sacFinal = Math.max(0, Math.round(Number(rreAj.sacIni) || 0) + idpcEj);
+            if ($('rre-regimen-sello')) $('rre-regimen-sello').textContent = es14A ? 'Art. 14 A' : (es14D8 ? '14 D N°8 (Exento)' : 'Art. 14 D N°3');
+            if ($('rre-liberacion-aviso')) {
+                $('rre-liberacion-aviso').textContent = es14D8
+                    ? 'ProPyme Transparente (14 D N°8) no lleva RRE: la base se asigna directamente a propietarios en DJ 1947.'
+                    : (!es14A && rexVal === 0
+                        ? 'Liberada de DDAN y de RAI/REX (Art. 14 D N°3 letra g LIR, sin REX ni devolución de capital). Mantiene control del SAC.'
+                        : (es14A ? 'Régimen 14 A: lleva RAI, DDAN, REX y SAC reajustados por IPC (Circular SII N° 73/2020).' : 'Régimen 14 D N°3 con REX activo: valor histórico sin corrección monetaria (Circular SII N° 62/2020).'));
+            }
+            var factorSacTxt = es14A ? 'Tasa 27% · factor 0,369863 (restitución 35%)' : 'Tasa 12,5% AT 2026 · factor 0,142857 (sin restitución)';
+            $('tbody-rre').innerHTML = [
+                ['RAI (Rentas Afectas a Impuestos Finales)', 'max(0, max(0, CPT) + Retiros - REX - Capital Aportado)', raiCalc],
+                ['REX (Rentas Exentas e INR)', rexVal === 0 && !es14A ? 'Sin saldo (liberado en 14 D N°3)' : 'Saldo controlado de rentas exentas / INR', rexVal],
+                ['DDAN (Diferencia Depreciación Acelerada)', es14A ? 'Aplica según activo fijo 14 A' : 'Liberado en 14 D N°3 / 14 D N°8', 0],
+                ['SAC (Saldo Acumulado de Créditos IDPC)', factorSacTxt, sacFinal]
+            ].map(function (r, idxR) {
+                return '<tr' + (idxR === 0 || idxR === 3 ? ' class="f29-subtotal"' : '') + '><td><strong>' + D.esc(r[0]) + '</strong></td><td>' + D.esc(r[1]) + '</td><td class="mono num"><strong>' + D.money(r[2]) + '</strong></td></tr>';
+            }).join('');
+        }
         pintarPropuestaF22(m);
         renderStripCobertura('ddjj-cobertura-strip', m.anual, m.periodo);
         var d = m.ddjj || {};
@@ -6872,6 +6980,172 @@
                 D.avisar('Finiquitos centralizados en Libro Diario (' + D.money(asientoFin.debe) + ').');
             });
         }
+
+        // Listeners Reclasificación RCV y RRE (RAI/SAC/REX)
+        if ($('tbody-f29-rcv-reclasif')) {
+            $('tbody-f29-rcv-reclasif').addEventListener('change', function (ev) {
+                var sel = ev.target;
+                if (!sel || !sel.getAttribute || !sel.getAttribute('data-reclas-key')) return;
+                var k = sel.getAttribute('data-reclas-key');
+                var val = sel.value;
+                guardarEstadoActual(function (est) {
+                    est.rcvReclasificaciones = est.rcvReclasificaciones || {};
+                    est.rcvReclasificaciones[k] = val;
+                });
+                refrescarTodo();
+                D.avisar('Factura reclasificada; F29 recalculado.');
+            });
+        }
+        ['rre-rex-input', 'rre-sac-ini-input'].forEach(function (id) {
+            var el = $(id);
+            if (!el) return;
+            el.addEventListener('change', function () {
+                guardarEstadoActual(function (est) {
+                    est.rreAjustes = {
+                        rex: Math.round(D.parseNumber($('rre-rex-input') && $('rre-rex-input').value)),
+                        sacIni: Math.max(0, Math.round(D.parseNumber($('rre-sac-ini-input') && $('rre-sac-ini-input').value)))
+                    };
+                });
+                refrescarTodo();
+            });
+        });
+
+        // ==================== EXTRAS: Split Comisión / Match 1-a-N en Bancos ====================
+        (function () {
+            var dlg = $('dlg-bancos-split');
+            var btnAbrir = $('btn-bancos-split-abrir');
+            if (!dlg || !btnAbrir) return;
+            var movsCache = [];
+            function calcBrutoSplit() {
+                var n = Math.max(0, Math.round(D.parseNumber($('split-neto') && $('split-neto').value)));
+                var c = Math.max(0, Math.round(D.parseNumber($('split-comision') && $('split-comision').value)));
+                if ($('split-bruto-preview')) $('split-bruto-preview').textContent = D.money(n + c);
+            }
+            function pintarMultiSplit() {
+                var m = calcularModelo();
+                var movs = (m.estado && m.estado.cartolaMovimientos) || [];
+                movsCache = movs;
+                var sel = $('split-mov-sel');
+                if (sel) {
+                    sel.innerHTML = movs.length
+                        ? movs.map(function (mv, i) {
+                            var amt = Math.round(Math.abs(mv.monto || mv.abono || mv.cargo || 0));
+                            return '<option value="' + i + '">' + D.esc((mv.fecha || '') + ' · ' + (mv.glosa || mv.descripcion || 'Movimiento') + ' (' + D.money(amt) + ')') + '</option>';
+                        }).join('')
+                        : '<option value="">Sin movimientos de cartola cargados</option>';
+                }
+                var docs = [];
+                ((m.ventas && m.ventas.documentos) || []).forEach(function (d) {
+                    docs.push({ tipo: 'CxC', folio: d.folio || '-', nombre: d.razonSocial || d.rut || 'Cliente', total: Math.round(d.total || 0), cuenta: '11050' });
+                });
+                ((m.compras && m.compras.documentos) || []).forEach(function (d) {
+                    docs.push({ tipo: 'CxP', folio: d.folio || '-', nombre: d.razonSocial || d.rut || 'Proveedor', total: Math.round(d.total || 0), cuenta: '21010' });
+                });
+                var tb = $('tbody-split-facturas');
+                if (tb) {
+                    tb.innerHTML = docs.length
+                        ? docs.slice(0, 30).map(function (d, i) {
+                            return '<tr><td><input type="checkbox" class="split-doc-chk" data-total="' + d.total + '" data-tipo="' + d.tipo + '" data-folio="' + D.esc(d.folio) + '" data-cuenta="' + d.cuenta + '"></td>' +
+                                '<td><span class="cc-tag-pill">' + d.tipo + '</span></td>' +
+                                '<td><span class="mono">' + D.esc(d.folio) + '</span> · ' + D.esc(d.nombre) + '</td>' +
+                                '<td class="mono num">' + D.money(d.total) + '</td></tr>';
+                        }).join('')
+                        : '<tr><td colspan="4" class="texto-ayuda">Carga RCV de ventas o compras para asociar facturas.</td></tr>';
+                }
+                recalcMultiSplit();
+            }
+            function recalcMultiSplit() {
+                var idx = parseInt(($('split-mov-sel') && $('split-mov-sel').value) || '0', 10);
+                var mv = movsCache[idx];
+                var obj = mv ? Math.round(Math.abs(mv.monto || mv.abono || mv.cargo || 0)) : 0;
+                var suma = 0;
+                Array.prototype.forEach.call(document.querySelectorAll('#tbody-split-facturas .split-doc-chk:checked'), function (c) {
+                    suma += Number(c.getAttribute('data-total')) || 0;
+                });
+                if ($('split-multi-suma')) $('split-multi-suma').textContent = D.money(suma);
+                if ($('split-multi-diff')) $('split-multi-diff').textContent = moneySigno(obj - suma);
+            }
+            btnAbrir.addEventListener('click', function () {
+                if ($('split-fecha') && !$('split-fecha').value) $('split-fecha').value = periodoActual() + '-15';
+                calcBrutoSplit();
+                pintarMultiSplit();
+                if (typeof dlg.showModal === 'function') dlg.showModal();
+                else dlg.setAttribute('open', '');
+            });
+            if ($('btn-cerrar-bancos-split')) $('btn-cerrar-bancos-split').addEventListener('click', function () { dlg.close ? dlg.close() : dlg.removeAttribute('open'); });
+            dlg.addEventListener('click', function (ev) { if (ev.target === dlg && dlg.close) dlg.close(); });
+            if ($('bancos-split-tabs')) {
+                $('bancos-split-tabs').addEventListener('click', function (ev) {
+                    var b = ev.target && ev.target.closest ? ev.target.closest('[data-split-tab]') : null;
+                    if (!b) return;
+                    var t = b.getAttribute('data-split-tab');
+                    Array.prototype.forEach.call($('bancos-split-tabs').querySelectorAll('[data-split-tab]'), function (x) {
+                        var on = x.getAttribute('data-split-tab') === t;
+                        x.classList.toggle('activo', on);
+                        x.setAttribute('aria-selected', on ? 'true' : 'false');
+                    });
+                    Array.prototype.forEach.call(dlg.querySelectorAll('[data-split-panel]'), function (p) {
+                        p.hidden = p.getAttribute('data-split-panel') !== t;
+                    });
+                });
+            }
+            ['split-neto', 'split-comision'].forEach(function (id) { if ($(id)) $(id).addEventListener('input', calcBrutoSplit); });
+            if ($('split-mov-sel')) $('split-mov-sel').addEventListener('change', recalcMultiSplit);
+            if ($('tbody-split-facturas')) $('tbody-split-facturas').addEventListener('change', recalcMultiSplit);
+            if ($('btn-split-confirmar')) {
+                $('btn-split-confirmar').addEventListener('click', function () {
+                    var neto = Math.max(0, Math.round(D.parseNumber($('split-neto') && $('split-neto').value)));
+                    var com = Math.max(0, Math.round(D.parseNumber($('split-comision') && $('split-comision').value)));
+                    if (neto <= 0 || com <= 0) { D.avisar('Ingresa abono neto y comisión mayores a $0.'); return; }
+                    var bruto = neto + com;
+                    guardarEstadoActual(function (est) {
+                        est.manuales = est.manuales || [];
+                        est.manuales.push({
+                            id: 'MAN-SPLIT-' + Date.now(),
+                            fecha: ($('split-fecha') && $('split-fecha').value) || (periodoActual() + '-15'),
+                            glosa: (($('split-glosa') && $('split-glosa').value.trim()) || 'Split comisión bancaria'),
+                            origen: 'ajuste',
+                            lineas: [
+                                { cuenta: '11010', debe: neto, haber: 0 },
+                                { cuenta: '42040', debe: com, haber: 0 },
+                                { cuenta: '11050', debe: 0, haber: bruto }
+                            ]
+                        });
+                    });
+                    refrescarTodo();
+                    if (dlg.close) dlg.close();
+                    D.avisar('Split registrado en Libro Diario (Banco ' + D.money(neto) + ' + Comisión ' + D.money(com) + ').');
+                });
+            }
+            if ($('btn-split-multi-confirmar')) {
+                $('btn-split-multi-confirmar').addEventListener('click', function () {
+                    var chks = Array.prototype.slice.call(document.querySelectorAll('#tbody-split-facturas .split-doc-chk:checked'));
+                    if (!chks.length) { D.avisar('Marca al menos una factura para asociar.'); return; }
+                    var folios = [], totCxc = 0, totCxp = 0;
+                    chks.forEach(function (c) {
+                        var amt = Number(c.getAttribute('data-total')) || 0;
+                        folios.push(c.getAttribute('data-folio'));
+                        if (c.getAttribute('data-tipo') === 'CxC') totCxc += amt; else totCxp += amt;
+                    });
+                    var lineas = [];
+                    if (totCxc > 0) { lineas.push({ cuenta: '11010', debe: totCxc, haber: 0 }); lineas.push({ cuenta: '11050', debe: 0, haber: totCxc }); }
+                    if (totCxp > 0) { lineas.push({ cuenta: '21010', debe: totCxp, haber: 0 }); lineas.push({ cuenta: '11010', debe: 0, haber: totCxp }); }
+                    guardarEstadoActual(function (est) {
+                        est.manuales = est.manuales || [];
+                        est.manuales.push({
+                            id: 'MAN-MULTI-' + Date.now(),
+                            fecha: periodoActual() + '-20',
+                            glosa: 'Cruce 1-a-N (' + chks.length + ' docs: ' + folios.slice(0, 4).join(', ') + ')',
+                            origen: 'ajuste',
+                            lineas: lineas
+                        });
+                    });
+                    refrescarTodo();
+                    if (dlg.close) dlg.close();
+                    D.avisar('Cruce 1-a-N registrado en Libro Diario (' + chks.length + ' facturas).');
+                });
+            }
+        })();
 
         // ==================== OLA 3: Legajo Trabajadores, Caja Chica, Centros de Costo, P&L Comparativo y Cierre Anual ====================
         (function () {

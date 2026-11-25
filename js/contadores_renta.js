@@ -490,7 +490,9 @@
 
         var capitalAportado = entero(d.capitalAportadoReajustado);
         var saldoRex = entero(d.saldoRex);
-        var raiEstimado = Math.max(0, cptFinal + disminucionesCapital + retirosDividendos - capitalAportado - saldoRex);
+        var rexPositivo = Math.max(0, saldoRex);
+        var rexNegativo = Math.max(0, -saldoRex);
+        var raiEstimado = Math.max(0, Math.max(0, cptFinal) + retirosDividendos + rexNegativo - rexPositivo - capitalAportado);
 
         return {
             norma: 'Circular SII 62/2020',

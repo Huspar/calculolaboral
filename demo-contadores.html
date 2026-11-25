@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.3.1">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.3.2">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -1155,6 +1155,32 @@
             </div>
           </div>
         </div>
+
+        <div class="panel" id="f29-rcv-reclasif-card" style="margin-bottom:16px">
+          <div class="panel-head">
+            <div>
+              <h2>Detalle y Reclasificación de Compras RCV</h2>
+              <p class="panel-ayuda">Cambia la clasificación tributaria por factura con recálculo inmediato del crédito fiscal (cód. 537).</p>
+            </div>
+            <span class="texto-ayuda">Factor proporcionalidad IVA: <strong class="mono" id="f29-factor-prop">1,0000</strong></span>
+          </div>
+          <div class="panel-cuerpo">
+            <div class="tabla-contable-wrap">
+              <table class="tabla-contable compacta">
+                <thead>
+                  <tr>
+                    <th scope="col">Folio</th>
+                    <th scope="col">RUT / Proveedor</th>
+                    <th scope="col" class="num">Neto ($)</th>
+                    <th scope="col" class="num">IVA ($)</th>
+                    <th scope="col">Clasificación F29</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-f29-rcv-reclasif"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         </div>
 
         <div id="f29-panel-acuses" data-f29-panel="acuses" hidden>
@@ -1414,6 +1440,7 @@
             <button type="button" class="btn btn-primario" id="btn-bancos-subir-cartola"><span class="material-icons" aria-hidden="true">upload_file</span>Subir cartola (CSV/Excel)</button>
             <input type="file" id="file-bancos-cartola" accept=".csv,.txt,.tsv,.xlsx,.xls" class="sr-only" aria-label="Subir cartola bancaria CSV o Excel">
             <button type="button" class="btn" id="btn-bancos-pegar-excel"><span class="material-icons" aria-hidden="true">content_paste</span>Pegar desde Excel</button>
+            <button type="button" class="btn" id="btn-bancos-split-abrir" title="Dividir comisión Transbank/Getnet o asociar 1 transferencia a varias facturas"><span class="material-icons" aria-hidden="true">call_split</span>Split / 1-a-N</button>
             <button type="button" class="btn" id="btn-bancos-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo</button>
           </div>
         </div>
@@ -2560,6 +2587,7 @@
             <span class="ddjj-grupo-lbl">Cierre Anual y F22</span>
             <div class="ddjj-grupo-chips">
               <button type="button" class="fin-chip" data-subddjj="cpt" role="tab" aria-selected="false" aria-controls="subddjj-cpt"><span>CPT Simplif.</span><span class="ddjj-chip-est" id="ddjj-st-cpt">Calculado</span></button>
+              <button type="button" class="fin-chip" data-subddjj="rre" role="tab" aria-selected="false" aria-controls="subddjj-rre"><span>RRE (RAI/SAC)</span><span class="ddjj-chip-est" id="ddjj-st-rre">AT 2026</span></button>
               <button type="button" class="fin-chip" data-subddjj="f22" role="tab" aria-selected="false" aria-controls="subddjj-f22"><span>Propuesta F22</span><span class="ddjj-chip-est" id="ddjj-st-f22">Favor</span></button>
             </div>
           </div>
@@ -2862,6 +2890,43 @@
         </div>
 
         <!-- Propuesta F22 (IDPC vs PPM Cód. 36 L85) -->
+        <div id="subddjj-rre" hidden>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Registro de Rentas Empresariales (RAI · REX · DDAN · SAC)</h2>
+                <p class="panel-ayuda" id="rre-liberacion-aviso">Control referencial de rentas afectas y créditos IDPC conforme al Art. 14 LIR.</p>
+              </div>
+              <span class="sello sello-guardada" id="rre-regimen-sello">14 D N°3</span>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="fin-form-grid" style="margin-bottom:14px">
+                <div class="lq-field">
+                  <label for="rre-rex-input">Saldo REX (Rentas exentas / INR) ($)</label>
+                  <input type="text" id="rre-rex-input" class="mono" inputmode="numeric" value="0">
+                </div>
+                <div class="lq-field">
+                  <label for="rre-sac-ini-input">Saldo SAC acumulado anterior ($)</label>
+                  <input type="text" id="rre-sac-ini-input" class="mono" inputmode="numeric" value="0">
+                </div>
+              </div>
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta">
+                  <thead>
+                    <tr>
+                      <th scope="col">Registro RRE</th>
+                      <th scope="col">Tratamiento normativo</th>
+                      <th scope="col" class="num">Saldo estimado ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-rre"></tbody>
+                </table>
+              </div>
+              <p class="texto-ayuda" style="margin-top:12px">Cálculo referencial del RRE (RAI, REX, DDAN/STUT y SAC) conforme al Art. 14 LIR y Circulares SII N° 62/2020, N° 73/2020 y N° 53/2025. Las pymes 14 D N° 3 están liberadas de DDAN (y de RAI/REX si no registran rentas exentas/INR ni devoluciones de capital), manteniendo control del SAC (AT 2026: tasa 12,5%, factor 0,142857 sin restitución; 14 A: tasa 27%, factor 0,369863 con restitución 35%); la declaración oficial rige en F22 y DJ 1948 ante el SII.</p>
+            </div>
+          </div>
+        </div>
+
         <div id="subddjj-f22" hidden>
           <div class="panel-nota-normativa" id="f22-norma-banner" style="margin-bottom:14px">
             <span class="material-icons" aria-hidden="true">info</span>
@@ -3301,6 +3366,59 @@
 </div>
 
 <div id="print-area"></div>
+
+<!-- Modal Split Comisión / Match 1-a-N en Bancos -->
+<dialog class="app-dialogo app-dialogo-medio" id="dlg-bancos-split" aria-labelledby="bancos-split-titulo">
+  <div class="midt-cabeza">
+    <h2 id="bancos-split-titulo">Dividir comisión o asociar varias facturas</h2>
+    <button type="button" class="app-icono-btn" id="btn-cerrar-bancos-split" aria-label="Cerrar">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  <div class="cfg-suite-cuerpo">
+    <div class="cl-subtabs" id="bancos-split-tabs" role="tablist">
+      <button type="button" class="cl-subtab activo" data-split-tab="comision" role="tab" aria-selected="true">Split comisión (Transbank / Getnet)</button>
+      <button type="button" class="cl-subtab" data-split-tab="multi" role="tab" aria-selected="false">Asociar varias facturas (1-a-N)</button>
+    </div>
+
+    <div id="split-panel-comision" data-split-panel="comision">
+      <div class="fin-form-grid">
+        <div class="lq-field"><label for="split-fecha">Fecha</label><input type="date" id="split-fecha"></div>
+        <div class="lq-field"><label for="split-glosa">Descripción</label><input type="text" id="split-glosa" value="Abono Transbank con comisión"></div>
+        <div class="lq-field"><label for="split-neto">Abono neto recibido en banco ($)</label><input type="text" id="split-neto" class="mono" inputmode="numeric" placeholder="975000"></div>
+        <div class="lq-field"><label for="split-comision">Comisión descontada ($)</label><input type="text" id="split-comision" class="mono" inputmode="numeric" placeholder="25000"></div>
+      </div>
+      <div class="split-resumen-bar">
+        <span>Total bruto factura (CxC): <strong class="mono" id="split-bruto-preview">$0</strong></span>
+        <button type="button" class="btn btn-primario" id="btn-split-confirmar">Registrar Split en Diario</button>
+      </div>
+    </div>
+
+    <div id="split-panel-multi" data-split-panel="multi" hidden>
+      <div class="lq-field" style="margin-bottom:10px">
+        <label for="split-mov-sel">Movimiento bancario a asociar</label>
+        <select id="split-mov-sel"></select>
+      </div>
+      <div class="tabla-contable-wrap" style="max-height:220px;overflow:auto;margin-bottom:10px">
+        <table class="tabla-contable compacta">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Folio / Contraparte</th>
+              <th scope="col" class="num">Total ($)</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-split-facturas"></tbody>
+        </table>
+      </div>
+      <div class="split-resumen-bar">
+        <span>Seleccionado: <strong class="mono" id="split-multi-suma">$0</strong> · Diferencia: <strong class="mono" id="split-multi-diff">$0</strong></span>
+        <button type="button" class="btn btn-primario" id="btn-split-multi-confirmar">Confirmar cruce 1-a-N</button>
+      </div>
+    </div>
+  </div>
+</dialog>
 
 <!-- Modal de Configuración de la Suite (Apariencia e Integraciones) -->
 <dialog class="app-dialogo app-dialogo-medio" id="dlg-suite-config" aria-labelledby="cfg-suite-titulo">
@@ -4393,7 +4511,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=2.1.2"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.4.2"></script>
+<script src="/js/demo_suite.js?v=3.5.0"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>
