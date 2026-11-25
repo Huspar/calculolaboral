@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.2.8">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.2.9">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -65,7 +65,7 @@
         <span>Cartera de Clientes</span>
         <span class="app-nav-chip" id="nav-count-clientes" hidden>0</span>
       </button>
-      <button type="button" class="suite-mod-btn" data-modulo="importador" aria-current="false">
+      <button type="button" class="suite-mod-btn" data-modulo="importador" aria-current="false" hidden>
         <span class="material-icons" aria-hidden="true">cloud_upload</span>
         <span>Carga Masiva SII</span>
       </button>
@@ -406,7 +406,9 @@
                     <thead>
                       <tr>
                         <th scope="col">Empresa</th>
-                        <th scope="col">Avance</th>
+                        <th scope="col">RCV</th>
+                        <th scope="col">Nómina</th>
+                        <th scope="col">Banco</th>
                         <th scope="col" class="num">F29 estimado</th>
                         <th scope="col">Estado</th>
                         <th scope="col" class="num">Acción</th>
@@ -424,8 +426,8 @@
               <div class="panel-cuerpo" id="dash-milestone-chart" aria-live="polite"></div>
             </section>
 
-            <!-- Ruta de Cierre Mensual en 4 pasos (compacta para cliente activo) -->
-            <section class="panel syn-panel dash-cierre-panel" id="dash-cierre-4pasos" aria-labelledby="dash-cierre-titulo">
+            <!-- Ruta de Cierre Mensual (movida fuera del Dashboard global) -->
+            <section class="panel syn-panel dash-cierre-panel" id="dash-cierre-4pasos" aria-labelledby="dash-cierre-titulo" hidden>
               <div class="panel-head dash-cierre-head">
                 <div>
                   <h2 id="dash-cierre-titulo">Cierre mensual: <span id="dash-cierre-cliente">Panadería San Isidro SpA</span></h2>
@@ -864,7 +866,6 @@
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Impuestos Mensuales (Formulario 29)</h1>
-            <p class="v-sub">Cuánto IVA y retenciones paga la empresa este mes: sube el RCV del SII y te armamos la hoja guía para el Formulario 29.</p>
           </div>
           <div class="v-acciones">
             <button class="btn btn-primario" type="button" id="btn-rcv-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo F29</button>
@@ -872,6 +873,14 @@
           </div>
         </div>
 
+        <div class="cl-subtabs" id="f29-subtabs" role="tablist" aria-label="Secciones de Impuestos Mensuales">
+          <button type="button" class="cl-subtab activo" data-f29-tab="hoja" role="tab" aria-selected="true">Hoja F29</button>
+          <button type="button" class="cl-subtab" data-f29-tab="rcv" role="tab" aria-selected="false">RCV y Parámetros</button>
+          <button type="button" class="cl-subtab" data-f29-tab="acuses" role="tab" aria-selected="false">Acuses 8 días</button>
+          <button type="button" class="cl-subtab" data-f29-tab="bhe" role="tab" aria-selected="false">Honorarios (BHE)</button>
+        </div>
+
+        <div id="f29-panel-hoja" data-f29-panel="hoja">
         <div id="f29-resumen-superior" class="f29-resumen-superior">
           <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
             <div class="fin-kpi" id="f29-kpi-card-debito">
@@ -955,7 +964,9 @@
             </div>
           </div>
         </div>
+        </div>
 
+        <div id="f29-panel-rcv" data-f29-panel="rcv" hidden>
         <div class="panel" style="margin-bottom:16px">
           <div class="panel-head"><h2>Carga de Registro de Compras y Ventas (RCV SII)</h2></div>
           <div class="panel-cuerpo">
@@ -1090,7 +1101,9 @@
             </div>
           </div>
         </div>
+        </div>
 
+        <div id="f29-panel-acuses" data-f29-panel="acuses" hidden>
         <div class="panel f29-auditoria-panel" id="f29-auditoria-compras" hidden>
           <div class="panel-head">
             <div>
@@ -1150,7 +1163,9 @@
             </div>
           </div>
         </div>
+        </div>
 
+        <div id="f29-panel-hoja-tabla" data-f29-panel="hoja">
         <div class="demo-vacio" id="f29-vacio">
           <p class="demo-vacio-t">Aún no hay movimientos tributarios cargados</p>
           <p class="texto-ayuda">Pulsa "Cargar ejemplo SII completo" para ver la hoja de trabajo del F29 con débitos, créditos y PPM al día.</p>
@@ -1266,6 +1281,49 @@
                 </div>
               </details>
               <button class="btn" type="button" id="btn-f29-ir-diario"><span class="material-icons" aria-hidden="true">menu_book</span>Ver en Diario</button>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <div id="f29-panel-bhe" data-f29-panel="bhe" hidden>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Boletas de Honorarios Electrónicas (BHE Recibidas SII)</h2>
+                <p class="panel-ayuda">Tasa Ley 21.133: 15,25% en 2026. Omite boletas anuladas y lleva la retención real al cód. 151 del F29.</p>
+              </div>
+            </div>
+            <div class="panel-cuerpo">
+              <div class="f29-upload-acciones" style="margin-bottom:12px">
+                <button type="button" class="btn btn-primario" id="btn-imp-bhe-sii"><span class="material-icons" aria-hidden="true">cloud_download</span>Traer BHE desde SII</button>
+                <button type="button" class="btn" id="btn-imp-bhe-subir">Subir CSV BHE SII</button>
+                <button type="button" class="btn btn-chico" id="btn-imp-bhe-ejemplo">Cargar ejemplo (15,25%)</button>
+                <button type="button" class="btn btn-chico" id="btn-imp-bhe-limpiar">Limpiar</button>
+                <input type="file" id="file-imp-bhe" accept=".csv,.txt,.tsv" class="sr-only" tabindex="-1" aria-label="Archivo CSV BHE recibidas SII">
+              </div>
+              <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
+                <div class="fin-kpi"><span class="fin-kpi-label">Vigentes</span><span class="fin-kpi-val mono" id="imp-bhe-vigentes">0</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Anuladas omitidas</span><span class="fin-kpi-val mono" id="imp-bhe-anuladas">0</span></div>
+                <div class="fin-kpi"><span class="fin-kpi-label">Bruto total</span><span class="fin-kpi-val mono" id="imp-bhe-bruto">$0</span></div>
+                <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Retenido (Cód. 151)</span><span class="fin-kpi-val mono" id="imp-bhe-retencion">$0</span></div>
+              </div>
+              <div id="imp-bhe-alertas" class="panel-ayuda" style="margin-bottom:8px"></div>
+              <div class="tabla-contable-wrap">
+                <table class="tabla-contable compacta bhe-tabla-pro">
+                  <thead>
+                    <tr>
+                      <th scope="col">Folio</th>
+                      <th scope="col">RUT Emisor</th>
+                      <th scope="col">Prestador</th>
+                      <th scope="col" class="num">Bruto</th>
+                      <th scope="col" class="num">Retención</th>
+                      <th scope="col" class="num">Líquido</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-imp-bhe"></tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -2260,43 +2318,12 @@
         </div>
 
         <div class="fin-cols-2 fin-cols-2-tablas" style="margin-bottom:16px">
-          <!-- BHE SII -->
+          <!-- BHE movido a Impuestos Mes > Honorarios (BHE) -->
           <div class="panel">
             <div class="panel-head">
               <div>
-                <h2>BHE Recibidas (SII CSV / TXT)</h2>
-                <p class="panel-ayuda">Tasa Ley 21.133: 15,25% en 2026 (16% en 2027, 17% en 2028). Omite boletas ANULADAS y lleva la retención real al cód. 151 del F29.</p>
-              </div>
-            </div>
-            <div class="panel-cuerpo">
-              <div class="f29-upload-acciones" style="margin-bottom:12px">
-                <button type="button" class="btn btn-primario" id="btn-imp-bhe-sii"><span class="material-icons" aria-hidden="true">cloud_download</span>Traer BHE del mes desde SII</button>
-                <button type="button" class="btn" id="btn-imp-bhe-subir">Subir CSV BHE SII</button>
-                <button type="button" class="btn btn-chico" id="btn-imp-bhe-ejemplo">Cargar BHE ejemplo (15,25%)</button>
-                <button type="button" class="btn btn-chico" id="btn-imp-bhe-limpiar">Limpiar</button>
-                <input type="file" id="file-imp-bhe" accept=".csv,.txt,.tsv" class="sr-only" tabindex="-1" aria-label="Archivo CSV BHE recibidas SII">
-              </div>
-              <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
-                <div class="fin-kpi"><span class="fin-kpi-label">Vigentes</span><span class="fin-kpi-val mono" id="imp-bhe-vigentes">0</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Anuladas omitidas</span><span class="fin-kpi-val mono" id="imp-bhe-anuladas">0</span></div>
-                <div class="fin-kpi"><span class="fin-kpi-label">Bruto total</span><span class="fin-kpi-val mono" id="imp-bhe-bruto">$0</span></div>
-                <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">Retenido (Cód. 151)</span><span class="fin-kpi-val mono" id="imp-bhe-retencion">$0</span></div>
-              </div>
-              <div id="imp-bhe-alertas" class="panel-ayuda" style="margin-bottom:8px"></div>
-              <div class="tabla-contable-wrap">
-                <table class="tabla-contable compacta">
-                  <thead>
-                    <tr>
-                      <th scope="col">Folio</th>
-                      <th scope="col">RUT Emisor</th>
-                      <th scope="col">Prestador</th>
-                      <th scope="col" class="num">Bruto</th>
-                      <th scope="col" class="num">Retención</th>
-                      <th scope="col" class="num">Líquido</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-imp-bhe"></tbody>
-                </table>
+                <h2>Honorarios BHE</h2>
+                <p class="panel-ayuda">Las Boletas de Honorarios Electrónicas ahora viven dentro de Impuestos Mes (F29).</p>
               </div>
             </div>
           </div>
@@ -2970,11 +2997,18 @@
           <div class="panel">
             <div class="panel-head"><h2>Membrete y firma del estudio</h2></div>
             <div class="panel-cuerpo">
-              <div class="fin-form-grid" style="margin-bottom:14px">
+              <div class="rep-membrete-grid" style="margin-bottom:14px">
                 <div class="lq-field"><label for="rep-estudio-nombre">Nombre del estudio contable</label><input type="text" id="rep-estudio-nombre" value="Estudio Contable Chile"></div>
                 <div class="lq-field"><label for="rep-estudio-rut">RUT del estudio</label><input type="text" id="rep-estudio-rut" value="76.543.210-K"></div>
                 <div class="lq-field"><label for="rep-contador-nombre">Contador responsable</label><input type="text" id="rep-contador-nombre" value="Contador Auditor"></div>
-                <div class="lq-field"><label for="rep-estudio-pie">Pie de documento</label><input type="text" id="rep-estudio-pie" value="Documento de trabajo y referencia tributaria emitido para el cliente."></div>
+                <div class="lq-field rep-logo-field">
+                  <label>Logo para PDF y Portal</label>
+                  <div class="rep-logo-fila">
+                    <button type="button" class="btn btn-chico" id="btn-rep-logo"><span class="material-icons" aria-hidden="true">image</span>Subir logo</button>
+                    <span class="texto-ayuda" id="rep-logo-estado">Opcional (PNG/JPG)</span>
+                  </div>
+                </div>
+                <div class="lq-field rep-pie-full"><label for="rep-estudio-pie">Pie de documento</label><input type="text" id="rep-estudio-pie" value="Documento de trabajo y referencia tributaria emitido para el cliente."></div>
               </div>
               <button type="button" class="btn btn-primario" id="btn-rep-guardar-membrete">Guardar membrete</button>
               <div class="suite-membrete-preview" id="rep-preview-box" style="margin-top:14px"></div>
@@ -2982,26 +3016,46 @@
           </div>
 
           <div class="panel">
-            <div class="panel-head"><h2>Emisión rápida de informes PDF / Impresión</h2></div>
+            <div class="panel-head">
+              <h2>Emisión de informes y certificados</h2>
+              <div class="rep-corte-head">
+                <label class="sr-only" for="rep-informe-corte">Corte del informe</label>
+                <select id="rep-informe-corte" class="lq-select lq-select-sm" style="max-width:145px">
+                  <option value="diario" selected>Corte diario</option>
+                  <option value="semanal">Corte semanal</option>
+                </select>
+              </div>
+            </div>
             <div class="panel-cuerpo">
-              <div class="suite-reportes-lista">
-                <button type="button" class="btn btn-primario" id="btn-rep-cert6"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Certificado N°6 Sueldos (Col. 7 Exenta / Col. 8 No Gravada)</button>
-                <button type="button" class="btn" id="btn-rep-cert1"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Certificado N°1 Honorarios BHE (Retención real)</button>
-                <button type="button" class="btn" id="btn-rep-resumen"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Resumen Ejecutivo Mensual del Cliente (F29 + P&amp;L)</button>
-                <button type="button" class="btn" id="btn-rep-whatsapp"><span class="material-icons" aria-hidden="true">chat</span>Copiar resumen ejecutivo WhatsApp cliente</button>
-                <button type="button" class="btn" id="btn-rep-f29"><span class="material-icons" aria-hidden="true">print</span>Borrador Formulario 29 con Membrete</button>
-                <div class="suite-reportes-corte" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-                  <label class="texto-ayuda" for="rep-informe-corte" style="margin:0;font-weight:700;">Corte del informe:</label>
-                  <select id="rep-informe-corte" class="lq-select" style="max-width:170px;">
-                    <option value="diario" selected>Corte diario</option>
-                    <option value="semanal">Corte semanal</option>
-                  </select>
-                  <button type="button" class="btn" id="btn-rep-informe"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Informe Situación Tributaria del Cliente (PDF)</button>
+              <div class="rep-lista-pro">
+                <div class="rep-fila-pro">
+                  <div><strong>Resumen Mensual del Cliente</strong><span>F29 borrador, resultados del período y base tributaria.</span></div>
+                  <button type="button" class="btn btn-chico btn-primario" id="btn-rep-resumen"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF</button>
+                </div>
+                <div class="rep-fila-pro">
+                  <div><strong>Informe de Situación Tributaria</strong><span>Estado F29, acuses RCV y alertas activas según corte.</span></div>
+                  <button type="button" class="btn btn-chico" id="btn-rep-informe"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF</button>
+                </div>
+                <div class="rep-fila-pro">
+                  <div><strong>Borrador Formulario 29 con Membrete</strong><span>Hoja guía de códigos SII lista para revisión.</span></div>
+                  <button type="button" class="btn btn-chico" id="btn-rep-f29"><span class="material-icons" aria-hidden="true">print</span>PDF</button>
+                </div>
+                <div class="rep-fila-pro">
+                  <div><strong>Certificado N°6 sobre Sueldos</strong><span>Mapeo SII vigente (Col. 7 Exenta / Col. 8 No Gravada).</span></div>
+                  <button type="button" class="btn btn-chico" id="btn-rep-cert6"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF</button>
+                </div>
+                <div class="rep-fila-pro">
+                  <div><strong>Certificado N°1 sobre Honorarios BHE</strong><span>Retención real practicada según boletas vigentes.</span></div>
+                  <button type="button" class="btn btn-chico" id="btn-rep-cert1"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF</button>
+                </div>
+                <div class="rep-fila-pro">
+                  <div><strong>Resumen para WhatsApp del Cliente</strong><span>Texto listo con F29, vencimiento y proyección de caja.</span></div>
+                  <button type="button" class="btn btn-chico" id="btn-rep-whatsapp"><span class="material-icons" aria-hidden="true">content_copy</span>Copiar</button>
                 </div>
               </div>
               <div class="suite-wa-preview" id="rep-whatsapp-preview" hidden>
                 <div class="suite-wa-head">
-                  <strong>Vista previa mensaje WhatsApp para el cliente</strong>
+                  <strong>Vista previa WhatsApp</strong>
                   <span class="texto-ayuda">Actualizado con el F29 y caja del período</span>
                 </div>
                 <pre class="suite-wa-texto" id="rep-whatsapp-texto"></pre>
@@ -4099,7 +4153,7 @@
 <script src="/js/liquidacion_valores.js?v=1.4.0"></script>
 <script src="/assets/vendor/xlsx.full.min.js"></script>
 <script src="/js/pyme_excel.js?v=2.1.1"></script>
-<script src="/js/demo_comun.js?v=1.2.3"></script>
+<script src="/js/demo_comun.js?v=1.2.4"></script>
 <script src="/js/demo_contadores.js?v=1.6.0"></script>
 <script src="/js/previred_generador.js?v=1.5.0"></script>
 <script src="/js/lre_tablas.js?v=1.0.0"></script>
@@ -4118,9 +4172,9 @@
 <script src="/js/contadores_contabilidad.js?v=2.2.0"></script>
 <script src="/js/contadores_importadores.js?v=1.1.0"></script>
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
-<script src="/js/contadores_asistente_pro.js?v=2.1.1"></script>
+<script src="/js/contadores_asistente_pro.js?v=2.1.2"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.2.4"></script>
+<script src="/js/demo_suite.js?v=3.2.5"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

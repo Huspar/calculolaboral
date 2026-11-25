@@ -712,7 +712,7 @@
         if (origen === 'ajuste') {
             return '<span class="asiento-chip chip-ajuste"><span class="material-icons" aria-hidden="true">tune</span>Ajuste · Contador</span>';
         }
-        return '<span class="asiento-chip chip-automatico"><span class="material-icons" aria-hidden="true">auto_awesome</span>Automático · RCV / Nómina</span>';
+        return '<span class="asiento-chip chip-automatico">Origen: RCV / Nómina</span>';
     }
 
     // ------------------------------------------------------------- Render F29
@@ -1457,10 +1457,12 @@
                     '<thead><tr><th>Código</th><th>Cuenta contable</th><th>Naturaleza</th><th class="num">Debe</th><th class="num">Haber</th></tr></thead>' +
                     '<tbody>' +
                     a.lineas.map(function (l) {
+                        var natMap = { activo: 'Activo', pasivo: 'Pasivo', patrimonio: 'Patrimonio', perdida: 'Pérdida', ganancia: 'Ganancia', resultado: 'Resultado' };
+                        var natTxt = natMap[String(l.tipo || '').toLowerCase()] || l.tipo;
                         return '<tr>' +
                             '<td class="mono">' + D.esc(l.cuenta) + '</td>' +
                             '<td>' + D.esc(l.nombre) + '</td>' +
-                            '<td class="cap">' + D.esc(l.tipo) + '</td>' +
+                            '<td>' + D.esc(natTxt) + '</td>' +
                             '<td class="mono num">' + (l.debe ? D.money(l.debe) : '-') + '</td>' +
                             '<td class="mono num">' + (l.haber ? D.money(l.haber) : '-') + '</td>' +
                             '</tr>';
@@ -3281,9 +3283,19 @@
             carteraTbody.innerHTML = resumenClientes.slice(0, 8).map(function (c) {
                 var estCls = c.cerrado ? 'sello-emitida' : (c.pctAvance > 0 ? 'sello-preparada' : 'sello-guardada');
                 var estTxt = c.cerrado ? 'Cerrado' : (c.pctAvance > 0 ? 'En curso' : 'Pendiente');
+                var stCli = c.esActivo ? m.estado : leerEstadoParaCliente(c.nombre, per);
+                var rcvOk = !!(c.f29Listo || (stCli && (stCli.ventasCsv || stCli.comprasCsv)));
+                var nomOk = c.esActivo ? !!(m.nomina && m.nomina.totalDebe > 0) : !!(stCli && stCli.nominaGuardada);
+                var bcoOk = !!(stCli && stCli.cartolaMovimientos && stCli.cartolaMovimientos.length);
+                var f29OkCli = !!(c.cerrado || c.f29Listo);
+                function celdaHito(ok, mod, lblOk, lblPend) {
+                    return '<td><button type="button" class="matriz-pill ' + (ok ? 'ok' : 'pend') + '" data-dash-ir="' + mod + '" title="Ir a ' + mod + '">' + (ok ? lblOk : lblPend) + '</button></td>';
+                }
                 return '<tr' + (c.esActivo ? ' class="saas-row-activo"' : '') + '>' +
                     '<td><strong>' + D.esc(c.nombre) + '</strong><br><span class="texto-ayuda mono">' + D.esc(c.regimen) + (c.rut ? ' · ' + D.esc(c.rut) : '') + '</span></td>' +
-                    '<td><div class="saas-mini-prog"><div class="saas-mini-track"><div class="saas-mini-fill" style="width:' + c.pctAvance + '%"></div></div><span class="mono">' + c.pctAvance + '%</span></div></td>' +
+                    celdaHito(rcvOk, 'f29', 'OK', 'Pend.') +
+                    celdaHito(nomOk, 'remuneraciones', 'OK', 'Pend.') +
+                    celdaHito(bcoOk, 'bancos', 'OK', 'Pend.') +
                     '<td class="mono num"><strong>' + D.money(c.f29Total) + '</strong></td>' +
                     '<td><span class="sello ' + estCls + '">' + estTxt + '</span></td>' +
                     '<td class="num"><div class="match-acciones-fila" style="justify-content:flex-end">' +
@@ -3329,11 +3341,11 @@
         var vencEl = $('dash-vencimientos-lista');
         if (vencEl) {
             vencEl.innerHTML = [
-                { tit: 'Acuses recibo RCV (Ley 19.983)', sub: acusesPend > 0 ? acusesPend + ' documentos por revisar (8 días)' : 'Sin acuses pendientes este mes', badge: acusesPend > 0 ? 'Urgente' : 'OK', cls: acusesPend > 0 ? 'abierto' : 'cerrado', mod: 'f29' },
-                { tit: 'Cotizaciones PreviRed (Día 13)', sub: (m.nomina && m.nomina.trabajadores) ? m.nomina.trabajadores + ' trabajadores listos' : 'Carga la nómina para generar archivo 105 campos', badge: (m.nomina && m.nomina.totalDebe > 0) ? 'Listo' : 'Pendiente', cls: (m.nomina && m.nomina.totalDebe > 0) ? 'cerrado' : 'abierto', mod: 'remuneraciones' },
-                { tit: 'Declaración F29 Mensual (Día 20)', sub: 'Cód. 91 estimado: ' + D.money(m.f29.codigos[91] || 0), badge: m.estado.cerradoTributario ? 'Cerrado' : 'Abierto', cls: m.estado.cerradoTributario ? 'cerrado' : 'abierto', mod: 'f29' }
+                { tit: 'Acuses recibo RCV (Ley 19.983)', sub: acusesPend > 0 ? acusesPend + ' documentos por revisar (8 días)' : 'Sin acuses pendientes este mes', badge: acusesPend > 0 ? 'Urgente' : 'Al día', cls: acusesPend > 0 ? 'syn-venc-badge--urgente' : 'syn-venc-badge--ok', mod: 'f29' },
+                { tit: 'Cotizaciones PreviRed (Día 13)', sub: (m.nomina && m.nomina.trabajadores) ? m.nomina.trabajadores + ' trabajadores listos' : 'Carga la nómina para generar archivo 105 campos', badge: (m.nomina && m.nomina.totalDebe > 0) ? 'Listo' : 'Pendiente', cls: (m.nomina && m.nomina.totalDebe > 0) ? 'syn-venc-badge--ok' : 'syn-venc-badge--warn', mod: 'remuneraciones' },
+                { tit: 'Declaración F29 Mensual (Día 20)', sub: 'Cód. 91 estimado: ' + D.money(m.f29.codigos[91] || 0), badge: m.estado.cerradoTributario ? 'Cerrado' : 'Abierto', cls: m.estado.cerradoTributario ? 'syn-venc-badge--ok' : 'syn-venc-badge--warn', mod: 'f29' }
             ].map(function (v) {
-                return '<div class="syn-venc-card"><div class="syn-venc-card-top"><strong>' + D.esc(v.tit) + '</strong><span class="app-nav-chip ' + v.cls + '">' + D.esc(v.badge) + '</span></div><span>' + D.esc(v.sub) + '</span></div>';
+                return '<div class="syn-venc-card"><div class="syn-venc-card-top"><strong>' + D.esc(v.tit) + '</strong><span class="syn-venc-badge ' + v.cls + '">' + D.esc(v.badge) + '</span></div><span>' + D.esc(v.sub) + '</span></div>';
             }).join('');
         }
 
@@ -6815,6 +6827,54 @@
             });
         }
 
+        // Subpestañas de Impuestos Mes (F29): Hoja F29 | RCV y Parámetros | Acuses 8 días | Honorarios (BHE)
+        (function () {
+            var tabsWrap = $('f29-subtabs');
+            if (!tabsWrap) return;
+            function activarTabF29(nombre) {
+                Array.prototype.forEach.call(tabsWrap.querySelectorAll('[data-f29-tab]'), function (btn) {
+                    var on = btn.getAttribute('data-f29-tab') === nombre;
+                    btn.classList.toggle('activo', on);
+                    btn.setAttribute('aria-selected', on ? 'true' : 'false');
+                });
+                Array.prototype.forEach.call(document.querySelectorAll('#suite-f29 [data-f29-panel]'), function (p) {
+                    p.hidden = p.getAttribute('data-f29-panel') !== nombre;
+                });
+            }
+            tabsWrap.addEventListener('click', function (ev) {
+                var btn = ev.target && ev.target.closest ? ev.target.closest('[data-f29-tab]') : null;
+                if (!btn) return;
+                activarTabF29(btn.getAttribute('data-f29-tab') || 'hoja');
+            });
+            activarTabF29('hoja');
+        })();
+
+        // Subir logo del estudio desde Informes > Membrete (reutiliza #logo-input de DemoCL)
+        if ($('btn-rep-logo') && $('logo-input')) {
+            $('btn-rep-logo').addEventListener('click', function () { $('logo-input').click(); });
+            document.addEventListener('demo:logo', function () {
+                var est = D && D.estudio ? D.estudio() : {};
+                if ($('rep-logo-estado') && est.logo) {
+                    $('rep-logo-estado').textContent = 'Logo cargado en PDFs';
+                }
+            });
+        }
+
+        // Colapsar bandeja de alertas en Cartera cuando tiene 0 alertas
+        (function () {
+            var pill = $('torre-alertas-total-pill');
+            var panel = $('torre-alertas-panel');
+            if (!pill || !panel) return;
+            function syncVacio() {
+                var n = parseInt(String(pill.textContent || '0').replace(/\D/g, ''), 10) || 0;
+                panel.classList.toggle('sin-alertas', n === 0);
+            }
+            syncVacio();
+            if (typeof MutationObserver !== 'undefined') {
+                new MutationObserver(syncVacio).observe(pill, { childList: true, characterData: true, subtree: true });
+            }
+        })();
+
         // Modal de Configuración de la Suite (Apariencia e Integraciones)
         (function () {
             var btnCfg = $('btn-suite-config');
@@ -6882,9 +6942,9 @@
             var yaInit = localStorage.getItem('cl-suite-demo-autoseed-v1');
             var rawStore = localStorage.getItem('cl-suite-contable');
             var vacio = !rawStore || rawStore === '{}' || rawStore.length < 40;
-            if (!yaInit && vacio && $('btn-cargar-ejemplo-todo')) {
+            if (!yaInit && vacio) {
                 localStorage.setItem('cl-suite-demo-autoseed-v1', '1');
-                $('btn-cargar-ejemplo-todo').click();
+                cargarEjemploCompleto({ silencioso: true });
             }
         } catch (e) { /* silencioso */ }
         cambiarModulo(moduloDesdeUbicacion());

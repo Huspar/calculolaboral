@@ -8569,3 +8569,238 @@ body[data-syn-theme="cobalto"] #dlg-suite-config {
         align-items: flex-start;
     }
 }
+
+/* ========================================================
+   Ola 1 Consenso ERP: Tabs únicas, P0 1280px, Semántica y Purga Legacy
+   ======================================================== */
+
+/* Estándar único de subpestañas subrayadas (Linear/Xero) */
+.cl-subtabs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid var(--syn-border, #E2E8F0);
+    margin: 0 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.cl-subtabs::-webkit-scrollbar { display: none; }
+.cl-subtab {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    padding: 9px 14px;
+    margin-bottom: -1px;
+    font: 500 13.5px/1.3 inherit;
+    color: var(--syn-muted, #64748B);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .15s ease, border-color .15s ease;
+}
+.cl-subtab:hover {
+    color: var(--syn-ink, #0F172A);
+}
+.cl-subtab.activo {
+    color: var(--syn-accent-ink, #3730A3);
+    border-bottom-color: var(--syn-accent, #4F46E5);
+    font-weight: 600;
+}
+
+/* Eliminar bolitas radio (○/◉) en .segmento → Segmented control limpio */
+#pm-panel.syn-theme .segmento label {
+    position: relative;
+}
+#pm-panel.syn-theme .segmento input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+
+/* Badges semánticos en Próximos vencimientos del Dashboard */
+.syn-venc-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+.syn-venc-badge--urgente {
+    background: #FEF2F2;
+    color: #B91C1C;
+    border: 1px solid #FECACA;
+}
+.syn-venc-badge--ok {
+    background: #ECFDF5;
+    color: #047857;
+    border: 1px solid #A7F3D0;
+}
+.syn-venc-badge--warn {
+    background: #FFFBEB;
+    color: #B45309;
+    border: 1px solid #FDE68A;
+}
+
+/* Celdas de Matriz de Cumplimiento en Dashboard */
+.matriz-pill {
+    appearance: none;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 2px 7px;
+    font: 600 11.5px/1.35 inherit;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.matriz-pill.ok {
+    background: #ECFDF5;
+    color: #047857;
+    border-color: #A7F3D0;
+}
+.matriz-pill.pend {
+    background: #F8FAFC;
+    color: #64748B;
+    border-color: #E2E8F0;
+}
+.matriz-pill:hover {
+    filter: brightness(0.96);
+}
+
+/* Fix P0 Cartera: tabla de clientes arriba y alertas vacías colapsadas a 1 línea */
+#suite-torre:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+}
+#suite-torre > #torre-alertas-panel {
+    order: 20;
+}
+#torre-alertas-panel.sin-alertas .panel-cuerpo {
+    display: none;
+}
+#torre-alertas-panel.sin-alertas .panel-head {
+    border-bottom: 0;
+}
+#pm-panel.syn-theme .torre-alerta-total-pill {
+    background: #F1F5F9 !important;
+    color: #334155 !important;
+    border: 1px solid #CBD5E1;
+}
+
+/* Fix P0 Buzón a 1280px: cero recorte derecho y 1 solo botón primario */
+#suite-buzon .buzon-grid {
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.85fr);
+}
+#suite-buzon .buzon-grid > *,
+#suite-buzon .panel {
+    min-width: 0;
+}
+#suite-buzon .tabla-contable-wrap {
+    overflow-x: auto;
+    max-width: 100%;
+}
+#suite-buzon .buzon-saliente-plantillas .btn-primario {
+    background: #FFFFFF !important;
+    color: var(--syn-ink, #0F172A) !important;
+    border: 1px solid var(--syn-border, #CBD5E1) !important;
+}
+#suite-buzon .buzon-saliente-plantillas .btn-primario:hover {
+    background: var(--syn-surface-2, #F8FAFC) !important;
+}
+
+/* Fix P0 Flujo de Caja y Balance 8 Columnas a 1280px */
+#suite-pnl .fin-cols-2 > *,
+#suite-pnl .panel,
+#suite-balance .panel {
+    min-width: 0;
+}
+#suite-pnl .tabla-contable-wrap,
+#suite-balance .tabla-contable-wrap {
+    overflow-x: auto;
+    max-width: 100%;
+}
+#pm-panel.syn-theme .traza-cuenta-btn {
+    color: var(--syn-ink, #0F172A) !important;
+}
+#pm-panel.syn-theme .traza-cuenta-btn:hover {
+    color: var(--syn-accent, #4F46E5) !important;
+}
+
+/* Fix P0 BHE tabla: RUT Emisor sin corte en 2 líneas */
+.bhe-tabla-pro td:nth-child(2),
+.bhe-tabla-pro th:nth-child(2) {
+    white-space: nowrap;
+}
+
+/* Purga legacy: checkboxes Bancos, badge Listo, alerta supermercados y WhatsApp */
+#pm-panel.syn-theme input[type="checkbox"] {
+    accent-color: var(--syn-accent, #4F46E5);
+}
+#pm-panel.syn-theme .sello-emitida {
+    background: #ECFDF5 !important;
+    color: #047857 !important;
+    border-color: #A7F3D0 !important;
+}
+#pm-panel.syn-theme .f29-alerta-supermercado {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-left: 3px solid #D97706 !important;
+}
+#pm-panel.syn-theme .suite-wa-preview {
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+}
+
+/* Informes y Portal: lista estructurada estilo ERP + Membrete 2fr 1fr */
+.rep-membrete-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+}
+.rep-membrete-grid .rep-pie-full {
+    grid-column: 1 / -1;
+}
+.rep-logo-fila {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.rep-lista-pro {
+    display: flex;
+    flex-direction: column;
+}
+.rep-fila-pro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--syn-border, #E2E8F0);
+}
+.rep-fila-pro:last-child {
+    border-bottom: 0;
+}
+.rep-fila-pro strong {
+    display: block;
+    font-size: 13.5px;
+    color: var(--syn-ink, #0F172A);
+    line-height: 1.3;
+}
+.rep-fila-pro span {
+    display: block;
+    font-size: 12px;
+    color: var(--syn-muted, #64748B);
+    margin-top: 1px;
+}
+.rep-fila-pro .btn {
+    flex-shrink: 0;
+}
+@media (max-width: 720px) {
+    .rep-membrete-grid {
+        grid-template-columns: 1fr;
+    }
+}

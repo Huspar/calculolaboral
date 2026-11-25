@@ -1055,7 +1055,7 @@
                         matchedFolios: [],
                         detalleMatch: alertaDiferencia
                             ? alertaDiferencia.posibleCausa
-                            : 'Sin regla ni factura coincidente; elige cuenta y confirma'
+                            : 'Sin asignar'
                     };
                 }
             }
