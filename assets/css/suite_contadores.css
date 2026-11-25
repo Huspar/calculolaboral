@@ -8478,20 +8478,35 @@ dialog.app-dialogo .btn-primario,
 }
 
 /* Modal Configuración de la Suite (Apariencia e Integraciones) */
+#dlg-suite-config {
+    --cfg-accent: #4F46E5;
+    --cfg-accent-soft: #EEF2FF;
+    --cfg-accent-ink: #3730A3;
+}
+body[data-syn-theme="editorial"] #dlg-suite-config {
+    --cfg-accent: #C2410C;
+    --cfg-accent-soft: #FFF7ED;
+    --cfg-accent-ink: #9A3412;
+}
+body[data-syn-theme="cobalto"] #dlg-suite-config {
+    --cfg-accent: #1D4ED8;
+    --cfg-accent-soft: #EFF6FF;
+    --cfg-accent-ink: #1E40AF;
+}
 .cfg-suite-cuerpo {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding-top: 8px;
+    gap: 22px;
+    padding: 20px 24px 24px;
 }
 .cfg-suite-sec h3 {
     margin: 0 0 4px;
     font-size: 13.5px;
     font-weight: 700;
-    color: var(--syn-ink, #0F172A);
+    color: #0F172A;
 }
 .cfg-suite-sec > .texto-ayuda {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
 }
 .cfg-theme-bar {
     padding: 0;
@@ -8501,20 +8516,21 @@ dialog.app-dialogo .btn-primario,
 .cfg-theme-bar .side-theme-btns {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
+    gap: 10px;
 }
 .cfg-theme-bar .side-theme-btn {
     background: #FFFFFF !important;
-    border: 1px solid var(--syn-border, #CBD5E1) !important;
-    color: var(--syn-ink, #0F172A) !important;
-    padding: 9px 12px;
+    border: 1px solid #CBD5E1 !important;
+    color: #0F172A !important;
+    padding: 10px 12px;
     font-size: 13px;
-    border-radius: 7px;
+    border-radius: 8px;
 }
 .cfg-theme-bar .side-theme-btn.activo {
-    background: var(--syn-accent-soft) !important;
-    border-color: var(--syn-accent) !important;
-    color: var(--syn-accent-ink) !important;
+    background: var(--cfg-accent-soft) !important;
+    border: 1.5px solid var(--cfg-accent) !important;
+    color: var(--cfg-accent-ink) !important;
+    font-weight: 600;
 }
 .cfg-int-lista {
     display: flex;

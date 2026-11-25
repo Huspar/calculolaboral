@@ -6822,6 +6822,8 @@
             var btnCerrarCfg = $('btn-cerrar-suite-config');
             if (!btnCfg || !dlgCfg) return;
             btnCfg.addEventListener('click', function () {
+                var p = document.getElementById('pm-panel');
+                if (p && document.body) document.body.setAttribute('data-syn-theme', p.getAttribute('data-syn-theme') || 'slate');
                 if (typeof dlgCfg.showModal === 'function') dlgCfg.showModal();
                 else dlgCfg.setAttribute('open', '');
             });
@@ -6834,6 +6836,13 @@
             dlgCfg.addEventListener('click', function (ev) {
                 if (ev.target === dlgCfg && typeof dlgCfg.close === 'function') dlgCfg.close();
             });
+            var picker = $('suite-theme-picker');
+            if (picker) {
+                picker.addEventListener('click', function (ev) {
+                    var b = ev.target && ev.target.closest ? ev.target.closest('[data-set-theme]') : null;
+                    if (b && document.body) document.body.setAttribute('data-syn-theme', b.getAttribute('data-set-theme') || 'slate');
+                });
+            }
             if ($('btn-rep-abrir-mcp')) {
                 $('btn-rep-abrir-mcp').addEventListener('click', function () {
                     if (dlgCfg.open && typeof dlgCfg.close === 'function') dlgCfg.close();
