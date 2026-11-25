@@ -8315,3 +8315,11 @@ dialog.app-dialogo .btn-primario,
     color: #E2E8F0 !important;
     border-color: #334155 !important;
 }
+
+/* Logo isotipo nítido en blanco sobre el acento en las 3 paletas */
+#pm-panel.syn-theme .syn-logo .app-logo-isotipo {
+    background: var(--syn-accent) !important;
+}
+#pm-panel.syn-theme .syn-logo .app-logo-isotipo svg {
+    color: #FFFFFF !important;
+}
