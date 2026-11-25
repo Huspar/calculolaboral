@@ -8289,3 +8289,29 @@ dialog.app-dialogo .btn-primario,
 .sw-slate { background: linear-gradient(135deg, #0F172A 50%, #4F46E5 50%); }
 .sw-editorial { background: #C2410C; }
 .sw-cobalto { background: #1D4ED8; }
+
+/* Contraste nítido en Sidebar oscuro Slate (#0F172A) */
+#pm-panel.syn-theme[data-syn-theme="slate"] #suite-modulos .suite-mod-btn {
+    color: #E2E8F0 !important;
+    background: transparent !important;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] #suite-modulos .suite-mod-btn .material-icons {
+    color: #94A3B8 !important;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] #suite-modulos .suite-mod-btn:hover {
+    background: #1E293B !important;
+    color: #FFFFFF !important;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] #suite-modulos .suite-mod-btn.activo {
+    background: #1E293B !important;
+    color: #FFFFFF !important;
+    box-shadow: inset 3px 0 0 #6366F1 !important;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] #suite-modulos .suite-mod-btn.activo .material-icons {
+    color: #818CF8 !important;
+}
+#pm-panel.syn-theme[data-syn-theme="slate"] #suite-modulos .app-nav-chip {
+    background: #1E293B !important;
+    color: #E2E8F0 !important;
+    border-color: #334155 !important;
+}
