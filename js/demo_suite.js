@@ -1792,7 +1792,8 @@
         if ($('pnl-vacio')) $('pnl-vacio').hidden = !sinDatosPnl;
 
         $('pnl-k-ingresos').textContent = D.money(p.ingresosGiro);
-        $('pnl-k-margen').textContent = D.money(p.margenBruto) + ' (' + D.num(p.margenBrutoPct, 1) + '%)';
+        $('pnl-k-margen').textContent = D.money(p.margenBruto);
+        if ($('pnl-k-margen-meta')) $('pnl-k-margen-meta').textContent = 'Margen ' + D.num(p.margenBrutoPct, 1) + '% sobre ventas';
         $('pnl-k-ebit').textContent = moneySigno(p.resultadoOperacional);
         $('pnl-k-caja').textContent = moneySigno(fl.cajaProyectadaPostImpuestos);
 
@@ -3237,7 +3238,10 @@
         if ($('dash-k-f29')) $('dash-k-f29').textContent = D.money(sumF29);
         if ($('dash-k-f29-meta')) $('dash-k-f29-meta').textContent = m.ventas.documentos.length ? (m.ventas.documentos.length + ' ventas · ' + m.compras.documentos.length + ' compras') : 'Carga ejemplo o RCV';
         if ($('dash-k-alertas')) $('dash-k-alertas').textContent = acusesPend;
-        if ($('dash-k-alertas-meta')) $('dash-k-alertas-meta').textContent = acusesPend > 0 ? 'Requiere revisión Ley 19.983' : 'Sin acuses pendientes';
+        if ($('dash-k-acuses')) $('dash-k-acuses').textContent = acusesPend;
+        var acuseMetaTxt = acusesPend > 0 ? (acusesPend + ' por revisar (plazo 8 días)') : 'Sin acuses pendientes';
+        if ($('dash-k-alertas-meta')) $('dash-k-alertas-meta').textContent = acuseMetaTxt;
+        if ($('dash-k-acuses-meta')) $('dash-k-acuses-meta').textContent = acuseMetaTxt;
         if ($('dash-k-cerrados')) $('dash-k-cerrados').textContent = cerradosCnt + ' / ' + resumenClientes.length;
         aplicarEstadoKpiCard('dash-kpi-card-alertas', acusesPend > 0 ? 'fin-kpi-warn' : 'fin-kpi-ok');
         aplicarEstadoKpiCard('dash-kpi-card-cerrados', cerradosCnt === resumenClientes.length && resumenClientes.length > 0 ? 'fin-kpi-ok' : 'fin-kpi-warn');

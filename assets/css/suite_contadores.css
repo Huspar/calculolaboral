@@ -7883,3 +7883,158 @@ dialog.app-dialogo {
 #pm-panel.syn-theme .syn-dash-grid {
     grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
 }
+
+/* ==========================================================================
+   CORRECCIONES AUDITORÍA PROFUNDA DESIGN CRITIC (Top 10: P0, P1, P2)
+   ========================================================================== */
+
+/* P0 #1: Dashboard móvil debe apilar a 1 columna en <=900px sin aplastar tarjetas */
+@media screen and (max-width: 900px) {
+    #pm-panel.syn-theme .syn-dash-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+    #pm-panel.syn-theme .syn-dash-main,
+    #pm-panel.syn-theme .syn-dash-rail,
+    #pm-panel.syn-theme .syn-panel {
+        min-width: 0;
+        max-width: 100%;
+    }
+}
+
+/* P0 #2: Evitar truncado de montos KPI en Carga Masiva (1280px) y móvil (390/360px) */
+#pm-panel.syn-theme .fin-kpi .fin-kpi-val,
+#pm-panel.syn-theme .fin-kpi .saas-kpi-num {
+    font-size: clamp(18px, 1.8vw, 25px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#suite-importador .fin-kpis {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+@media screen and (max-width: 520px) {
+    #pm-panel.syn-theme .fin-kpi .fin-kpi-val,
+    #pm-panel.syn-theme .fin-kpi .saas-kpi-num {
+        font-size: 19px;
+    }
+    #pm-panel.syn-theme .fin-kpis.fin-kpis-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+}
+@media screen and (max-width: 365px) {
+    #pm-panel.syn-theme .fin-kpis.fin-kpis-4 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* P0 #3: Buzón en 1280px sin recortar columna ACCIONES */
+.buzon-recibidos-panel,
+.buzon-salientes-panel {
+    min-width: 0;
+}
+.buzon-tabla-escritorio {
+    overflow-x: auto;
+    max-width: 100%;
+}
+#suite-buzon .match-acciones-fila {
+    flex-wrap: wrap;
+    gap: 6px;
+}
+@media screen and (min-width: 961px) and (max-width: 1400px) {
+    .buzon-layout {
+        grid-template-columns: minmax(0, 1.55fr) minmax(270px, 0.9fr);
+    }
+}
+
+/* P0 #4: Contraste WCAG AA (>=4.5:1) en guía SII F29 y badges naranja */
+.rcv-guia-card,
+.rcv-guia-card strong,
+.rcv-guia-card p,
+.rcv-guia-card li {
+    color: #0F172A !important;
+}
+.rcv-guia-card {
+    background: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+}
+.lre-tab-badge,
+#pm-panel.syn-theme .lre-tab-badge,
+.tabla-contable tr.f29-gran-total .f29-cod,
+#pm-panel.syn-theme .f29-cod.f29-cod-91 {
+    background: #C2410C !important;
+    color: #FFFFFF !important;
+    border-color: #C2410C !important;
+}
+
+/* P1 #6: Scroll horizontal limpio en Flujo (#suite-pnl) y primera columna fija en Balance 8 Col. */
+#suite-pnl .tabla-contable-wrap,
+#suite-balance .tabla-contable-wrap {
+    overflow-x: auto;
+    max-width: 100%;
+}
+#suite-balance .tabla-contable th:first-child,
+#suite-balance .tabla-contable td:first-child {
+    position: sticky;
+    left: 0;
+    background: #FFFFFF;
+    z-index: 2;
+    box-shadow: 1px 0 0 var(--syn-border, #E5E7EB);
+}
+#suite-balance .tabla-contable thead th:first-child {
+    background: var(--syn-canvas, #F6F7F9);
+    z-index: 3;
+}
+
+/* P1 #7: Header móvil compacto y tap targets >=44px */
+@media screen and (max-width: 768px) {
+    #app-cerrar,
+    .syn-range-btn {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+    #pm-panel.syn-theme .syn-topbar {
+        padding: 8px 12px;
+        gap: 6px 8px;
+    }
+}
+
+/* P1 #8: Unificar botones y focos legacy verde esmeralda -> carbón #141518 y limpiar fondos crema en F29 */
+#pm-panel.syn-theme :focus-visible,
+dialog.app-dialogo :focus-visible,
+.pe-shell :focus-visible {
+    outline: 2px solid #141518 !important;
+    outline-offset: 2px;
+}
+dialog.app-dialogo .btn-primario,
+.pe-shell .btn-primario {
+    background: #141518 !important;
+    border-color: #141518 !important;
+    color: #FFFFFF !important;
+}
+.pe-header {
+    background: #141518 !important;
+}
+#suite-f29 .panel,
+#suite-f29 .f29-resumen-box,
+#suite-f29 .f29-alerta-supermercado {
+    background: #FFFFFF;
+}
+
+/* P2 #9: Informes membrete (Pie de documento ancho completo) */
+#rep-membrete-pie,
+.rep-membrete-pie-field {
+    grid-column: 1 / -1;
+}
+#suite-reportes .fin-form-grid .lq-field:last-child {
+    grid-column: 1 / -1;
+}
+
+/* P2 #10: Selector de cuenta bancaria no estirado a 780px en escritorio */
+@media screen and (min-width: 769px) {
+    #pm-panel.syn-theme .bancos-cuenta-select {
+        width: auto !important;
+        min-width: 210px;
+        max-width: 250px;
+    }
+}

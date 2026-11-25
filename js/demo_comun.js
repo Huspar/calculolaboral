@@ -18,7 +18,7 @@
 
     function money(n) {
         var v = Math.round(Number(n) || 0);
-        return '$' + v.toLocaleString('es-CL');
+        return v < 0 ? '-$' + Math.abs(v).toLocaleString('es-CL') : '$' + v.toLocaleString('es-CL');
     }
 
     function num(n, dec) {

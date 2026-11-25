@@ -115,10 +115,18 @@
         }
 
         if (secciones.pnl) {
+            var costosPnl = Math.round(Number(pnl.costoVentas != null ? pnl.costoVentas : pnl.costosDirectos) || 0);
+            var gastosPnl = Math.round(
+                (Number(pnl.gastoLaboral) || 0) +
+                (Number(pnl.gastoHonorarios) || 0) +
+                (Number(pnl.gastoAdmin) || 0) +
+                (Number(pnl.depreciacion) || 0) +
+                (Number(pnl.otrosGastosNoDeducibles) || 0)
+            );
             snap.pnl = {
-                ingresos: Math.round(Number(pnl.ingresosGiro) || 0),
-                costos: Math.round(Number(pnl.costosDirectos) || 0),
-                gastos: Math.round((Number(pnl.gastosRemuneraciones) || 0) + (Number(pnl.gastosOperacion) || 0)),
+                ingresos: Math.round(Number(pnl.totalIngresos != null ? pnl.totalIngresos : pnl.ingresosGiro) || 0),
+                costos: costosPnl,
+                gastos: gastosPnl,
                 resultado: Math.round(Number(pnl.resultadoAntesImpuesto) || 0)
             };
         }
