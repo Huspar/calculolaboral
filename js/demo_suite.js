@@ -6815,6 +6815,17 @@
             });
         }
 
+        // Cerrar menús desplegables Exportar al elegir una opción o hacer clic fuera
+        document.addEventListener('click', function (ev) {
+            var menus = document.querySelectorAll('details.cl-export-menu[open]');
+            if (!menus.length) return;
+            Array.prototype.forEach.call(menus, function (m) {
+                if (!m.contains(ev.target) || ev.target.closest('.cl-export-item')) {
+                    m.removeAttribute('open');
+                }
+            });
+        });
+
         // Eventos cruzados desde Liquidaciones / Finiquitos / Cliente
         document.addEventListener('demo:liquidaciones', refrescarTodo);
         document.addEventListener('demo:finiquitos', function () { pintarSelloFiniquitos(); });

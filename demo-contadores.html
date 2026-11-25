@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
-<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.2.5">
+<link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.2.6">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -63,7 +63,7 @@
       <button type="button" class="suite-mod-btn" data-modulo="torre" aria-current="false">
         <span class="material-icons" aria-hidden="true">apartment</span>
         <span>Cartera de Clientes</span>
-        <span class="app-nav-chip" id="nav-count-clientes">0</span>
+        <span class="app-nav-chip" id="nav-count-clientes" hidden>0</span>
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="importador" aria-current="false">
         <span class="material-icons" aria-hidden="true">cloud_upload</span>
@@ -79,26 +79,26 @@
       <button type="button" class="suite-mod-btn" data-modulo="remuneraciones" aria-current="false">
         <span class="material-icons" aria-hidden="true">receipt_long</span>
         <span>Remuneraciones</span>
-        <span class="app-nav-chip" id="nav-count-liq">10</span>
+        <span class="app-nav-chip" id="nav-count-liq" hidden>10</span>
       </button>
 
       <p class="app-nav-grupo">Tributario y Renta</p>
       <button type="button" class="suite-mod-btn" data-modulo="f29" aria-current="false">
         <span class="material-icons" aria-hidden="true">receipt</span>
         <span>Impuestos Mes</span>
-        <span class="app-nav-chip" id="nav-f29-estado">F29</span>
+        <span class="app-nav-chip" id="nav-f29-estado" hidden>F29</span>
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="ddjj" aria-current="false">
         <span class="material-icons" aria-hidden="true">description</span>
         <span>Renta y DDJJ</span>
-        <span class="app-nav-chip" id="nav-ddjj-at">AT 2026</span>
+        <span class="app-nav-chip" id="nav-ddjj-at" hidden>AT 2026</span>
       </button>
 
       <p class="app-nav-grupo">Contabilidad y Finanzas</p>
       <button type="button" class="suite-mod-btn" data-modulo="bancos" aria-current="false">
         <span class="material-icons" aria-hidden="true">sync_alt</span>
         <span>Bancos</span>
-        <span class="app-nav-chip" id="nav-bancos-pct">0%</span>
+        <span class="app-nav-chip" id="nav-bancos-pct" hidden>0%</span>
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="libros" aria-current="false">
         <span class="material-icons" aria-hidden="true">account_balance</span>
@@ -112,26 +112,12 @@
       <div class="syn-side-clientes" id="side-clientes-rapidos" hidden aria-hidden="true"></div>
     </nav>
 
-    <!-- Pie del Sidebar limpio estilo SaaS -->
+    <!-- Pie del Sidebar limpio -->
     <div class="app-side-pie" id="suite-side-pie">
-      <div class="side-theme-bar" id="suite-theme-picker" role="group" aria-label="Paleta de colores de la suite">
-        <span class="side-theme-lbl">Tema</span>
-        <div class="side-theme-btns">
-          <button type="button" class="side-theme-btn activo" data-set-theme="slate" aria-pressed="true" title="Slate Profundo + Índigo Fintech">
-            <span class="side-swatch sw-slate" aria-hidden="true"></span><span>Slate</span>
-          </button>
-          <button type="button" class="side-theme-btn" data-set-theme="editorial" aria-pressed="false" title="Editorial Cálido + Naranja Marca">
-            <span class="side-swatch sw-editorial" aria-hidden="true"></span><span>Naranja</span>
-          </button>
-          <button type="button" class="side-theme-btn" data-set-theme="cobalto" aria-pressed="false" title="Banca Moderna + Azul Cobalto">
-            <span class="side-swatch sw-cobalto" aria-hidden="true"></span><span>Cobalto</span>
-          </button>
-        </div>
-      </div>
       <details class="side-tools-menu" id="side-tools-menu">
         <summary class="side-tools-summary">
           <span class="material-icons" aria-hidden="true">tune</span>
-          <span>Herramientas y respaldo</span>
+          <span>Respaldo y datos</span>
           <span class="material-icons side-tools-chev" aria-hidden="true">expand_more</span>
         </summary>
         <div class="side-tools-body">
@@ -144,9 +130,6 @@
             <span class="material-icons" aria-hidden="true">drive_folder_upload</span>Importar paquete Pyme
           </button>
           <input type="file" id="file-paquete-pyme" accept=".json,application/json" class="sr-only" aria-label="Importar archivo paquete Pyme JSON">
-          <button type="button" class="btn btn-chico suite-btn-importar" id="btn-side-mcp" title="Conectar cartera del estudio con Claude (MCP)">
-            <span class="material-icons" aria-hidden="true">hub</span>Conectar Claude (MCP)
-          </button>
           <button type="button" class="btn btn-chico suite-btn-importar" id="btn-side-planes">
             <span class="material-icons" aria-hidden="true">workspace_premium</span>Planes · 90 días gratis
           </button>
@@ -411,7 +394,6 @@
               <div class="panel-head">
                 <div>
                   <h2 id="dash-cli-titulo">Cartera del período</h2>
-                  <p class="panel-ayuda">Avance mensual por empresa con acceso directo a ficha y módulos.</p>
                 </div>
                 <button type="button" class="btn btn-chico" data-dash-ir="torre">Ver toda la cartera</button>
               </div>
@@ -443,8 +425,7 @@
             <section class="panel syn-panel dash-cierre-panel" id="dash-cierre-4pasos" aria-labelledby="dash-cierre-titulo">
               <div class="panel-head dash-cierre-head">
                 <div>
-                  <h2 id="dash-cierre-titulo">Ruta de cierre: <span id="dash-cierre-cliente">Panadería San Isidro SpA</span></h2>
-                  <p class="panel-ayuda">4 pasos en orden para cerrar el mes de la empresa activa.</p>
+                  <h2 id="dash-cierre-titulo">Cierre mensual: <span id="dash-cierre-cliente">Panadería San Isidro SpA</span></h2>
                 </div>
                 <span class="sello sello-guardada" id="dash-cierre-avance">0 de 4 listos</span>
               </div>
@@ -1272,11 +1253,16 @@
               </div>
             </div>
             <div class="form-acciones" style="margin-top:14px">
-              <button class="btn btn-primario" type="button" id="btn-f29-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Imprimir / PDF F29</button>
-              <button class="btn" type="button" id="btn-f29-csv">Exportar Excel</button>
-              <button class="btn" type="button" id="btn-f29-copiar"><span class="material-icons" aria-hidden="true">content_copy</span>Copiar códigos SII</button>
-              <button class="btn" type="button" id="btn-f29-whatsapp"><span class="material-icons" aria-hidden="true">chat</span>Copiar reporte WhatsApp</button>
-              <button class="btn" type="button" id="btn-f29-ir-diario"><span class="material-icons" aria-hidden="true">menu_book</span>Ver centralización en Diario</button>
+              <button class="btn btn-primario" type="button" id="btn-f29-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF F29</button>
+              <details class="cl-export-menu">
+                <summary class="btn"><span class="material-icons" aria-hidden="true">download</span>Exportar y copiar<span class="material-icons cl-exp-chev" aria-hidden="true">expand_more</span></summary>
+                <div class="cl-export-popover">
+                  <button class="cl-export-item" type="button" id="btn-f29-csv"><span class="material-icons" aria-hidden="true">table_view</span>Exportar Excel (.xlsx)</button>
+                  <button class="cl-export-item" type="button" id="btn-f29-copiar"><span class="material-icons" aria-hidden="true">content_copy</span>Copiar códigos SII</button>
+                  <button class="cl-export-item" type="button" id="btn-f29-whatsapp"><span class="material-icons" aria-hidden="true">chat</span>Copiar reporte WhatsApp</button>
+                </div>
+              </details>
+              <button class="btn" type="button" id="btn-f29-ir-diario"><span class="material-icons" aria-hidden="true">menu_book</span>Ver en Diario</button>
             </div>
           </div>
         </div>
@@ -1287,7 +1273,7 @@
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Bancos y Conciliación</h1>
-            <p class="v-sub">Compara tu cartola bancaria con tus facturas y deja cuadrada la contabilidad.</p>
+            <p class="v-sub">Conciliación de cartola bancaria y movimientos del período.</p>
           </div>
           <div class="v-acciones bancos-head-acciones">
             <label class="sr-only" for="bancos-cuenta-select">Cuenta bancaria</label>
@@ -1787,7 +1773,7 @@
         <div class="v-head">
           <div>
             <h1 class="v-titulo">Balance Tributario (8 Columnas) y RLI</h1>
-            <p class="v-sub">Fotografía tributaria del año y cálculo de cuánto paga de impuesto a la renta la empresa bajo ProPyme 14 D3 o 14 D8.</p>
+            <p class="v-sub">Comprobación de saldos y determinación RLI ProPyme.</p>
           </div>
           <div class="v-acciones">
             <div class="segmento" id="bal-alcance-seg" role="radiogroup" aria-label="Alcance temporal del balance y RLI">
@@ -1795,8 +1781,13 @@
               <label><input type="radio" name="bal-alcance" value="anual"><span>Acumulado anual <span id="bal-seg-anio">2026</span></span></label>
             </div>
             <button class="btn btn-primario" type="button" id="btn-balance-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>PDF Balance + RLI</button>
-            <button class="btn" type="button" id="btn-balance-csv">Excel Balance</button>
-            <button class="btn" type="button" id="btn-rli-csv">Excel RLI</button>
+            <details class="cl-export-menu">
+              <summary class="btn"><span class="material-icons" aria-hidden="true">table_view</span>Exportar Excel<span class="material-icons cl-exp-chev" aria-hidden="true">expand_more</span></summary>
+              <div class="cl-export-popover">
+                <button class="cl-export-item" type="button" id="btn-balance-csv"><span class="material-icons" aria-hidden="true">table_view</span>Excel Balance 8 Columnas</button>
+                <button class="cl-export-item" type="button" id="btn-rli-csv"><span class="material-icons" aria-hidden="true">calculate</span>Excel Hoja RLI ProPyme</button>
+              </div>
+            </details>
           </div>
         </div>
 
@@ -2214,11 +2205,8 @@
               <button type="button" class="btn btn-chico" id="btn-torre-portal" title="Compartir portal de solo lectura con el cliente activo">
                 <span class="material-icons" aria-hidden="true">share</span><span>Portal cliente</span>
               </button>
-              <button type="button" class="btn btn-chico" id="btn-torre-webhooks" title="Configurar webhooks HMAC-SHA256 y receptor automático del estudio">
+              <button type="button" class="btn btn-chico" id="btn-torre-webhooks" title="Configurar webhooks HMAC-SHA256 del estudio">
                 <span class="material-icons" aria-hidden="true">webhook</span><span>Webhooks</span>
-              </button>
-              <button type="button" class="btn btn-chico" id="btn-torre-mcp" title="Conectar tu cartera del estudio con Claude Desktop vía MCP">
-                <span class="material-icons" aria-hidden="true">hub</span><span>Claude (MCP)</span>
               </button>
               <select id="torre-sync-tipo" class="lq-select lq-select-sm torre-sync-select" aria-label="Módulo a sincronizar">
                 <option value="ALL" selected>Todo (SII + TGR + PreviRed)</option>
@@ -2736,13 +2724,18 @@
             <div class="panel-head">
               <div>
                 <h2>Cierre Preliminar Formulario 22 (IDPC vs PPM)</h2>
-                <p class="panel-ayuda" id="f22-fuente-tasa">Cruce automático desde RLI del período y PPM reajustados.</p>
+                <p class="panel-ayuda" id="f22-fuente-tasa">Base RLI del período y PPM reajustados.</p>
               </div>
               <div class="v-acciones">
-                <button type="button" class="btn btn-chico" id="btn-f22-usar-f29">Usar PPM del F29 actual</button>
-                <button type="button" class="btn btn-chico" id="btn-f22-pdf">PDF Propuesta F22</button>
-                <button type="button" class="btn btn-chico" id="btn-f22-paquete-xlsx"><span class="material-icons" aria-hidden="true">table_view</span><span>Paquete Cliente (.xlsx)</span></button>
                 <button type="button" class="btn btn-chico btn-primario" id="btn-f22-paquete-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span><span>Paquete Cliente (PDF)</span></button>
+                <details class="cl-export-menu">
+                  <summary class="btn btn-chico"><span class="material-icons" aria-hidden="true">download</span>Exportar<span class="material-icons cl-exp-chev" aria-hidden="true">expand_more</span></summary>
+                  <div class="cl-export-popover">
+                    <button type="button" class="cl-export-item" id="btn-f22-paquete-xlsx"><span class="material-icons" aria-hidden="true">table_view</span>Paquete Cliente (.xlsx)</button>
+                    <button type="button" class="cl-export-item" id="btn-f22-pdf"><span class="material-icons" aria-hidden="true">picture_as_pdf</span>Solo Propuesta F22 (PDF)</button>
+                    <button type="button" class="cl-export-item" id="btn-f22-usar-f29"><span class="material-icons" aria-hidden="true">sync</span>Traer PPM del F29 actual</button>
+                  </div>
+                </details>
               </div>
             </div>
             <div class="panel-cuerpo">
@@ -2965,20 +2958,36 @@
       <section class="vista" id="suite-reportes" hidden>
         <div class="v-head">
           <div>
-            <h1 class="v-titulo">Informes, Certificados y WhatsApp</h1>
-            <p class="v-sub">Configura el encabezado y firma de tu estudio contable para emitir certificados y resúmenes para tus clientes.</p>
+            <h1 class="v-titulo">Informes, Membrete y Portal</h1>
+            <p class="v-sub">Identidad del estudio, paleta de documentos y emisión de certificados.</p>
           </div>
         </div>
 
         <div class="fin-cols-2">
           <div class="panel">
-            <div class="panel-head"><h2>Membrete y firma del estudio</h2></div>
+            <div class="panel-head"><h2>Membrete y apariencia del estudio</h2></div>
             <div class="panel-cuerpo">
               <div class="fin-form-grid" style="margin-bottom:14px">
                 <div class="lq-field"><label for="rep-estudio-nombre">Nombre del estudio contable</label><input type="text" id="rep-estudio-nombre" value="Estudio Contable Chile"></div>
                 <div class="lq-field"><label for="rep-estudio-rut">RUT del estudio</label><input type="text" id="rep-estudio-rut" value="76.543.210-K"></div>
                 <div class="lq-field"><label for="rep-contador-nombre">Contador responsable</label><input type="text" id="rep-contador-nombre" value="Contador Auditor"></div>
                 <div class="lq-field"><label for="rep-estudio-pie">Pie de documento</label><input type="text" id="rep-estudio-pie" value="Documento de trabajo y referencia tributaria emitido para el cliente."></div>
+              </div>
+              <div class="rep-apariencia-bloque">
+                <div class="side-theme-bar rep-theme-bar" id="suite-theme-picker" role="group" aria-label="Paleta de colores de la suite y documentos">
+                  <span class="side-theme-lbl">Paleta de la suite, PDF y Excel</span>
+                  <div class="side-theme-btns">
+                    <button type="button" class="side-theme-btn activo" data-set-theme="slate" aria-pressed="true" title="Slate Profundo + Índigo">
+                      <span class="side-swatch sw-slate" aria-hidden="true"></span><span>Slate</span>
+                    </button>
+                    <button type="button" class="side-theme-btn" data-set-theme="editorial" aria-pressed="false" title="Editorial Cálido + Naranja">
+                      <span class="side-swatch sw-editorial" aria-hidden="true"></span><span>Naranja</span>
+                    </button>
+                    <button type="button" class="side-theme-btn" data-set-theme="cobalto" aria-pressed="false" title="Azul Cobalto">
+                      <span class="side-swatch sw-cobalto" aria-hidden="true"></span><span>Cobalto</span>
+                    </button>
+                  </div>
+                </div>
               </div>
               <button type="button" class="btn btn-primario" id="btn-rep-guardar-membrete">Guardar membrete</button>
               <div class="suite-membrete-preview" id="rep-preview-box" style="margin-top:14px"></div>
@@ -3014,16 +3023,14 @@
           </div>
         </div>
 
-        <div class="fin-cols-2 suite-rep-integraciones" style="margin-top:16px">
-        <div class="panel" id="rep-portal-card">
+        <div class="panel" id="rep-portal-card" style="margin-top:16px">
           <div class="panel-head">
             <div>
               <h2>Portal Cliente Marca Blanca</h2>
-              <p class="panel-ayuda">Comparte con tu cliente un enlace privado de solo lectura con la identidad de tu estudio: F29, P&amp;L y resumen laboral sin datos bancarios.</p>
+              <p class="panel-ayuda">Enlace privado de solo lectura con la identidad del estudio (F29, resultados y resumen laboral).</p>
             </div>
             <div class="v-acciones">
               <span class="sello sello-preparada" id="rep-portal-badge" hidden>0 nuevo(s)</span>
-              <span class="sello sello-guardada" id="rep-portal-sello">Solo lectura</span>
               <button type="button" class="btn btn-primario" id="btn-rep-abrir-portal">
                 <span class="material-icons" aria-hidden="true">share</span>Configurar Portal Cliente
               </button>
@@ -3031,21 +3038,18 @@
           </div>
         </div>
 
-        <div class="panel mcp-tarjeta-reportes" id="rep-mcp-card">
-          <div class="panel-head">
-            <div>
-              <h2>Conectar estudio con Claude (MCP)</h2>
-              <p class="panel-ayuda">Consulta F29, RCV, BHE y alertas de acuse de 8 días de tus clientes desde Claude Desktop o Claude web en modo de solo lectura.</p>
-            </div>
+        <details class="suite-avanzado-det" id="rep-mcp-card" style="margin-top:14px">
+          <summary class="suite-avanzado-sum">Integraciones externas de solo lectura (API / MCP)</summary>
+          <div class="suite-avanzado-body">
+            <p class="panel-ayuda" style="margin:0">Conecta clientes externos de solo lectura para consultar F29, RCV, BHE y plazos de acuse.</p>
             <div class="v-acciones">
               <span class="sello sello-guardada" id="rep-mcp-sello">Solo lectura</span>
-              <button type="button" class="btn btn-primario" id="btn-rep-abrir-mcp">
-                <span class="material-icons" aria-hidden="true">hub</span>Configurar Claude (MCP)
+              <button type="button" class="btn btn-chico" id="btn-rep-abrir-mcp">
+                <span class="material-icons" aria-hidden="true">hub</span>Configurar conector
               </button>
             </div>
           </div>
-        </div>
-        </div>
+        </details>
       </section>
 
     </main>
@@ -4084,7 +4088,7 @@
 <script src="/js/contadores_renta.js?v=1.2.1"></script>
 <script src="/js/contadores_asistente_pro.js?v=2.1.1"></script>
 <script src="/js/contadores_sii.js?v=1.5.0"></script>
-<script src="/js/demo_suite.js?v=3.2.1"></script>
+<script src="/js/demo_suite.js?v=3.2.2"></script>
 <script src="/js/demo_equipo_nube.js?v=1.0.0"></script>
 <script src="/js/demo_sii.js?v=1.4.0"></script>
 <script src="/js/demo_mcp.js?v=1.1.0"></script>

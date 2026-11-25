@@ -8371,3 +8371,166 @@ dialog.app-dialogo .btn-primario,
     color: #FFFFFF !important;
     opacity: 1 !important;
 }
+
+/* ========================================================
+   Limpieza Anti-Slop ERP: menú sobrio, menús Exportar y densidad real
+   ======================================================== */
+#nav-count-clientes,
+#nav-count-liq,
+#nav-f29-estado,
+#nav-ddjj-at,
+#nav-bancos-pct {
+    display: none !important;
+}
+
+/* Topbar más serena: indicadores planos en vez de píldoras llamativas */
+#pm-panel.syn-theme #suite-estado-badge,
+#pm-panel.syn-theme #cloud-sync-pill {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    color: var(--syn-muted, #64748B) !important;
+    font-weight: 500;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+#pm-panel.syn-theme #cloud-sync-pill:hover {
+    color: var(--syn-ink, #0F172A) !important;
+    background: var(--syn-surface-2, #F1F5F9) !important;
+}
+
+/* Geometría más firme tipo software contable */
+#pm-panel.syn-theme .panel,
+#pm-panel.syn-theme .syn-panel,
+#pm-panel.syn-theme .syn-kpi-card {
+    border-radius: 10px;
+}
+#pm-panel.syn-theme .btn,
+#pm-panel.syn-theme .syn-side-cta {
+    border-radius: 7px;
+}
+
+/* Menú desplegable compacto Exportar */
+.cl-export-menu {
+    position: relative;
+    display: inline-block;
+}
+.cl-export-menu > summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.cl-export-menu > summary::-webkit-details-marker {
+    display: none;
+}
+.cl-export-menu .cl-exp-chev {
+    font-size: 16px;
+    margin-left: 1px;
+    transition: transform .15s ease;
+}
+.cl-export-menu[open] .cl-exp-chev {
+    transform: rotate(180deg);
+}
+.cl-export-popover {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 5px);
+    min-width: 225px;
+    background: #FFFFFF;
+    border: 1px solid var(--syn-border, #E2E8F0);
+    border-radius: 8px;
+    box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.06);
+    padding: 5px;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.form-acciones .cl-export-popover {
+    left: 0;
+    right: auto;
+}
+.cl-export-item {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: left;
+    font: 500 13px/1.3 inherit;
+    color: var(--syn-ink, #0F172A);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    width: 100%;
+    white-space: nowrap;
+}
+.cl-export-item .material-icons {
+    font-size: 16px;
+    color: var(--syn-muted, #64748B);
+}
+.cl-export-item:hover {
+    background: var(--syn-surface-2, #F1F5F9);
+}
+
+/* Selector de paleta movido a Informes > Membrete y apariencia */
+.rep-apariencia-bloque {
+    margin: 4px 0 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--syn-border, #E2E8F0);
+}
+.rep-theme-bar {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    max-width: 380px;
+}
+.rep-theme-bar .side-theme-lbl {
+    color: var(--syn-ink-2, #334155);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-bottom: 6px;
+}
+.rep-theme-bar .side-theme-btn {
+    background: #FFFFFF !important;
+    border: 1px solid var(--syn-border, #CBD5E1) !important;
+    color: var(--syn-ink, #0F172A) !important;
+    padding: 7px 10px;
+    font-size: 12.5px;
+}
+.rep-theme-bar .side-theme-btn.activo {
+    background: var(--syn-accent-soft) !important;
+    border-color: var(--syn-accent) !important;
+    color: var(--syn-accent-ink) !important;
+}
+
+/* Integraciones avanzadas colapsadas por defecto en Informes */
+.suite-avanzado-det {
+    border: 1px solid var(--syn-border, #E2E8F0);
+    border-radius: 8px;
+    background: var(--syn-surface, #FFFFFF);
+    padding: 10px 14px;
+}
+.suite-avanzado-sum {
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--syn-muted, #64748B);
+    user-select: none;
+}
+.suite-avanzado-body {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--syn-border, #E2E8F0);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
