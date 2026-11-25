@@ -220,7 +220,7 @@
         'CálculoLaboral no presta asesoría legal.</div>';
 
     function sincronizarTemaImpresion() {
-        var panel = document.querySelector('#pm-panel[data-syn-theme], [data-syn-theme]');
+        var panel = document.querySelector('#pm-panel[data-syn-theme]') || document.querySelector('[data-syn-theme]');
         var tema = (panel && panel.getAttribute('data-syn-theme')) || 'slate';
         if (document.body) document.body.setAttribute('data-syn-theme', tema);
         var pa = document.getElementById('print-area');

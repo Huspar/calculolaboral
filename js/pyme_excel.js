@@ -209,7 +209,7 @@
     function resolverTema(explicito) {
         if (explicito && PALETAS[explicito]) return explicito;
         if (typeof document !== 'undefined') {
-            var panel = document.querySelector('#pm-panel.syn-theme, [data-syn-theme]');
+            var panel = document.querySelector('#pm-panel[data-syn-theme]') || document.querySelector('#pm-panel.syn-theme') || document.querySelector('[data-syn-theme]');
             if (panel) {
                 var attr = panel.getAttribute('data-syn-theme');
                 if (attr && PALETAS[attr]) return attr;
