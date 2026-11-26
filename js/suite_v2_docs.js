@@ -924,11 +924,81 @@
     return downloadXlsxSafe(`Bancos_Auxiliar_${slug(c.id)}_${period.iso}.xlsx`, hojas, fallbackDownload);
   }
 
+  function emitirAnalisisAnualF29Pdf(ctx, rows) {
+    const { c, studioName } = ctx;
+    const sum = (k) => rows.reduce((s, r) => s + (Number(r[k]) || 0), 0);
+    const body = `
+      ${docHeader(studioName, 'Análisis Anual F29 e IVA (Enero – Diciembre 2026)', `Régimen ${c.regime}`, 'Cuadratura Anual')}
+      ${clientStrip(c, 'Base Legal', 'Art. 27 D.L. 825 · Reajuste UTM mes declaración')}
+
+      <section class="doc-section">
+        <h2 class="doc-section-title">1. PPM y Retenciones Mensuales (Cuadratura DJ 1887 / DJ 1879 / F22)</h2>
+        <table class="doc-tbl">
+          <thead><tr><th>Mes</th><th class="num">Base PPM (563)</th><th class="num">Tasa (115)</th><th class="num">PPM (062)</th><th class="num">Impto. Único (048)</th><th class="num">BHE 15,25% (151)</th></tr></thead>
+          <tbody>
+            ${rows.map((r) => `<tr><td><strong>${esc(r.mes)}</strong></td><td class="num">${fmt(r.base563)}</td><td class="num">${esc(r.tasa115)}</td><td class="num">${fmt(r.ppm062)}</td><td class="num">${fmt(r.iusc048)}</td><td class="num">${fmt(r.bhe151)}</td></tr>`).join('')}
+          </tbody>
+          <tfoot>
+            <tr><td><strong>Total 2026</strong></td><td class="num">${fmt(sum('base563'))}</td><td class="num">—</td><td class="num">${fmt(sum('ppm062'))}</td><td class="num">${fmt(sum('iusc048'))}</td><td class="num">${fmt(sum('bhe151'))}</td></tr>
+          </tfoot>
+        </table>
+      </section>
+
+      <section class="doc-section">
+        <h2 class="doc-section-title">2. IVA y Arrastre de Remanentes (Cód. 077 → Cód. 504 reajustado por UTM)</h2>
+        <table class="doc-tbl">
+          <thead><tr><th>Mes</th><th class="num">UTM decl.</th><th class="num">Rem. Ant. (504)</th><th class="num">IVA Débito (538)</th><th class="num">IVA Crédito (537)</th><th class="num">IVA Det. (089)</th><th class="num">Rem. Sgte. (077)</th><th class="num">Total F29 (091)</th></tr></thead>
+          <tbody>
+            ${rows.map((r) => `<tr><td><strong>${esc(r.mes)}</strong></td><td class="num">${fmt(r.utmDecl)}</td><td class="num">${fmt(r.rem504)}</td><td class="num">${fmt(r.deb538)}</td><td class="num">${fmt(r.cred537)}</td><td class="num">${fmt(r.iva089)}</td><td class="num">${fmt(r.rem077)}</td><td class="num"><strong>${fmt(r.total091)}</strong></td></tr>`).join('')}
+          </tbody>
+          <tfoot>
+            <tr><td><strong>Total 2026</strong></td><td class="num">—</td><td class="num">—</td><td class="num">${fmt(sum('deb538'))}</td><td class="num">${fmt(sum('cred537'))}</td><td class="num">${fmt(sum('iva089'))}</td><td class="num">—</td><td class="num">${fmt(sum('total091'))}</td></tr>
+          </tfoot>
+        </table>
+        <div class="doc-note">Cálculo de remanente Cód. 504 según Art. 27 D.L. 825 y criterio SII FAQ 001.130.1926.013 (conversión a 2 decimales usando UTM del mes de declaración para evitar observaciones FM01).</div>
+      </section>
+
+      ${docFooter(studioName, c)}
+    `;
+    return openPrintable(`Análisis Anual F29 — ${c.name} (2026)`, body, { studioName, landscape: true });
+  }
+
+  function emitirAnalisisAnualF29Excel(ctx, rows, fallbackDownload) {
+    const { c } = ctx;
+    const hojas = [
+      {
+        nombre: 'PPM y Retenciones',
+        filas: [
+          [`ANÁLISIS ANUAL F29 — PPM Y RETENCIONES — ${c.name} (${c.rut})`],
+          [`Régimen: ${c.regime} · Año Comercial 2026`],
+          [],
+          ['Mes', 'Base PPM (Cód. 563)', 'Tasa (Cód. 115)', 'PPM (Cód. 062)', 'Impto. Único (Cód. 048)', 'Ret. BHE 15,25% (Cód. 151)'],
+          ...rows.map((r) => [r.mes, r.base563, r.tasa115, r.ppm062, r.iusc048, r.bhe151])
+        ],
+        formatoMonedaCols: [1, 3, 4, 5]
+      },
+      {
+        nombre: 'IVA y Remanentes',
+        filas: [
+          [`ANÁLISIS ANUAL F29 — IVA Y REMANENTES — ${c.name} (${c.rut})`],
+          ['Reajuste Cód. 504 según Art. 27 D.L. 825 (UTM mes declaración)'],
+          [],
+          ['Mes', 'UTM Decl.', 'Remanente Reaj. (504)', 'IVA Débito (538)', 'IVA Crédito (537)', 'IVA Det. (089)', 'Remanente Sgte. (077)', 'Total F29 (091)'],
+          ...rows.map((r) => [r.mes, r.utmDecl, r.rem504, r.deb538, r.cred537, r.iva089, r.rem077, r.total091])
+        ],
+        formatoMonedaCols: [1, 2, 3, 4, 5, 6, 7]
+      }
+    ];
+    return downloadXlsxSafe(`Analisis_Anual_F29_${slug(c.id)}_2026.xlsx`, hojas, fallbackDownload);
+  }
+
   window.CLSuiteV2Docs = {
     emitirPaqueteMensualPdf,
     emitirPaqueteMensualExcel,
     emitirF29Pdf,
     emitirF29Excel,
+    emitirAnalisisAnualF29Pdf,
+    emitirAnalisisAnualF29Excel,
     emitirRentaPdf,
     emitirLiquidacionPdf,
     emitirLiquidacionesLotePdf,

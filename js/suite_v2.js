@@ -934,6 +934,7 @@
             { id: 'f29', label: 'Hoja F29' },
             { id: 'rcv', label: 'Compras y Acuses' },
             { id: 'bhe', label: 'Honorarios BHE' },
+            { id: 'anual', label: 'Análisis Anual' },
             { id: 'renta', label: `Renta (${c.regime})` }
           ]
         },
@@ -1670,6 +1671,48 @@
     `;
   }
 
+  function buildAnalisisAnualF29(c) {
+    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const utms2026 = [67429, 67894, 68306, 68648, 69020, 69542, 69980, 70450, 71100, 71680, 72100, 72440, 72800];
+    const hist = Array.isArray(c.f29.history) && c.f29.history.length === 12 ? c.f29.history : [];
+    const ppmPct = c.f29.ppmRate != null ? Number(c.f29.ppmRate) : (c.regime === '14 A' ? 1.5 : 0.25);
+    const tasaLabel = `${ppmPct.toFixed(2).replace('.', ',')}%`;
+    const F29Engine = window.CLContadoresF29;
+    let remAnterior = 0;
+    let consecRem = 0;
+    let maxConsecRem = 0;
+    const rows = meses.map((mes, idx) => {
+      const isNov = idx === 10;
+      const isDic = idx === 11;
+      const scale = isDic ? 0 : (isNov ? 1 : (hist[idx] && f29Total(c) > 0 ? Math.max(0.45, Math.min(1.4, hist[idx] / f29Total(c))) : 0.85));
+      const base563 = isDic ? 0 : Math.round((c.rcv.ventasNeto || 0) * scale);
+      const deb538 = isDic ? 0 : (isNov ? (c.f29.debito || 0) : Math.round((c.f29.debito || 0) * scale));
+      const credMes = isDic ? 0 : (isNov ? (c.f29.credito || 0) : Math.round((c.f29.credito || 0) * scale * (idx === 1 || idx === 2 ? 1.25 : 0.96)));
+      const utmDeclPrev = utms2026[idx] || 70000;
+      const utmDeclActual = utms2026[idx + 1] || 72440;
+      let rem504 = 0;
+      if (remAnterior > 0) {
+        if (F29Engine && typeof F29Engine.reajustarRemanenteUtm === 'function') {
+          const rObj = F29Engine.reajustarRemanenteUtm(remAnterior, utmDeclPrev, utmDeclActual);
+          rem504 = (rObj && rObj.remanenteReajustado != null) ? rObj.remanenteReajustado : Math.round((Math.round((remAnterior / utmDeclPrev) * 100) / 100) * utmDeclActual);
+        } else {
+          rem504 = Math.round((Math.round((remAnterior / utmDeclPrev) * 100) / 100) * utmDeclActual);
+        }
+      }
+      const cred537 = credMes + rem504;
+      const iva089 = Math.max(0, deb538 - cred537);
+      const rem077 = Math.max(0, cred537 - deb538);
+      if (rem077 > 0) { consecRem++; if (consecRem > maxConsecRem) maxConsecRem = consecRem; } else { consecRem = 0; }
+      remAnterior = rem077;
+      const ppm062 = isDic ? 0 : (isNov ? (c.f29.ppm || 0) : Math.round(base563 * (ppmPct / 100)));
+      const iusc048 = isDic ? 0 : (isNov ? (c.f29.retenciones || 0) : Math.round((c.f29.retenciones || 0) * 0.92));
+      const bhe151 = isDic ? 0 : (isNov ? (c.f29.bhe || 0) : Math.round((c.f29.bhe || 0) * (idx % 2 === 0 ? 1 : 0.7)));
+      const total091 = iva089 + ppm062 + iusc048 + bhe151;
+      return { mes, utmDecl: utmDeclActual, base563, tasa115: tasaLabel, ppm062, iusc048, bhe151, rem504, deb538, cred537, iva089, rem077, total091 };
+    });
+    return { rows, maxConsecRem };
+  }
+
   function renderClientImpuestos(c) {
     const iva = Math.max(0, c.f29.debito - c.f29.credito);
     const total = f29Total(c);
@@ -1809,6 +1852,67 @@
             <tfoot>
               <tr><td colspan="3">Total BHE recibidas · Alimenta F29 Cód. 151 y DJ 1879</td><td class="num">${fmt(totBruto)}</td><td class="num">${fmt(totRet)}</td><td class="num">${fmt(totLiq)}</td><td></td></tr>
             </tfoot>
+          </table>
+        </div>
+      `;
+    } else if (state.clientSub === 'anual') {
+      const { rows, maxConsecRem } = buildAnalisisAnualF29(c);
+      const sum = (k) => rows.reduce((s, r) => s + (r[k] || 0), 0);
+      $('v2-canvas').innerHTML = `
+        <div class="v2-tape">
+          <div class="v2-tape-cell"><span class="v2-tape-label">PPM acumulado (062)</span><span class="v2-tape-val">${fmt(sum('ppm062'))}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">IUSC acumulado (048)</span><span class="v2-tape-val">${fmt(sum('iusc048'))}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">BHE 15,25% (151)</span><span class="v2-tape-val">${fmt(sum('bhe151'))}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Total F29 año (091)</span><span class="v2-tape-val is-in">${fmt(sum('total091'))}</span></div>
+        </div>
+        ${maxConsecRem >= 2 ? `<div class="v2-f29-hint" style="margin:8px 0 0;border-color:#fde68a;background:#fffbeb"><span><strong>Aviso Art. 27 bis D.L. 825:</strong> esta empresa acumula ${maxConsecRem} meses seguidos con remanente (Cód. 077). Si incluye activo fijo (Cód. 525), evalúa solicitud de devolución F3280 (sujeta a regla de restitución).</span></div>` : ''}
+        <div class="v2-pulse-bar">
+          <span class="muted">Análisis Anual F29 (Enero – Diciembre 2026) · Arrastre Cód. 077 → Cód. 504 por UTM de declaración</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button type="button" class="btn btn--primary btn--sm" data-emit-doc="anual-f29-excel">Descargar Excel</button>
+            <button type="button" class="btn btn--sm" data-emit-doc="anual-f29-pdf">Imprimir PDF</button>
+          </div>
+        </div>
+        <div class="v2-table-wrap">
+          <table class="v2-table">
+            <thead>
+              <tr><th>Mes 2026</th><th class="num">Base PPM (563)</th><th class="num">Tasa</th><th class="num">PPM (062)</th><th class="num">IUSC (048)</th><th class="num">BHE (151)</th></tr>
+            </thead>
+            <tbody>
+              ${rows.map((r) => `
+                <tr>
+                  <td><strong>${r.mes}</strong></td>
+                  <td class="num mono">${fmt(r.base563)}</td>
+                  <td class="num mono">${r.tasa115}</td>
+                  <td class="num mono">${fmt(r.ppm062)}</td>
+                  <td class="num mono">${fmt(r.iusc048)}</td>
+                  <td class="num mono">${fmt(r.bhe151)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+            <tfoot><tr><td>Total 2026</td><td class="num">${fmt(sum('base563'))}</td><td class="num">—</td><td class="num">${fmt(sum('ppm062'))}</td><td class="num">${fmt(sum('iusc048'))}</td><td class="num">${fmt(sum('bhe151'))}</td></tr></tfoot>
+          </table>
+        </div>
+        <div class="v2-table-wrap" style="margin-top:12px">
+          <table class="v2-table">
+            <thead>
+              <tr><th>Mes 2026</th><th class="num">UTM decl.</th><th class="num">Rem. Reaj. (504)</th><th class="num">Débito (538)</th><th class="num">Crédito (537)</th><th class="num">IVA Det. (089)</th><th class="num">Rem. Sgte. (077)</th><th class="num">Total F29 (091)</th></tr>
+            </thead>
+            <tbody>
+              ${rows.map((r) => `
+                <tr>
+                  <td><strong>${r.mes}</strong></td>
+                  <td class="num mono">${fmt(r.utmDecl)}</td>
+                  <td class="num mono">${fmt(r.rem504)}</td>
+                  <td class="num mono">${fmt(r.deb538)}</td>
+                  <td class="num mono">${fmt(r.cred537)}</td>
+                  <td class="num mono">${fmt(r.iva089)}</td>
+                  <td class="num mono" style="color:${r.rem077 ? '#00382E' : 'inherit'}">${fmt(r.rem077)}</td>
+                  <td class="num mono"><strong>${fmt(r.total091)}</strong></td>
+                </tr>
+              `).join('')}
+            </tbody>
+            <tfoot><tr><td>Total 2026</td><td class="num">—</td><td class="num">—</td><td class="num">${fmt(sum('deb538'))}</td><td class="num">${fmt(sum('cred537'))}</td><td class="num">${fmt(sum('iva089'))}</td><td class="num">—</td><td class="num">${fmt(sum('total091'))}</td></tr></tfoot>
           </table>
         </div>
       `;
@@ -3561,6 +3665,13 @@
       toast(`Hoja F29 PDF lista para ${c.name}`);
     } else if (docType === 'f29-xlsx') {
       D.emitirF29Excel(ctx, downloadFile).then(() => toast(`Hoja F29 Excel (.xlsx) descargada para ${c.name}`));
+    } else if (docType === 'anual-f29-pdf') {
+      const { rows } = buildAnalisisAnualF29(c);
+      D.emitirAnalisisAnualF29Pdf(ctx, rows);
+      toast(`Análisis Anual F29 PDF listo para ${c.name}`);
+    } else if (docType === 'anual-f29-excel') {
+      const { rows } = buildAnalisisAnualF29(c);
+      D.emitirAnalisisAnualF29Excel(ctx, rows, downloadFile).then(() => toast(`Análisis Anual F29 Excel (.xlsx) descargado para ${c.name}`));
     } else if (docType === 'renta-pdf') {
       D.emitirRentaPdf(ctx);
       toast(`Borrador Renta y DDJJ PDF listo para ${c.name}`);
