@@ -527,20 +527,39 @@
     return res;
   }
 
+  async function loadLiveCompanies() {
+    if (!state.gatewayConnected) return [];
+    const res = await gatewayCall('GET', '/api/v1/companies');
+    if (res && res.ok && res.data) {
+      const items = Array.isArray(res.data.items) ? res.data.items : (Array.isArray(res.data) ? res.data : []);
+      state.liveCompanies = items;
+      return items;
+    }
+    return state.liveCompanies || [];
+  }
+
   async function probeStudioGateway() {
-    if (typeof fetch !== 'function' || location.protocol === 'file:') return;
+    if (typeof fetch !== 'function' || location.protocol === 'file:') return { mode: 'demo-local', configured: false };
     try {
       const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-      const timer = ctrl ? setTimeout(() => ctrl.abort(), 2500) : null;
+      const timer = ctrl ? setTimeout(() => ctrl.abort(), 3000) : null;
       const res = await fetch('/api/studio-proxy?action=status', { credentials: 'same-origin', signal: ctrl ? ctrl.signal : undefined });
       if (timer) clearTimeout(timer);
-      if (!res.ok) return;
+      if (!res.ok) return { mode: 'demo-local', configured: false };
       const data = await res.json().catch(() => null);
       if (data && data.ok && data.configured && (!data.sessionRequired || data.authenticated)) {
         state.gatewayConnected = true;
+        state.gateway = data;
+        await loadLiveCompanies();
         renderSidebar();
+        if (state.level === 'studio' && state.studioView === 'conexiones') renderStudioConexiones();
+        return data;
       }
-    } catch (_) { /* Modo demo local sin proxy: silencioso */ }
+      state.gateway = data || { mode: 'demo-local', configured: false };
+      return state.gateway;
+    } catch (_) {
+      return { mode: 'demo-local', configured: false };
+    }
   }
 
   window.CLStudioGateway = { call: gatewayCall, syncRange: syncRangeFromGateway, probe: probeStudioGateway };
@@ -2716,8 +2735,8 @@
 
   function renderStudioConexiones() {
     if (!state.selectedConn) state.selectedConn = 'sii';
-    const gw = state.gateway || { mode: 'demo-local', configured: false };
-    const gwConnected = gw.mode === 'connected' || gw.configured;
+    const gwConnected = !!state.gatewayConnected || !!(state.gateway && (state.gateway.mode === 'connected' || state.gateway.configured));
+    const liveList = Array.isArray(state.liveCompanies) ? state.liveCompanies : [];
     const mcpTools = [
       'list_companies', 'get_rcv_documents', 'get_bhe_documents',
       'get_f29_summary', 'get_sync_status', 'get_f22_ddjj',
@@ -2730,7 +2749,7 @@
         sub: 'RCV Compras/Ventas · BHE 15,25% · F29 · Acuses 8d · sync-range',
         endpoint: 'connect.calculolaboral.cl · /api/studio-proxy',
         statusTag: gwConnected ? 'tag--in' : 'tag--out',
-        statusLabel: gwConnected ? 'Gateway activo' : 'Demo local (sin clave SII)'
+        statusLabel: gwConnected ? `Gateway conectado · ${liveList.length} RUT real(es)` : 'Demo local (sin proxy)'
       },
       {
         id: 'previred',
@@ -2738,7 +2757,7 @@
         sub: 'Bóveda cifrada AES-256-GCM · Alertas Ley Bustos y fichas incompletas',
         endpoint: 'PREVIRED_CREDENTIALS · Archivo 105 / ANSI Win-1252',
         statusTag: 'tag--in',
-        statusLabel: 'Exportadores activos · Sync listo'
+        statusLabel: gwConnected ? 'Conectado · Exportadores activos' : 'Exportadores activos · Sync listo'
       },
       {
         id: 'mcp',
@@ -2761,8 +2780,8 @@
 
     $('v2-canvas').innerHTML = `
       <div class="v2-f29-hint" style="margin-bottom:10px">
-        <span><strong>Integraciones reales de Cálculo Laboral:</strong> selecciona una fila para ver su estado real, probar consultas MCP en vivo o conectar un RUT por bóveda cifrada.</span>
-        <span class="mono">${gwConnected ? 'Gateway: conectado' : 'Modo: Demo local'}</span>
+        <span><strong>Integraciones reales de Cálculo Laboral:</strong> selecciona una fila para conectar un RUT real por bóveda cifrada, sincronizar SII/PreviRed o emitir tu token MCP para Claude.</span>
+        <span class="mono">${gwConnected ? 'Gateway: conectado en vivo' : 'Modo: Demo local'}</span>
       </div>
       <div class="v2-table-wrap">
         <table class="v2-table">
@@ -2781,16 +2800,16 @@
       </div>
       <div class="v2-table-wrap" style="margin-top:14px">
         <table class="v2-table">
-          <thead><tr><th>Empresa en cartera</th><th>Estado SII</th><th>Estado PreviRed</th><th class="num">Acción</th></tr></thead>
+          <thead><tr><th>Empresas conectadas en Gateway SII (${liveList.length})</th><th>RUT</th><th>Estado real</th><th class="num">Acción</th></tr></thead>
           <tbody>
-            ${state.clients.map((c) => `
+            ${liveList.length ? liveList.map((lc) => `
               <tr>
-                <td><strong>${c.name}</strong><span class="v2-cell-sub mono">${c.rut} · ${c.regime}</span></td>
-                <td><span class="tag ${gwConnected ? 'tag--in' : 'tag--out'}">${gwConnected ? 'Credencial guardada' : 'Sin credencial (demo)'}</span></td>
-                <td><span class="tag ${c.nomina.previredOk ? 'tag--in' : 'tag--danger'}">${c.nomina.previredOk ? 'Archivo 105 OK' : 'Mora · Ley Bustos'}</span></td>
-                <td class="num"><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="resumen">Abrir →</button></td>
+                <td><strong>${lc.name || lc.razonSocial || 'Empresa'}</strong></td>
+                <td class="mono">${lc.rut || '—'}</td>
+                <td><span class="tag ${lc.hasCredentials ? 'tag--in' : 'tag--out'}">${lc.hasCredentials ? 'Credencial en bóveda' : 'Sin credencial'}</span></td>
+                <td class="num"><button type="button" class="btn btn--sm" data-sync-live-company="${lc.id}">Sincronizar ahora</button></td>
               </tr>
-            `).join('')}
+            `).join('') : `<tr><td colspan="4" class="muted" style="text-align:center;padding:14px">${gwConnected ? 'Gateway conectado y listo. Conecta tu primer RUT real en el panel derecho para descargar RCV, BHE y F29 automáticamente.' : 'Modo demo local activo.'}</td></tr>`}
           </tbody>
         </table>
       </div>
@@ -2802,7 +2821,7 @@
         mcpServers: {
           'calculo-laboral': {
             url: 'https://connect.calculolaboral.cl/mcp',
-            headers: { 'x-mcp-token': state.mcpTokenDemo || 'cl_mcp_emitir_en_cuenta_estudio' }
+            headers: { 'x-mcp-token': state.mcpTokenLive || 'emitir_token_con_el_boton_de_arriba' }
           }
         }
       }, null, 2);
@@ -2814,9 +2833,11 @@
             ${mcpTools.map((fn) => `<span class="tag tag--out mono" style="font-size:10.5px">${fn}</span>`).join('')}
           </div>
           <div style="display:flex;gap:6px;margin-top:8px">
-            <button type="button" class="btn btn--primary btn--sm" style="flex:1" data-conn-action="copy-mcp-json">Copiar JSON para Claude</button>
+            <button type="button" class="btn btn--primary btn--sm" style="flex:1" data-conn-action="issue-mcp-token">Emitir token MCP real</button>
+            <button type="button" class="btn btn--sm" data-conn-action="copy-mcp-json">Copiar JSON</button>
             <a href="/conector-mcp-contadores-chile" target="_blank" rel="noopener" class="btn btn--sm" style="text-decoration:none">Guía ↗</a>
           </div>
+          ${state.mcpTokenLive ? `<div class="v2-ins-note" style="margin-top:6px;font-size:11.5px">Token emitido una sola vez. Cópialo ahora en tu configuración de Claude.</div>` : ''}
           <pre class="mono" style="margin:6px 0 0;padding:8px;background:var(--ink-paper-2,#f4f5f6);border:1px solid var(--ink-rule);border-radius:6px;font-size:10.5px;overflow:auto;max-height:115px">${claudeSnippet}</pre>
         </div>
         <div class="v2-ins-block v2-ins-block--soft">
@@ -2849,25 +2870,20 @@
       $('v2-inspector').innerHTML = `
         <div class="v2-ins-block">
           <div class="v2-ins-head">
-            <h2 class="v2-ins-title">${isPrev ? 'Conexión PreviRed' : 'Conexión SII Automática'}</h2>
-            <span class="tag ${gwConnected ? 'tag--in' : 'tag--out'}">${gwConnected ? 'Conectado' : 'Demo local'}</span>
+            <h2 class="v2-ins-title">${isPrev ? 'Conectar PreviRed real' : 'Conectar empresa real al SII'}</h2>
+            <span class="tag ${gwConnected ? 'tag--in' : 'tag--out'}">${gwConnected ? 'Gateway en vivo' : 'Demo local'}</span>
           </div>
           <p class="muted" style="margin:0;font-size:12px;line-height:1.45">
             ${isPrev
-              ? 'Sincroniza estado de cotizaciones y alerta Ley Bustos vía bóveda AES-256-GCM. Las claves nunca se guardan en el navegador.'
-              : 'Descarga automática de RCV Compras/Ventas, BHE (15,25%), F29 y cuenta regresiva de acuses 8 días vía /api/studio-proxy. Jamás guarda tu clave SII en localStorage.'}
+              ? 'Guarda credenciales PreviRed en bóveda cifrada AES-256-GCM (VPS Chile) para consultar estado de cotizaciones y alerta Ley Bustos.'
+              : 'Guarda la Clave Tributaria SII en bóveda AES-256-GCM vía /api/studio-proxy (nunca en el navegador) y sincroniza RCV, BHE y F29.'}
           </p>
-          <dl class="v2-ins-kv" style="margin-top:4px">
-            <dt>Máquina de estados</dt><dd>Sin credencial → Bóveda → Verificado</dd>
-            <dt>Cifrado bóveda</dt><dd>AES-256-GCM (VPS Chile)</dd>
-            <dt>Proxy servidor</dt><dd class="mono">/api/studio-proxy</dd>
-          </dl>
           <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
-            <select id="sel-conn-client" class="v2-ins-select" aria-label="Empresa a conectar">
-              ${state.clients.map((c) => `<option value="${c.id}">${c.name} (${c.rut})</option>`).join('')}
-            </select>
-            <button type="button" class="btn btn--primary btn--sm" data-conn-action="probe-gateway">Verificar estado del Gateway ahora</button>
-            <a href="/suite-contadores" class="btn btn--sm" style="text-decoration:none;text-align:center">Activar conexión real en Plan Estudio ↗</a>
+            <input type="text" id="inp-conn-rut" class="v2-ins-select mono" placeholder="RUT empresa (ej. 76.543.210-3)" aria-label="RUT empresa">
+            <input type="text" id="inp-conn-name" class="v2-ins-select" placeholder="Razón social" aria-label="Razón social">
+            <input type="password" id="inp-conn-pass" class="v2-ins-select" autocomplete="off" placeholder="${isPrev ? 'Clave PreviRed' : 'Clave Tributaria SII'}" aria-label="Clave cifrada">
+            <button type="button" class="btn btn--primary btn--sm" data-conn-action="connect-real-company" data-conn-kind="${isPrev ? 'previred' : 'sii'}">Guardar en bóveda y sincronizar</button>
+            <button type="button" class="btn btn--sm" data-conn-action="probe-gateway">Verificar estado del Gateway</button>
           </div>
         </div>
       `;
@@ -3395,7 +3411,7 @@
         mcpServers: {
           'calculo-laboral': {
             url: 'https://connect.calculolaboral.cl/mcp',
-            headers: { 'x-mcp-token': state.mcpTokenDemo || 'cl_mcp_emitir_en_cuenta_estudio' }
+            headers: { 'x-mcp-token': state.mcpTokenLive || 'emitir_token_con_el_boton_de_arriba' }
           }
         }
       }, null, 2);
@@ -3403,10 +3419,60 @@
       toast('Configuración JSON de MCP copiada para Claude');
       return;
     }
+    if (t.dataset.connAction === 'issue-mcp-token') {
+      gatewayCall('POST', '/api/v1/mcp/tokens', { label: state.studioName || 'Estudio Contable' }).then((res) => {
+        if (res && res.ok && res.data && (res.data.token || res.data.rawToken || res.data.accessToken)) {
+          state.mcpTokenLive = res.data.token || res.data.rawToken || res.data.accessToken;
+          toast('Token MCP real emitido por connect.calculolaboral.cl');
+          renderStudioConexiones();
+        } else {
+          toast((res && res.data && (res.data.message || res.data.error)) || 'No se pudo emitir token MCP desde el gateway');
+        }
+      });
+      return;
+    }
+    if (t.dataset.connAction === 'connect-real-company') {
+      const rut = ($('inp-conn-rut') && $('inp-conn-rut').value.trim()) || '';
+      const name = ($('inp-conn-name') && $('inp-conn-name').value.trim()) || 'Empresa conectada';
+      const passEl = $('inp-conn-pass');
+      const password = (passEl && passEl.value) || '';
+      const kind = t.dataset.connKind === 'previred' ? 'PREVIRED_CREDENTIALS' : 'CLAVE_TRIBUTARIA';
+      if (!rut || !password) { toast('Ingresa RUT y clave para guardar en bóveda AES-256-GCM'); return; }
+      if (passEl) passEl.value = '';
+      (async () => {
+        let compRes = await gatewayCall('POST', '/api/v1/companies', { rut, name });
+        let companyId = compRes && compRes.data && (compRes.data.id || (compRes.data.company && compRes.data.company.id));
+        if (!companyId) {
+          const list = await loadLiveCompanies();
+          const norm = (s) => String(s || '').replace(/[^0-9kK]/g, '').toUpperCase();
+          const found = list.find((x) => norm(x.rut) === norm(rut));
+          if (found) companyId = found.id;
+        }
+        if (!companyId) {
+          toast((compRes && compRes.data && (compRes.data.message || compRes.data.error)) || 'No se pudo registrar empresa en el gateway');
+          return;
+        }
+        const credRes = await gatewayCall('POST', `/api/v1/companies/${encodeURIComponent(companyId)}/credentials`, { type: kind, rut, password });
+        if (!credRes || !credRes.ok) {
+          toast((credRes && credRes.data && (credRes.data.message || credRes.data.error)) || 'Error guardando credencial en bóveda');
+          return;
+        }
+        await loadLiveCompanies();
+        const iso = currentPeriod().iso;
+        await syncRangeFromGateway(companyId, iso, iso, kind === 'PREVIRED_CREDENTIALS' ? 'PREVIRED_STATUS' : 'RCV_COMPRAS');
+        renderStudioConexiones();
+      })();
+      return;
+    }
+    if (t.dataset.syncLiveCompany) {
+      const cid = t.dataset.syncLiveCompany;
+      const iso = currentPeriod().iso;
+      syncRangeFromGateway(cid, iso, iso, 'RCV_COMPRAS');
+      return;
+    }
     if (t.dataset.connAction === 'probe-gateway') {
       probeStudioGateway().then((info) => {
-        state.gateway = info || { mode: 'demo-local', configured: false };
-        toast(state.gateway.configured ? 'Gateway SII conectado y operativo' : 'Gateway en modo Demo local (sin SII_GATEWAY_API_KEY activa)');
+        toast(info && info.configured ? `Gateway SII conectado (${(state.liveCompanies || []).length} RUT reales)` : 'Gateway en modo Demo local');
         render();
       });
       return;
