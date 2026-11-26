@@ -187,7 +187,7 @@
       nomina: { state: 'alerta', label: 'Mora Previred · Ley Bustos', count: 2, previredOk: false, leyBustos: true },
       bancos: { state: 'ok', label: '96% match', matched: 48, total: 50 },
       f29: { state: 'revisar', folio: '', postergar: false, debito: 7999000, credito: 5491000, ppm: 421000, retenciones: 615000, history: [2900, 3120, 3400, 2980, 3650, 3490, 3100, 3890, 3220, 3410, 3544, 3544] },
-      cierre: 'Bloqueado (Ley Bustos)',
+      cierre: 'Bloqueado · Bustos',
       workers: [
         { id: 'a1', name: 'Carlos Méndez Pino', rut: rutConDv(14221334), sexo: 'M', ingreso: '2020-01-15', cargo: 'Jefe de Obra', base: 2100000, afp: 'Habitat', estado: 'Finiquito abierto' },
         { id: 'a2', name: 'Luis Herrera Soto', rut: rutConDv(15887412), sexo: 'M', ingreso: '2022-05-01', cargo: 'Carpintero', base: 980000, afp: 'Provida', estado: 'Listo' }
@@ -222,7 +222,7 @@
       nomina: { state: 'ok', label: '1 liq · LRE listo', count: 1, previredOk: true, leyBustos: false },
       bancos: { state: 'ok', label: '100% match', matched: 64, total: 64 },
       f29: { state: 'listo', folio: '', postergar: false, debito: 5624000, credito: 3496000, ppm: 296000, retenciones: 184000, history: [2200, 2350, 2180, 2410, 2500, 2490, 2610, 2550, 2480, 2590, 2608, 2608] },
-      cierre: 'F29 listo para aprobar',
+      cierre: 'Listo p/ aprobar',
       workers: [
         { id: 'r1', name: 'Mauricio Díaz Vera', rut: rutConDv(13998112), sexo: 'M', ingreso: '2022-07-01', cargo: 'Conductor Clase A4', base: 1250000, afp: 'Habitat', estado: 'Listo' }
       ],
@@ -345,7 +345,19 @@
     render();
   }
 
-  function closeMobileSidebar() { $('v2-sidebar').classList.remove('is-open'); }
+  function closeMobileSidebar() {
+    $('v2-sidebar').classList.remove('is-open');
+    const bd = $('v2-sidebar-backdrop');
+    if (bd) bd.hidden = true;
+  }
+  function toggleMobileSidebar() {
+    const open = $('v2-sidebar').classList.toggle('is-open');
+    const bd = $('v2-sidebar-backdrop');
+    if (bd) bd.hidden = !open;
+  }
+  function f29StateLabel(st) {
+    return st === 'declarado' ? 'Declarado' : st === 'listo' ? 'Listo para declarar' : 'En revisión';
+  }
 
   /* ==================== SIDEBAR + TOPBAR ==================== */
   function renderSidebar() {
@@ -498,6 +510,78 @@
   }
 
   /* ==================== NIVEL 1: ESPACIO ESTUDIO ==================== */
+  function studioHoyFiltered() {
+    const q = state.query.trim().toLowerCase();
+    return state.clients.filter((c) => {
+      if (state.filter === 'critico' && c.status !== 'critico') return false;
+      if (state.filter === 'esperando' && c.status !== 'esperando') return false;
+      if (state.filter === 'revisar' && c.f29.state === 'declarado') return false;
+      if (state.filter === 'cerrado' && c.status !== 'cerrado') return false;
+      if (q && !(c.name.toLowerCase().includes(q) || c.rut.toLowerCase().includes(q) || c.regime.toLowerCase().includes(q))) return false;
+      return true;
+    });
+  }
+
+  function studioHoyRowsHtml(rows) {
+    if (!rows.length) {
+      return `<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">Sin empresas que coincidan con el filtro actual.</td></tr>`;
+    }
+    return rows.map((c) => {
+      const rcvTag = c.rcv.state === 'alerta' ? 'tag--danger' : 'tag--in';
+      const nomTag = c.nomina.state === 'alerta' ? 'tag--danger' : c.nomina.state === 'esperando' ? 'tag--out' : 'tag--in';
+      const bcoTag = c.bancos.state === 'ok' ? 'tag--in' : 'tag--out';
+      const cierreTag = c.status === 'cerrado' ? 'tag--in' : c.status === 'critico' ? 'tag--danger' : 'tag--out';
+      return `
+        <tr>
+          <td>
+            <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="impuestos">
+              <span>${c.name}</span>
+            </button>
+            <span class="v2-cell-sub mono">${c.rut} · ${c.regime}</span>
+          </td>
+          <td>
+            <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="rcv">
+              <span class="tag ${rcvTag}">${c.rcv.label}</span>
+            </button>
+          </td>
+          <td>
+            <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="remuneraciones">
+              <span class="tag ${nomTag}">${c.nomina.label}</span>
+            </button>
+          </td>
+          <td>
+            <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="bancos">
+              <span class="tag ${bcoTag}">${c.bancos.label}</span>
+            </button>
+          </td>
+          <td class="num">
+            <button type="button" class="v2-cell-btn mono" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="f29">
+              ${fmt(f29Total(c))}
+            </button>
+          </td>
+          <td><span class="tag ${cierreTag}">${c.cierre}</span></td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function updateStudioHoyRows() {
+    const tbody = $('v2-hoy-tbody');
+    const tfoot = $('v2-hoy-tfoot');
+    if (!tbody || !tfoot) { renderStudioHoy(); return; }
+    const rows = studioHoyFiltered();
+    const totalF29Cartera = rows.reduce((acc, c) => acc + f29Total(c), 0);
+    const cerrados = state.clients.filter((c) => c.status === 'cerrado').length;
+    tbody.innerHTML = studioHoyRowsHtml(rows);
+    tfoot.innerHTML = `
+      <tr>
+        <td colspan="4">${rows.length} empresas en vista · ${currentPeriod().label}</td>
+        <td class="num">${fmt(totalF29Cartera)}</td>
+        <td class="mono">${cerrados}/${state.clients.length} OK</td>
+      </tr>
+    `;
+  }
+
   function renderStudioHoy() {
     const counts = {
       todos: state.clients.length,
@@ -546,46 +630,10 @@
               <th>Cierre</th>
             </tr>
           </thead>
-          <tbody>
-            ${rows.map((c) => {
-              const rcvTag = c.rcv.state === 'alerta' ? 'tag--on' : 'tag--in';
-              const nomTag = c.nomina.state === 'alerta' ? 'tag--on' : c.nomina.state === 'esperando' ? 'tag--out' : 'tag--in';
-              const bcoTag = c.bancos.state === 'ok' ? 'tag--in' : 'tag--out';
-              const cierreTag = c.status === 'cerrado' ? 'tag--in' : c.status === 'critico' ? 'tag--on' : 'tag--out';
-              return `
-                <tr>
-                  <td>
-                    <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="impuestos">
-                      <span>${c.name}</span>
-                    </button>
-                    <span class="v2-cell-sub mono">${c.rut} · ${c.regime}</span>
-                  </td>
-                  <td>
-                    <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="rcv">
-                      <span class="tag ${rcvTag}">${c.rcv.label}</span>
-                    </button>
-                  </td>
-                  <td>
-                    <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="remuneraciones">
-                      <span class="tag ${nomTag}">${c.nomina.label}</span>
-                    </button>
-                  </td>
-                  <td>
-                    <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="bancos">
-                      <span class="tag ${bcoTag}">${c.bancos.label}</span>
-                    </button>
-                  </td>
-                  <td class="num">
-                    <button type="button" class="v2-cell-btn mono" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="f29">
-                      ${fmt(f29Total(c))}
-                    </button>
-                  </td>
-                  <td><span class="tag ${cierreTag}">${c.cierre}</span></td>
-                </tr>
-              `;
-            }).join('')}
+          <tbody id="v2-hoy-tbody">
+            ${studioHoyRowsHtml(rows)}
           </tbody>
-          <tfoot>
+          <tfoot id="v2-hoy-tfoot">
             <tr>
               <td colspan="4">${rows.length} empresas en vista · ${currentPeriod().label}</td>
               <td class="num">${fmt(totalF29Cartera)}</td>
@@ -606,7 +654,7 @@
         <div class="v2-ins-list">
           <button type="button" class="v2-ins-row-btn" data-jump-ola="acuses">
             <span><strong>Día 8</strong> · Acuses Ley 19.983</span>
-            <span class="tag tag--on">3 por vencer</span>
+            <span class="tag tag--danger">3 por vencer</span>
           </button>
           <button type="button" class="v2-ins-row-btn" data-jump-ola="lre">
             <span><strong>Día 13</strong> · PreviRed</span>
@@ -803,18 +851,37 @@
           <dt>Régimen 14 A</dt><dd>${state.clients.filter((c) => c.regime === '14 A').length}</dd>
           <dt>Régimen 14 D8</dt><dd>${state.clients.filter((c) => c.regime === '14 D8').length}</dd>
         </dl>
-        <button type="button" class="btn btn--primary" id="btn-ins-new-client" style="margin-top:8px">+ Agregar nueva empresa</button>
       </div>
     `;
   }
 
   /* ==================== NIVEL 2: ESPACIO CLIENTE ==================== */
   function sparklineSvg(arr) {
+    const meses = ['Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov'];
     const max = Math.max(...arr, 1);
     const min = Math.min(...arr, 0);
     const span = Math.max(max - min, 1);
-    const pts = arr.map((v, i) => `${((i / (arr.length - 1)) * 300).toFixed(1)},${(46 - ((v - min) / span) * 38).toFixed(1)}`).join(' ');
-    return `<svg class="v2-spark" viewBox="0 0 300 52" preserveAspectRatio="none" aria-label="Tendencia F29 12 meses"><polyline fill="none" stroke="oklch(50% 0.095 188)" stroke-width="2" points="${pts}" /></svg>`;
+    const coords = arr.map((v, i) => ({
+      x: Number(((i / Math.max(arr.length - 1, 1)) * 288 + 6).toFixed(1)),
+      y: Number((60 - ((v - min) / span) * 48).toFixed(1)),
+      v,
+      m: meses[i] || `M${i + 1}`
+    }));
+    const pts = coords.map((p) => `${p.x},${p.y}`).join(' ');
+    const area = `6,64 ${pts} 294,64`;
+    const dots = coords.map((p, i) => `
+      <circle cx="${p.x}" cy="${p.y}" r="${i === coords.length - 1 ? 3.4 : 2.2}" fill="${i === coords.length - 1 ? 'var(--ink-accent)' : 'var(--ink-paper)'}" stroke="var(--ink-accent)" stroke-width="1.6">
+        <title>${p.m}: ${fmt(p.v * 1000)}</title>
+      </circle>
+    `).join('');
+    return `
+      <svg class="v2-spark" viewBox="0 0 300 68" preserveAspectRatio="none" role="img" aria-label="Tendencia F29 últimos 12 meses">
+        <polygon fill="var(--ink-accent-soft)" opacity="0.55" points="${area}" />
+        <polyline fill="none" stroke="var(--ink-accent)" stroke-width="2" points="${pts}" />
+        ${dots}
+      </svg>
+      <div class="v2-spark-axis mono"><span>${meses[0]}</span><span>Mín ${fmt(min * 1000)}</span><span>Máx ${fmt(max * 1000)}</span><span>${meses[meses.length - 1]}</span></div>
+    `;
   }
 
   function renderClientImpuestos(c) {
@@ -832,10 +899,10 @@
       ];
       $('v2-canvas').innerHTML = `
         <div class="v2-tape">
-          <div class="v2-tape-cell"><span class="v2-tape-label">Débito (538)</span><span class="v2-tape-val">${fmt(c.f29.debito)}</span></div>
-          <div class="v2-tape-cell"><span class="v2-tape-label">Crédito (537)</span><span class="v2-tape-val">${fmt(c.f29.credito)}</span></div>
-          <div class="v2-tape-cell"><span class="v2-tape-label">IVA neto (089)</span><span class="v2-tape-val">${fmt(iva)}</span></div>
-          <div class="v2-tape-cell"><span class="v2-tape-label">Total F29 (091)</span><span class="v2-tape-val is-in">${fmt(total)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Débito (538)</span><span class="v2-tape-val" data-f29-tape="debito">${fmt(c.f29.debito)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Crédito (537)</span><span class="v2-tape-val" data-f29-tape="credito">${fmt(c.f29.credito)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">IVA neto (089)</span><span class="v2-tape-val" data-f29-tape="iva">${fmt(iva)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Total F29 (091)</span><span class="v2-tape-val is-in" data-f29-tape="total">${fmt(total)}</span></div>
         </div>
         <div class="v2-table-wrap">
           <table class="v2-table">
@@ -848,19 +915,19 @@
                   <td class="num">
                     ${l.editable
                       ? `<input type="number" class="v2-inline-input" data-f29-field="${l.field}" value="${l.val}" aria-label="Código ${l.code}">`
-                      : `<span class="mono">${fmt(l.val)}</span>`}
+                      : `<span class="mono" data-f29-code-val="${l.code}">${fmt(l.val)}</span>`}
                   </td>
                 </tr>
               `).join('')}
             </tbody>
-            <tfoot><tr><td class="mono">091</td><td>Total a pagar dentro de plazo legal</td><td class="num">${fmt(total)}</td></tr></tfoot>
+            <tfoot><tr><td class="mono">091</td><td>Total a pagar dentro de plazo legal</td><td class="num" data-f29-total>${fmt(total)}</td></tr></tfoot>
           </table>
         </div>
       `;
     } else if (state.clientSub === 'rcv') {
       $('v2-canvas').innerHTML = `
         <div class="v2-pulse-bar">
-          <span class="muted">Registro Compras y Ventas · Motor oficial <code>CLContadoresF29</code></span>
+          <span class="muted">Registro Compras y Ventas · Cálculo SII</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <label class="btn btn--sm">Importar CSV Ventas SII<input type="file" accept=".csv,.txt" id="v2-csv-ventas" class="sr-only"></label>
             <label class="btn btn--sm">Importar CSV Compras SII<input type="file" accept=".csv,.txt" id="v2-csv-compras" class="sr-only"></label>
@@ -916,10 +983,10 @@
       <div class="v2-ins-block v2-ins-block--soft">
         <div class="v2-ins-head">
           <h2 class="v2-ins-title">Conexión SII y TGR</h2>
-          <span class="tag tag--in">Motor F29 real</span>
+          <span class="tag tag--in">F29 vigente SII</span>
         </div>
         <dl class="v2-ins-kv">
-          <dt>Estado F29</dt><dd>${c.f29.state}</dd>
+          <dt>Estado F29</dt><dd>${f29StateLabel(c.f29.state)}</dd>
           <dt>Folio SII</dt><dd>${c.f29.folio || 'Sin declarar'}</dd>
           <dt>Deuda TGR</dt><dd>$0</dd>
         </dl>
@@ -992,7 +1059,7 @@
                 </tr>
               `).join('')}
             </tbody>
-            <tfoot><tr><td colspan="6">Motor oficial FiniquitoCalculator · Art. ${state.finiquitoCause} CT · UF ${fmt(mesVals.uf)}</td><td class="num">${fmt(totFin)}</td></tr></tfoot>
+            <tfoot><tr><td colspan="6">Finiquitos Art. ${state.finiquitoCause} CT · UF ${fmt(mesVals.uf)}</td><td class="num">${fmt(totFin)}</td></tr></tfoot>
           </table>
         </div>
       `;
@@ -1083,9 +1150,9 @@
     $('v2-canvas').innerHTML = `
       <div class="v2-tape">
         <div class="v2-tape-cell"><span class="v2-tape-label">Dotación</span><span class="v2-tape-val">${c.workers.length}</span></div>
-        <div class="v2-tape-cell"><span class="v2-tape-label">Total imponible</span><span class="v2-tape-val">${fmt(totalImp)}</span></div>
-        <div class="v2-tape-cell"><span class="v2-tape-label">Líquido a pagar</span><span class="v2-tape-val is-in">${fmt(totalLiquido)}</span></div>
-        <div class="v2-tape-cell"><span class="v2-tape-label">Costo empleador</span><span class="v2-tape-val">${fmt(totalEmp)}</span></div>
+        <div class="v2-tape-cell"><span class="v2-tape-label">Total imponible</span><span class="v2-tape-val" data-nom-tape="imponible">${fmt(totalImp)}</span></div>
+        <div class="v2-tape-cell"><span class="v2-tape-label">Líquido a pagar</span><span class="v2-tape-val is-in" data-nom-tape="liquido">${fmt(totalLiquido)}</span></div>
+        <div class="v2-tape-cell"><span class="v2-tape-label">Costo empleador</span><span class="v2-tape-val" data-nom-tape="empleador">${fmt(totalEmp)}</span></div>
       </div>
       <div class="v2-table-wrap">
         <table class="v2-table">
@@ -1099,17 +1166,17 @@
                 <td><strong>${w.name}</strong><span class="v2-cell-sub">${w.cargo}</span></td>
                 <td class="mono">${w.rut}</td>
                 <td>${w.afp}</td>
-                <td class="num">${fmt(calc.imponible)}</td>
-                <td class="num"><strong>${fmt(calc.liquido)}</strong></td>
-                <td><span class="tag ${w.estado === 'Listo' || w.estado === 'Pagado' ? 'tag--in' : 'tag--on'}">${w.estado}</span></td>
+                <td class="num" data-row-imp="${w.id}">${fmt(calc.imponible)}</td>
+                <td class="num" data-row-liq="${w.id}"><strong>${fmt(calc.liquido)}</strong></td>
+                <td><span class="tag ${w.estado === 'Listo' || w.estado === 'Pagado' ? 'tag--in' : 'tag--danger'}">${w.estado}</span></td>
               </tr>
             `).join('')}
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="4">Motor oficial CLLiquidacionEngine · ${iso}</td>
-              <td class="num">${fmt(totalImp)}</td>
-              <td class="num">${fmt(totalLiquido)}</td>
+              <td colspan="4">Liquidaciones · ${iso}</td>
+              <td class="num" data-nom-foot="imponible">${fmt(totalImp)}</td>
+              <td class="num" data-nom-foot="liquido">${fmt(totalLiquido)}</td>
               <td class="mono">LRE 147</td>
             </tr>
           </tfoot>
@@ -1124,14 +1191,14 @@
         <div class="v2-ins-block">
           <div class="v2-ins-head">
             <h2 class="v2-ins-title">${w.name}</h2>
-            <span class="tag ${w.estado === 'Listo' ? 'tag--in' : 'tag--on'}">${w.estado}</span>
+            <span class="tag ${w.estado === 'Listo' || w.estado === 'Pagado' ? 'tag--in' : 'tag--danger'}">${w.estado}</span>
           </div>
           <div class="muted" style="font-size:12px">${w.cargo} · <span class="mono">${w.rut}</span></div>
           <div class="v2-ins-row">
             <span>Sueldo base ($)</span>
             <input type="number" class="v2-inline-input" id="inp-worker-base" value="${w.base}" aria-label="Sueldo base de ${w.name}">
           </div>
-          <dl class="v2-ins-kv" style="margin-top:4px">
+          <dl class="v2-ins-kv" id="v2-worker-kv" style="margin-top:4px">
             ${(d.haberesImponibles || []).map((h) => `<dt>${h.concepto}</dt><dd>${fmt(h.monto)}</dd>`).join('')}
             ${(d.descuentosLegales || []).map((x) => `<dt>${x.concepto}</dt><dd>−${fmt(x.monto)}</dd>`).join('')}
             <dt><strong>Líquido a pagar</strong></dt><dd><strong>${fmt(calc.liquido)}</strong></dd>
@@ -1159,7 +1226,7 @@
     const pend = c.bankTx.length - conc;
     $('v2-canvas').innerHTML = `
       <div class="v2-pulse-bar">
-        <span class="muted">Conciliación bancaria · Motor <code>CLImportadores</code> (${conc}/${c.bankTx.length} cuadrados)</span>
+        <span class="muted">Conciliación bancaria (${conc}/${c.bankTx.length} cuadrados)</span>
         <label class="btn btn--sm">
           Importar cartola CSV
           <input type="file" accept=".csv,.txt" id="v2-csv-cartola" class="sr-only">
@@ -1274,7 +1341,7 @@
         <div class="v2-tape">
           <div class="v2-tape-cell"><span class="v2-tape-label">Total Débitos</span><span class="v2-tape-val">${fmt(t.debito)}</span></div>
           <div class="v2-tape-cell"><span class="v2-tape-label">Total Créditos</span><span class="v2-tape-val">${fmt(t.credito)}</span></div>
-          <div class="v2-tape-cell"><span class="v2-tape-label">Resultado período</span><span class="v2-tape-val is-in">${fmt((t.ganancia || 0) - (t.perdida || 0))}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Resultado período</span><span class="v2-tape-val ${((t.ganancia || 0) - (t.perdida || 0)) < 0 ? 'is-danger' : 'is-in'}">${fmt((t.ganancia || 0) - (t.perdida || 0))}</span></div>
           <div class="v2-tape-cell"><span class="v2-tape-label">Partida doble</span><span class="v2-tape-val">${cuadra ? 'Cuadrado' : 'Revisar'}</span></div>
         </div>
         <div class="v2-table-wrap">
@@ -1298,7 +1365,7 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="2">Motor oficial CLContabilidad · ${asientos.length} asientos</td>
+                <td colspan="2">${asientos.length} asientos centralizados</td>
                 <td class="num">${fmt(t.deudor)}</td>
                 <td class="num">${fmt(t.acreedor)}</td>
                 <td class="num">${fmt(t.activo)}</td>
@@ -1337,10 +1404,10 @@
         <table class="v2-table">
           <thead><tr><th>Hito de cierre mensual</th><th>Estado actual</th><th>Acceso directo</th></tr></thead>
           <tbody>
-            <tr><td>1. Registro Compras y Ventas (RCV) + Acuses 8d</td><td><span class="tag ${c.rcv.state === 'alerta' ? 'tag--on' : 'tag--in'}">${c.rcv.label}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="rcv">Abrir RCV</button></td></tr>
-            <tr><td>2. Remuneraciones, PreviRed (105) y LRE (147)</td><td><span class="tag ${c.nomina.state === 'ok' ? 'tag--in' : 'tag--on'}">${c.nomina.label}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="remuneraciones">Abrir Nómina</button></td></tr>
+            <tr><td>1. Registro Compras y Ventas (RCV) + Acuses 8d</td><td><span class="tag ${c.rcv.state === 'alerta' ? 'tag--danger' : 'tag--in'}">${c.rcv.label}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="rcv">Abrir RCV</button></td></tr>
+            <tr><td>2. Remuneraciones, PreviRed (105) y LRE (147)</td><td><span class="tag ${c.nomina.state === 'ok' ? 'tag--in' : 'tag--danger'}">${c.nomina.label}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="remuneraciones">Abrir Nómina</button></td></tr>
             <tr><td>3. Conciliación Bancaria</td><td><span class="tag ${c.bancos.state === 'ok' ? 'tag--in' : 'tag--out'}">${c.bancos.label}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="bancos">Abrir Bancos</button></td></tr>
-            <tr><td>4. Declaración F29 (Cód. 91)</td><td><span class="tag ${c.f29.state === 'declarado' || c.f29.state === 'listo' ? 'tag--in' : 'tag--out'}">${fmt(f29Total(c))} · ${c.f29.state}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="f29">Abrir F29</button></td></tr>
+            <tr><td>4. Declaración F29 (Cód. 91)</td><td><span class="tag ${c.f29.state === 'declarado' || c.f29.state === 'listo' ? 'tag--in' : 'tag--out'}">${fmt(f29Total(c))} · ${f29StateLabel(c.f29.state)}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="f29">Abrir F29</button></td></tr>
           </tbody>
         </table>
       </div>
@@ -1424,7 +1491,7 @@
     c.f29.retenciones = (res.cod48 || 0) + (res.cod151 || 0);
     c.rcv.state = 'ok';
     c.rcv.label = 'RCV procesado (SII)';
-    toast(`F29 recalculado con CLContadoresF29 · Total Cód. 91: ${fmt(f29Total(c))}`);
+    toast(`F29 recalculado desde RCV · Total Cód. 91: ${fmt(f29Total(c))}`);
     state.clientSub = 'f29';
     render();
   }
@@ -1434,10 +1501,20 @@
     $('v2-cmdk-backdrop').hidden = false;
     const inp = $('v2-cmdk-input');
     inp.value = '';
+    state.cmdkIdx = 0;
     renderCmdk('');
-    setTimeout(() => inp.focus(), 10);
+    inp.focus();
   }
   function closeCmdk() { $('v2-cmdk-backdrop').hidden = true; }
+  function updateCmdkActive() {
+    const list = $('v2-cmdk-list');
+    const items = list.querySelectorAll('.v2-cmdk-item');
+    items.forEach((el, idx) => {
+      const active = idx === state.cmdkIdx;
+      el.classList.toggle('is-active', active);
+      if (active) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
   function renderCmdk(q) {
     const term = q.trim().toLowerCase();
     const entries = [
@@ -1452,6 +1529,7 @@
       ]))
     ].filter((e) => !term || e.label.toLowerCase().includes(term) || e.meta.toLowerCase().includes(term));
 
+    state.cmdkIdx = 0;
     const list = $('v2-cmdk-list');
     list.innerHTML = entries.slice(0, 10).map((e, idx) => `
       <button type="button" class="v2-cmdk-item ${idx === 0 ? 'is-active' : ''}" data-cmdk-idx="${idx}">
@@ -1460,7 +1538,7 @@
     `).join('');
     list._entries = entries.slice(0, 10);
   }
-  function openDrawer() { $('v2-drawer-wrap').hidden = false; setTimeout(() => $('nc-name').focus(), 20); }
+  function openDrawer() { $('v2-drawer-wrap').hidden = false; $('nc-name').focus(); }
   function closeDrawer() { $('v2-drawer-wrap').hidden = true; }
 
   /* ==================== EVENTS ==================== */
@@ -1472,7 +1550,7 @@
     if (t.id === 'btn-back-studio' || t.dataset.backStudio) { enterStudio('hoy'); return; }
     if (t.id === 'btn-new-client' || t.id === 'btn-ins-new-client') { openDrawer(); return; }
     if (t.id === 'btn-close-drawer' || t.id === 'btn-cancel-drawer') { closeDrawer(); return; }
-    if (t.id === 'btn-mobile-menu') { $('v2-sidebar').classList.toggle('is-open'); return; }
+    if (t.id === 'btn-mobile-menu') { toggleMobileSidebar(); return; }
     if (t.id === 'btn-period-prev') { state.periodIdx = Math.max(0, state.periodIdx - 1); render(); return; }
     if (t.id === 'btn-period-next') { state.periodIdx = Math.min(PERIODS.length - 1, state.periodIdx + 1); render(); return; }
     if (t.id === 'btn-reset-demo') { state.clients = INITIAL_CLIENTS(); state.inbox = INITIAL_INBOX(); toast('Datos restablecidos'); render(); return; }
@@ -1565,23 +1643,60 @@
   });
 
   document.addEventListener('input', (e) => {
-    if (e.target.id === 'v2-matrix-search') { state.query = e.target.value; renderStudioHoy(); $('v2-matrix-search')?.focus(); return; }
+    if (e.target.id === 'v2-matrix-search') {
+      state.query = e.target.value;
+      updateStudioHoyRows();
+      return;
+    }
     if (e.target.id === 'v2-cmdk-input') { renderCmdk(e.target.value); return; }
     if (e.target.id === 'inp-worker-base') {
       const c = getClient();
       const w = c.workers.find((x) => x.id === state.selectedWorkerId);
       if (w) {
         w.base = Math.max(0, Number(e.target.value) || 0);
-        renderClientRemuneraciones(c);
-        $('inp-worker-base')?.focus();
+        const iso = currentPeriod().iso;
+        const computed = c.workers.map((wk) => ({ w: wk, calc: calcularWorkerReal(wk, iso) }));
+        const totalImp = computed.reduce((s, x) => s + x.calc.imponible, 0);
+        const totalLiq = computed.reduce((s, x) => s + x.calc.liquido, 0);
+        const totalEmp = computed.reduce((s, x) => s + x.calc.costoEmpleador, 0);
+        const sel = computed.find((x) => x.w.id === w.id);
+        const setTxt = (q, val) => { const el = document.querySelector(q); if (el) el.textContent = val; };
+        setTxt('[data-nom-tape="imponible"]', fmt(totalImp));
+        setTxt('[data-nom-tape="liquido"]', fmt(totalLiq));
+        setTxt('[data-nom-tape="empleador"]', fmt(totalEmp));
+        setTxt('[data-nom-foot="imponible"]', fmt(totalImp));
+        setTxt('[data-nom-foot="liquido"]', fmt(totalLiq));
+        if (sel) {
+          setTxt(`[data-row-imp="${w.id}"]`, fmt(sel.calc.imponible));
+          const liqCell = document.querySelector(`[data-row-liq="${w.id}"]`);
+          if (liqCell) liqCell.innerHTML = `<strong>${fmt(sel.calc.liquido)}</strong>`;
+          const kv = $('v2-worker-kv');
+          const d = sel.calc.detalle || {};
+          if (kv) {
+            kv.innerHTML = `
+              ${(d.haberesImponibles || []).map((h) => `<dt>${h.concepto}</dt><dd>${fmt(h.monto)}</dd>`).join('')}
+              ${(d.descuentosLegales || []).map((x) => `<dt>${x.concepto}</dt><dd>−${fmt(x.monto)}</dd>`).join('')}
+              <dt><strong>Líquido a pagar</strong></dt><dd><strong>${fmt(sel.calc.liquido)}</strong></dd>
+              <dt>Aportes empleador</dt><dd>${fmt(sel.calc.costoEmpleador)}</dd>
+            `;
+          }
+        }
       }
       return;
     }
     if (e.target.dataset.f29Field) {
       const c = getClient();
       c.f29[e.target.dataset.f29Field] = Math.max(0, Number(e.target.value) || 0);
-      renderClientImpuestos(c);
-      document.querySelector(`[data-f29-field="${e.target.dataset.f29Field}"]`)?.focus();
+      const iva = Math.max(0, c.f29.debito - c.f29.credito);
+      const total = f29Total(c);
+      const setTxt = (q, val) => { const el = document.querySelector(q); if (el) el.textContent = val; };
+      setTxt('[data-f29-tape="debito"]', fmt(c.f29.debito));
+      setTxt('[data-f29-tape="credito"]', fmt(c.f29.credito));
+      setTxt('[data-f29-tape="iva"]', fmt(iva));
+      setTxt('[data-f29-tape="total"]', fmt(total));
+      setTxt('[data-f29-code-val="089"]', fmt(iva));
+      setTxt('[data-f29-code-val="755"]', fmt(c.f29.postergar ? iva : 0));
+      setTxt('[data-f29-total]', fmt(total));
     }
   });
 
@@ -1630,6 +1745,7 @@
 
   $('v2-cmdk-backdrop').addEventListener('click', (e) => { if (e.target.id === 'v2-cmdk-backdrop') closeCmdk(); });
   $('v2-drawer-wrap').addEventListener('click', (e) => { if (e.target.id === 'v2-drawer-wrap') closeDrawer(); });
+  $('v2-sidebar-backdrop')?.addEventListener('click', closeMobileSidebar);
   $('v2-brand-home').addEventListener('click', (e) => { e.preventDefault(); enterStudio('hoy'); });
 
   $('form-new-client').addEventListener('submit', (e) => {
@@ -1655,8 +1771,27 @@
   });
 
   document.addEventListener('keydown', (e) => {
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openCmdk(); }
-    if (e.key === 'Escape') { closeCmdk(); closeDrawer(); closeMobileSidebar(); }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openCmdk(); return; }
+    if (e.key === 'Escape') { closeCmdk(); closeDrawer(); closeMobileSidebar(); return; }
+    if (!$('v2-cmdk-backdrop').hidden) {
+      const list = $('v2-cmdk-list');
+      const entries = list._entries || [];
+      if (!entries.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        state.cmdkIdx = (state.cmdkIdx + 1) % entries.length;
+        updateCmdkActive();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        state.cmdkIdx = (state.cmdkIdx - 1 + entries.length) % entries.length;
+        updateCmdkActive();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const entry = entries[state.cmdkIdx] || entries[0];
+        closeCmdk();
+        if (entry) entry.run();
+      }
+    }
   });
 
   if (location.hash === '#cliente-f29') enterClient('san-isidro', 'impuestos', 'f29');
