@@ -742,6 +742,7 @@
           tabs: [
             { id: 'f29', label: 'Hoja F29' },
             { id: 'rcv', label: 'Compras y Acuses' },
+            { id: 'bhe', label: 'Honorarios BHE' },
             { id: 'renta', label: `Renta (${c.regime})` }
           ]
         },
@@ -750,6 +751,7 @@
           cta: state.clientSub === 'previred' ? 'Descargar LRE 147 CSV' : state.clientSub === 'finiquitos' ? 'Exportar Finiquitos Excel' : (payrollBlockers ? `Completar ${payrollBlockers} ficha${payrollBlockers > 1 ? 's' : ''}` : 'Descargar Previred 105'),
           tabs: [
             { id: 'nomina', label: 'Nómina del mes' },
+            { id: 'fichas', label: 'Trabajadores' },
             { id: 'finiquitos', label: 'Finiquitos' },
             { id: 'previred', label: 'Previred y LRE' }
           ]
@@ -764,9 +766,11 @@
         },
         contabilidad: {
           title: 'Contabilidad',
-          cta: state.clientSub === 'plan' ? 'Aplicar plan al Estudio' : 'Exportar Contabilidad Excel',
+          cta: state.clientSub === 'plan' ? 'Aplicar plan al Estudio' : state.clientSub === 'resultados' ? 'Emitir Resultados PDF' : 'Exportar Contabilidad Excel',
           tabs: [
             { id: 'balance', label: 'Balance 8 Col.' },
+            { id: 'resultados', label: 'Resultados (P&L)' },
+            { id: 'mayor', label: 'Libro Mayor' },
             { id: 'diario', label: 'Libro Diario' },
             { id: 'plan', label: 'Plan de Cuentas' }
           ]
@@ -1506,6 +1510,52 @@
           </table>
         </div>
       `;
+    } else if (state.clientSub === 'bhe') {
+      if (!Array.isArray(c.bheDocs)) {
+        const retTarget = c.f29.bhe || 0;
+        const brutoDefault = retTarget > 0 ? Math.round(retTarget / 0.1525) : 0;
+        c.bheDocs = brutoDefault > 0
+          ? [
+              { id: 'bh1', folio: '1402', date: '08/11/2026', name: 'Estudio Diseño Sur Ltda.', rut: rutConDv(16224510), bruto: Math.round(brutoDefault * 0.6), status: 'Pagada' },
+              { id: 'bh2', folio: '1419', date: '19/11/2026', name: 'Andrés Morales Vega (TI)', rut: rutConDv(17992310), bruto: brutoDefault - Math.round(brutoDefault * 0.6), status: 'Pendiente pago' }
+            ]
+          : [];
+      }
+      const totBruto = c.bheDocs.reduce((s, b) => s + (b.bruto || 0), 0);
+      const totRet = c.bheDocs.reduce((s, b) => s + Math.round((b.bruto || 0) * 0.1525), 0);
+      const totLiq = totBruto - totRet;
+      $('v2-canvas').innerHTML = `
+        <div class="v2-tape">
+          <div class="v2-tape-cell"><span class="v2-tape-label">Boletas BHE</span><span class="v2-tape-val">${c.bheDocs.length}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Honorario bruto</span><span class="v2-tape-val">${fmt(totBruto)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Retención 15,25% (Cód. 151)</span><span class="v2-tape-val is-in">${fmt(totRet)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Líquido a pagar</span><span class="v2-tape-val">${fmt(totLiq)}</span></div>
+        </div>
+        <div class="v2-table-wrap">
+          <table class="v2-table">
+            <thead><tr><th style="width:68px">Folio</th><th style="width:92px">Fecha</th><th>Profesional / RUT</th><th class="num">Bruto</th><th class="num">Ret. 15,25%</th><th class="num">Líquido</th><th>Estado</th></tr></thead>
+            <tbody>
+              ${c.bheDocs.length ? c.bheDocs.map((b) => {
+                const ret = Math.round((b.bruto || 0) * 0.1525);
+                return `
+                  <tr>
+                    <td class="mono">${b.folio}</td>
+                    <td class="mono">${b.date}</td>
+                    <td><strong>${b.name}</strong><span class="v2-cell-sub mono">${b.rut}</span></td>
+                    <td class="num">${fmt(b.bruto)}</td>
+                    <td class="num">${fmt(ret)}</td>
+                    <td class="num"><strong>${fmt(b.bruto - ret)}</strong></td>
+                    <td><span class="tag ${b.status === 'Pagada' ? 'tag--in' : 'tag--out'}">${b.status}</span></td>
+                  </tr>
+                `;
+              }).join('') : `<tr><td colspan="7" class="muted" style="text-align:center;padding:18px">Sin boletas de honorarios recibidas en ${currentPeriod().label}. Registra una en el panel derecho para actualizar automáticamente el F29 Cód. 151.</td></tr>`}
+            </tbody>
+            <tfoot>
+              <tr><td colspan="3">Total BHE recibidas · Alimenta F29 Cód. 151 y DJ 1879</td><td class="num">${fmt(totBruto)}</td><td class="num">${fmt(totRet)}</td><td class="num">${fmt(totLiq)}</td><td></td></tr>
+            </tfoot>
+          </table>
+        </div>
+      `;
     } else {
       const ddjj = c.regime === '14 D3'
         ? [['DJ 1948', 'Retiros y dividendos', 'Obligatoria 14 D3'], ['DJ 1887', 'Sueldos y retenciones', 'Obligatoria'], ['DJ 1879', 'Honorarios BHE', 'Obligatoria']]
@@ -1529,7 +1579,18 @@
     }
 
     $('v2-inspector').innerHTML = `
-      ${state.clientSub === 'f29' ? renderF29ExplainBlock(c) : state.clientSub === 'rcv' ? renderRcvExplainBlock(c) : ''}
+      ${state.clientSub === 'f29' ? renderF29ExplainBlock(c) : state.clientSub === 'rcv' ? renderRcvExplainBlock(c) : state.clientSub === 'bhe' ? `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head"><h2 class="v2-ins-title">Registrar Boleta (BHE)</h2><span class="tag tag--in">15,25% · 2026</span></div>
+          <p class="muted" style="margin:0;font-size:12px">Al agregar una boleta se recalcula automáticamente el Cód. 151 del F29 y el respaldo anual DJ 1879 (Ley 21.133).</p>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+            <input type="text" id="inp-bhe-name" class="v2-ins-select" placeholder="Nombre profesional (ej. Juan Pérez)" aria-label="Nombre profesional">
+            <input type="text" id="inp-bhe-rut" class="v2-ins-select mono" placeholder="RUT (ej. 16.440.221-8)" aria-label="RUT profesional">
+            <input type="number" id="inp-bhe-bruto" class="v2-ins-select mono" placeholder="Monto bruto CLP (ej. 500000)" aria-label="Monto bruto">
+            <button type="button" class="btn btn--primary btn--sm" data-add-bhe="1">+ Agregar BHE y actualizar F29</button>
+          </div>
+        </div>
+      ` : ''}
       <div class="v2-ins-block">
         <div class="v2-ins-head">
           <h2 class="v2-ins-title">Semáforo Pre-SII</h2>
@@ -1620,6 +1681,66 @@
     const totalImp = computed.reduce((s, x) => s + x.calc.imponible, 0);
     const totalLiquido = computed.reduce((s, x) => s + x.calc.liquido, 0);
     const totalEmp = computed.reduce((s, x) => s + x.calc.costoEmpleador, 0);
+
+    if (state.clientSub === 'fichas') {
+      const calcMeses = (ingreso) => {
+        if (!ingreso) return 12;
+        const d = new Date(ingreso + 'T00:00:00');
+        if (isNaN(d.getTime())) return 12;
+        const ref = new Date(iso + '-30T00:00:00');
+        return Math.max(1, (ref.getFullYear() - d.getFullYear()) * 12 + (ref.getMonth() - d.getMonth()));
+      };
+      $('v2-canvas').innerHTML = `
+        <div class="v2-tape">
+          <div class="v2-tape-cell"><span class="v2-tape-label">Dotación vigente</span><span class="v2-tape-val">${c.workers.length}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Socios Art. 31 N°6</span><span class="v2-tape-val">${c.workers.filter((w) => w.tipoRegimen === 'socio').length}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Pensionados vejez</span><span class="v2-tape-val">${c.workers.filter((w) => w.tipoRegimen === 'pensionado').length}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Fichas incompletas</span><span class="v2-tape-val ${getClientPayrollBlockers(c).length ? 'is-danger' : 'is-in'}">${getClientPayrollBlockers(c).length}</span></div>
+        </div>
+        <div class="v2-table-wrap">
+          <table class="v2-table">
+            <thead><tr><th>Trabajador / RUT</th><th>Cargo</th><th>Ingreso</th><th class="num">Vacaciones (Art. 67)</th><th>Previsión</th><th>Régimen</th><th class="num">Sueldo base</th></tr></thead>
+            <tbody>
+              ${c.workers.map((w) => {
+                const m = calcMeses(w.ingreso);
+                const vac = w.tipoRegimen === 'socio' ? 'N/A' : `${(m * 1.25).toFixed(1).replace('.', ',')} d`;
+                const reg = w.tipoRegimen === 'socio' ? 'Socio Emp.' : w.tipoRegimen === 'pensionado' ? 'Pensionado' : 'Dependiente';
+                return `
+                  <tr class="${selectedObj && selectedObj.w.id === w.id ? 'is-selected' : ''}" data-select-worker="${w.id}" style="cursor:pointer">
+                    <td><strong>${w.name}</strong><span class="v2-cell-sub mono">${w.rut}</span></td>
+                    <td>${w.cargo || 'Sin cargo'}</td>
+                    <td class="mono">${w.ingreso || '—'}</td>
+                    <td class="num mono">${vac}</td>
+                    <td>${w.afp || '—'} / Fonasa</td>
+                    <td><span class="tag ${w.tipoRegimen === 'socio' ? 'tag--out' : 'tag--in'}">${reg}</span></td>
+                    <td class="num"><strong>${fmt(w.base)}</strong></td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      $('v2-inspector').innerHTML = `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head"><h2 class="v2-ins-title">Agregar trabajador a ${c.name.split(' ')[0]}</h2><span class="tag tag--in">Legajo</span></div>
+          <p class="muted" style="margin:0;font-size:12px">Se suma de inmediato a Nómina, PreviRed (105), LRE (147) y Finiquitos.</p>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+            <input type="text" id="inp-nw-name" class="v2-ins-select" placeholder="Nombre completo" aria-label="Nombre completo">
+            <input type="text" id="inp-nw-rut" class="v2-ins-select mono" placeholder="RUT (ej. 18.234.567-K)" aria-label="RUT trabajador">
+            <input type="text" id="inp-nw-cargo" class="v2-ins-select" placeholder="Cargo (ej. Administrativo)" aria-label="Cargo">
+            <input type="number" id="inp-nw-base" class="v2-ins-select mono" placeholder="Sueldo base CLP (ej. 850000)" aria-label="Sueldo base">
+            <select id="sel-nw-regimen" class="v2-ins-select" aria-label="Régimen laboral">
+              <option value="dependiente">Dependiente estándar</option>
+              <option value="socio">Socio · Sueldo empresarial (Art. 31 N°6)</option>
+              <option value="pensionado">Pensionado por vejez (Art. 69 D.L. 3.500)</option>
+            </select>
+            <button type="button" class="btn btn--primary btn--sm" data-add-worker="1">+ Guardar trabajador</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
 
     if (state.clientSub === 'finiquitos') {
       const mesVals = valoresMesActual(iso);
@@ -2285,6 +2406,97 @@
       return;
     }
 
+    if (state.clientSub === 'resultados') {
+      const ingresos = (bal.filas || []).filter((f) => (f.ganancia || 0) > 0);
+      const gastos = (bal.filas || []).filter((f) => (f.perdida || 0) > 0);
+      const totIng = ingresos.reduce((s, f) => s + (f.ganancia || 0), 0);
+      const totGas = gastos.reduce((s, f) => s + (f.perdida || 0), 0);
+      const res = totIng - totGas;
+      const margen = totIng > 0 ? ((res / totIng) * 100).toFixed(1).replace('.', ',') : '0,0';
+      const tasaIdpc = c.regime === '14 A' ? 27 : c.regime === '14 D8' ? 0 : 12.5;
+      const idpcEst = res > 0 ? Math.round(res * (tasaIdpc / 100)) : 0;
+      $('v2-canvas').innerHTML = `
+        <div class="v2-tape">
+          <div class="v2-tape-cell"><span class="v2-tape-label">Ingresos</span><span class="v2-tape-val">${fmt(totIng)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Costos y gastos</span><span class="v2-tape-val">${fmt(totGas)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Resultado neto</span><span class="v2-tape-val ${res < 0 ? 'is-danger' : 'is-in'}">${fmt(res)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Margen operativo</span><span class="v2-tape-val">${margen}%</span></div>
+        </div>
+        <div class="v2-table-wrap">
+          <table class="v2-table">
+            <thead><tr><th style="width:72px">Código</th><th>Estado de Resultados (P&amp;L) · ${state.balanceScope === 'mes' ? currentPeriod().label : 'Acumulado'}</th><th>Tipo</th><th class="num">Monto CLP</th></tr></thead>
+            <tbody>
+              ${ingresos.map((f) => `<tr><td class="mono">${f.codigo}</td><td><strong>${f.nombre}</strong></td><td><span class="tag tag--in">Ingreso</span></td><td class="num">${fmt(f.ganancia)}</td></tr>`).join('')}
+              ${gastos.map((f) => `<tr><td class="mono">${f.codigo}</td><td>${f.nombre}</td><td><span class="tag tag--out">Gasto / Costo</span></td><td class="num">−${fmt(f.perdida)}</td></tr>`).join('')}
+            </tbody>
+            <tfoot>
+              <tr><td colspan="3"><strong>${res >= 0 ? 'Utilidad del período' : 'Pérdida del período'} (Margen ${margen}%)</strong></td><td class="num">${fmt(res)}</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      `;
+      $('v2-inspector').innerHTML = `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head"><h2 class="v2-ins-title">Proyección Tributaria (${c.regime})</h2><span class="tag tag--in">IDPC ${tasaIdpc}%</span></div>
+          <dl class="v2-ins-kv">
+            <dt>Resultado antes IDPC</dt><dd>${fmt(res)}</dd>
+            <dt>IDPC estimado (${tasaIdpc}%)</dt><dd>${fmt(idpcEst)}</dd>
+            <dt>Resultado después IDPC</dt><dd><strong>${fmt(res - idpcEst)}</strong></dd>
+          </dl>
+          <p class="muted" style="margin:4px 0 0;font-size:11.5px">${c.regime === '14 D3' ? 'En 14 D3 ProPyme la base real se determina sobre ingresos percibidos y gastos pagados.' : 'Referencial antes de ajustes extracontables de RLI.'}</p>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button type="button" class="btn btn--sm" style="flex:1" data-emit-doc="resultados-pdf">Emitir P&amp;L PDF</button>
+            <button type="button" class="btn btn--sm" data-emit-doc="contab-xlsx">Excel (.xlsx)</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    if (state.clientSub === 'mayor') {
+      const selCode = state.selectedMayorCode || (mayor[0] && mayor[0].codigo) || null;
+      const selMayor = mayor.find((m) => m.codigo === selCode) || mayor[0];
+      const movs = selMayor ? asientos.flatMap((a) => a.lineas.filter((l) => l.cuenta === selMayor.codigo).map((l) => ({ id: a.id, fecha: a.fecha, glosa: a.glosa, debe: l.debe || 0, haber: l.haber || 0 }))) : [];
+      $('v2-canvas').innerHTML = `
+        <div class="v2-table-wrap">
+          <table class="v2-table">
+            <thead><tr><th style="width:72px">Código</th><th>Cuenta (clic para ver movimientos del Mayor)</th><th class="num">Débitos</th><th class="num">Créditos</th><th class="num">Saldo Deudor</th><th class="num">Saldo Acreedor</th></tr></thead>
+            <tbody>
+              ${mayor.map((m) => {
+                const sd = Math.max(0, (m.debito || 0) - (m.credito || 0));
+                const sa = Math.max(0, (m.credito || 0) - (m.debito || 0));
+                return `
+                  <tr class="${selMayor && selMayor.codigo === m.codigo ? 'is-selected' : ''}" data-select-mayor="${m.codigo}" style="cursor:pointer">
+                    <td class="mono"><strong>${m.codigo}</strong></td>
+                    <td>${m.nombre}</td>
+                    <td class="num">${fmt(m.debito || 0)}</td>
+                    <td class="num">${fmt(m.credito || 0)}</td>
+                    <td class="num">${sd ? fmt(sd) : '—'}</td>
+                    <td class="num">${sa ? fmt(sa) : '—'}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      $('v2-inspector').innerHTML = selMayor ? `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head"><h2 class="v2-ins-title">${selMayor.codigo} · ${selMayor.nombre}</h2><span class="tag tag--out">${movs.length} mov.</span></div>
+          <div class="v2-ins-list" style="font-size:12px">
+            ${movs.map((mv) => `
+              <div class="v2-ins-row">
+                <div><strong>${mv.id}</strong> · <span class="mono muted">${mv.fecha}</span><div class="muted">${mv.glosa}</div></div>
+                <span class="mono">${mv.debe ? `D ${fmt(mv.debe)}` : `H ${fmt(mv.haber)}`}</span>
+              </div>
+            `).join('')}
+          </div>
+          <button type="button" class="btn btn--sm" style="margin-top:8px" data-emit-doc="contab-xlsx">Descargar Mayor en Excel (.xlsx)</button>
+        </div>
+      ` : '';
+      return;
+    }
+
     if (state.clientSub === 'diario') {
       $('v2-canvas').innerHTML = `
         <div class="v2-table-wrap">
@@ -2865,6 +3077,9 @@
     } else if (docType === 'balance-pdf') {
       D.emitirBalancePdf(ctx);
       toast(`Balance 8 Columnas PDF (horizontal) listo para ${c.name}`);
+    } else if (docType === 'resultados-pdf') {
+      D.emitirResultadosPdf(ctx);
+      toast(`Estado de Resultados (P&L) PDF listo para ${c.name}`);
     } else if (docType === 'contab-xlsx') {
       D.emitirContabilidadExcel(ctx, downloadFile).then(() => toast(`Contabilidad Excel (.xlsx: Balance + Diario + Mayor) descargada`));
     } else if (docType === 'bancos-pdf') {
@@ -3087,7 +3302,7 @@
 
   /* ==================== EVENTS ==================== */
   document.addEventListener('click', (e) => {
-    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox], [data-select-conn]');
+    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox], [data-select-conn], [data-select-mayor]');
     if (!t) return;
 
     if (t.id === 'btn-open-cmdk' || t.id === 'btn-switch-client') { openCmdk(); return; }
@@ -3128,6 +3343,41 @@
     if (t.dataset.selectConn) {
       state.selectedConn = t.dataset.selectConn;
       renderStudioConexiones();
+      return;
+    }
+    if (t.dataset.selectMayor) {
+      state.selectedMayorCode = t.dataset.selectMayor;
+      renderClientContabilidad(getClient());
+      return;
+    }
+    if (t.dataset.addBhe) {
+      const c = getClient();
+      const name = ($('inp-bhe-name') && $('inp-bhe-name').value.trim()) || 'Profesional Independiente';
+      const rut = ($('inp-bhe-rut') && $('inp-bhe-rut').value.trim()) || rutConDv(16554321);
+      const bruto = Math.max(0, Number($('inp-bhe-bruto') && $('inp-bhe-bruto').value) || 0);
+      if (!bruto) { toast('Ingresa un monto bruto mayor a $0'); return; }
+      if (!Array.isArray(c.bheDocs)) c.bheDocs = [];
+      c.bheDocs.unshift({ id: 'bh-' + Date.now(), folio: String(1420 + c.bheDocs.length), date: '26/11/2026', name, rut, bruto, status: 'Pendiente pago' });
+      c.f29.bhe = c.bheDocs.reduce((s, b) => s + Math.round((b.bruto || 0) * 0.1525), 0);
+      toast(`BHE registrada · Retención 15,25% actualizada en F29 Cód. 151 (${fmt(c.f29.bhe)})`);
+      render();
+      return;
+    }
+    if (t.dataset.addWorker) {
+      const c = getClient();
+      const name = ($('inp-nw-name') && $('inp-nw-name').value.trim());
+      const rut = ($('inp-nw-rut') && $('inp-nw-rut').value.trim()) || rutConDv(18554321);
+      const cargo = ($('inp-nw-cargo') && $('inp-nw-cargo').value.trim()) || 'Administrativo';
+      const base = Math.max(0, Number($('inp-nw-base') && $('inp-nw-base').value) || 0);
+      const tipoRegimen = ($('sel-nw-regimen') && $('sel-nw-regimen').value) || 'dependiente';
+      if (!name || !base) { toast('Completa nombre y sueldo base'); return; }
+      const nw = { id: 'w-' + Date.now(), name, rut, sexo: 'F', ingreso: currentPeriod().iso + '-01', cargo, base, afp: 'Habitat', tipoRegimen, estado: 'Listo' };
+      c.workers.push(nw);
+      c.nomina.count = c.workers.length;
+      c.nomina.label = `${c.workers.length} liq · LRE listo`;
+      state.selectedWorkerId = nw.id;
+      toast(`${name} agregado a dotación (${c.workers.length} personas)`);
+      render();
       return;
     }
     if (t.dataset.mcpQuery) {
@@ -3255,6 +3505,10 @@
           state.lastPlanSync = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
           toast(`Plan de cuentas (${state.studioChart.length} cuentas) propagado a ${state.clients.length} empresas · cuentas con movimiento protegidas`);
           render(); return;
+        }
+        if (state.clientSub === 'resultados') {
+          emitDocument('resultados-pdf', getClient());
+          return;
         }
         emitDocument('contab-xlsx', getClient());
         return;

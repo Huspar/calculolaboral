@@ -599,6 +599,64 @@
     return openPrintable(`Balance 8 Columnas — ${c.name} (${period.label})`, body, { studioName, landscape: true });
   }
 
+  // ---- 7b. ESTADO DE RESULTADOS P&L (PDF) ----
+  function emitirResultadosPdf(ctx) {
+    const { c, studioName, period, scope, accounting } = ctx;
+    const filas = (accounting && accounting.bal && accounting.bal.filas) || [];
+    const ingresos = filas.filter((f) => (f.ganancia || 0) > 0);
+    const gastos = filas.filter((f) => (f.perdida || 0) > 0);
+    const totIng = ingresos.reduce((s, f) => s + (f.ganancia || 0), 0);
+    const totGas = gastos.reduce((s, f) => s + (f.perdida || 0), 0);
+    const res = totIng - totGas;
+    const margen = totIng > 0 ? ((res / totIng) * 100).toFixed(1).replace('.', ',') : '0,0';
+    const tasaIdpc = c.regime === '14 A' ? 27 : c.regime === '14 D8' ? 0 : 12.5;
+    const idpc = res > 0 ? Math.round(res * (tasaIdpc / 100)) : 0;
+
+    const body = `
+      ${docHeader(studioName, 'Estado de Resultados (P&L)', scope === 'mes' ? period.label : `Acumulado al ${period.label}`, c.regime)}
+      ${clientStrip(c, 'Margen Neto', `${margen}%`)}
+
+      <div class="doc-kpis">
+        <div class="doc-kpi"><div class="doc-kpi-l">Total Ingresos</div><div class="doc-kpi-v">${fmt(totIng)}</div></div>
+        <div class="doc-kpi"><div class="doc-kpi-l">Total Costos y Gastos</div><div class="doc-kpi-v">${fmt(totGas)}</div></div>
+        <div class="doc-kpi"><div class="doc-kpi-l">Resultado antes IDPC</div><div class="doc-kpi-v is-accent">${fmt(res)}</div></div>
+        <div class="doc-kpi"><div class="doc-kpi-l">IDPC Est. (${tasaIdpc}%)</div><div class="doc-kpi-v">${fmt(idpc)}</div></div>
+      </div>
+
+      <section class="doc-section">
+        <h2 class="doc-section-title">1. Ingresos del Período</h2>
+        <table class="doc-tbl">
+          <thead><tr><th style="width:70px">Código</th><th>Cuenta de Ingreso</th><th class="num">Monto CLP</th></tr></thead>
+          <tbody>
+            ${ingresos.length ? ingresos.map((f) => `<tr><td class="mono">${esc(f.codigo)}</td><td>${esc(f.nombre)}</td><td class="num">${fmt(f.ganancia)}</td></tr>`).join('') : '<tr><td colspan="3" class="muted">Sin ingresos registrados en el período.</td></tr>'}
+          </tbody>
+          <tfoot><tr><td colspan="2">Total Ingresos</td><td class="num">${fmt(totIng)}</td></tr></tfoot>
+        </table>
+      </section>
+
+      <section class="doc-section">
+        <h2 class="doc-section-title">2. Costos y Gastos Operacionales</h2>
+        <table class="doc-tbl">
+          <thead><tr><th style="width:70px">Código</th><th>Cuenta de Gasto / Costo</th><th class="num">Monto CLP</th></tr></thead>
+          <tbody>
+            ${gastos.length ? gastos.map((f) => `<tr><td class="mono">${esc(f.codigo)}</td><td>${esc(f.nombre)}</td><td class="num">${fmt(f.perdida)}</td></tr>`).join('') : '<tr><td colspan="3" class="muted">Sin gastos registrados en el período.</td></tr>'}
+          </tbody>
+          <tfoot>
+            <tr><td colspan="2">Total Costos y Gastos</td><td class="num">${fmt(totGas)}</td></tr>
+            <tr><td colspan="2"><strong>${res >= 0 ? 'UTILIDAD DEL EJERCICIO' : 'PÉRDIDA DEL EJERCICIO'} (Margen ${margen}%)</strong></td><td class="num" style="font-size:13px">${fmt(res)}</td></tr>
+          </tfoot>
+        </table>
+      </section>
+
+      <div class="doc-signs">
+        <div class="doc-sign-box"><strong>Representante Legal</strong>${esc(c.name)} · RUT ${esc(c.rut)}</div>
+        <div class="doc-sign-box"><strong>Contador General</strong>${esc(studioName)}</div>
+      </div>
+      ${docFooter(studioName, c)}
+    `;
+    return openPrintable(`Estado de Resultados — ${c.name} (${period.label})`, body, { studioName, landscape: false });
+  }
+
   // ---- 7. CONCILIACIÓN BANCARIA (PDF) ----
   function emitirBancosPdf(ctx) {
     const { c, studioName, period, bankSummary } = ctx;
@@ -820,6 +878,7 @@
     emitirFiniquitoPdf,
     emitirFiniquitosExcel,
     emitirBalancePdf,
+    emitirResultadosPdf,
     emitirContabilidadExcel,
     emitirBancosPdf,
     emitirBancosExcel
