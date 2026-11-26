@@ -2925,9 +2925,9 @@
           </div>
           ${tokensList.length ? `
             <div class="v2-ins-list" style="margin-bottom:8px">
-              ${tokensList.slice(0, 4).map((tk) => `
+              ${tokensList.filter((tk) => !tk.revokedAt).slice(0, 4).map((tk) => `
                 <div class="v2-ins-row">
-                  <div style="font-size:11.5px"><strong>${tk.label || 'Token MCP'}</strong> <span class="mono muted">${tk.prefix || tk.id.slice(0, 8)}</span></div>
+                  <div style="font-size:11.5px"><strong>${tk.label || 'Token MCP'}</strong> <span class="mono muted">${tk.tokenPrefix || tk.prefix || tk.id.slice(0, 8)}</span></div>
                   <button type="button" class="btn btn--sm" data-revoke-mcp-token="${tk.id}" style="color:#b91c1c">Revocar</button>
                 </div>
               `).join('')}
@@ -3665,9 +3665,26 @@
       }
       gatewayCall('POST', '/api/v1/sync/batch', { mode: 'rcv' }).then((res) => {
         if (res && res.ok && res.data) {
-          state.liveSyncBatch = res.data;
-          toast(`Sincronización masiva encolada: ${res.data.total || 0} empresa(s)`);
+          const d = res.data;
+          state.liveSyncBatch = {
+            batchId: d.batchId,
+            total: d.totalEnqueued != null ? d.totalEnqueued : (d.total || 0),
+            completed: d.completed || 0,
+            inProgress: d.totalEnqueued != null ? d.totalEnqueued : (d.inProgress || 0),
+            failed: d.failed || 0
+          };
+          toast(`Sincronización masiva encolada: ${state.liveSyncBatch.total} job(s)`);
           renderStudioOlas();
+          if (d.batchId) {
+            setTimeout(() => {
+              gatewayCall('GET', `/api/v1/sync/batch/${encodeURIComponent(d.batchId)}`).then((stRes) => {
+                if (stRes && stRes.ok && stRes.data) {
+                  state.liveSyncBatch = stRes.data;
+                  if (state.level === 'studio' && state.studioView === 'olas') renderStudioOlas();
+                }
+              });
+            }, 2500);
+          }
         } else {
           toast((res && res.data && (res.data.message || res.data.error)) || 'No se pudo iniciar la sincronización en lote');
         }
