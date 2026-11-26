@@ -1947,7 +1947,7 @@
         </div>
         <div class="v2-table-wrap">
           <table class="v2-table">
-            <thead><tr><th>Trabajador / RUT</th><th>Cargo</th><th>Ingreso</th><th class="num">Vacaciones (Art. 67)</th><th>Previsión</th><th>Régimen</th><th class="num">Sueldo base</th></tr></thead>
+            <thead><tr><th>Trabajador / RUT</th><th>Cargo</th><th>Ingreso</th><th class="num">Vacaciones (Art. 67)</th><th>Previsión</th><th>Régimen</th><th class="num">Sueldo base</th><th class="num">Documentos</th></tr></thead>
             <tbody>
               ${c.workers.map((w) => {
                 const m = calcMeses(w.ingreso);
@@ -1962,6 +1962,7 @@
                     <td>${w.afp || '—'} / Fonasa</td>
                     <td><span class="tag ${w.tipoRegimen === 'socio' ? 'tag--out' : 'tag--in'}">${reg}</span></td>
                     <td class="num"><strong>${fmt(w.base)}</strong></td>
+                    <td class="num"><a href="/generador-contrato-trabajo-chile" target="_blank" rel="noopener" class="btn btn--sm" style="text-decoration:none">Contrato / Anexo ↗</a></td>
                   </tr>
                 `;
               }).join('')}
@@ -1970,6 +1971,16 @@
         </div>
       `;
       $('v2-inspector').innerHTML = `
+        ${selectedObj ? `
+          <div class="v2-ins-block v2-ins-block--soft">
+            <div class="v2-ins-head"><h2 class="v2-ins-title">${selectedObj.w.name}</h2><span class="mono muted">${selectedObj.w.rut}</span></div>
+            <p class="muted" style="margin:0 0 6px;font-size:12px">Genera contratos y anexos laborales en Word actualizados a Ley 40 Horas (42h en 2026) directo desde la ficha.</p>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <a href="/generador-contrato-trabajo-chile" target="_blank" rel="noopener" class="btn btn--primary btn--sm" style="text-decoration:none;flex:1;text-align:center">Generar Contrato Word ↗</a>
+              <a href="/app" target="_blank" rel="noopener" class="btn btn--sm" style="text-decoration:none">Anexos ↗</a>
+            </div>
+          </div>
+        ` : ''}
         <div class="v2-ins-block">
           <div class="v2-ins-head"><h2 class="v2-ins-title">Agregar trabajador a ${c.name.split(' ')[0]}</h2><span class="tag tag--in">Legajo</span></div>
           <p class="muted" style="margin:0;font-size:12px">Se suma de inmediato a Nómina, PreviRed (105), LRE (147) y Finiquitos.</p>
@@ -2328,6 +2339,9 @@
       const totCxc = openAux.filter((d) => d.kind === 'cxc').reduce((s, d) => s + d.amount, 0);
       const totCxp = openAux.filter((d) => d.kind === 'cxp').reduce((s, d) => s + d.amount, 0);
       const vencido30 = openAux.filter((d) => d.days > 30).reduce((s, d) => s + d.amount, 0);
+      const bucket0_30 = openAux.filter((d) => d.days <= 30).reduce((s, d) => s + d.amount, 0);
+      const bucket31_60 = openAux.filter((d) => d.days > 30 && d.days <= 60).reduce((s, d) => s + d.amount, 0);
+      const bucket60p = openAux.filter((d) => d.days > 60).reduce((s, d) => s + d.amount, 0);
       const filtered = allAux.filter((d) => {
         if (state.auxFilter === 'cxc') return d.kind === 'cxc';
         if (state.auxFilter === 'cxp') return d.kind === 'cxp';
@@ -2343,6 +2357,9 @@
           <div class="v2-tape-cell"><span class="v2-tape-label">Por pagar (CxP)</span><span class="v2-tape-val">${fmt(totCxp)}</span></div>
           <div class="v2-tape-cell"><span class="v2-tape-label">Vencido &gt; 30 días</span><span class="v2-tape-val ${vencido30 ? 'is-danger' : ''}">${fmt(vencido30)}</span></div>
           <div class="v2-tape-cell"><span class="v2-tape-label">Posición neta</span><span class="v2-tape-val">${fmt(totCxc - totCxp)}</span></div>
+        </div>
+        <div class="v2-f29-hint" style="margin:8px 0 0;padding:8px 14px;font-size:12px">
+          <span><strong>Antigüedad de saldos abierta (incluida sin costo extra):</strong> 0–30 d <span class="mono">${fmt(bucket0_30)}</span> · 31–60 d <span class="mono">${fmt(bucket31_60)}</span> · &gt;60 d <span class="mono" style="color:${bucket60p ? '#b91c1c' : 'inherit'};font-weight:700">${fmt(bucket60p)}</span></span>
         </div>
         <div class="v2-pulse-bar">
           <div class="v2-filter-pills" role="group" aria-label="Filtrar auxiliar por cobrar y pagar">
