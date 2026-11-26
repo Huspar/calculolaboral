@@ -1574,6 +1574,15 @@
       </div>
 
       <div class="v2-ins-block v2-ins-block--soft">
+        <div class="v2-ins-head"><h2 class="v2-ins-title">Documentos tributarios</h2><span class="mono muted">PDF · XLSX</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <button type="button" class="btn btn--sm" data-emit-doc="f29-pdf">Hoja F29 (PDF)</button>
+          <button type="button" class="btn btn--sm" data-emit-doc="f29-xlsx">F29 (Excel)</button>
+          <button type="button" class="btn btn--sm" data-emit-doc="renta-pdf">Borrador Renta / DDJJ (PDF)</button>
+        </div>
+      </div>
+
+      <div class="v2-ins-block v2-ins-block--soft">
         <div class="v2-ins-head"><h2 class="v2-ins-title">Tendencia F29 (12 meses)</h2><span class="mono muted">M$</span></div>
         ${sparklineSvg(c.f29.history)}
       </div>
@@ -1680,6 +1689,10 @@
             </dl>
           ` : ''}
           ${c.nomina.leyBustos ? `<div class="tag tag--on" style="justify-content:center">Bloqueo Ley Bustos Art. 162 CT</div>` : ''}
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button type="button" class="btn btn--primary btn--sm" style="flex:1" data-emit-doc="finiquito-pdf"${selIsSocio ? ' disabled' : ''}>Emitir Finiquito PDF</button>
+            <button type="button" class="btn btn--sm" data-emit-doc="finiquitos-xlsx">Lote Excel</button>
+          </div>
         </div>
       ` : '';
       return;
@@ -1871,7 +1884,11 @@
             <dt>Aportes empleador</dt><dd>${fmt(calc.costoEmpleador)}</dd>
           </dl>
           <div style="display:flex;gap:8px;margin-top:6px">
-            <button type="button" class="btn btn--primary btn--sm" style="flex:1" id="btn-dl-previred">${incompleteCount ? `Previred bloqueado (${incompleteCount})` : 'Previred 105'}</button>
+            <button type="button" class="btn btn--primary btn--sm" style="flex:1" data-emit-doc="liq-pdf">Liquidación PDF</button>
+            <button type="button" class="btn btn--sm" data-emit-doc="liq-lote-pdf">Todas (PDF)</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button type="button" class="btn btn--sm" style="flex:1" id="btn-dl-previred">${incompleteCount ? `Previred bloqueado (${incompleteCount})` : 'Previred 105'}</button>
             <button type="button" class="btn btn--sm" id="btn-dl-lre">LRE 147</button>
           </div>
         </div>
@@ -2093,9 +2110,27 @@
             ${ruleSaved ? 'Regla guardada (quitar)' : 'Guardar regla para próximos meses'}
           </button>
         </div>
+
+        <div class="v2-ins-block v2-ins-block--soft">
+          <div class="v2-ins-head"><h2 class="v2-ins-title">Informes bancarios</h2><span class="mono muted">PDF · XLSX</span></div>
+          <div style="display:flex;gap:8px">
+            <button type="button" class="btn btn--sm" style="flex:1" data-emit-doc="bancos-pdf">Conciliación PDF</button>
+            <button type="button" class="btn btn--sm" data-emit-doc="bancos-xlsx">Excel (.xlsx)</button>
+          </div>
+        </div>
       `;
     } else {
-      $('v2-inspector').innerHTML = `<div class="v2-ins-block"><h2 class="v2-ins-title">Cartola pendiente</h2><p class="muted" style="margin:0;font-size:12.5px">Pendientes por conciliar: ${pend}</p><button type="button" class="btn btn--primary" data-quick-ok="Enlace sin clave enviado a ${c.name}">Pedir cartola al cliente</button></div>`;
+      $('v2-inspector').innerHTML = `
+        <div class="v2-ins-block">
+          <h2 class="v2-ins-title">Cartola pendiente</h2>
+          <p class="muted" style="margin:0;font-size:12.5px">Pendientes por conciliar: ${pend}</p>
+          <button type="button" class="btn btn--primary" data-quick-ok="Enlace sin clave enviado a ${c.name}">Pedir cartola al cliente</button>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button type="button" class="btn btn--sm" style="flex:1" data-emit-doc="bancos-pdf">Informe PDF</button>
+            <button type="button" class="btn btn--sm" data-emit-doc="bancos-xlsx">Excel (.xlsx)</button>
+          </div>
+        </div>
+      `;
     }
   }
 
@@ -2263,8 +2298,9 @@
           <details class="v2-export-menu">
             <summary class="btn btn--sm">Exportar ▾</summary>
             <div class="v2-export-pop">
+              <button type="button" data-export-bal="pdf">Balance 8 Columnas (PDF horizontal)</button>
+              <button type="button" data-export-bal="xlsx">Balance + Diario + Mayor (Excel .xlsx)</button>
               <button type="button" data-export-bal="csv">Balance 8 Columnas (CSV)</button>
-              <button type="button" data-export-bal="diario">Libro Diario (CSV)</button>
             </div>
           </details>
         </div>
@@ -2312,6 +2348,10 @@
           <dt>Total Pasivo</dt><dd>${fmt(t.pasivo)}</dd>
           <dt>Utilidad / Pérdida</dt><dd>${fmt((t.ganancia || 0) - (t.perdida || 0))}</dd>
         </dl>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button type="button" class="btn btn--primary btn--sm" style="flex:1" data-emit-doc="balance-pdf">Balance 8 Col. PDF</button>
+          <button type="button" class="btn btn--sm" data-emit-doc="contab-xlsx">Excel (.xlsx)</button>
+        </div>
       </div>
     `;
   }
@@ -2339,9 +2379,19 @@
     $('v2-inspector').innerHTML = `
       <div class="v2-ins-block">
         <h2 class="v2-ins-title">Paquete Mensual para el dueño</h2>
-        <p class="muted" style="margin:0;font-size:12.5px">Envía en 1 clic el resumen ejecutivo del mes (F29, nómina y caja) con membrete del estudio.</p>
-        <button type="button" class="btn btn--primary" data-quick-ok="Paquete Mensual generado para ${c.name}">Emitir Paquete PDF</button>
-        <button type="button" class="btn" data-quick-ok="Enlace de Portal sin clave copiado para ${c.name}">Copiar enlace Portal sin clave</button>
+        <p class="muted" style="margin:0;font-size:12.5px">Emite en 1 clic el informe ejecutivo del mes (F29, nómina, bancos y balance) con membrete de ${state.studioName}.</p>
+        <button type="button" class="btn btn--primary" data-emit-doc="paquete-pdf">Emitir Paquete PDF</button>
+        <button type="button" class="btn" data-emit-doc="paquete-xlsx">Descargar Paquete Excel (.xlsx)</button>
+        <button type="button" class="btn" data-emit-doc="copy-portal">Copiar enlace Portal sin clave</button>
+      </div>
+      <div class="v2-ins-block v2-ins-block--soft">
+        <h2 class="v2-ins-title">Entregables individuales del mes</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <button type="button" class="btn btn--sm" data-emit-doc="f29-pdf">Hoja F29 PDF</button>
+          <button type="button" class="btn btn--sm" data-emit-doc="liq-lote-pdf">Liquidaciones PDF</button>
+          <button type="button" class="btn btn--sm" data-emit-doc="balance-pdf">Balance 8 Col. PDF</button>
+          <button type="button" class="btn btn--sm" data-emit-doc="bancos-pdf">Conciliación PDF</button>
+        </div>
       </div>
     `;
   }
@@ -2403,6 +2453,157 @@
     const bytes = window.CLLre.bytesAnsi(lre.texto);
     downloadFile(bytes, lre.nombreArchivo || `lre_${c.id}.csv`, 'text/csv;charset=windows-1252');
     toast(`LRE Mi DT (147 cols ANSI) descargado: ${lre.nombreArchivo}`);
+  }
+
+  function buildDocContext(c) {
+    const period = currentPeriod();
+    const iso = period.iso;
+    const mesVals = valoresMesActual(iso);
+    const iva = Math.max(0, (c.f29.debito || 0) - (c.f29.credito || 0));
+    const ppmPct = c.f29.ppmRate != null
+      ? Number(c.f29.ppmRate)
+      : (c.rcv.ventasNeto > 0 && c.f29.ppm > 0 ? (c.f29.ppm / c.rcv.ventasNeto) * 100 : (c.regime === '14 A' ? 1.5 : 0.25));
+    const ppmRateLabel = `${ppmPct.toFixed(2).replace('.', ',')}%`;
+    const f29Rows = [
+      { cod: '538', label: 'Débito fiscal IVA (ventas afectas RCV)', source: 'RCV Ventas SII', val: c.f29.debito || 0 },
+      { cod: '537', label: 'Crédito fiscal IVA (compras con derecho a crédito)', source: 'RCV Compras SII', val: c.f29.credito || 0 },
+      { cod: '089', label: 'IVA determinado del período (Cód. 538 − Cód. 537)', source: 'Cálculo neto IVA', val: iva },
+      { cod: '755', label: 'Postergación pago IVA Art. 64 D.L. 825 (mes +2)', source: c.f29.postergar ? 'Activada' : 'No aplicada', val: c.f29.postergar ? iva : 0 },
+      { cod: '062', label: `PPM obligatorio mensual (${ppmRateLabel} · ${c.regime})`, source: 'Base ingresos netos', val: c.f29.ppm || 0 },
+      { cod: '048', label: 'Impuesto Único 2ª Categoría + Retenciones BHE (151 · 15,25%)', source: 'Nómina + BHE', val: c.f29.retenciones || 0 }
+    ];
+    const workersCalc = (c.workers || []).map((w) => ({ w, calc: calcularWorkerReal(w, iso) }));
+    const auxDocs = ensureAuxDocs(c);
+    const totalTx = (c.bancos && c.bancos.total) || (c.bankTx || []).length;
+    const matchedTx = (c.bancos && c.bancos.matched) || (c.bankTx || []).filter((x) => x.status === 'Conciliado').length;
+    const bankSummary = {
+      matched: matchedTx,
+      total: totalTx,
+      pending: Math.max(0, totalTx - matchedTx),
+      pct: totalTx ? Math.round((matchedTx / totalTx) * 100) : 0,
+      cxcOpen: auxDocs.filter((a) => a.kind === 'cxc' && a.status === 'Abierto').reduce((s, a) => s + (a.amount || 0), 0),
+      cxpOpen: auxDocs.filter((a) => a.kind === 'cxp' && a.status === 'Abierto').reduce((s, a) => s + (a.amount || 0), 0)
+    };
+    const accounting = buildAccountingReal(c);
+    const ddjjBase = c.regime === '14 D3'
+      ? [['DJ 1948', 'Retiros, remesas y dividendos', 'Obligatoria 14 D3'], ['DJ 1887', 'Sueldos y retenciones', 'Obligatoria'], ['DJ 1879', 'Retenciones de honorarios (15,25%)', 'Si hubo BHE']]
+      : c.regime === '14 D8'
+        ? [['DJ 1947', 'Base imponible transparente', 'Obligatoria 14 D8'], ['DJ 1887', 'Sueldos y retenciones', 'Obligatoria']]
+        : [['DJ 1847', 'Balance 8 Columnas', 'Obligatoria 14 A'], ['DJ 1926', 'Renta Líquida Imponible', 'Obligatoria 14 A'], ['DJ 1948', 'Retiros y dividendos', 'Obligatoria']];
+    const ddjj = ddjjBase.map(([cod, desc, apl]) => {
+      const is1887 = cod === 'DJ 1887' && c.lreHistory && c.lreHistory.imports > 0;
+      const st = is1887 ? `${c.lreHistory.imports} LRE · Renta ${fmt(c.lreHistory.rentaNetaAnual)} · IUSC ${fmt(c.lreHistory.iuscRetenidoAnual)}` : 'Borrador listo';
+      return [cod, desc, apl, st];
+    });
+    const FinCalc = window.FiniquitoCalculator;
+    const finRows = workersCalc.map(({ w, calc }) => {
+      const isSocio = (w.tipoRegimen || 'dependiente') === 'socio';
+      const gratLine = (calc.detalle && calc.detalle.haberesImponibles || []).find((h) => /gratific/i.test(h.concepto));
+      const gratMonto = gratLine ? gratLine.monto : 0;
+      let fRes = null;
+      if (FinCalc && !isSocio) {
+        try {
+          fRes = new FinCalc({
+            startDate: w.ingreso || '2022-03-01',
+            endDate: iso + '-30',
+            baseSalary: w.base,
+            gratification: gratMonto,
+            cause: state.finiquitoCause,
+            ufValue: mesVals.uf,
+            vacationDaysPending: 7.5
+          }).calculate();
+        } catch (_) { fRes = null; }
+      }
+      return {
+        w,
+        fin: fRes ? {
+          economics: {
+            years: fRes.serviceTime ? fRes.serviceTime.years : 0,
+            isCapped: !!(fRes.economics && fRes.economics.isCapped),
+            ias: fRes.indemnities ? fRes.indemnities.yearsOfService.total : 0,
+            aviso: fRes.indemnities ? fRes.indemnities.notice.total : 0,
+            vacaciones: fRes.indemnities ? fRes.indemnities.vacation.total : 0,
+            total: fRes.total || 0
+          }
+        } : null
+      };
+    });
+    return {
+      c,
+      studioName: state.studioName,
+      period,
+      f29Rows,
+      ppmRateLabel,
+      f29Total: f29Total(c),
+      f29StateLabel: f29StateLabel(c.f29.state),
+      workersCalc,
+      bankSummary,
+      auxDocs,
+      accounting,
+      scope: state.balanceScope,
+      ddjj,
+      finRows,
+      cause: state.finiquitoCause,
+      uf: mesVals.uf
+    };
+  }
+
+  function emitDocument(docType, c) {
+    if (docType === 'copy-portal') {
+      const url = `${window.location.origin}/portal-estudio?cliente=${encodeURIComponent(c.id)}`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).catch(() => {});
+      }
+      toast(`Enlace de Portal sin clave copiado: /portal-estudio?cliente=${c.id}`);
+      return;
+    }
+    const D = window.CLSuiteV2Docs;
+    if (!D) { toast('Motor de documentos no disponible'); return; }
+    const ctx = buildDocContext(c);
+    if (docType === 'paquete-pdf') {
+      D.emitirPaqueteMensualPdf(ctx);
+      toast(`Paquete Mensual PDF listo para ${c.name}`);
+    } else if (docType === 'paquete-xlsx') {
+      D.emitirPaqueteMensualExcel(ctx, downloadFile).then(() => toast(`Paquete Mensual Excel (.xlsx) descargado para ${c.name}`));
+    } else if (docType === 'f29-pdf') {
+      D.emitirF29Pdf(ctx);
+      toast(`Hoja F29 PDF lista para ${c.name}`);
+    } else if (docType === 'f29-xlsx') {
+      D.emitirF29Excel(ctx, downloadFile).then(() => toast(`Hoja F29 Excel (.xlsx) descargada para ${c.name}`));
+    } else if (docType === 'renta-pdf') {
+      D.emitirRentaPdf(ctx);
+      toast(`Borrador Renta y DDJJ PDF listo para ${c.name}`);
+    } else if (docType === 'liq-pdf') {
+      const item = ctx.workersCalc.find((x) => x.w.id === state.selectedWorkerId) || ctx.workersCalc[0];
+      if (!item) { toast('No hay trabajador seleccionado'); return; }
+      D.emitirLiquidacionPdf(ctx, item);
+      toast(`Liquidación PDF lista para ${item.w.name}`);
+    } else if (docType === 'liq-lote-pdf') {
+      if (!ctx.workersCalc.length) { toast('No hay trabajadores en nómina'); return; }
+      D.emitirLiquidacionesLotePdf(ctx);
+      toast(`${ctx.workersCalc.length} liquidaciones PDF listas para imprimir`);
+    } else if (docType === 'finiquito-pdf') {
+      const row = ctx.finRows.find((x) => x.w.id === state.selectedWorkerId) || ctx.finRows[0];
+      if (!row) { toast('No hay trabajador seleccionado'); return; }
+      if ((row.w.tipoRegimen || 'dependiente') === 'socio' || !row.fin) {
+        toast('Finiquito bloqueado: Socio con sueldo empresarial (Art. 31 N°6 LIR)');
+        return;
+      }
+      D.emitirFiniquitoPdf(ctx, row);
+      toast(`Finiquito PDF listo para ${row.w.name}`);
+    } else if (docType === 'finiquitos-xlsx') {
+      D.emitirFiniquitosExcel(ctx, ctx.finRows, downloadFile).then(() => toast(`Lote de Finiquitos Excel (.xlsx) descargado`));
+    } else if (docType === 'balance-pdf') {
+      D.emitirBalancePdf(ctx);
+      toast(`Balance 8 Columnas PDF (horizontal) listo para ${c.name}`);
+    } else if (docType === 'contab-xlsx') {
+      D.emitirContabilidadExcel(ctx, downloadFile).then(() => toast(`Contabilidad Excel (.xlsx: Balance + Diario + Mayor) descargada`));
+    } else if (docType === 'bancos-pdf') {
+      D.emitirBancosPdf(ctx);
+      toast(`Informe de Conciliación Bancaria PDF listo para ${c.name}`);
+    } else if (docType === 'bancos-xlsx') {
+      D.emitirBancosExcel(ctx, ctx.auxDocs, downloadFile).then(() => toast(`Conciliación + Auxiliar CxC/CxP Excel (.xlsx) descargado`));
+    }
   }
 
   function applyRcvToClient(c, ventasCsv, comprasCsv) {
@@ -2639,8 +2840,20 @@
     if (t.dataset.exportBal) {
       const det = t.closest('details');
       if (det) det.open = false;
-      if (t.dataset.exportBal === 'csv') { $('v2-primary-cta')?.click(); }
-      else { toast(`Libro Diario exportado (${state.studioName})`); }
+      if (t.dataset.exportBal === 'pdf') { emitDocument('balance-pdf', getClient()); }
+      else if (t.dataset.exportBal === 'xlsx') { emitDocument('contab-xlsx', getClient()); }
+      else {
+        const c = getClient();
+        const { bal } = buildAccountingReal(c);
+        const csv = '\uFEFFCodigo;Cuenta;Debitos;Creditos;Deudor;Acreedor;Activo;Pasivo;Perdida;Ganancia\n' +
+          (bal.filas || []).map((f) => `${f.codigo};${f.nombre};${f.debito || 0};${f.credito || 0};${f.deudor || 0};${f.acreedor || 0};${f.activo || 0};${f.pasivo || 0};${f.perdida || 0};${f.ganancia || 0}`).join('\n');
+        downloadFile(csv, `balance_8col_${c.id}_${currentPeriod().iso}.csv`, 'text/csv;charset=utf-8');
+        toast('Balance 8 Columnas exportado a CSV');
+      }
+      return;
+    }
+    if (t.dataset.emitDoc) {
+      emitDocument(t.dataset.emitDoc, getClient());
       return;
     }
     if (t.id === 'btn-period-prev') { state.periodIdx = Math.max(0, state.periodIdx - 1); render(); return; }
@@ -2674,12 +2887,14 @@
         toast(ok ? `${ok} declaraciones F29 aprobadas en lote` : 'No hay F29 pendientes en estado listo');
         render(); return;
       }
+      if (state.level === 'client' && state.clientArea === 'resumen') {
+        emitDocument('paquete-pdf', getClient());
+        return;
+      }
       if (state.level === 'client' && state.clientArea === 'impuestos') {
         const c = getClient();
         if (c.f29.state === 'pagado') {
-          const resumen = `F29 ${c.name} (${c.rut}) - ${currentPeriod().label}\nEstado: Pagado\nFolio SII: ${c.f29.folio}\nTotal Cód. 091: ${fmt(f29Total(c))}\n`;
-          downloadFile(resumen, `resumen_f29_${c.id}_${currentPeriod().iso}.txt`, 'text/plain;charset=utf-8');
-          toast('Resumen F29 descargado');
+          emitDocument('f29-pdf', c);
         } else if (c.f29.state === 'declarado') {
           c.f29.state = 'pagado';
           c.f29.paidDate = '12/12/2026';
@@ -2707,10 +2922,7 @@
       if (state.level === 'client' && state.clientArea === 'remuneraciones') {
         if (state.clientSub === 'previred') triggerLreDownload(getClient());
         else if (state.clientSub === 'finiquitos') {
-          const c = getClient();
-          const csv = 'RUT;Trabajador;Causal\n' + c.workers.map((w) => `${w.rut};${w.name};Art.${state.finiquitoCause}`).join('\n');
-          downloadFile(csv, `finiquitos_${c.id}_${currentPeriod().iso}.csv`, 'text/csv;charset=utf-8');
-          toast('Lote de finiquitos exportado a CSV');
+          emitDocument('finiquitos-xlsx', getClient());
         }
         else triggerPreviredDownload(getClient());
         return;
@@ -2731,12 +2943,7 @@
           toast(`Plan de cuentas (${state.studioChart.length} cuentas) propagado a ${state.clients.length} empresas · cuentas con movimiento protegidas`);
           render(); return;
         }
-        const c = getClient();
-        const { bal } = buildAccountingReal(c);
-        const csv = 'Codigo;Cuenta;Deudor;Acreedor;Activo;Pasivo;Perdida;Ganancia\n' +
-          (bal.filas || []).map((f) => `${f.codigo};${f.nombre};${f.deudor};${f.acreedor};${f.activo};${f.pasivo};${f.perdida};${f.ganancia}`).join('\n');
-        downloadFile(csv, `balance_8col_${c.id}_${currentPeriod().iso}.csv`, 'text/csv;charset=utf-8');
-        toast('Balance 8 Columnas exportado a CSV');
+        emitDocument('contab-xlsx', getClient());
         return;
       }
       toast(`${t.textContent} ejecutado`);
