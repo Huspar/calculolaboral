@@ -195,7 +195,7 @@
         salud: 'fonasa',
         jornadaHoras: 42,
         dias: 30,
-        pensionadoVejez: tipo === 'pensionado',
+        pension: tipo === 'pensionado' ? 'vejez' : '',
         v: {
           '2101': tipo === 'socio' ? 0 : w.base,
           '2105': tipo === 'socio' ? 0 : (gratLine ? gratLine.monto : 0),
@@ -1422,7 +1422,11 @@
           <table class="v2-table">
             <thead><tr><th>Declaración</th><th>Descripción</th><th>Aplicabilidad (${c.regime})</th><th>Estado AT 2027</th></tr></thead>
             <tbody>
-              ${ddjj.map(([cod, desc, apl]) => `<tr><td class="mono"><strong>${cod}</strong></td><td>${desc}</td><td><span class="tag tag--in">${apl}</span></td><td><span class="tag tag--out">Borrador listo</span></td></tr>`).join('')}
+              ${ddjj.map(([cod, desc, apl]) => {
+                const is1887 = cod === 'DJ 1887' && c.lreHistory && c.lreHistory.imports > 0;
+                const stText = is1887 ? `${c.lreHistory.imports} LRE · Renta ${fmt(c.lreHistory.rentaNetaAnual)} · IUSC ${fmt(c.lreHistory.iuscRetenidoAnual)}` : 'Borrador listo';
+                return `<tr><td class="mono"><strong>${cod}</strong></td><td>${desc}</td><td><span class="tag tag--in">${apl}</span></td><td><span class="tag ${is1887 ? 'tag--in' : 'tag--out'}">${stText}</span></td></tr>`;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -1682,7 +1686,11 @@
           <button type="button" class="v2-pill-btn" data-worker-filter="todos" aria-pressed="${state.workerFilter === 'todos'}">Todos <span class="mono">${c.workers.length}</span></button>
           <button type="button" class="v2-pill-btn" data-worker-filter="incompletas" aria-pressed="${state.workerFilter === 'incompletas'}">Fichas incompletas <span class="mono">${incompleteCount}</span></button>
         </div>
-        <span class="tag ${incompleteCount ? 'tag--danger' : 'tag--in'}">${incompleteCount ? `PreviRed bloqueado · ${incompleteCount} ficha(s)` : 'Fichas completas · PreviRed listo'}</span>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="tag ${incompleteCount ? 'tag--danger' : 'tag--in'}">${incompleteCount ? `PreviRed bloqueado · ${incompleteCount} ficha(s)` : 'Fichas completas · PreviRed listo'}</span>
+          <label class="btn btn--sm">Importar LRE CSV<input type="file" accept=".csv,.txt" id="v2-csv-lre" class="sr-only"></label>
+          <button type="button" class="btn btn--sm" id="btn-sample-lre">Migrar LRE ejemplo</button>
+        </div>
       </div>
       <div class="v2-table-wrap">
         <table class="v2-table">
@@ -2185,6 +2193,134 @@
     render();
   }
 
+  const LRE_AFP_BY_CODE = { '3': 'Cuprum', '03': 'Cuprum', '5': 'Habitat', '05': 'Habitat', '8': 'Provida', '08': 'Provida', '29': 'Planvital', '33': 'Capital', '34': 'Modelo', '35': 'Uno' };
+
+  function parseLreDate(str) {
+    const m = /^(\d{2})[\/-](\d{2})[\/-](\d{4})$/.exec(String(str || '').trim());
+    if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(String(str || '').trim())) return String(str).trim();
+    return '';
+  }
+
+  function formatRutDots(raw) {
+    const clean = String(raw || '').replace(/[^0-9kK]/g, '').toUpperCase();
+    if (clean.length < 2) return String(raw || '').trim();
+    const cuerpo = clean.slice(0, -1).replace(/^0+/, '');
+    const dv = clean.slice(-1);
+    return cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
+  }
+
+  function parseLreCsv(csvText) {
+    const lines = String(csvText || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    if (lines.length < 2) return { workers: [], rentaAnual: 0, iuscAnual: 0, error: 'El archivo LRE debe tener encabezado y al menos 1 trabajador.' };
+    const sep = lines[0].includes(';') ? ';' : ',';
+    const headers = lines[0].split(sep).map((h) => h.trim());
+    const idxOf = (code) => headers.findIndex((h) => h === code || h.includes(`(${code})`) || new RegExp(`\\b${code}\\b`).test(h));
+    const idxNombre = headers.findIndex((h) => /nombre/i.test(h));
+
+    const cRut = idxOf('1101');
+    if (cRut === -1) return { workers: [], rentaAnual: 0, iuscAnual: 0, error: 'No se encontró la columna RUT trabajador (1101) en el LRE.' };
+    const cIngreso = idxOf('1102');
+    const cPens = idxOf('1109');
+    const cAfp = idxOf('1141');
+    const cBase = idxOf('2101');
+    const cSocio = idxOf('2161');
+    const cIusc = idxOf('3161');
+    const cTrib = idxOf('5210') !== -1 ? idxOf('5210') : idxOf('5201');
+
+    const num = (cols, idx) => (idx >= 0 && cols[idx] !== undefined ? Math.max(0, Math.round(Number(String(cols[idx]).replace(/[^0-9.-]/g, '')) || 0)) : 0);
+    const workers = [];
+    let rentaAnual = 0;
+    let iuscAnual = 0;
+
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(sep).map((x) => x.trim());
+      const rutRaw = cols[cRut];
+      if (!rutRaw) continue;
+      const rut = formatRutDots(rutRaw);
+      const ingreso = cIngreso >= 0 ? parseLreDate(cols[cIngreso]) : '';
+      const isPens = cPens >= 0 && String(cols[cPens]) === '1';
+      const afpCode = cAfp >= 0 ? String(cols[cAfp]).replace(/^0+/, '') : '';
+      const afp = LRE_AFP_BY_CODE[afpCode] || LRE_AFP_BY_CODE[cAfp >= 0 ? cols[cAfp] : ''] || 'Habitat';
+      const valBase = num(cols, cBase);
+      const valSocio = num(cols, cSocio);
+      const valIusc = num(cols, cIusc);
+      const valTrib = num(cols, cTrib) || (valSocio > 0 ? valSocio : valBase);
+      const tipoRegimen = valSocio > 0 ? 'socio' : isPens ? 'pensionado' : 'dependiente';
+      const base = valSocio > 0 ? valSocio : (valBase || 650000);
+      const nombre = (idxNombre >= 0 && cols[idxNombre]) ? cols[idxNombre] : `Trabajador ${rut}`;
+      const sinContrato = !ingreso;
+      workers.push({
+        rut,
+        name: nombre,
+        ingreso: ingreso || '2025-01-01',
+        sinContrato,
+        afp,
+        base,
+        tipoRegimen,
+        pensionMensual: tipoRegimen === 'pensionado' ? 550000 : 0,
+        cotizaAfpVoluntaria: false,
+        cargo: tipoRegimen === 'socio' ? 'Socio (migrado LRE)' : tipoRegimen === 'pensionado' ? 'Pensionado (migrado LRE)' : 'Migrado desde LRE',
+        estado: sinContrato ? 'Sin contrato' : 'Listo'
+      });
+      rentaAnual += valTrib;
+      iuscAnual += valIusc;
+    }
+    if (!workers.length) return { workers: [], rentaAnual: 0, iuscAnual: 0, error: 'No se encontraron filas válidas de trabajadores en el LRE.' };
+    return { workers, rentaAnual, iuscAnual, error: null };
+  }
+
+  function applyLreCsvToClient(c, csvText, filename) {
+    const parsed = parseLreCsv(csvText);
+    if (parsed.error) { toast(parsed.error); return; }
+    let added = 0, updated = 0, socios = 0, pens = 0;
+    parsed.workers.forEach((nw, idx) => {
+      if (nw.tipoRegimen === 'socio') socios++;
+      if (nw.tipoRegimen === 'pensionado') pens++;
+      const normRut = nw.rut.replace(/[^0-9K]/gi, '').toUpperCase();
+      const existing = c.workers.find((w) => w.rut.replace(/[^0-9K]/gi, '').toUpperCase() === normRut);
+      if (existing) {
+        existing.base = nw.base;
+        existing.tipoRegimen = nw.tipoRegimen;
+        existing.afp = nw.afp;
+        if (!nw.sinContrato) { existing.ingreso = nw.ingreso; existing.sinContrato = false; }
+        updated++;
+      } else {
+        c.workers.push({
+          id: `lre-${Date.now()}-${idx}`,
+          name: nw.name,
+          rut: nw.rut,
+          sexo: 'F',
+          ingreso: nw.ingreso,
+          cargo: nw.cargo,
+          base: nw.base,
+          afp: nw.afp,
+          estado: nw.estado,
+          sinContrato: nw.sinContrato,
+          tipoRegimen: nw.tipoRegimen,
+          pensionMensual: nw.pensionMensual,
+          cotizaAfpVoluntaria: false
+        });
+        added++;
+      }
+    });
+    if (!c.lreHistory) c.lreHistory = { imports: 0, rentaNetaAnual: 0, iuscRetenidoAnual: 0, lastFile: '' };
+    c.lreHistory.imports += 1;
+    c.lreHistory.rentaNetaAnual += parsed.rentaAnual;
+    c.lreHistory.iuscRetenidoAnual += parsed.iuscAnual;
+    c.lreHistory.lastFile = filename || 'LRE_importado.csv';
+    c.nomina.count = c.workers.length;
+    c.nomina.label = `${c.workers.length} liq · LRE migrado`;
+    const parts = [];
+    if (added) parts.push(`${added} nuevo(s)`);
+    if (updated) parts.push(`${updated} actualizado(s)`);
+    if (socios) parts.push(`${socios} socio`);
+    if (pens) parts.push(`${pens} pensionado`);
+    toast(`LRE migrado (${parts.join(' · ')}) · DJ 1887 actualizada`);
+    state.workerFilter = 'todos';
+    render();
+  }
+
   /* ==================== COMMAND PALETTE ⌘K & DRAWER ==================== */
   function openCmdk() {
     $('v2-cmdk-backdrop').hidden = false;
@@ -2265,6 +2401,16 @@
     if (t.id === 'btn-batch-action') { toast(`Lote procesado (${state.selectedIds.size} elementos)`); state.selectedIds.clear(); render(); return; }
     if (t.id === 'btn-dl-previred') { triggerPreviredDownload(getClient()); return; }
     if (t.id === 'btn-dl-lre') { triggerLreDownload(getClient()); return; }
+    if (t.id === 'btn-sample-lre') {
+      const sampleLre = [
+        'Rut trabajador(1101);Nombre;Fecha inicio contrato(1102);Pensionado vejez(1109);AFP(1141);Sueldo(2101);Sueldo empresarial(2161);Impuesto retenido(3161);Total tributable(5210)',
+        `${rutConDv(18334512)};Claudia Morales Díaz;15/03/2024;0;05;980000;0;12400;1180000`,
+        `${rutConDv(11223344)};Roberto Araya Soto;01/06/2021;0;33;0;2100000;51800;2100000`,
+        `${rutConDv(9445566)};Elena Fuenzalida Vera;10/08/2023;1;08;890000;0;0;1070000`
+      ].join('\n');
+      applyLreCsvToClient(getClient(), sampleLre, 'LRE_ejemplo_3trab.csv');
+      return;
+    }
     if (t.id === 'btn-run-rcv-sample') {
       const F = window.CLContadoresF29;
       if (F) applyRcvToClient(getClient(), F.ejemploRcvVentasCsv(), F.ejemploRcvComprasCsv());
@@ -2649,6 +2795,15 @@
         toast(w.cotizaAfpVoluntaria ? 'Cotización AFP voluntaria activada (PreviRed Tipo 1)' : 'Exento de AFP (PreviRed Tipo 2)');
         render();
       }
+      return;
+    }
+    if (e.target.id === 'v2-csv-lre') {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => { applyLreCsvToClient(getClient(), String(reader.result || ''), file.name); };
+      reader.readAsText(file, 'windows-1252');
+      e.target.value = '';
       return;
     }
     if (e.target.id === 'v2-csv-cartola') {
