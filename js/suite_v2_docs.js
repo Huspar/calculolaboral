@@ -190,7 +190,7 @@
     return `
       <footer class="doc-footer">
         <span>${esc(studioName)} · ${esc(c.name)} (${esc(c.rut)})</span>
-        <span>Documento generado en Suite Contadores · calculolaboral.cl</span>
+        <span>Documento referencial generado en Suite Contadores · Validar respaldos/certificados ante SII, DT o PreviRed</span>
       </footer>
     `;
   }
@@ -319,7 +319,7 @@
             <tr><td>Retención Boletas de Honorarios (Ley 21.133 · 2026)</td><td class="num">15,25%</td></tr>
           </tbody>
         </table>
-        ${c.rcv.pendingAcuses ? `<div class="doc-note is-warn">Existen ${c.rcv.pendingAcuses} documento(s) con acuse de recibo pendiente. Confirmar antes del vencimiento de 8 días para asegurar el Crédito Fiscal IVA.</div>` : `<div class="doc-note">Control Pre-SII sin reparos pendientes. Borrador listo para declaración y pago en SII / TGR.</div>`}
+        ${c.rcv.pendingAcuses ? `<div class="doc-note is-warn">Existen ${c.rcv.pendingAcuses} documento(s) con acuse de recibo pendiente. Confirmar antes del vencimiento de 8 días para asegurar el Crédito Fiscal IVA.</div>` : `<div class="doc-note">Control Pre-SII sin reparos pendientes. ${c.f29.postergar ? 'Para postergar IVA (Art. 64 D.L. 825) debes marcar Cód. 756 dentro de plazo legal (el SII traspasa el IVA a giro Cód. 755; fuera de plazo se pierde el beneficio y PPM/retenciones no se postergan).' : 'Borrador listo para declaración y pago en SII / TGR (Cód. 048 IUSC y Cód. 151 BHE declarados por separado).'}</div>`}
       </section>
 
       ${docFooter(studioName, c)}
@@ -359,7 +359,7 @@
             <tr><td>Impuesto de Primera Categoría estimado (${tasaIdpc}%)</td><td class="num"><strong>${fmt(idpcEst)}</strong></td></tr>
           </tbody>
         </table>
-        <div class="doc-note">Borrador referencial basado en contabilidad centralizada al cierre de ${esc(period.label)}. Validar ajustes extracontables (corrección monetaria, gastos rechazados Art. 21, créditos por inversiones y RRE) antes de enviar F22 al SII.</div>
+        <div class="doc-note">${c.regime === '14 D3' ? 'Régimen 14 D N° 3 ProPyme General: la base imponible se determina sobre ingresos percibidos y gastos efectivamente pagados (Art. 14 D N° 3 LIR), no solo balance devengado. ' : ''}Borrador referencial basado en contabilidad centralizada al cierre de ${esc(period.label)}. Validar ajustes extracontables (gastos rechazados Art. 21, créditos y RRE) antes de enviar F22 al SII.</div>
       </section>
 
       ${docFooter(studioName, c)}
@@ -386,10 +386,10 @@
     return `
       ${docHeader(studioName, 'Liquidación de Remuneraciones', period.label, w.rut)}
       <div class="doc-client-box">
-        <div><span class="doc-kv-label">Empleador</span><span class="doc-kv-val">${esc(c.name)}</span></div>
-        <div><span class="doc-kv-label">RUT Empleador</span><span class="doc-kv-val mono">${esc(c.rut)}</span></div>
-        <div><span class="doc-kv-label">Trabajador</span><span class="doc-kv-val">${esc(w.name)}</span></div>
-        <div><span class="doc-kv-label">RUT Trabajador</span><span class="doc-kv-val mono">${esc(w.rut)}</span></div>
+        <div><span class="doc-kv-label">${w.tipoRegimen === 'socio' ? 'Sociedad / Pagador' : 'Empleador'}</span><span class="doc-kv-val">${esc(c.name)}</span></div>
+        <div><span class="doc-kv-label">RUT ${w.tipoRegimen === 'socio' ? 'Sociedad' : 'Empleador'}</span><span class="doc-kv-val mono">${esc(c.rut)}</span></div>
+        <div><span class="doc-kv-label">${w.tipoRegimen === 'socio' ? 'Socio Administrador' : 'Trabajador'}</span><span class="doc-kv-val">${esc(w.name)}</span></div>
+        <div><span class="doc-kv-label">RUT ${w.tipoRegimen === 'socio' ? 'Socio' : 'Trabajador'}</span><span class="doc-kv-val mono">${esc(w.rut)}</span></div>
         <div><span class="doc-kv-label">Cargo</span><span class="doc-kv-val">${esc(w.cargo || 'No informado')}</span></div>
         <div><span class="doc-kv-label">Fecha Ingreso</span><span class="doc-kv-val mono">${esc(w.ingreso || '—')}</span></div>
         <div><span class="doc-kv-label">AFP / Salud</span><span class="doc-kv-val">${esc(w.afp || '—')} / ${esc(w.salud || 'Fonasa')}</span></div>
@@ -435,14 +435,14 @@
           </tfoot>
         </table>
         ${w.tipoRegimen === 'socio' ? `<div class="doc-note">Sueldo empresarial (Art. 31 N° 6 LIR): liquidación afecta a Impuesto Único de Segunda Categoría (F29 Cód. 048 · LRE 2161/3161). Sin cotizaciones patronales obligatorias ni derecho a finiquito laboral.</div>` : ''}
-        ${w.tipoRegimen === 'pensionado' ? `<div class="doc-note">Pensionado por vejez (Art. 69 y 16 D.L. 3.500): exento de cotización AFP, Seguro de Cesantía (AFC), SIS y aporte Ley 21.735. Mantiene cotización de Salud (tope 90 UF menos pensión).</div>` : ''}
+        ${w.tipoRegimen === 'pensionado' ? `<div class="doc-note">Pensionado por vejez (Art. 69 y 16 D.L. 3.500): exento de cotización AFP, Seguro de Cesantía (AFC), SIS y aporte Ley 21.735; mantiene cotización de Salud (tope 90 UF menos pensión) y aporte empleador Mutual + SANNA (Ley 16.744). La exención o cotización voluntaria AFP exige respaldo escrito del trabajador.</div>` : ''}
       </section>
 
-      <p class="doc-legal-p">Certifico que he recibido de <strong>${esc(c.name)}</strong> a mi entera satisfacción el saldo líquido indicado en la presente liquidación de remuneraciones correspondiente al período <strong>${esc(period.label)}</strong>, no teniendo cargo ni reclamo alguno que formular respecto de los conceptos liquidados.</p>
+      <p class="doc-legal-p">Comprobante de pago de remuneraciones emitido conforme al Art. 54 inc. 3° del Código del Trabajo. Declaro haber recibido el saldo líquido indicado correspondiente al período <strong>${esc(period.label)}</strong>. La firma de este comprobante acredita únicamente la recepción del pago y no constituye renuncia de derechos laborales (Art. 5° inc. 2° CT).</p>
 
       <div class="doc-signs">
-        <div class="doc-sign-box"><strong>${esc(w.name)}</strong>RUT ${esc(w.rut)} · Firma Trabajador</div>
-        <div class="doc-sign-box"><strong>${esc(c.name)}</strong>RUT ${esc(c.rut)} · Firma y Timbre Empleador</div>
+        <div class="doc-sign-box"><strong>${esc(w.name)}</strong>RUT ${esc(w.rut)} · Firma ${w.tipoRegimen === 'socio' ? 'Socio' : 'Trabajador'}</div>
+        <div class="doc-sign-box"><strong>${esc(c.name)}</strong>RUT ${esc(c.rut)} · Firma y Timbre ${w.tipoRegimen === 'socio' ? 'Sociedad' : 'Empleador'}</div>
       </div>
       ${docFooter(studioName, c)}
     `;
@@ -468,7 +468,7 @@
     const causalTxt = cause === '161'
       ? 'Artículo 161 inciso 1° del Código del Trabajo (Necesidades de la empresa)'
       : cause === '159'
-        ? 'Artículo 159 del Código del Trabajo (Mutuo acuerdo / Renuncia voluntaria)'
+        ? 'Artículo 159 del Código del Trabajo (N° 1 Mutuo acuerdo, N° 2 Renuncia, N° 4 Vencimiento de plazo o N° 5 Conclusión de obra/faena)'
         : 'Artículo 160 del Código del Trabajo (Causal sin derecho a indemnización)';
 
     const body = `
@@ -484,15 +484,16 @@
         <table class="doc-tbl">
           <thead><tr><th>Concepto</th><th>Referencia Legal / Cálculo</th><th class="num">Monto CLP</th></tr></thead>
           <tbody>
-            <tr><td>Indemnización por Años de Servicio (IAS)</td><td class="muted">${eco.years || 0} año(s)${eco.isCapped ? ` · Con tope legal 90 UF (UF ${fmt(uf)})` : ''}</td><td class="num">${fmt(eco.ias || 0)}</td></tr>
+            <tr><td>Indemnización por Años de Servicio (IAS)</td><td class="muted">${eco.years || 0} año(s) · Tope legal 11 años / 330 días (Art. 163 inc. 2° CT)${eco.isCapped ? ` y 90 UF (UF ${fmt(uf)})` : ''}</td><td class="num">${fmt(eco.ias || 0)}</td></tr>
             <tr><td>Indemnización Sustitutiva del Aviso Previo</td><td class="muted">${cause === '161' ? 'Art. 161 / 162 CT' : 'No aplica a causal'}</td><td class="num">${fmt(eco.aviso || 0)}</td></tr>
             <tr><td>Feriado Proporcional y/o Pendiente</td><td class="muted">Art. 73 del Código del Trabajo</td><td class="num">${fmt(eco.vacaciones || 0)}</td></tr>
+            ${eco.afcDesc ? `<tr><td>Descuento aporte empleador Seguro de Cesantía (AFC)</td><td class="muted">Art. 13 Ley 19.728 (solo causal Art. 161 CT)</td><td class="num">−${fmt(eco.afcDesc)}</td></tr>` : ''}
           </tbody>
           <tfoot>
             <tr><td colspan="2"><strong>TOTAL LÍQUIDO A PAGAR POR FINIQUITO</strong></td><td class="num" style="font-size:13px">${fmt(eco.total || 0)}</td></tr>
           </tfoot>
         </table>
-        ${c.nomina.leyBustos ? `<div class="doc-note is-warn"><strong>ALERTA LEY BUSTOS (Art. 162 inc. 5° CT):</strong> La empresa registra cotizaciones previsionales impagas. Regularizar PreviRed y adjuntar certificados de pago antes de ratificar este finiquito ante Ministro de Fe.</div>` : `<div class="doc-note">Cotizaciones previsionales verificadas al día para ratificación ante Ministro de Fe (Notaría, Inspección del Trabajo o Portal Mi DT).</div>`}
+        ${c.nomina.leyBustos ? `<div class="doc-note is-warn"><strong>ALERTA LEY BUSTOS (Art. 162 inc. 5° CT):</strong> La empresa registra cotizaciones previsionales impagas. Regularizar PreviRed/AFC y adjuntar certificados de pago antes de ratificar este finiquito ante Ministro de Fe.</div>` : `<div class="doc-note">Adjuntar certificados de pago de cotizaciones previsionales y de cesantía al día (Art. 162 inc. 5° CT). Plazo legal para otorgar y poner el pago a disposición del trabajador: <strong>10 días hábiles</strong> desde la separación (Art. 177 inc. 1° CT).</div>`}
       </section>
 
       <p class="doc-legal-p"><strong>TERCERO (Poder liberatorio y reserva):</strong> El Trabajador declara recibir en este acto la suma total de <strong>${fmt(eco.total || 0)}</strong> a su entera satisfacción, otorgando el más amplio y completo finiquito respecto de la relación laboral que los unió, sin perjuicio del derecho que le asiste para estampar reserva de derechos de puño y letra al momento de ratificar ante Ministro de Fe conforme al artículo 177 del Código del Trabajo.</p>

@@ -31,11 +31,11 @@
   function valoresMesActual(iso) {
     const P = window.CLLiquidacionParametros;
     const vig = (P && P.vigenciaDe && P.vigenciaDe(iso)) || {
-      imm: 539000, topeAfpUF: 90, topeAfcUF: 135.2, jornadaMaxima: 42,
+      imm: 553553, topeAfpUF: 90, topeAfcUF: 135.2, jornadaMaxima: 42,
       afp: { Capital: 0.1144, Cuprum: 0.1144, Habitat: 0.1127, Modelo: 0.1058, Planvital: 0.1116, Provida: 0.1145, Uno: 0.1046 },
       empleador: { afp: 0.001, seguroSocial: 0.0161, sis: 0.0179 }
     };
-    const resp = (P && P.RESPALDO && (P.RESPALDO[iso] || P.RESPALDO['2026-09'])) || { uf: 39741.89, utm: 69542 };
+    const resp = (P && P.RESPALDO && (P.RESPALDO[iso] || P.RESPALDO['2026-11'] || P.RESPALDO['2026-09'])) || { uf: 41439.89, utm: 72440 };
     return Object.assign({}, vig, { uf: resp.uf, utm: resp.utm });
   }
 
@@ -198,19 +198,19 @@
         pension: tipo === 'pensionado' ? 'vejez' : '',
         v: {
           '2101': tipo === 'socio' ? 0 : w.base,
-          '2105': tipo === 'socio' ? 0 : (gratLine ? gratLine.monto : 0),
+          '2106': tipo === 'socio' ? 0 : (gratLine ? gratLine.monto : 0),
           '2161': tipo === 'socio' ? w.base : 0,
-          '3110': findDesc(/^afp/i),
-          '3141': findDesc(/^salud/i),
+          '3141': findDesc(/^afp/i),
+          '3143': findDesc(/^salud/i),
           '3151': findDesc(/cesant/i),
           '3161': findDesc(/impuesto/i),
-          '4110': findEmp('sis'),
-          '4161': findEmp('afc'),
-          '4155': findEmp('mutual'),
-          '5201': calc.imponible,
+          '4151': findEmp('afc'),
+          '4152': findEmp('mutual'),
+          '4155': findEmp('sis'),
+          '5201': d.totalHaberes || calc.imponible,
           '5210': calc.imponible,
-          '5301': d.totalHaberes || calc.imponible,
-          '5410': d.totalDescuentos || 0,
+          '5301': d.totalDescuentos || 0,
+          '5410': calc.costoEmpleador || 0,
           '5501': calc.liquido
         }
       };
@@ -232,7 +232,7 @@
       rcv: { state: 'alerta', label: '2 acuses < 48h', pendingAcuses: 2, ventasNeto: 18400000, comprasNeto: 10361579 },
       nomina: { state: 'ok', label: '6 liq · LRE listo', count: 6, previredOk: true, leyBustos: false },
       bancos: { state: 'pendiente', label: '68% match', matched: 34, total: 50 },
-      f29: { state: 'revisar', folio: '', postergar: false, debito: 3496000, credito: 1968700, ppm: 24125, retenciones: 727679, history: [1890, 2040, 1760, 2110, 1950, 2280, 2190, 2410, 2080, 2150, 2279, 2279] },
+      f29: { state: 'revisar', folio: '', postergar: false, debito: 3496000, credito: 1968700, ppm: 24125, retenciones: 544679, bhe: 183000, history: [1890, 2040, 1760, 2110, 1950, 2280, 2190, 2410, 2080, 2150, 2279, 2279] },
       cierre: 'En revisión',
       workers: [
         { id: 'w1', name: 'Camila Rojas Fuentes', rut: rutConDv(19876543), sexo: 'F', ingreso: '2021-04-01', cargo: 'Jefa de Producción', base: 1450000, afp: 'Habitat', estado: 'Listo' },
@@ -477,7 +477,7 @@
   function f29Total(c) {
     const iva = Math.max(0, (c.f29.debito || 0) - (c.f29.credito || 0));
     const ivaPagar = c.f29.postergar ? 0 : iva;
-    return ivaPagar + (c.f29.ppm || 0) + (c.f29.retenciones || 0);
+    return ivaPagar + (c.f29.ppm || 0) + (c.f29.retenciones || 0) + (c.f29.bhe || 0);
   }
 
   function downloadFile(content, filename, mime = 'text/plain;charset=utf-8') {
@@ -549,7 +549,7 @@
     return state.clients.find((c) => c.id === state.clientId) || state.clients[0];
   }
 
-  function enterClient(clientId, area = 'impuestos', sub = null) {
+  function enterClient(clientId, area = 'resumen', sub = null) {
     state.level = 'client';
     state.clientId = clientId;
     state.clientArea = area;
@@ -623,7 +623,7 @@
       `;
       const items = [
         { id: 'hoy', label: 'Hoy · Cierre', count: urgentCount ? `${urgentCount} urg.` : '' },
-        { id: 'olas', label: 'Olas del Mes', count: 'Lotes' },
+        { id: 'olas', label: 'Cierre en Lote', count: 'Lotes' },
         { id: 'bandeja', label: 'Bandeja', count: pendingInbox || '' },
         { id: 'empresas', label: 'Empresas', count: state.clients.length }
       ];
@@ -632,11 +632,27 @@
           <span class="v2-nav-left">${it.label}</span>
           ${it.count !== '' ? `<span class="v2-nav-count">${it.count}</span>` : ''}
         </button>
-      `).join('');
+      `).join('') + `
+        <div class="v2-nav-group-label" style="margin-top:14px">Automatización</div>
+        <button type="button" class="v2-nav-btn" data-studio-nav="conexiones" ${state.studioView === 'conexiones' ? 'aria-current="page"' : ''}>
+          <span class="v2-nav-left">Conexiones</span>
+          <span class="v2-nav-count">SII · MCP</span>
+        </button>
+        <div style="margin-top:14px;padding:0 6px">
+          <a href="/suite-contadores" class="v2-ws-switch" style="text-decoration:none;justify-content:space-between">
+            <span>Ver planes · 90 días gratis</span><span>↗</span>
+          </a>
+        </div>
+      `;
 
-      mob.innerHTML = items.map((it) => `
+      mob.innerHTML = [
+        { id: 'hoy', label: 'Hoy' },
+        { id: 'olas', label: 'Lotes' },
+        { id: 'conexiones', label: 'SII · MCP' },
+        { id: 'empresas', label: 'Empresas' }
+      ].map((it) => `
         <button type="button" data-studio-nav="${it.id}" ${state.studioView === it.id ? 'aria-current="page"' : ''}>
-          <span>${it.label.split(' · ')[0]}</span>
+          <span>${it.label}</span>
         </button>
       `).join('');
     } else {
@@ -650,6 +666,9 @@
         </div>
         <button type="button" class="v2-ws-switch" id="btn-switch-client">
           <span>Cambiar empresa</span><span class="mono">⌘K</span>
+        </button>
+        <button type="button" class="v2-ws-switch" data-studio-nav="conexiones" style="margin-top:4px;font-size:11.5px">
+          <span>SII · PreviRed · MCP</span><span class="mono">Abrir →</span>
         </button>
       `;
       const areas = [
@@ -686,8 +705,8 @@
     const ctaEl = $('v2-primary-cta');
 
     if (state.level === 'studio') {
-      const titles = { hoy: 'Mesa de Cierre', olas: 'Olas del Mes', bandeja: 'Bandeja', empresas: 'Empresas' };
-      titleEl.textContent = titles[state.studioView];
+      const titles = { hoy: 'Mesa de Cierre', olas: 'Cierre en Lote', bandeja: 'Bandeja', empresas: 'Empresas', conexiones: 'Conexiones e Integraciones' };
+      titleEl.textContent = titles[state.studioView] || 'Mesa de Cierre';
       if (state.studioView === 'olas') {
         const tabs = [
           { id: 'acuses', label: 'Acuses 8 días' },
@@ -705,17 +724,21 @@
       } else if (state.studioView === 'empresas') {
         tabsEl.innerHTML = '';
         ctaEl.textContent = '+ Nueva empresa';
+      } else if (state.studioView === 'conexiones') {
+        tabsEl.innerHTML = '';
+        ctaEl.textContent = 'Verificar Gateway SII';
       } else {
         tabsEl.innerHTML = '';
         ctaEl.textContent = 'Aprobar F29 listos';
       }
     } else {
       const c = getClient();
+      const payrollBlockers = getClientPayrollBlockers(c).length;
       const map = {
-        resumen: { title: 'Resumen', cta: 'Emitir Paquete PDF', tabs: [{ id: 'estado', label: 'Cierre del mes' }] },
+        resumen: { title: 'Resumen y Cierre', cta: 'Emitir Paquete PDF', tabs: [{ id: 'estado', label: 'Ruta de cierre 1→4' }] },
         impuestos: {
           title: 'Impuestos',
-          cta: c.f29.state === 'pagado' ? 'Descargar resumen F29' : c.f29.state === 'declarado' ? 'Registrar pago TGR' : c.f29.state === 'contabilizado' ? 'Declarar F29' : 'Contabilizar F29',
+          cta: c.f29.state === 'pagado' ? 'Emitir Hoja F29 PDF' : c.f29.state === 'declarado' ? 'Registrar pago TGR' : c.f29.state === 'contabilizado' ? 'Declarar F29' : 'Contabilizar F29',
           tabs: [
             { id: 'f29', label: 'Hoja F29' },
             { id: 'rcv', label: 'Compras y Acuses' },
@@ -724,7 +747,7 @@
         },
         remuneraciones: {
           title: 'Remuneraciones',
-          cta: state.clientSub === 'previred' ? 'Descargar LRE 147 CSV' : state.clientSub === 'finiquitos' ? 'Exportar lote CSV' : 'Descargar Previred 105',
+          cta: state.clientSub === 'previred' ? 'Descargar LRE 147 CSV' : state.clientSub === 'finiquitos' ? 'Exportar Finiquitos Excel' : (payrollBlockers ? `Completar ${payrollBlockers} ficha${payrollBlockers > 1 ? 's' : ''}` : 'Descargar Previred 105'),
           tabs: [
             { id: 'nomina', label: 'Nómina del mes' },
             { id: 'finiquitos', label: 'Finiquitos' },
@@ -741,7 +764,7 @@
         },
         contabilidad: {
           title: 'Contabilidad',
-          cta: state.clientSub === 'plan' ? 'Aplicar plan al Estudio' : 'Exportar Balance CSV',
+          cta: state.clientSub === 'plan' ? 'Aplicar plan al Estudio' : 'Exportar Contabilidad Excel',
           tabs: [
             { id: 'balance', label: 'Balance 8 Col.' },
             { id: 'diario', label: 'Libro Diario' },
@@ -781,7 +804,7 @@
       return `
         <tr>
           <td>
-            <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="impuestos">
+            <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="resumen">
               <span>${c.name}</span>
             </button>
             <span class="v2-cell-sub mono">${c.rut} · ${c.regime}</span>
@@ -806,7 +829,11 @@
               ${fmt(f29Total(c))}
             </button>
           </td>
-          <td><span class="tag ${cierreTag}">${c.cierre}</span></td>
+          <td class="num">
+            <button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="resumen" title="${c.cierre}">
+              ${c.status === 'critico' ? 'Resolver →' : 'Entrar →'}
+            </button>
+          </td>
         </tr>
       `;
     }).join('');
@@ -849,15 +876,9 @@
     const totalF29Cartera = rows.reduce((acc, c) => acc + f29Total(c), 0);
 
     $('v2-canvas').innerHTML = `
-      <div class="v2-legal-strip" role="status">
-        <strong>Calendario legal · ${currentPeriod().label}:</strong>
-        <button type="button" class="v2-legal-link is-urgent" data-jump-ola="acuses">Acuses 8d (3 por vencer)</button>
-        <span>·</span>
-        <button type="button" class="v2-legal-link" data-jump-ola="previred">PreviRed día 13 (5/6 al día)</button>
-        <span>·</span>
-        <button type="button" class="v2-legal-link" data-jump-ola="previred">LRE día 15 (4/6)</button>
-        <span>·</span>
-        <button type="button" class="v2-legal-link" data-jump-ola="f29">F29 día 20 (${counts.cerrado}/${counts.todos} cerrados)</button>
+      <div class="v2-f29-hint" style="margin-bottom:10px">
+        <span><strong>Cómo operar este mes:</strong> entra a cualquier empresa marcada en rojo para seguir su ruta guiada 1→4, o conecta SII y MCP en <strong>Conexiones</strong>.</span>
+        <button type="button" class="btn btn--sm" data-studio-nav="conexiones">Conexiones SII · MCP →</button>
       </div>
       <div class="v2-pulse-bar">
         <div class="v2-filter-pills" role="group" aria-label="Filtrar cartera">
@@ -884,7 +905,7 @@
               <th>Nómina / LRE</th>
               <th>Bancos</th>
               <th class="num">F29 (Cód. 91)</th>
-              <th>Cierre</th>
+              <th class="num" style="width:108px">Acción</th>
             </tr>
           </thead>
           <tbody id="v2-hoy-tbody">
@@ -1414,9 +1435,10 @@
         { code: '538', glosa: 'Débito fiscal IVA (ventas afectas RCV)', field: 'debito', val: c.f29.debito, editable: true },
         { code: '537', glosa: 'Crédito fiscal IVA (compras con derecho a crédito)', field: 'credito', val: c.f29.credito, editable: true },
         { code: '089', glosa: 'IVA determinado del período (cód. 538 − cód. 537)', field: null, val: iva, editable: false },
-        { code: '755', glosa: 'Postergación pago IVA Art. 64 D.L. 825 (mes +2)', field: null, val: c.f29.postergar ? iva : 0, editable: false },
+        { code: '755', glosa: 'Postergación IVA Art. 64 D.L. 825 (marcar Cód. 756 dentro de plazo; no posterga PPM ni retenciones)', field: null, val: c.f29.postergar ? iva : 0, editable: false },
         { code: '062', glosa: 'PPM obligatorio mensual', field: 'ppm', val: c.f29.ppm, editable: true },
-        { code: '048', glosa: 'Impuesto Único 2ª Categoría + Retenciones BHE (151)', field: 'retenciones', val: c.f29.retenciones, editable: true }
+        { code: '048', glosa: 'Impuesto Único 2ª Categoría (sueldos y sueldo empresarial)', field: 'retenciones', val: c.f29.retenciones || 0, editable: true },
+        { code: '151', glosa: 'Retención Boletas de Honorarios BHE (15,25% Ley 21.133)', field: 'bhe', val: c.f29.bhe || 0, editable: true }
       ];
       $('v2-canvas').innerHTML = `
         <div class="v2-tape">
@@ -2357,43 +2379,287 @@
   }
 
   function renderClientResumen(c) {
+    const blockers = getClientPayrollBlockers(c);
+    const steps = [
+      {
+        num: 1,
+        title: '1. Compras, Ventas (RCV) y Acuses 8 días',
+        sub: 'Revisa compras y da acuse antes de 8 días para no perder Crédito Fiscal IVA.',
+        done: c.rcv.state !== 'alerta' && !c.rcv.pendingAcuses,
+        tagClass: c.rcv.state === 'alerta' ? 'tag--danger' : 'tag--in',
+        status: c.rcv.label,
+        btnLabel: c.rcv.pendingAcuses ? `Revisar ${c.rcv.pendingAcuses} acuses →` : 'Abrir RCV',
+        area: 'impuestos',
+        subArea: 'rcv'
+      },
+      {
+        num: 2,
+        title: '2. Remuneraciones, PreviRed (105) y LRE (147)',
+        sub: 'Verifica fichas completas, calcula liquidaciones y exporta PreviRed / LRE.',
+        done: c.nomina.state === 'ok' && blockers.length === 0,
+        tagClass: (c.nomina.state !== 'ok' || blockers.length) ? 'tag--danger' : 'tag--in',
+        status: blockers.length ? `${blockers.length} ficha(s) bloquean PreviRed` : c.nomina.label,
+        btnLabel: blockers.length ? `Completar ${blockers.length} ficha(s) →` : (c.nomina.leyBustos ? 'Revisar Ley Bustos →' : 'Abrir Nómina'),
+        area: 'remuneraciones',
+        subArea: 'nomina'
+      },
+      {
+        num: 3,
+        title: '3. Conciliación Bancaria',
+        sub: 'Cruza la cartola bancaria con facturas y remuneraciones del mes.',
+        done: c.bancos.state === 'ok',
+        tagClass: c.bancos.state === 'ok' ? 'tag--in' : 'tag--out',
+        status: c.bancos.label,
+        btnLabel: c.bancos.state === 'ok' ? 'Ver Bancos' : 'Conciliar cartola →',
+        area: 'bancos',
+        subArea: 'match'
+      },
+      {
+        num: 4,
+        title: '4. Declaración F29 (Cód. 091) y Cierre',
+        sub: 'Valida IVA, PPM, IUSC (048) y BHE (151), contabiliza y declara en SII.',
+        done: c.f29.state === 'declarado' || c.f29.state === 'pagado',
+        tagClass: (c.f29.state === 'declarado' || c.f29.state === 'pagado' || c.f29.state === 'listo') ? 'tag--in' : 'tag--out',
+        status: `${fmt(f29Total(c))} · ${f29StateLabel(c.f29.state)}`,
+        btnLabel: (c.f29.state === 'declarado' || c.f29.state === 'pagado') ? 'Ver F29' : 'Revisar F29 →',
+        area: 'impuestos',
+        subArea: 'f29'
+      }
+    ];
+    const nextStep = steps.find((s) => !s.done) || null;
+    const doneCount = steps.filter((s) => s.done).length;
+
     $('v2-canvas').innerHTML = `
+      <div class="v2-f29-hint" style="margin-bottom:10px">
+        <span>${nextStep
+          ? `<strong>Siguiente paso recomendado (${doneCount}/4):</strong> ${nextStep.title} — ${nextStep.sub}`
+          : `<strong>Mes completo (4/4):</strong> todos los hitos están al día. Ya puedes emitir el Paquete PDF para el cliente.`}</span>
+        ${nextStep
+          ? `<button type="button" class="btn btn--primary btn--sm" data-open-client="${c.id}" data-open-area="${nextStep.area}" data-open-sub="${nextStep.subArea}">${nextStep.btnLabel}</button>`
+          : `<span class="tag tag--in">Listo</span>`}
+      </div>
       <div class="v2-tape">
         <div class="v2-tape-cell"><span class="v2-tape-label">Ventas netas</span><span class="v2-tape-val">${fmt(c.rcv.ventasNeto)}</span></div>
         <div class="v2-tape-cell"><span class="v2-tape-label">Compras netas</span><span class="v2-tape-val">${fmt(c.rcv.comprasNeto)}</span></div>
         <div class="v2-tape-cell"><span class="v2-tape-label">F29 estimado</span><span class="v2-tape-val is-in">${fmt(f29Total(c))}</span></div>
-        <div class="v2-tape-cell"><span class="v2-tape-label">Dotación</span><span class="v2-tape-val">${c.workers.length}</span></div>
+        <div class="v2-tape-cell"><span class="v2-tape-label">Avance cierre</span><span class="v2-tape-val">${doneCount}/4 pasos</span></div>
       </div>
       <div class="v2-table-wrap">
         <table class="v2-table">
-          <thead><tr><th>Hito de cierre mensual</th><th>Estado actual</th><th>Acceso directo</th></tr></thead>
+          <thead><tr><th>Ruta de cierre mensual (en orden)</th><th>Estado actual</th><th class="num">Acción</th></tr></thead>
           <tbody>
-            <tr><td>1. Registro Compras y Ventas (RCV) + Acuses 8d</td><td><span class="tag ${c.rcv.state === 'alerta' ? 'tag--danger' : 'tag--in'}">${c.rcv.label}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="rcv">Abrir RCV</button></td></tr>
-            <tr><td>2. Remuneraciones, PreviRed (105) y LRE (147)</td><td><span class="tag ${c.nomina.state === 'ok' ? 'tag--in' : 'tag--danger'}">${c.nomina.label}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="remuneraciones">Abrir Nómina</button></td></tr>
-            <tr><td>3. Conciliación Bancaria</td><td><span class="tag ${c.bancos.state === 'ok' ? 'tag--in' : 'tag--out'}">${c.bancos.label}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="bancos">Abrir Bancos</button></td></tr>
-            <tr><td>4. Declaración F29 (Cód. 91)</td><td><span class="tag ${c.f29.state === 'declarado' || c.f29.state === 'listo' ? 'tag--in' : 'tag--out'}">${fmt(f29Total(c))} · ${f29StateLabel(c.f29.state)}</span></td><td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="f29">Abrir F29</button></td></tr>
+            ${steps.map((s) => `
+              <tr class="${nextStep && nextStep.num === s.num ? 'is-selected' : ''}">
+                <td><strong>${s.title}</strong><span class="v2-cell-sub">${s.sub}</span></td>
+                <td><span class="tag ${s.tagClass}">${s.status}</span></td>
+                <td class="num"><button type="button" class="btn btn--sm ${nextStep && nextStep.num === s.num ? 'btn--primary' : ''}" data-open-client="${c.id}" data-open-area="${s.area}" data-open-sub="${s.subArea}">${s.btnLabel}</button></td>
+              </tr>
+            `).join('')}
           </tbody>
         </table>
       </div>
     `;
     $('v2-inspector').innerHTML = `
       <div class="v2-ins-block">
-        <h2 class="v2-ins-title">Paquete Mensual para el dueño</h2>
-        <p class="muted" style="margin:0;font-size:12.5px">Emite en 1 clic el informe ejecutivo del mes (F29, nómina, bancos y balance) con membrete de ${state.studioName}.</p>
-        <button type="button" class="btn btn--primary" data-emit-doc="paquete-pdf">Emitir Paquete PDF</button>
-        <button type="button" class="btn" data-emit-doc="paquete-xlsx">Descargar Paquete Excel (.xlsx)</button>
-        <button type="button" class="btn" data-emit-doc="copy-portal">Copiar enlace Portal sin clave</button>
+        <h2 class="v2-ins-title">Qué revisar antes de cerrar (Normativa)</h2>
+        <div class="v2-ins-list" style="font-size:12px">
+          <div class="v2-ins-row"><span><strong>Acuses 8d:</strong> sin acuse pierdes Crédito Fiscal IVA.</span><span class="tag ${c.rcv.pendingAcuses ? 'tag--danger' : 'tag--in'}">${c.rcv.pendingAcuses ? `${c.rcv.pendingAcuses} pend.` : 'OK'}</span></div>
+          <div class="v2-ins-row"><span><strong>PPM ${c.regime}:</strong> ${c.regime === '14 D3' ? 'en ProPyme tributa sobre cobrado.' : 'validar tasa sobre ingresos.'}</span><span class="tag tag--out">Revisar</span></div>
+          <div class="v2-ins-row"><span><strong>Ley Bustos / Fichas:</strong> no ratificar finiquitos con mora.</span><span class="tag ${(c.nomina.leyBustos || blockers.length) ? 'tag--danger' : 'tag--in'}">${(c.nomina.leyBustos || blockers.length) ? 'Bloqueo' : 'OK'}</span></div>
+          <div class="v2-ins-row"><span><strong>F29 048 vs 151:</strong> IUSC y BHE 15,25% separados.</span><span class="tag tag--in">Separados</span></div>
+        </div>
       </div>
       <div class="v2-ins-block v2-ins-block--soft">
-        <h2 class="v2-ins-title">Entregables individuales del mes</h2>
+        <h2 class="v2-ins-title">Entregables del mes · ${state.studioName}</h2>
         <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <button type="button" class="btn btn--sm" data-emit-doc="paquete-xlsx">Paquete Excel (.xlsx)</button>
           <button type="button" class="btn btn--sm" data-emit-doc="f29-pdf">Hoja F29 PDF</button>
           <button type="button" class="btn btn--sm" data-emit-doc="liq-lote-pdf">Liquidaciones PDF</button>
           <button type="button" class="btn btn--sm" data-emit-doc="balance-pdf">Balance 8 Col. PDF</button>
           <button type="button" class="btn btn--sm" data-emit-doc="bancos-pdf">Conciliación PDF</button>
+          <button type="button" class="btn btn--sm" data-emit-doc="copy-portal">Copiar enlace Portal</button>
         </div>
       </div>
     `;
+  }
+
+  /* ==================== HUB CONEXIONES (SII + PREVIRED + MCP + PORTAL) ==================== */
+  function runMcpDemoQuery(queryId) {
+    const clients = state.clients;
+    if (queryId === 'acuses') {
+      const urg = clients.filter((c) => c.rcv.pendingAcuses > 0);
+      return urg.length
+        ? `tool: get_tax_alerts → ${urg.length} empresa(s) con acuses < 8 días: ` + urg.map((c) => `${c.name} (${c.rcv.pendingAcuses} doc.)`).join(' · ')
+        : 'tool: get_tax_alerts → 0 acuses por vencer en la cartera.';
+    }
+    if (queryId === 'f29') {
+      const total = clients.reduce((s, c) => s + f29Total(c), 0);
+      const cerr = clients.filter((c) => c.f29.state === 'declarado' || c.f29.state === 'pagado').length;
+      return `tool: get_f29_summary → Cartera ${currentPeriod().label}: ${fmt(total)} total F29 Cód. 091 (${cerr}/${clients.length} declarados). Mayor monto: Importadora Pacífico ($3.662.000).`;
+    }
+    const bustos = clients.filter((c) => c.nomina.leyBustos);
+    const incomp = clients.map((c) => ({ c, n: getClientPayrollBlockers(c).length })).filter((x) => x.n > 0);
+    return `tool: get_previred_status → Riesgo Ley Bustos: ${bustos.map((c) => c.name).join(', ') || 'ninguno'}. Fichas que bloquean PreviRed: ${incomp.map((x) => `${x.c.name} (${x.n})`).join(', ') || 'ninguna'}.`;
+  }
+
+  function renderStudioConexiones() {
+    if (!state.selectedConn) state.selectedConn = 'sii';
+    const gw = state.gateway || { mode: 'demo-local', configured: false };
+    const gwConnected = gw.mode === 'connected' || gw.configured;
+    const mcpTools = [
+      'list_companies', 'get_rcv_documents', 'get_bhe_documents',
+      'get_f29_summary', 'get_sync_status', 'get_f22_ddjj',
+      'get_tgr_status', 'get_previred_status', 'get_tax_alerts'
+    ];
+    const integrations = [
+      {
+        id: 'sii',
+        name: 'Conector SII Automático',
+        sub: 'RCV Compras/Ventas · BHE 15,25% · F29 · Acuses 8d · sync-range',
+        endpoint: 'connect.calculolaboral.cl · /api/studio-proxy',
+        statusTag: gwConnected ? 'tag--in' : 'tag--out',
+        statusLabel: gwConnected ? 'Gateway activo' : 'Demo local (sin clave SII)'
+      },
+      {
+        id: 'previred',
+        name: 'PreviRed (105 campos) y LRE Mi DT (147 cols)',
+        sub: 'Bóveda cifrada AES-256-GCM · Alertas Ley Bustos y fichas incompletas',
+        endpoint: 'PREVIRED_CREDENTIALS · Archivo 105 / ANSI Win-1252',
+        statusTag: 'tag--in',
+        statusLabel: 'Exportadores activos · Sync listo'
+      },
+      {
+        id: 'mcp',
+        name: 'Conector MCP · Claude, ChatGPT y Agentes IA',
+        sub: '9 herramientas oficiales de solo lectura autenticadas por token de estudio',
+        endpoint: 'https://connect.calculolaboral.cl/mcp',
+        statusTag: 'tag--in',
+        statusLabel: '9 herramientas · Solo lectura'
+      },
+      {
+        id: 'portal',
+        name: 'Portal del Cliente sin clave',
+        sub: 'Recibe cartolas/respaldos y entrega Paquete Mensual PDF con tu marca',
+        endpoint: '/portal-estudio?cliente=<id>',
+        statusTag: 'tag--in',
+        statusLabel: `${state.clients.length} enlaces listos`
+      }
+    ];
+    const sel = integrations.find((x) => x.id === state.selectedConn) || integrations[0];
+
+    $('v2-canvas').innerHTML = `
+      <div class="v2-f29-hint" style="margin-bottom:10px">
+        <span><strong>Integraciones reales de Cálculo Laboral:</strong> selecciona una fila para ver su estado real, probar consultas MCP en vivo o conectar un RUT por bóveda cifrada.</span>
+        <span class="mono">${gwConnected ? 'Gateway: conectado' : 'Modo: Demo local'}</span>
+      </div>
+      <div class="v2-table-wrap">
+        <table class="v2-table">
+          <thead><tr><th>Integración</th><th>Canal / Alcance</th><th>Estado real</th><th class="num">Detalle</th></tr></thead>
+          <tbody>
+            ${integrations.map((it) => `
+              <tr class="${sel.id === it.id ? 'is-selected' : ''}" data-select-conn="${it.id}" style="cursor:pointer">
+                <td><strong>${it.name}</strong><span class="v2-cell-sub">${it.sub}</span></td>
+                <td class="mono" style="font-size:11.5px">${it.endpoint}</td>
+                <td><span class="tag ${it.statusTag}">${it.statusLabel}</span></td>
+                <td class="num"><button type="button" class="btn btn--sm" data-select-conn="${it.id}">Configurar →</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="v2-table-wrap" style="margin-top:14px">
+        <table class="v2-table">
+          <thead><tr><th>Empresa en cartera</th><th>Estado SII</th><th>Estado PreviRed</th><th class="num">Acción</th></tr></thead>
+          <tbody>
+            ${state.clients.map((c) => `
+              <tr>
+                <td><strong>${c.name}</strong><span class="v2-cell-sub mono">${c.rut} · ${c.regime}</span></td>
+                <td><span class="tag ${gwConnected ? 'tag--in' : 'tag--out'}">${gwConnected ? 'Credencial guardada' : 'Sin credencial (demo)'}</span></td>
+                <td><span class="tag ${c.nomina.previredOk ? 'tag--in' : 'tag--danger'}">${c.nomina.previredOk ? 'Archivo 105 OK' : 'Mora · Ley Bustos'}</span></td>
+                <td class="num"><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="resumen">Abrir →</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    if (sel.id === 'mcp') {
+      const demoOut = state.mcpDemoOutput || 'Haz clic en cualquiera de las 3 consultas para probar el Conector MCP en vivo sobre tus 6 empresas demo.';
+      const claudeSnippet = JSON.stringify({
+        mcpServers: {
+          'calculo-laboral': {
+            url: 'https://connect.calculolaboral.cl/mcp',
+            headers: { 'x-mcp-token': state.mcpTokenDemo || 'cl_mcp_emitir_en_cuenta_estudio' }
+          }
+        }
+      }, null, 2);
+      $('v2-inspector').innerHTML = `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head"><h2 class="v2-ins-title">Conector MCP (Solo lectura)</h2><span class="tag tag--in">9 tools</span></div>
+          <p class="muted" style="margin:0;font-size:12px">Conecta Claude Desktop, Claude Web o agentes IA a tu cartera. Al ser solo lectura, el agente nunca modifica declaraciones ni envía nada al SII.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">
+            ${mcpTools.map((fn) => `<span class="tag tag--out mono" style="font-size:10.5px">${fn}</span>`).join('')}
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <button type="button" class="btn btn--primary btn--sm" style="flex:1" data-conn-action="copy-mcp-json">Copiar JSON para Claude</button>
+            <a href="/conector-mcp-contadores-chile" target="_blank" rel="noopener" class="btn btn--sm" style="text-decoration:none">Guía ↗</a>
+          </div>
+          <pre class="mono" style="margin:6px 0 0;padding:8px;background:var(--ink-paper-2,#f4f5f6);border:1px solid var(--ink-rule);border-radius:6px;font-size:10.5px;overflow:auto;max-height:115px">${claudeSnippet}</pre>
+        </div>
+        <div class="v2-ins-block v2-ins-block--soft">
+          <div class="v2-ins-head"><h2 class="v2-ins-title">Prueba en vivo sobre tu cartera</h2><span class="mono muted">MCP</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button type="button" class="btn btn--sm" style="text-align:left" data-mcp-query="acuses">¿Qué clientes tienen acuses &lt; 8 días?</button>
+            <button type="button" class="btn btn--sm" style="text-align:left" data-mcp-query="f29">¿Cuánto suma el F29 de la cartera?</button>
+            <button type="button" class="btn btn--sm" style="text-align:left" data-mcp-query="previred">¿Quién tiene Ley Bustos o fichas incompletas?</button>
+          </div>
+          <div class="v2-ins-note" style="margin-top:6px;font-size:11.5px">${demoOut}</div>
+        </div>
+      `;
+    } else if (sel.id === 'portal') {
+      $('v2-inspector').innerHTML = `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head"><h2 class="v2-ins-title">Portal del Cliente sin clave</h2><span class="tag tag--in">Activo</span></div>
+          <p class="muted" style="margin:0;font-size:12px">Cada empresa recibe un enlace único para subir cartolas o licencias y descargar su Paquete Mensual PDF con tu marca (${state.studioName}).</p>
+          <div class="v2-ins-list" style="margin-top:6px">
+            ${state.clients.map((c) => `
+              <div class="v2-ins-row">
+                <span style="font-size:12px"><strong>${c.name.split(' ').slice(0, 2).join(' ')}</strong></span>
+                <button type="button" class="btn btn--sm" data-copy-portal-id="${c.id}">Copiar enlace</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    } else {
+      const isPrev = sel.id === 'previred';
+      $('v2-inspector').innerHTML = `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head">
+            <h2 class="v2-ins-title">${isPrev ? 'Conexión PreviRed' : 'Conexión SII Automática'}</h2>
+            <span class="tag ${gwConnected ? 'tag--in' : 'tag--out'}">${gwConnected ? 'Conectado' : 'Demo local'}</span>
+          </div>
+          <p class="muted" style="margin:0;font-size:12px;line-height:1.45">
+            ${isPrev
+              ? 'Sincroniza estado de cotizaciones y alerta Ley Bustos vía bóveda AES-256-GCM. Las claves nunca se guardan en el navegador.'
+              : 'Descarga automática de RCV Compras/Ventas, BHE (15,25%), F29 y cuenta regresiva de acuses 8 días vía /api/studio-proxy. Jamás guarda tu clave SII en localStorage.'}
+          </p>
+          <dl class="v2-ins-kv" style="margin-top:4px">
+            <dt>Máquina de estados</dt><dd>Sin credencial → Bóveda → Verificado</dd>
+            <dt>Cifrado bóveda</dt><dd>AES-256-GCM (VPS Chile)</dd>
+            <dt>Proxy servidor</dt><dd class="mono">/api/studio-proxy</dd>
+          </dl>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+            <select id="sel-conn-client" class="v2-ins-select" aria-label="Empresa a conectar">
+              ${state.clients.map((c) => `<option value="${c.id}">${c.name} (${c.rut})</option>`).join('')}
+            </select>
+            <button type="button" class="btn btn--primary btn--sm" data-conn-action="probe-gateway">Verificar estado del Gateway ahora</button>
+            <a href="/suite-contadores" class="btn btn--sm" style="text-decoration:none;text-align:center">Activar conexión real en Plan Estudio ↗</a>
+          </div>
+        </div>
+      `;
+    }
   }
 
   function renderBatchBar() {
@@ -2411,6 +2677,7 @@
       if (state.studioView === 'hoy') renderStudioHoy();
       else if (state.studioView === 'olas') renderStudioOlas();
       else if (state.studioView === 'bandeja') renderStudioBandeja();
+      else if (state.studioView === 'conexiones') renderStudioConexiones();
       else renderStudioEmpresas();
     } else {
       const c = getClient();
@@ -2468,9 +2735,10 @@
       { cod: '538', label: 'Débito fiscal IVA (ventas afectas RCV)', source: 'RCV Ventas SII', val: c.f29.debito || 0 },
       { cod: '537', label: 'Crédito fiscal IVA (compras con derecho a crédito)', source: 'RCV Compras SII', val: c.f29.credito || 0 },
       { cod: '089', label: 'IVA determinado del período (Cód. 538 − Cód. 537)', source: 'Cálculo neto IVA', val: iva },
-      { cod: '755', label: 'Postergación pago IVA Art. 64 D.L. 825 (mes +2)', source: c.f29.postergar ? 'Activada' : 'No aplicada', val: c.f29.postergar ? iva : 0 },
+      { cod: '755', label: 'Postergación IVA Art. 64 D.L. 825 (marcar Cód. 756 dentro de plazo)', source: c.f29.postergar ? 'Activada (Cód. 756)' : 'No aplicada', val: c.f29.postergar ? iva : 0 },
       { cod: '062', label: `PPM obligatorio mensual (${ppmRateLabel} · ${c.regime})`, source: 'Base ingresos netos', val: c.f29.ppm || 0 },
-      { cod: '048', label: 'Impuesto Único 2ª Categoría + Retenciones BHE (151 · 15,25%)', source: 'Nómina + BHE', val: c.f29.retenciones || 0 }
+      { cod: '048', label: 'Impuesto Único 2ª Categoría (sueldos y sueldo empresarial)', source: 'Nómina / LRE 3161', val: c.f29.retenciones || 0 },
+      { cod: '151', label: 'Retención Boletas de Honorarios BHE (15,25% Ley 21.133)', source: 'BHE Recibidas SII', val: c.f29.bhe || 0 }
     ];
     const workersCalc = (c.workers || []).map((w) => ({ w, calc: calcularWorkerReal(w, iso) }));
     const auxDocs = ensureAuxDocs(c);
@@ -2488,8 +2756,8 @@
     const ddjjBase = c.regime === '14 D3'
       ? [['DJ 1948', 'Retiros, remesas y dividendos', 'Obligatoria 14 D3'], ['DJ 1887', 'Sueldos y retenciones', 'Obligatoria'], ['DJ 1879', 'Retenciones de honorarios (15,25%)', 'Si hubo BHE']]
       : c.regime === '14 D8'
-        ? [['DJ 1947', 'Base imponible transparente', 'Obligatoria 14 D8'], ['DJ 1887', 'Sueldos y retenciones', 'Obligatoria']]
-        : [['DJ 1847', 'Balance 8 Columnas', 'Obligatoria 14 A'], ['DJ 1926', 'Renta Líquida Imponible', 'Obligatoria 14 A'], ['DJ 1948', 'Retiros y dividendos', 'Obligatoria']];
+        ? [['DJ 1947', 'Base imponible transparente', 'Obligatoria 14 D8'], ['DJ 1887', 'Sueldos y retenciones', 'Obligatoria'], ['DJ 1879', 'Retenciones de honorarios (15,25%)', 'Si hubo BHE']]
+        : [['DJ 1847', 'Balance 8 Columnas', 'Obligatoria 14 A'], ['DJ 1926', 'Renta Líquida Imponible', 'Obligatoria 14 A'], ['DJ 1948', 'Retiros y dividendos', 'Obligatoria'], ['DJ 1887', 'Sueldos y retenciones', 'Obligatoria'], ['DJ 1879', 'Retenciones de honorarios (15,25%)', 'Si hubo BHE']];
     const ddjj = ddjjBase.map(([cod, desc, apl]) => {
       const is1887 = cod === 'DJ 1887' && c.lreHistory && c.lreHistory.imports > 0;
       const st = is1887 ? `${c.lreHistory.imports} LRE · Renta ${fmt(c.lreHistory.rentaNetaAnual)} · IUSC ${fmt(c.lreHistory.iuscRetenidoAnual)}` : 'Borrador listo';
@@ -2523,6 +2791,7 @@
             ias: fRes.indemnities ? fRes.indemnities.yearsOfService.total : 0,
             aviso: fRes.indemnities ? fRes.indemnities.notice.total : 0,
             vacaciones: fRes.indemnities ? fRes.indemnities.vacation.total : 0,
+            afcDesc: fRes.afc && fRes.afc.applied ? fRes.afc.total : 0,
             total: fRes.total || 0
           }
         } : null
@@ -2856,6 +3125,42 @@
       emitDocument(t.dataset.emitDoc, getClient());
       return;
     }
+    if (t.dataset.selectConn) {
+      state.selectedConn = t.dataset.selectConn;
+      renderStudioConexiones();
+      return;
+    }
+    if (t.dataset.mcpQuery) {
+      state.mcpDemoOutput = runMcpDemoQuery(t.dataset.mcpQuery);
+      renderStudioConexiones();
+      return;
+    }
+    if (t.dataset.copyPortalId) {
+      const targetC = state.clients.find((x) => x.id === t.dataset.copyPortalId) || getClient();
+      emitDocument('copy-portal', targetC);
+      return;
+    }
+    if (t.dataset.connAction === 'copy-mcp-json') {
+      const snippet = JSON.stringify({
+        mcpServers: {
+          'calculo-laboral': {
+            url: 'https://connect.calculolaboral.cl/mcp',
+            headers: { 'x-mcp-token': state.mcpTokenDemo || 'cl_mcp_emitir_en_cuenta_estudio' }
+          }
+        }
+      }, null, 2);
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(snippet).catch(() => {});
+      toast('Configuración JSON de MCP copiada para Claude');
+      return;
+    }
+    if (t.dataset.connAction === 'probe-gateway') {
+      probeStudioGateway().then((info) => {
+        state.gateway = info || { mode: 'demo-local', configured: false };
+        toast(state.gateway.configured ? 'Gateway SII conectado y operativo' : 'Gateway en modo Demo local (sin SII_GATEWAY_API_KEY activa)');
+        render();
+      });
+      return;
+    }
     if (t.id === 'btn-period-prev') { state.periodIdx = Math.max(0, state.periodIdx - 1); render(); return; }
     if (t.id === 'btn-period-next') { state.periodIdx = Math.min(PERIODS.length - 1, state.periodIdx + 1); render(); return; }
     if (t.id === 'btn-reset-demo') { state.clients = INITIAL_CLIENTS(); state.inbox = INITIAL_INBOX(); toast('Datos restablecidos'); render(); return; }
@@ -2881,6 +3186,14 @@
 
     if (t.id === 'v2-primary-cta') {
       if (state.level === 'studio' && state.studioView === 'empresas') { openDrawer(); return; }
+      if (state.level === 'studio' && state.studioView === 'conexiones') {
+        probeStudioGateway().then((info) => {
+          state.gateway = info || { mode: 'demo-local', configured: false };
+          toast(state.gateway.configured ? 'Gateway SII verificado y operativo' : 'Gateway en modo Demo local');
+          render();
+        });
+        return;
+      }
       if (state.level === 'studio' && state.studioView === 'hoy') {
         let ok = 0;
         state.clients.forEach((c) => { if (c.f29.state === 'listo') { c.f29.state = 'declarado'; c.f29.folio = String(84920200 + ok); c.status = 'cerrado'; c.cierre = 'Cerrado'; ok++; } });
