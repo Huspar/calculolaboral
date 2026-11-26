@@ -284,6 +284,9 @@
     selectedWorkerId: null,
     selectedBankId: null,
     finiquitoCause: '161',
+    balanceScope: 'acumulado',
+    studioName: 'Asesorías Pérez Ltda.',
+    sidebarCollapsed: false,
     selectedIds: new Set(),
     clients: INITIAL_CLIENTS(),
     inbox: INITIAL_INBOX()
@@ -371,7 +374,7 @@
       wsBox.innerHTML = `
         <div class="v2-ws-title">Espacio Estudio</div>
         <div class="v2-ws-meta">
-          <span>Asesorías Pérez Ltda.</span>
+          <span id="v2-studio-name-ws">${state.studioName}</span>
           <span class="tag tag--in">En línea</span>
         </div>
       `;
@@ -602,6 +605,16 @@
     const totalF29Cartera = rows.reduce((acc, c) => acc + f29Total(c), 0);
 
     $('v2-canvas').innerHTML = `
+      <div class="v2-legal-strip" role="status">
+        <strong>Calendario legal · ${currentPeriod().label}:</strong>
+        <button type="button" class="v2-legal-link is-urgent" data-jump-ola="acuses">Acuses 8d (3 por vencer)</button>
+        <span>·</span>
+        <button type="button" class="v2-legal-link" data-jump-ola="previred">PreviRed día 13 (5/6 al día)</button>
+        <span>·</span>
+        <button type="button" class="v2-legal-link" data-jump-ola="previred">LRE día 15 (4/6)</button>
+        <span>·</span>
+        <button type="button" class="v2-legal-link" data-jump-ola="f29">F29 día 20 (${counts.cerrado}/${counts.todos} cerrados)</button>
+      </div>
       <div class="v2-pulse-bar">
         <div class="v2-filter-pills" role="group" aria-label="Filtrar cartera">
           ${[
@@ -852,6 +865,17 @@
           <dt>Régimen 14 D8</dt><dd>${state.clients.filter((c) => c.regime === '14 D8').length}</dd>
         </dl>
       </div>
+      <div class="v2-ins-block v2-ins-block--soft">
+        <div class="v2-ins-head">
+          <h2 class="v2-ins-title">Marca de tu estudio</h2>
+          <span class="tag tag--in">PDF y reportes</span>
+        </div>
+        <p class="muted" style="margin:0;font-size:12.5px">Tu logo y nombre del estudio van en el PDF del F29 y en los informes que envías a tus clientes.</p>
+        <div class="v2-field" style="margin-top:6px">
+          <label for="inp-studio-name">Nombre visible en entregables</label>
+          <input type="text" id="inp-studio-name" value="${state.studioName}">
+        </div>
+      </div>
     `;
   }
 
@@ -909,7 +933,7 @@
             <thead><tr><th style="width:78px">Código</th><th>Glosa oficial Formulario 29</th><th class="num" style="width:160px">Monto ($)</th></tr></thead>
             <tbody>
               ${lines.map((l) => `
-                <tr>
+                <tr class="${l.editable ? '' : 'is-calc-row'}">
                   <td class="mono"><strong>${l.code}</strong></td>
                   <td>${l.glosa}</td>
                   <td class="num">
@@ -1157,7 +1181,16 @@
       <div class="v2-table-wrap">
         <table class="v2-table">
           <thead>
-            <tr><th style="width:32px"></th><th>Trabajador</th><th>RUT</th><th>AFP</th><th class="num">Imponible</th><th class="num">Líquido</th><th>Estado</th></tr>
+            <tr class="v2-superhead">
+              <th colspan="4">Se ingresa este mes</th>
+              <th colspan="3" class="v2-th-calc">Calculado</th>
+            </tr>
+            <tr class="v2-subhead">
+              <th style="width:32px"></th><th>Trabajador</th><th>RUT</th><th>AFP</th>
+              <th class="num v2-col-calc v2-col-calc-start">Imponible</th>
+              <th class="num v2-col-calc">Líquido</th>
+              <th class="v2-col-calc">Estado</th>
+            </tr>
           </thead>
           <tbody>
             ${computed.map(({ w, calc }) => `
@@ -1166,9 +1199,9 @@
                 <td><strong>${w.name}</strong><span class="v2-cell-sub">${w.cargo}</span></td>
                 <td class="mono">${w.rut}</td>
                 <td>${w.afp}</td>
-                <td class="num" data-row-imp="${w.id}">${fmt(calc.imponible)}</td>
-                <td class="num" data-row-liq="${w.id}"><strong>${fmt(calc.liquido)}</strong></td>
-                <td><span class="tag ${w.estado === 'Listo' || w.estado === 'Pagado' ? 'tag--in' : 'tag--danger'}">${w.estado}</span></td>
+                <td class="num v2-col-calc v2-col-calc-start" data-row-imp="${w.id}">${fmt(calc.imponible)}</td>
+                <td class="num v2-col-calc" data-row-liq="${w.id}"><strong>${fmt(calc.liquido)}</strong></td>
+                <td class="v2-col-calc"><span class="tag ${w.estado === 'Listo' || w.estado === 'Pagado' ? 'tag--in' : 'tag--danger'}">${w.estado}</span></td>
               </tr>
             `).join('')}
           </tbody>
@@ -1344,10 +1377,23 @@
           <div class="v2-tape-cell"><span class="v2-tape-label">Resultado período</span><span class="v2-tape-val ${((t.ganancia || 0) - (t.perdida || 0)) < 0 ? 'is-danger' : 'is-in'}">${fmt((t.ganancia || 0) - (t.perdida || 0))}</span></div>
           <div class="v2-tape-cell"><span class="v2-tape-label">Partida doble</span><span class="v2-tape-val">${cuadra ? 'Cuadrado' : 'Revisar'}</span></div>
         </div>
+        <div class="v2-scope-bar">
+          <div class="v2-seg" role="group" aria-label="Alcance del balance">
+            <button type="button" data-bal-scope="acumulado" aria-pressed="${state.balanceScope === 'acumulado'}">Acumulado</button>
+            <button type="button" data-bal-scope="mes" aria-pressed="${state.balanceScope === 'mes'}">Movimientos del mes</button>
+          </div>
+          <details class="v2-export-menu">
+            <summary class="btn btn--sm">Exportar ▾</summary>
+            <div class="v2-export-pop">
+              <button type="button" data-export-bal="csv">Balance 8 Columnas (CSV)</button>
+              <button type="button" data-export-bal="diario">Libro Diario (CSV)</button>
+            </div>
+          </details>
+        </div>
         <div class="v2-table-wrap">
           <table class="v2-table">
             <thead>
-              <tr><th style="width:66px">Cta.</th><th>Nombre cuenta</th><th class="num">Deudor</th><th class="num">Acreedor</th><th class="num">Activo</th><th class="num">Pasivo</th><th class="num">Pérdida</th><th class="num">Ganancia</th></tr>
+              <tr><th style="width:66px">Cta.</th><th>Nombre cuenta · ${state.balanceScope === 'mes' ? currentPeriod().label : 'Acumulado año'}</th><th class="num">Deudor</th><th class="num">Acreedor</th><th class="num">Activo</th><th class="num">Pasivo</th><th class="num">Pérdida</th><th class="num">Ganancia</th></tr>
             </thead>
             <tbody>
               ${(bal.filas || []).map((f) => `
@@ -1551,6 +1597,24 @@
     if (t.id === 'btn-new-client' || t.id === 'btn-ins-new-client') { openDrawer(); return; }
     if (t.id === 'btn-close-drawer' || t.id === 'btn-cancel-drawer') { closeDrawer(); return; }
     if (t.id === 'btn-mobile-menu') { toggleMobileSidebar(); return; }
+    if (t.id === 'btn-toggle-sidebar') {
+      state.sidebarCollapsed = !state.sidebarCollapsed;
+      $('v2-app').classList.toggle('is-sidebar-collapsed', state.sidebarCollapsed);
+      t.setAttribute('aria-expanded', String(!state.sidebarCollapsed));
+      return;
+    }
+    if (t.dataset.balScope) {
+      state.balanceScope = t.dataset.balScope;
+      renderClientContabilidad(getClient());
+      return;
+    }
+    if (t.dataset.exportBal) {
+      const det = t.closest('details');
+      if (det) det.open = false;
+      if (t.dataset.exportBal === 'csv') { $('v2-primary-cta')?.click(); }
+      else { toast(`Libro Diario exportado (${state.studioName})`); }
+      return;
+    }
     if (t.id === 'btn-period-prev') { state.periodIdx = Math.max(0, state.periodIdx - 1); render(); return; }
     if (t.id === 'btn-period-next') { state.periodIdx = Math.min(PERIODS.length - 1, state.periodIdx + 1); render(); return; }
     if (t.id === 'btn-reset-demo') { state.clients = INITIAL_CLIENTS(); state.inbox = INITIAL_INBOX(); toast('Datos restablecidos'); render(); return; }
@@ -1649,6 +1713,14 @@
       return;
     }
     if (e.target.id === 'v2-cmdk-input') { renderCmdk(e.target.value); return; }
+    if (e.target.id === 'inp-studio-name') {
+      state.studioName = e.target.value.trim() || 'Mi Estudio Contable';
+      const foot = $('v2-studio-name-foot');
+      if (foot) foot.textContent = state.studioName;
+      const ws = $('v2-studio-name-ws');
+      if (ws) ws.textContent = state.studioName;
+      return;
+    }
     if (e.target.id === 'inp-worker-base') {
       const c = getClient();
       const w = c.workers.find((x) => x.id === state.selectedWorkerId);
