@@ -283,13 +283,17 @@
     query: '',
     selectedWorkerId: null,
     selectedBankId: null,
+    finiquitoCause: '161',
     selectedIds: new Set(),
     clients: INITIAL_CLIENTS(),
     inbox: INITIAL_INBOX()
   };
 
   const $ = (id) => document.getElementById(id);
-  const fmt = (n) => '$' + Math.round(Number(n) || 0).toLocaleString('es-CL');
+  const fmt = (n) => {
+    const v = Math.round(Number(n) || 0);
+    return (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('es-CL');
+  };
   const currentPeriod = () => PERIODS[state.periodIdx];
 
   function f29Total(c) {
@@ -462,9 +466,10 @@
         },
         remuneraciones: {
           title: 'Remuneraciones',
-          cta: state.clientSub === 'previred' ? 'Descargar LRE 147 CSV' : 'Descargar Previred 105',
+          cta: state.clientSub === 'previred' ? 'Descargar LRE 147 CSV' : state.clientSub === 'finiquitos' ? 'Exportar lote CSV' : 'Descargar Previred 105',
           tabs: [
             { id: 'nomina', label: 'Nómina del mes' },
+            { id: 'finiquitos', label: 'Finiquitos' },
             { id: 'previred', label: 'Previred y LRE' }
           ]
         },
@@ -937,6 +942,93 @@
     const totalLiquido = computed.reduce((s, x) => s + x.calc.liquido, 0);
     const totalEmp = computed.reduce((s, x) => s + x.calc.costoEmpleador, 0);
 
+    if (state.clientSub === 'finiquitos') {
+      const mesVals = valoresMesActual(iso);
+      const FinCalc = window.FiniquitoCalculator;
+      const finRows = computed.map(({ w, calc }) => {
+        const gratLine = (calc.detalle && calc.detalle.haberesImponibles || []).find((h) => /gratific/i.test(h.concepto));
+        const gratMonto = gratLine ? gratLine.monto : 0;
+        let fRes = null;
+        if (FinCalc) {
+          try {
+            fRes = new FinCalc({
+              startDate: w.ingreso || '2022-03-01',
+              endDate: iso + '-30',
+              baseSalary: w.base,
+              gratification: gratMonto,
+              cause: state.finiquitoCause,
+              ufValue: mesVals.uf,
+              vacationDaysPending: 7.5
+            }).calculate();
+          } catch (_) { fRes = null; }
+        }
+        return { w, fRes };
+      });
+      const selFin = finRows.find((x) => x.w.id === state.selectedWorkerId) || finRows[0];
+      const totFin = finRows.reduce((s, x) => s + (x.fRes ? x.fRes.total : 0), 0);
+      const totIas = finRows.reduce((s, x) => s + (x.fRes ? x.fRes.indemnities.yearsOfService.total : 0), 0);
+      const totVac = finRows.reduce((s, x) => s + (x.fRes ? x.fRes.indemnities.vacation.total : 0), 0);
+
+      $('v2-canvas').innerHTML = `
+        <div class="v2-tape">
+          <div class="v2-tape-cell"><span class="v2-tape-label">Lote finiquitos</span><span class="v2-tape-val">${finRows.length}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">IAS (tope 90 UF)</span><span class="v2-tape-val">${fmt(totIas)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Feriado prop.</span><span class="v2-tape-val">${fmt(totVac)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Total lote</span><span class="v2-tape-val is-in">${fmt(totFin)}</span></div>
+        </div>
+        <div class="v2-table-wrap">
+          <table class="v2-table">
+            <thead><tr><th>Trabajador</th><th>Ingreso</th><th class="num">Años</th><th class="num">IAS</th><th class="num">Aviso previo</th><th class="num">Vacaciones</th><th class="num">Total finiquito</th></tr></thead>
+            <tbody>
+              ${finRows.map(({ w, fRes }) => `
+                <tr class="${selFin && selFin.w.id === w.id ? 'is-selected' : ''}" data-select-worker="${w.id}" style="cursor:pointer">
+                  <td><strong>${w.name}</strong><span class="v2-cell-sub mono">${w.rut}</span></td>
+                  <td class="mono">${w.ingreso || '2022-03-01'}</td>
+                  <td class="num">${fRes ? fRes.serviceTime.years : 0}</td>
+                  <td class="num">${fmt(fRes ? fRes.indemnities.yearsOfService.total : 0)}</td>
+                  <td class="num">${fmt(fRes ? fRes.indemnities.notice.total : 0)}</td>
+                  <td class="num">${fmt(fRes ? fRes.indemnities.vacation.total : 0)}</td>
+                  <td class="num"><strong>${fmt(fRes ? fRes.total : 0)}</strong></td>
+                </tr>
+              `).join('')}
+            </tbody>
+            <tfoot><tr><td colspan="6">Motor oficial FiniquitoCalculator · Art. ${state.finiquitoCause} CT · UF ${fmt(mesVals.uf)}</td><td class="num">${fmt(totFin)}</td></tr></tfoot>
+          </table>
+        </div>
+      `;
+
+      const sf = selFin && selFin.fRes;
+      $('v2-inspector').innerHTML = selFin ? `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head">
+            <h2 class="v2-ins-title">${selFin.w.name}</h2>
+            <span class="tag ${sf && sf.economics.isCapped ? 'tag--on' : 'tag--in'}">${sf && sf.economics.isCapped ? 'Tope 90 UF' : `Art. ${state.finiquitoCause}`}</span>
+          </div>
+          <div class="v2-ins-row">
+            <span>Causal legal</span>
+            <select id="sel-fin-cause" style="height:28px;border:1px solid var(--ink-rule);border-radius:6px;padding:0 6px;background:var(--ink-paper)">
+              <option value="161" ${state.finiquitoCause === '161' ? 'selected' : ''}>Art. 161 · Necesidades</option>
+              <option value="159" ${state.finiquitoCause === '159' ? 'selected' : ''}>Art. 159 · Renuncia / Mutuo</option>
+              <option value="160" ${state.finiquitoCause === '160' ? 'selected' : ''}>Art. 160 · Sin indemnización</option>
+            </select>
+          </div>
+          ${sf ? `
+            <dl class="v2-ins-kv">
+              <dt>Base Art. 172</dt><dd>${fmt(sf.economics.cappedSalary)}</dd>
+              <dt>Años servicio</dt><dd>${fmt(sf.indemnities.yearsOfService.total)}</dd>
+              <dt>Aviso previo</dt><dd>${fmt(sf.indemnities.notice.total)}</dd>
+              <dt>Feriado proporcional</dt><dd>${fmt(sf.indemnities.vacation.total)}</dd>
+              <dt>Rem. pendiente</dt><dd>${fmt(sf.pendingRemuneration ? sf.pendingRemuneration.total : 0)}</dd>
+              <dt>Desc. aporte AFC</dt><dd>−${fmt(sf.afc && sf.afc.applied ? sf.afc.total : 0)}</dd>
+              <dt><strong>Total a pagar</strong></dt><dd><strong>${fmt(sf.total)}</strong></dd>
+            </dl>
+          ` : ''}
+          ${c.nomina.leyBustos ? `<div class="tag tag--on" style="justify-content:center">Bloqueo Ley Bustos Art. 162 CT</div>` : ''}
+        </div>
+      ` : '';
+      return;
+    }
+
     if (state.clientSub === 'previred') {
       const prev = generarPreviredReal(c, iso);
       const lre = generarLreReal(c, iso);
@@ -1063,7 +1155,16 @@
   function renderClientBancos(c) {
     const selected = c.bankTx.find((b) => b.id === state.selectedBankId) || c.bankTx[0] || null;
     if (selected) state.selectedBankId = selected.id;
+    const conc = c.bankTx.filter((t) => t.status === 'Conciliado').length;
+    const pend = c.bankTx.length - conc;
     $('v2-canvas').innerHTML = `
+      <div class="v2-pulse-bar">
+        <span class="muted">Conciliación bancaria · Motor <code>CLImportadores</code> (${conc}/${c.bankTx.length} cuadrados)</span>
+        <label class="btn btn--sm">
+          Importar cartola CSV
+          <input type="file" accept=".csv,.txt" id="v2-csv-cartola" class="sr-only">
+        </label>
+      </div>
       <div class="v2-table-wrap">
         <table class="v2-table">
           <thead><tr><th>Fecha</th><th>Movimiento bancario</th><th class="num">Monto</th><th>Sugerencia</th><th>Estado</th></tr></thead>
@@ -1076,7 +1177,7 @@
                 <td class="muted">${tx.match}</td>
                 <td><span class="tag ${tx.status === 'Conciliado' ? 'tag--in' : 'tag--out'}">${tx.status}</span></td>
               </tr>
-            `).join('') : `<tr><td colspan="5" style="padding:24px;text-align:center" class="muted">Sin cartola cargada para ${currentPeriod().label}.</td></tr>`}
+            `).join('') : `<tr><td colspan="5" style="padding:24px;text-align:center" class="muted">Sin cartola cargada para ${currentPeriod().label}. Sube una cartola CSV arriba o pídela al cliente.</td></tr>`}
           </tbody>
         </table>
       </div>
@@ -1084,7 +1185,7 @@
     $('v2-inspector').innerHTML = selected ? `
       <div class="v2-ins-block">
         <div class="v2-ins-head"><h2 class="v2-ins-title">Conciliación asistida</h2><span class="tag ${selected.status === 'Conciliado' ? 'tag--in' : 'tag--out'}">${selected.status}</span></div>
-        <dl class="v2-ins-kv"><dt>Movimiento</dt><dd>${selected.desc}</dd><dt>Monto</dt><dd>${fmt(selected.amount)}</dd><dt>Cruce sugerido</dt><dd>${selected.match}</dd></dl>
+        <dl class="v2-ins-kv"><dt>Movimiento</dt><dd>${selected.desc}</dd><dt>Monto</dt><dd>${fmt(selected.amount)}</dd><dt>Cruce sugerido</dt><dd>${selected.match}</dd><dt>Pendientes</dt><dd>${pend}</dd></dl>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
           ${selected.status !== 'Conciliado' ? `<button type="button" class="btn btn--primary" data-match-tx="${selected.id}">Cuadrar movimiento</button>` : ''}
           <button type="button" class="btn" data-quick-ok="Micro-solicitud sin clave enviada por ${selected.desc}">Pedir respaldo al cliente</button>
@@ -1093,26 +1194,135 @@
     ` : `<div class="v2-ins-block"><h2 class="v2-ins-title">Cartola pendiente</h2><button type="button" class="btn btn--primary" data-quick-ok="Enlace sin clave enviado a ${c.name}">Pedir cartola al cliente</button></div>`;
   }
 
+  function buildAccountingReal(c) {
+    const C = window.CLContabilidad;
+    if (!C) return { asientos: [], mayor: [], bal: { filas: [], totales: {} } };
+    const iso = currentPeriod().iso;
+    const fecha = iso + '-30';
+    const asientos = [];
+    const vNeto = c.rcv.ventasNeto || 0;
+    const vIva = c.f29.debito || 0;
+    if (vNeto + vIva > 0) {
+      asientos.push(C.crearAsiento('AS-VTA', fecha, 'Centralización ventas del mes (RCV)', 'f29', [
+        { cuenta: '11050', debe: vNeto + vIva, haber: 0 },
+        { cuenta: '51010', debe: 0, haber: vNeto },
+        { cuenta: '21050', debe: 0, haber: vIva }
+      ]));
+    }
+    const cNeto = c.rcv.comprasNeto || 0;
+    const cIva = c.f29.credito || 0;
+    if (cNeto + cIva > 0) {
+      asientos.push(C.crearAsiento('AS-CMP', fecha, 'Centralización compras e insumos (RCV)', 'f29', [
+        { cuenta: '41010', debe: cNeto, haber: 0 },
+        { cuenta: '11080', debe: cIva, haber: 0 },
+        { cuenta: '21010', debe: 0, haber: cNeto + cIva }
+      ]));
+    }
+    const computed = c.workers.map((w) => calcularWorkerReal(w, iso));
+    const totImp = computed.reduce((s, x) => s + x.imponible, 0);
+    const totLiq = computed.reduce((s, x) => s + x.liquido, 0);
+    const totEmp = computed.reduce((s, x) => s + x.costoEmpleador, 0);
+    const totImpUnico = computed.reduce((s, x) => s + x.impUnico, 0);
+    const cotizTrab = Math.max(0, totImp - totLiq - totImpUnico);
+    if (totImp > 0) {
+      asientos.push(C.crearAsiento('AS-NOM', fecha, `Centralización remuneraciones (${c.workers.length} trab.)`, 'nomina', [
+        { cuenta: '42010', debe: totImp, haber: 0 },
+        { cuenta: '42015', debe: totEmp, haber: 0 },
+        { cuenta: '21030', debe: 0, haber: totLiq },
+        { cuenta: '21035', debe: 0, haber: cotizTrab + totEmp },
+        { cuenta: '21040', debe: 0, haber: totImpUnico }
+      ]));
+    }
+    if (c.f29.ppm > 0) {
+      asientos.push(C.crearAsiento('AS-PPM', fecha, 'Provisión PPM mensual F29 cód. 62', 'f29', [
+        { cuenta: '11090', debe: c.f29.ppm, haber: 0 },
+        { cuenta: '21070', debe: 0, haber: c.f29.ppm }
+      ]));
+    }
+    const valid = asientos.filter(Boolean);
+    const mayor = C.calcularMayor(valid);
+    const bal = C.calcularBalance8Columnas(mayor);
+    return { asientos: valid, mayor, bal };
+  }
+
   function renderClientContabilidad(c) {
-    const accounts = [
-      { code: '1101', name: 'Caja y Bancos', deudor: 12480000, acreedor: 0, activo: 12480000, pasivo: 0 },
-      { code: '1104', name: 'Clientes por Cobrar', deudor: 6820000, acreedor: 0, activo: 6820000, pasivo: 0 },
-      { code: '2101', name: 'Proveedores Nacionales', deudor: 0, acreedor: 4910000, activo: 0, pasivo: 4910000 },
-      { code: '2105', name: 'IVA Débito / Impuestos por Pagar', deudor: 0, acreedor: f29Total(c), activo: 0, pasivo: f29Total(c) },
-      { code: '4101', name: 'Ingresos del Giro', deudor: 0, acreedor: c.rcv.ventasNeto, activo: 0, pasivo: 0 },
-      { code: '5101', name: 'Costos y Remuneraciones', deudor: c.rcv.comprasNeto, acreedor: 0, activo: 0, pasivo: 0 }
-    ];
-    $('v2-canvas').innerHTML = `
-      <div class="v2-table-wrap">
-        <table class="v2-table">
-          <thead><tr><th style="width:76px">Cuenta</th><th>Nombre cuenta</th><th class="num">Saldo Deudor</th><th class="num">Saldo Acreedor</th><th class="num">Activo</th><th class="num">Pasivo</th></tr></thead>
-          <tbody>
-            ${accounts.map((a) => `<tr><td class="mono">${a.code}</td><td><strong>${a.name}</strong></td><td class="num">${fmt(a.deudor)}</td><td class="num">${fmt(a.acreedor)}</td><td class="num">${fmt(a.activo)}</td><td class="num">${fmt(a.pasivo)}</td></tr>`).join('')}
-          </tbody>
-        </table>
+    const { asientos, bal } = buildAccountingReal(c);
+    const t = bal.totales || {};
+    const cuadra = t.debito === t.credito;
+
+    if (state.clientSub === 'diario') {
+      $('v2-canvas').innerHTML = `
+        <div class="v2-table-wrap">
+          <table class="v2-table">
+            <thead><tr><th>Asiento</th><th>Fecha</th><th>Cuenta y glosa</th><th class="num">Debe</th><th class="num">Haber</th></tr></thead>
+            <tbody>
+              ${asientos.flatMap((a) => a.lineas.map((l, idx) => `
+                <tr>
+                  <td class="mono">${idx === 0 ? a.id : ''}</td>
+                  <td class="mono">${idx === 0 ? a.fecha : ''}</td>
+                  <td><span class="mono muted">${l.cuenta}</span> ${idx === 0 ? `<strong>${a.glosa}</strong>` : (window.CLContabilidad ? window.CLContabilidad.cuentaInfo(l.cuenta).nombre : '')}</td>
+                  <td class="num">${l.debe ? fmt(l.debe) : '—'}</td>
+                  <td class="num">${l.haber ? fmt(l.haber) : '—'}</td>
+                </tr>
+              `)).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else {
+      $('v2-canvas').innerHTML = `
+        <div class="v2-tape">
+          <div class="v2-tape-cell"><span class="v2-tape-label">Total Débitos</span><span class="v2-tape-val">${fmt(t.debito)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Total Créditos</span><span class="v2-tape-val">${fmt(t.credito)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Resultado período</span><span class="v2-tape-val is-in">${fmt((t.ganancia || 0) - (t.perdida || 0))}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Partida doble</span><span class="v2-tape-val">${cuadra ? 'Cuadrado' : 'Revisar'}</span></div>
+        </div>
+        <div class="v2-table-wrap">
+          <table class="v2-table">
+            <thead>
+              <tr><th style="width:66px">Cta.</th><th>Nombre cuenta</th><th class="num">Deudor</th><th class="num">Acreedor</th><th class="num">Activo</th><th class="num">Pasivo</th><th class="num">Pérdida</th><th class="num">Ganancia</th></tr>
+            </thead>
+            <tbody>
+              ${(bal.filas || []).map((f) => `
+                <tr>
+                  <td class="mono">${f.codigo}</td>
+                  <td><strong>${f.nombre}</strong></td>
+                  <td class="num">${f.deudor ? fmt(f.deudor) : '—'}</td>
+                  <td class="num">${f.acreedor ? fmt(f.acreedor) : '—'}</td>
+                  <td class="num">${f.activo ? fmt(f.activo) : '—'}</td>
+                  <td class="num">${f.pasivo ? fmt(f.pasivo) : '—'}</td>
+                  <td class="num">${f.perdida ? fmt(f.perdida) : '—'}</td>
+                  <td class="num">${f.ganancia ? fmt(f.ganancia) : '—'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2">Motor oficial CLContabilidad · ${asientos.length} asientos</td>
+                <td class="num">${fmt(t.deudor)}</td>
+                <td class="num">${fmt(t.acreedor)}</td>
+                <td class="num">${fmt(t.activo)}</td>
+                <td class="num">${fmt(t.pasivo)}</td>
+                <td class="num">${fmt(t.perdida)}</td>
+                <td class="num">${fmt(t.ganancia)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      `;
+    }
+    $('v2-inspector').innerHTML = `
+      <div class="v2-ins-block">
+        <div class="v2-ins-head"><h2 class="v2-ins-title">Salud contable · ${c.regime}</h2><span class="tag ${cuadra ? 'tag--in' : 'tag--on'}">${cuadra ? 'Debe = Haber' : 'Descuadre'}</span></div>
+        <dl class="v2-ins-kv">
+          <dt>Asientos centralizados</dt><dd>${asientos.length}</dd>
+          <dt>Cuentas con movimiento</dt><dd>${(bal.filas || []).length}</dd>
+          <dt>Total Activo</dt><dd>${fmt(t.activo)}</dd>
+          <dt>Total Pasivo</dt><dd>${fmt(t.pasivo)}</dd>
+          <dt>Utilidad / Pérdida</dt><dd>${fmt((t.ganancia || 0) - (t.perdida || 0))}</dd>
+        </dl>
       </div>
     `;
-    $('v2-inspector').innerHTML = `<div class="v2-ins-block"><h2 class="v2-ins-title">Salud contable · ${c.regime}</h2><dl class="v2-ins-kv"><dt>Asientos del mes</dt><dd>142</dd><dt>Cuadre Debe = Haber</dt><dd>OK</dd><dt>Estado período</dt><dd>${c.cierre}</dd></dl></div>`;
   }
 
   function renderClientResumen(c) {
@@ -1291,7 +1501,32 @@
       }
       if (state.level === 'client' && state.clientArea === 'remuneraciones') {
         if (state.clientSub === 'previred') triggerLreDownload(getClient());
+        else if (state.clientSub === 'finiquitos') {
+          const c = getClient();
+          const csv = 'RUT;Trabajador;Causal\n' + c.workers.map((w) => `${w.rut};${w.name};Art.${state.finiquitoCause}`).join('\n');
+          downloadFile(csv, `finiquitos_${c.id}_${currentPeriod().iso}.csv`, 'text/csv;charset=utf-8');
+          toast('Lote de finiquitos exportado a CSV');
+        }
         else triggerPreviredDownload(getClient());
+        return;
+      }
+      if (state.level === 'client' && state.clientArea === 'bancos') {
+        const c = getClient();
+        let n = 0;
+        c.bankTx.forEach((tx) => { if (tx.status !== 'Conciliado') { tx.status = 'Conciliado'; n++; } });
+        c.bancos.matched = c.bancos.total || c.bankTx.length;
+        c.bancos.state = 'ok';
+        c.bancos.label = '100% match';
+        toast(n ? `${n} movimientos auto-conciliados` : 'Cartola ya está 100% cuadrada');
+        render(); return;
+      }
+      if (state.level === 'client' && state.clientArea === 'contabilidad') {
+        const c = getClient();
+        const { bal } = buildAccountingReal(c);
+        const csv = 'Codigo;Cuenta;Deudor;Acreedor;Activo;Pasivo;Perdida;Ganancia\n' +
+          (bal.filas || []).map((f) => `${f.codigo};${f.nombre};${f.deudor};${f.acreedor};${f.activo};${f.pasivo};${f.perdida};${f.ganancia}`).join('\n');
+        downloadFile(csv, `balance_8col_${c.id}_${currentPeriod().iso}.csv`, 'text/csv;charset=utf-8');
+        toast('Balance 8 Columnas exportado a CSV');
         return;
       }
       toast(`${t.textContent} ejecutado`);
@@ -1352,6 +1587,31 @@
 
   document.addEventListener('change', (e) => {
     if (e.target.id === 'chk-postergar') { getClient().f29.postergar = e.target.checked; render(); return; }
+    if (e.target.id === 'sel-fin-cause') { state.finiquitoCause = e.target.value; render(); return; }
+    if (e.target.id === 'v2-csv-cartola') {
+      const file = e.target.files && e.target.files[0];
+      if (!file || !window.CLImportadores) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const parsed = window.CLImportadores.parsearCartola(String(reader.result), { periodo: currentPeriod().iso });
+        if (!parsed || !parsed.ok) { toast(parsed?.error || 'No pudimos leer la cartola'); return; }
+        const c = getClient();
+        c.bankTx = parsed.movimientos.map((m, i) => ({
+          id: 'imp-' + i,
+          date: m.fecha || '',
+          desc: m.glosa || 'Movimiento',
+          amount: (m.abono || 0) - (m.cargo || 0),
+          status: 'Por conciliar',
+          match: 'Sugerencia automática'
+        }));
+        c.bancos.total = c.bankTx.length;
+        c.bancos.matched = 0;
+        toast(`Cartola importada: ${c.bankTx.length} movimientos`);
+        render();
+      };
+      reader.readAsText(file, 'ISO-8859-1');
+      return;
+    }
     if (e.target.id === 'v2-csv-ventas' || e.target.id === 'v2-csv-compras') {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -1401,7 +1661,10 @@
 
   if (location.hash === '#cliente-f29') enterClient('san-isidro', 'impuestos', 'f29');
   else if (location.hash === '#cliente-nomina') enterClient('san-isidro', 'remuneraciones', 'nomina');
+  else if (location.hash === '#cliente-finiquitos') enterClient('san-isidro', 'remuneraciones', 'finiquitos');
   else if (location.hash === '#cliente-previred') enterClient('san-isidro', 'remuneraciones', 'previred');
+  else if (location.hash === '#cliente-bancos') enterClient('san-isidro', 'bancos', 'match');
+  else if (location.hash === '#cliente-contabilidad') enterClient('san-isidro', 'contabilidad', 'balance');
   else if (location.hash === '#olas') enterStudio('olas');
   else render();
 })();
