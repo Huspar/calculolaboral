@@ -171,4 +171,218 @@
     #suite-buzon .furrow-sal-acciones .btn {
         min-height: 44px;
     }
+    /* Fix Fase 1: tira demo de Buzón compacta en móvil (flex-basis vertical en columna) */
+    #suite-buzon .buzon-demo-strip {
+        height: auto !important;
+        min-height: 0 !important;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+    }
+    #suite-buzon .buzon-demo-txt {
+        flex: 0 0 auto !important;
+        height: auto !important;
+    }
+    #suite-buzon .buzon-demo-acciones {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}
+
+/* ---------- Fase 2: Nómina (#suite-remuneraciones) e Impuestos F29 (#suite-f29) ---------- */
+#pm-panel.syn-theme .furrow-radio-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    border: 0 !important;
+    border-bottom: 1px solid var(--f-rule) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin-bottom: 14px;
+    box-shadow: none !important;
+}
+#pm-panel.syn-theme .furrow-radio-tabs label {
+    position: relative;
+    cursor: pointer;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    min-height: 0 !important;
+}
+#pm-panel.syn-theme .furrow-radio-tabs label:has(input[type="radio"]:checked) {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+#pm-panel.syn-theme .furrow-radio-tabs input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+#pm-panel.syn-theme .furrow-radio-tabs label > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--f-muted);
+    border: 0 !important;
+    border-bottom: 2px solid transparent !important;
+    margin-bottom: -1px;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    min-height: 40px;
+}
+#pm-panel.syn-theme .furrow-radio-tabs label:hover > span {
+    color: var(--f-ink);
+}
+#pm-panel.syn-theme .furrow-radio-tabs input[type="radio"]:checked + span {
+    color: var(--f-ink) !important;
+    font-weight: 600;
+    border-bottom-color: var(--f-ink) !important;
+}
+#pm-panel.syn-theme .furrow-radio-tabs input[type="radio"]:focus-visible + span {
+    outline: 2px solid var(--f-accent);
+    outline-offset: -2px;
+}
+
+/* Tira contable reglada para KPIs de Nómina (Finiquitos y Liquidaciones) */
+#pm-panel.syn-theme #suite-remuneraciones .fin-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 !important;
+    background: var(--f-paper-2);
+    border: 1px solid var(--f-rule);
+    border-top: 1px solid var(--f-ink);
+    border-radius: var(--f-radius-ctrl);
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+#pm-panel.syn-theme #suite-remuneraciones .fin-kpi {
+    border: 0 !important;
+    border-right: 1px solid var(--f-rule) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 12px 16px !important;
+    min-width: 0;
+}
+#pm-panel.syn-theme #suite-remuneraciones .fin-kpi:last-child {
+    border-right: 0 !important;
+}
+#pm-panel.syn-theme #suite-remuneraciones .fin-kpi-val {
+    font-size: clamp(18px, 1.8vw, 22px) !important;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+}
+
+/* F29: barra de estado (Borrador / Folio / Fecha) en una sola fila en escritorio */
+@media screen and (min-width: 900px) {
+    #pm-panel.syn-theme #suite-f29 .f29-estado-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 8px;
+    }
+    #pm-panel.syn-theme #suite-f29 .f29-estado-bar select {
+        width: auto;
+        min-width: 130px;
+    }
+    #pm-panel.syn-theme #suite-f29 .f29-estado-bar input[type="text"] {
+        width: 120px;
+    }
+    #pm-panel.syn-theme #suite-f29 .f29-estado-bar input[type="date"] {
+        width: 145px;
+    }
+}
+@media screen and (max-width: 768px) {
+    #pm-panel.syn-theme #suite-remuneraciones .fin-kpis {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+    #pm-panel.syn-theme #suite-remuneraciones .fin-kpi {
+        border-right: 0 !important;
+        border-bottom: 1px solid var(--f-rule) !important;
+    }
+    #pm-panel.syn-theme #suite-remuneraciones .fin-kpi:last-child {
+        border-bottom: 0 !important;
+    }
+}
+
+/* Tira horizontal compacta de PreviRed (Nómina) y SII+TGR (F29) */
+.furrow-status-strip {
+    background: var(--f-paper-2);
+    border: 1px solid var(--f-rule);
+    border-radius: var(--f-radius-ctrl);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+}
+.furrow-status-strip-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    flex-wrap: wrap;
+}
+.furrow-status-strip-izq,
+.furrow-status-strip-der {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.furrow-conn-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+    flex-wrap: wrap;
+    background: var(--f-paper-2);
+    border: 1px solid var(--f-rule);
+    border-radius: var(--f-radius-ctrl);
+    padding: 10px 14px;
+    margin-bottom: 12px;
+}
+.furrow-conn-item {
+    display: flex;
+    align-items: center;
+    gap: 8px 10px;
+    flex-wrap: wrap;
+}
+.furrow-f29-charts-toggle {
+    margin-top: 0 !important;
+    margin-bottom: 14px;
+    background: var(--f-paper-2);
+    border: 1px solid var(--f-rule);
+    border-radius: var(--f-radius-ctrl);
+}
+.furrow-f29-charts-toggle > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--f-ink-2);
+    min-height: 40px;
+}
+.furrow-f29-charts-toggle > summary::-webkit-details-marker {
+    display: none;
+}
+.furrow-f29-charts-toggle .furrow-disclosure-body {
+    padding: 12px 14px 14px;
+    border-top: 1px solid var(--f-rule);
 }

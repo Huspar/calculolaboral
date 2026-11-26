@@ -487,47 +487,38 @@
       <section class="vista" id="suite-remuneraciones" hidden>
         <div class="v-head">
           <div>
-            <h1 class="v-titulo">Remuneraciones y Nómina</h1>
-            <p class="v-sub">Liquidaciones de sueldo, finiquitos en lote, archivo Previred y centralización de leyes sociales.</p>
-          </div>
-          <div class="v-acciones">
-            <div class="segmento" aria-label="Tipo de documento laboral">
-              <label><input type="radio" name="modo" value="trabajadores"><span>Trabajadores</span></label>
-              <label><input type="radio" name="modo" value="liquidaciones" checked><span>Liquidaciones</span></label>
-              <label><input type="radio" name="modo" value="finiquitos"><span>Finiquitos</span></label>
-              <label><input type="radio" name="modo" value="bandeja-lre"><span>Bandeja LRE (Mi DT) <em class="lre-tab-badge" id="lre-tab-badge" hidden>0</em></span></label>
-            </div>
+            <h1 class="v-titulo">Nómina y Remuneraciones</h1>
+            <p class="v-sub">Liquidaciones de sueldo, finiquitos en lote, Previred (105 campos) y Libro LRE.</p>
           </div>
         </div>
 
-        <section class="panel rem-previred-card" id="rem-previred-card" aria-labelledby="rem-previred-titulo" style="margin-bottom:14px">
-          <div class="rem-previred-cabeza">
-            <div class="rem-previred-info">
-              <div class="rem-previred-titulo-fila">
-                <h2 id="rem-previred-titulo" class="rem-previred-h2">Estado PreviRed sincronizado</h2>
-                <span class="sello sello-guardada" id="rem-previred-sello">
-                  <span class="material-icons" aria-hidden="true">cloud_off</span>
-                  <span id="rem-previred-sello-txt">Sin consultar</span>
-                </span>
-              </div>
-              <p class="texto-ayuda" id="rem-previred-meta">Conecta la clave PreviRed de la empresa para verificar cotizaciones declaradas y pagadas.</p>
+        <!-- Sub-navegación unificada underline (preserva radios name="modo" para JS) -->
+        <div class="segmento furrow-radio-tabs" aria-label="Tipo de documento laboral">
+          <label><input type="radio" name="modo" value="trabajadores"><span>Trabajadores</span></label>
+          <label><input type="radio" name="modo" value="liquidaciones" checked><span>Liquidaciones</span></label>
+          <label><input type="radio" name="modo" value="finiquitos"><span>Finiquitos</span></label>
+          <label><input type="radio" name="modo" value="bandeja-lre"><span>Bandeja LRE (Mi DT) <em class="lre-tab-badge" id="lre-tab-badge" hidden>0</em></span></label>
+        </div>
+
+        <!-- Tira compacta de estado PreviRed (1 línea limpia) -->
+        <section class="furrow-status-strip rem-previred-card" id="rem-previred-card" aria-labelledby="rem-previred-titulo">
+          <div class="furrow-status-strip-main">
+            <div class="furrow-status-strip-izq">
+              <strong id="rem-previred-titulo">PreviRed</strong>
+              <span class="sello sello-guardada" id="rem-previred-sello">
+                <span class="material-icons" aria-hidden="true">cloud_off</span>
+                <span id="rem-previred-sello-txt">Sin consultar</span>
+              </span>
+              <span class="texto-ayuda" id="rem-previred-meta">Conecta tu clave para verificar cotizaciones declaradas y pagadas.</span>
             </div>
-            <div class="rem-previred-cifras">
-              <div class="rem-previred-dato">
-                <span class="f29-tgr-lbl">Deuda estimada</span>
-                <strong class="mono" id="rem-previred-deuda">$0</strong>
-              </div>
-              <div class="rem-previred-dato">
-                <span class="f29-tgr-lbl">Período consultado</span>
-                <strong class="mono" id="rem-previred-periodo">Sin sync</strong>
-              </div>
-            </div>
-            <div class="rem-previred-acciones">
+            <div class="furrow-status-strip-der">
+              <span class="texto-ayuda">Deuda: <strong class="mono" id="rem-previred-deuda">$0</strong></span>
+              <span class="texto-ayuda">Período: <strong class="mono" id="rem-previred-periodo">Sin sync</strong></span>
               <button type="button" class="btn btn-chico" id="btn-rem-previred-cred">
-                <span class="material-icons" aria-hidden="true">vpn_key</span><span>Clave PreviRed</span>
+                <span class="material-icons" aria-hidden="true">vpn_key</span><span>Clave</span>
               </button>
               <button type="button" class="btn btn-chico btn-primario" id="btn-rem-previred-sync">
-                <span class="material-icons" aria-hidden="true">sync</span><span>Consultar PreviRed</span>
+                <span class="material-icons" aria-hidden="true">sync</span><span>Consultar</span>
               </button>
             </div>
           </div>
@@ -929,88 +920,77 @@
         </div>
 
         <div id="f29-panel-hoja" data-f29-panel="hoja">
+        <!-- Tira contable horizontal F29 (sin 4 cajas flotantes) -->
         <div id="f29-resumen-superior" class="f29-resumen-superior">
-          <div class="fin-kpis fin-kpis-4" style="margin-bottom:12px">
-            <div class="fin-kpi" id="f29-kpi-card-debito">
-              <span class="fin-kpi-label">Total débito fiscal (cód. 538)</span>
+          <div class="furrow-ledger-strip" role="region" aria-label="Resumen Formulario 29">
+            <div class="furrow-ledger-cell" id="f29-kpi-card-debito">
+              <span class="fin-kpi-label">Débito fiscal (cód. 538)</span>
               <span class="fin-kpi-val mono" id="f29-k-debito">$0</span>
               <span class="fin-kpi-meta" id="f29-k-debito-meta">Sube el RCV de ventas</span>
             </div>
-            <div class="fin-kpi" id="f29-kpi-card-credito">
-              <span class="fin-kpi-label">Total crédito fiscal (cód. 537)</span>
+            <div class="furrow-ledger-cell" id="f29-kpi-card-credito">
+              <span class="fin-kpi-label">Crédito fiscal (cód. 537)</span>
               <span class="fin-kpi-val mono" id="f29-k-credito">$0</span>
               <span class="fin-kpi-meta" id="f29-k-credito-meta">Sube el RCV de compras</span>
             </div>
-            <div class="fin-kpi" id="f29-kpi-card-iva">
+            <div class="furrow-ledger-cell" id="f29-kpi-card-iva">
               <span class="fin-kpi-label" id="f29-k-iva-lbl">IVA determinado (cód. 89)</span>
               <span class="fin-kpi-val mono" id="f29-k-iva">$0</span>
               <span class="fin-kpi-meta" id="f29-k-iva-meta">Débito menos crédito</span>
             </div>
-            <div class="fin-kpi fin-kpi-destacado" id="f29-kpi-card-total">
-              <span class="fin-kpi-label">Total a pagar en F29 (cód. 91)</span>
+            <div class="furrow-ledger-cell" id="f29-kpi-card-total">
+              <span class="fin-kpi-label">Total a pagar F29 (cód. 91)</span>
               <span class="fin-kpi-val mono ok" id="f29-k-total">$0</span>
-              <span class="fin-kpi-meta" id="f29-k-total-meta">Carga RCV o ejemplo para calcular</span>
-            </div>
-          </div>
-          <div class="f29-graficos-grid" id="f29-graficos-grid" hidden>
-            <div class="suite-graf-card" id="f29-grafico-resumen" aria-label="Comparación visual Débito, Crédito, Retenciones y Total F29"></div>
-            <div class="suite-graf-card" id="f29-grafico-anual" aria-label="Evolución 12 meses de Débito, Crédito y F29 a pagar"></div>
-          </div>
-        </div>
-
-        <div class="f29-conexiones-grid">
-          <div class="panel f29-sii-panel f29-sii-compacto" id="f29-sii-bloque">
-            <div class="f29-sii-cabeza">
-              <div class="f29-sii-info">
-                <div>
-                  <span class="sello sello-guardada" id="f29-sii-sello">
-                    <span class="material-icons" aria-hidden="true">folder_open</span>Modo CSV local
-                  </span>
-                </div>
-                <p class="f29-sii-meta" id="f29-sii-meta">Operando con CSV manuales desde sii.cl o vinculación automática.</p>
-              </div>
-              <div class="f29-sii-acciones">
-                <button type="button" class="btn btn-primario btn-chico" id="btn-f29-sii-sync" hidden>
-                  <span class="material-icons" aria-hidden="true">sync</span>Sincronizar RCV y F29
-                </button>
-                <button type="button" class="btn btn-chico" id="btn-f29-sii-credenciales">
-                  <span class="material-icons" aria-hidden="true">link</span><span id="btn-f29-sii-cred-txt">Conectar al SII</span>
-                </button>
-              </div>
-            </div>
-            <div class="f29-sii-progreso" id="f29-sii-progreso" hidden role="status" aria-live="polite">
-              <span class="sii-spin material-icons" aria-hidden="true">sync</span>
-              <span id="f29-sii-progreso-txt">Consultando RCV y F29 en el SII...</span>
+              <span class="fin-kpi-meta" id="f29-k-total-meta">Carga RCV o ejemplo</span>
             </div>
           </div>
 
-          <div class="panel f29-tgr-panel f29-tgr-compacto" id="f29-tgr-bloque">
-            <div class="f29-tgr-cabeza">
-              <div class="f29-tgr-izq">
-                <span class="sello sello-guardada" id="f29-tgr-sello">
-                  <span class="material-icons" aria-hidden="true">account_balance</span>
-                  <span id="f29-tgr-sello-txt">TGR: Sin consultar</span>
-                </span>
-                <span class="f29-tgr-periodo mono" id="f29-tgr-periodo">Período 2026-11</span>
-                <span class="texto-ayuda" id="f29-tgr-meta">Deudas o convenios en Tesorería.</span>
-              </div>
-              <div class="f29-tgr-cifras" id="f29-tgr-cifras">
-                <div class="f29-tgr-dato">
-                  <span class="f29-tgr-lbl">Adeudado TGR</span>
-                  <strong class="mono" id="f29-tgr-total">$0</strong>
-                </div>
-                <div class="f29-tgr-dato">
-                  <span class="f29-tgr-lbl">Multas</span>
-                  <strong class="mono" id="f29-tgr-multas">$0</strong>
-                </div>
-              </div>
-              <div class="f29-tgr-acciones">
-                <button type="button" class="btn btn-chico" id="btn-f29-tgr-sync">
-                  <span class="material-icons" aria-hidden="true">sync</span><span>Actualizar TGR</span>
-                </button>
+          <!-- Tira delgada de conexiones SII + TGR (sin empujar la Hoja F29 hacia abajo) -->
+          <div class="furrow-conn-strip">
+            <div class="furrow-conn-item" id="f29-sii-bloque">
+              <span class="sello sello-guardada" id="f29-sii-sello">
+                <span class="material-icons" aria-hidden="true">folder_open</span>Modo CSV local
+              </span>
+              <span class="texto-ayuda" id="f29-sii-meta">CSV manuales o enlace SII.</span>
+              <button type="button" class="btn btn-primario btn-chico" id="btn-f29-sii-sync" hidden>
+                <span class="material-icons" aria-hidden="true">sync</span>Sincronizar
+              </button>
+              <button type="button" class="btn btn-chico" id="btn-f29-sii-credenciales">
+                <span class="material-icons" aria-hidden="true">link</span><span id="btn-f29-sii-cred-txt">Conectar SII</span>
+              </button>
+              <div class="f29-sii-progreso" id="f29-sii-progreso" hidden role="status" aria-live="polite">
+                <span class="sii-spin material-icons" aria-hidden="true">sync</span>
+                <span id="f29-sii-progreso-txt">Consultando SII...</span>
               </div>
             </div>
+
+            <div class="furrow-conn-item" id="f29-tgr-bloque">
+              <span class="sello sello-guardada" id="f29-tgr-sello">
+                <span class="material-icons" aria-hidden="true">account_balance</span>
+                <span id="f29-tgr-sello-txt">TGR: Sin consultar</span>
+              </span>
+              <span class="texto-ayuda mono" id="f29-tgr-periodo" hidden>2026-11</span>
+              <span class="texto-ayuda" id="f29-tgr-meta" hidden>Deudas en Tesorería.</span>
+              <span class="texto-ayuda" id="f29-tgr-cifras">Deuda: <strong class="mono" id="f29-tgr-total">$0</strong> · Multas: <strong class="mono" id="f29-tgr-multas">$0</strong></span>
+              <button type="button" class="btn btn-chico" id="btn-f29-tgr-sync">
+                <span class="material-icons" aria-hidden="true">sync</span><span>TGR</span>
+              </button>
+            </div>
           </div>
+
+          <!-- Gráficos F29 colapsables para que la Hoja F29 sea visible arriba del pliegue -->
+          <details class="furrow-disclosure furrow-f29-charts-toggle" id="f29-graficos-details">
+            <summary>
+              <span>Ver gráfico comparativo y evolución anual F29</span>
+              <span class="material-icons" aria-hidden="true">expand_more</span>
+            </summary>
+            <div class="furrow-disclosure-body">
+              <div class="f29-graficos-grid" id="f29-graficos-grid" hidden>
+                <div class="suite-graf-card" id="f29-grafico-resumen" aria-label="Comparación visual Débito, Crédito, Retenciones y Total F29"></div>
+                <div class="suite-graf-card" id="f29-grafico-anual" aria-label="Evolución 12 meses de Débito, Crédito y F29 a pagar"></div>
+              </div>
+            </div>
+          </details>
         </div>
         </div>
 
