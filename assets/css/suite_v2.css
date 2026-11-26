@@ -936,6 +936,46 @@ a:hover { text-decoration-color: var(--ink-accent); }
 }
 .v2-ins-check input { margin-top: 2px; flex-shrink: 0; }
 
+
+/* ---------- F29 WORKFLOW & PERIOD CLOSE ---------- */
+.v2-step-rail {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}
+.v2-step-chip {
+  padding: 5px 4px;
+  border: 1px solid var(--ink-rule);
+  border-radius: 6px;
+  background: var(--ink-paper);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.v2-step-chip.is-done {
+  border-color: var(--ink-accent);
+  background: var(--ink-accent-soft);
+  color: var(--ink-accent);
+}
+.v2-reopen-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--ink-rule);
+  border-radius: var(--radius-ctrl);
+  background: var(--ink-paper);
+}
+.v2-inline-input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  background: var(--ink-paper-2);
+}
+
 @media (max-width: 1080px) {
   .v2-workbench { grid-template-columns: minmax(0, 1fr); }
   .v2-inspector { border-left: 0; border-top: 1px solid var(--ink); }

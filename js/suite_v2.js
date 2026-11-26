@@ -357,6 +357,8 @@
     selectedBankId: null,
     selectedF29Code: '538',
     selectedRcvId: null,
+    reopenPromptOpen: false,
+    reopenError: '',
     bankRules: {},
     supplierRules: {},
     finiquitoCause: '161',
@@ -435,7 +437,15 @@
     if (bd) bd.hidden = !open;
   }
   function f29StateLabel(st) {
-    return st === 'declarado' ? 'Declarado' : st === 'listo' ? 'Listo para declarar' : 'En revisión';
+    if (st === 'pagado') return 'Pagado';
+    if (st === 'declarado') return 'Declarado';
+    if (st === 'contabilizado') return 'Contabilizado';
+    if (st === 'listo') return 'Listo para declarar';
+    return 'En revisión';
+  }
+  function isPeriodClosed(c) {
+    if (typeof c.periodClosed === 'boolean') return c.periodClosed;
+    return c.f29.state === 'declarado' || c.f29.state === 'pagado';
   }
 
   /* ==================== SIDEBAR + TOPBAR ==================== */
@@ -548,7 +558,7 @@
         resumen: { title: 'Resumen', cta: 'Emitir Paquete PDF', tabs: [{ id: 'estado', label: 'Cierre del mes' }] },
         impuestos: {
           title: 'Impuestos',
-          cta: c.f29.state === 'declarado' ? 'Descargar resumen F29' : 'Declarar F29',
+          cta: c.f29.state === 'pagado' ? 'Descargar resumen F29' : c.f29.state === 'declarado' ? 'Registrar pago TGR' : c.f29.state === 'contabilizado' ? 'Declarar F29' : 'Contabilizar F29',
           tabs: [
             { id: 'f29', label: 'Hoja F29' },
             { id: 'rcv', label: 'Compras y Acuses' },
@@ -1166,10 +1176,10 @@
     const sel = docs.find((d) => d.id === state.selectedRcvId) || docs[0];
     if (!sel) return '';
     state.selectedRcvId = sel.id;
-    const isClosedPeriod = c.f29.state === 'declarado' || sel.closed;
+    const isClosedPeriod = isPeriodClosed(c) || sel.closed;
     const ruleKey = `${c.id}::${sel.rut}`;
     const savedRule = state.supplierRules[ruleKey];
-    const sameOpen = docs.filter((d) => d.rut === sel.rut && !d.closed && c.f29.state !== 'declarado');
+    const sameOpen = docs.filter((d) => d.rut === sel.rut && !d.closed && !isPeriodClosed(c));
     const othersCount = Math.max(0, sameOpen.length - 1);
 
     return `
@@ -1258,8 +1268,8 @@
           <div class="v2-tape-cell"><span class="v2-tape-label">Total F29 (091)</span><span class="v2-tape-val is-in" data-f29-tape="total">${fmt(total)}</span></div>
         </div>
         <div class="v2-f29-hint">
-          <span>Haz clic en cualquier código del F29 para ver en el Inspector los documentos exactos que lo componen.</span>
-          <span class="mono">Régimen ${c.regime}</span>
+          <span>${isPeriodClosed(c) ? 'Período cerrado (solo lectura). Usa «Reabrir mes» en el Inspector dejando motivo si necesitas ajustar.' : 'Haz clic en cualquier código del F29 para ver en el Inspector los documentos exactos que lo componen.'}</span>
+          <span class="mono">${isPeriodClosed(c) ? 'Cerrado · ' : ''}Régimen ${c.regime}</span>
         </div>
         <div class="v2-table-wrap">
           <table class="v2-table">
@@ -1271,7 +1281,7 @@
                   <td>${l.glosa}</td>
                   <td class="num">
                     ${l.editable
-                      ? `<input type="number" class="v2-inline-input" data-f29-field="${l.field}" data-f29-code="${l.code}" value="${l.val}" aria-label="Código ${l.code}">`
+                      ? `<input type="number" class="v2-inline-input" data-f29-field="${l.field}" data-f29-code="${l.code}" value="${l.val}" aria-label="Código ${l.code}"${isPeriodClosed(c) ? ' disabled' : ''}>`
                       : `<span class="mono" data-f29-code-val="${l.code}">${fmt(l.val)}</span>`}
                   </td>
                 </tr>
@@ -1352,16 +1362,53 @@
         </div>
       </div>
 
-      <div class="v2-ins-block v2-ins-block--soft">
+      <div class="v2-ins-block v2-ins-block--soft" id="v2-f29-workflow-block">
         <div class="v2-ins-head">
-          <h2 class="v2-ins-title">Conexión SII y TGR</h2>
-          <span class="tag tag--in">F29 vigente SII</span>
+          <h2 class="v2-ins-title">Flujo F29 y cierre mensual</h2>
+          <span class="tag ${isPeriodClosed(c) ? 'tag--in' : 'tag--out'}">${isPeriodClosed(c) ? 'Mes cerrado' : 'Mes abierto'}</span>
         </div>
-        <dl class="v2-ins-kv">
-          <dt>Estado F29</dt><dd>${f29StateLabel(c.f29.state)}</dd>
-          <dt>Folio SII</dt><dd>${c.f29.folio || 'Sin declarar'}</dd>
-          <dt>Deuda TGR</dt><dd>$0</dd>
-        </dl>
+        ${(() => {
+          const closed = isPeriodClosed(c);
+          const isContab = !!c.f29.contabilizado || c.f29.state === 'contabilizado' || c.f29.state === 'declarado' || c.f29.state === 'pagado';
+          const isDecl = c.f29.state === 'declarado' || c.f29.state === 'pagado';
+          const isPag = c.f29.state === 'pagado';
+          const lastReopen = Array.isArray(c.f29.reopenLog) && c.f29.reopenLog.length ? c.f29.reopenLog[c.f29.reopenLog.length - 1] : null;
+          return `
+            <div class="v2-step-rail" aria-label="Etapas F29">
+              <span class="v2-step-chip ${isContab ? 'is-done' : ''}">1. Contab.</span>
+              <span class="v2-step-chip ${isDecl ? 'is-done' : ''}">2. Decl.</span>
+              <span class="v2-step-chip ${isPag ? 'is-done' : ''}">3. Pagado</span>
+              <span class="v2-step-chip ${closed ? 'is-done' : ''}">4. Cierre</span>
+            </div>
+            <dl class="v2-ins-kv">
+              <dt>Estado F29</dt><dd>${f29StateLabel(c.f29.state)}</dd>
+              <dt>Folio SII</dt><dd>${c.f29.folio || 'Sin declarar'}</dd>
+              <dt>Pago TGR</dt><dd>${isPag ? (c.f29.paidDate || 'Registrado') : 'Pendiente'}</dd>
+            </dl>
+            ${lastReopen ? `<div class="v2-ins-note">Última reapertura (${lastReopen.at}): «${lastReopen.reason}»</div>` : ''}
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:2px">
+              ${!isContab ? `<button type="button" class="btn btn--primary btn--sm" data-f29-step="contabilizar">1. Contabilizar IVA y PPM</button>` : ''}
+              ${isContab && !isDecl ? `
+                <input type="text" id="inp-f29-folio" class="v2-ins-select mono" placeholder="Folio SII (ej. 84920311)" value="${c.f29.folio || ''}" aria-label="Folio SII F29">
+                <button type="button" class="btn btn--primary btn--sm" data-f29-step="declarar">2. Marcar declarado (SII)</button>
+              ` : ''}
+              ${isDecl && !isPag ? `<button type="button" class="btn btn--primary btn--sm" data-f29-step="pagar">3. Registrar pago TGR</button>` : ''}
+              ${!closed ? `<button type="button" class="btn btn--sm" data-f29-step="cerrar">Cerrar mes</button>` : ''}
+              ${closed && !state.reopenPromptOpen ? `<button type="button" class="btn btn--sm" data-f29-step="reopen-prompt">Reabrir mes (requiere motivo)</button>` : ''}
+              ${closed && state.reopenPromptOpen ? `
+                <div class="v2-reopen-box">
+                  <label for="inp-reopen-reason" class="muted" style="font-size:11.5px">Motivo obligatorio para auditar la reapertura</label>
+                  <input type="text" id="inp-reopen-reason" class="v2-ins-select" placeholder="Ej. Nota de crédito recibida fuera de plazo">
+                  ${state.reopenError ? `<div style="font-size:11.5px;color:var(--ink-danger)">${state.reopenError}</div>` : ''}
+                  <div style="display:flex;gap:6px">
+                    <button type="button" class="btn btn--primary btn--sm" style="flex:1" data-f29-step="reopen-confirm">Confirmar reapertura</button>
+                    <button type="button" class="btn btn--sm" data-f29-step="reopen-cancel">Cancelar</button>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        })()}
       </div>
 
       <div class="v2-ins-block v2-ins-block--soft">
@@ -1736,6 +1783,22 @@
     const totImp = computed.reduce((s, x) => s + x.imponible, 0);
     const totLiq = computed.reduce((s, x) => s + x.liquido, 0);
     const totEmp = computed.reduce((s, x) => s + x.costoEmpleador, 0);
+    if (c.f29.contabilizado || c.f29.state === 'contabilizado' || c.f29.state === 'declarado' || c.f29.state === 'pagado') {
+      const f29Iva = Math.max(0, (c.f29.debito || 0) - (c.f29.credito || 0));
+      const f29Ppm = c.f29.ppm || 0;
+      if (f29Iva + f29Ppm > 0) {
+        const lineasF29 = [];
+        if (f29Iva > 0) {
+          lineasF29.push({ cuenta: '21050', debe: f29Iva, haber: 0 });
+          lineasF29.push({ cuenta: '21055', debe: 0, haber: f29Iva });
+        }
+        if (f29Ppm > 0) {
+          lineasF29.push({ cuenta: '11090', debe: f29Ppm, haber: 0 });
+          lineasF29.push({ cuenta: '21055', debe: 0, haber: f29Ppm });
+        }
+        asientos.push(C.crearAsiento('AS-F29', fecha, 'Liquidación IVA y provisión PPM (F29)', 'f29', lineasF29));
+      }
+    }
     const totImpUnico = computed.reduce((s, x) => s + x.impUnico, 0);
     const cotizTrab = Math.max(0, totImp - totLiq - totImpUnico);
     if (totImp > 0) {
@@ -2052,8 +2115,33 @@
       }
       if (state.level === 'client' && state.clientArea === 'impuestos') {
         const c = getClient();
-        c.f29.state = 'declarado'; c.f29.folio = c.f29.folio || '84920311'; c.status = 'cerrado'; c.cierre = 'Cerrado';
-        toast(`F29 declarado · Folio SII ${c.f29.folio}`); render(); return;
+        if (c.f29.state === 'pagado') {
+          const resumen = `F29 ${c.name} (${c.rut}) - ${currentPeriod().label}\nEstado: Pagado\nFolio SII: ${c.f29.folio}\nTotal Cód. 091: ${fmt(f29Total(c))}\n`;
+          downloadFile(resumen, `resumen_f29_${c.id}_${currentPeriod().iso}.txt`, 'text/plain;charset=utf-8');
+          toast('Resumen F29 descargado');
+        } else if (c.f29.state === 'declarado') {
+          c.f29.state = 'pagado';
+          c.f29.paidDate = '12/12/2026';
+          c.periodClosed = true;
+          c.status = 'cerrado';
+          c.cierre = 'Pagado y cerrado';
+          toast(`Pago TGR registrado para Folio ${c.f29.folio}`);
+        } else if (c.f29.state === 'contabilizado') {
+          const folioVal = ($('inp-f29-folio') && $('inp-f29-folio').value.trim()) || c.f29.folio || '84920311';
+          c.f29.state = 'declarado';
+          c.f29.folio = folioVal;
+          c.f29.contabilizado = true;
+          c.periodClosed = true;
+          c.status = 'cerrado';
+          c.cierre = 'Cerrado';
+          toast(`F29 declarado · Folio SII ${c.f29.folio}`);
+        } else {
+          c.f29.contabilizado = true;
+          c.f29.state = 'contabilizado';
+          c.cierre = 'Contabilizado';
+          toast('Asiento F29 (IVA + PPM) contabilizado');
+        }
+        render(); return;
       }
       if (state.level === 'client' && state.clientArea === 'remuneraciones') {
         if (state.clientSub === 'previred') triggerLreDownload(getClient());
@@ -2129,6 +2217,68 @@
       }
       return;
     }
+    if (t.dataset.f29Step) {
+      const c = getClient();
+      const step = t.dataset.f29Step;
+      if (step === 'contabilizar') {
+        c.f29.contabilizado = true;
+        c.f29.state = 'contabilizado';
+        c.cierre = 'Contabilizado';
+        toast('Asiento F29 (IVA + PPM) contabilizado en Contabilidad');
+      } else if (step === 'declarar') {
+        const folioVal = ($('inp-f29-folio') && $('inp-f29-folio').value.trim()) || c.f29.folio || '84920311';
+        c.f29.contabilizado = true;
+        c.f29.state = 'declarado';
+        c.f29.folio = folioVal;
+        c.periodClosed = true;
+        c.status = 'cerrado';
+        c.cierre = 'Cerrado';
+        toast(`F29 marcado declarado · Folio SII ${folioVal}`);
+      } else if (step === 'pagar') {
+        c.f29.state = 'pagado';
+        c.f29.paidDate = '12/12/2026';
+        c.periodClosed = true;
+        c.status = 'cerrado';
+        c.cierre = 'Pagado y cerrado';
+        toast('Pago TGR registrado');
+      } else if (step === 'cerrar') {
+        c.periodClosed = true;
+        c.status = 'cerrado';
+        c.cierre = 'Cerrado';
+        state.reopenPromptOpen = false;
+        state.reopenError = '';
+        toast(`Período ${currentPeriod().label} cerrado (solo lectura)`);
+      } else if (step === 'reopen-prompt') {
+        state.reopenPromptOpen = true;
+        state.reopenError = '';
+      } else if (step === 'reopen-cancel') {
+        state.reopenPromptOpen = false;
+        state.reopenError = '';
+      } else if (step === 'reopen-confirm') {
+        const reasonEl = $('inp-reopen-reason');
+        const reason = reasonEl ? reasonEl.value.trim() : '';
+        if (reason.length < 4) {
+          state.reopenError = 'Ingresa un motivo breve (mín. 4 caracteres) para auditar la reapertura.';
+          render();
+          const inp = $('inp-reopen-reason');
+          if (inp) inp.focus();
+          return;
+        }
+        c.periodClosed = false;
+        if (c.f29.state === 'declarado' || c.f29.state === 'pagado') {
+          c.f29.state = 'contabilizado';
+        }
+        c.status = 'revisar';
+        c.cierre = 'Reabierto';
+        if (!Array.isArray(c.f29.reopenLog)) c.f29.reopenLog = [];
+        c.f29.reopenLog.push({ at: new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }), reason });
+        state.reopenPromptOpen = false;
+        state.reopenError = '';
+        toast(`Período reabierto · Motivo registrado`);
+      }
+      render();
+      return;
+    }
     if (t.dataset.applyRcvAccount) {
       const c = getClient();
       const docs = ensureRcvDocs(c);
@@ -2138,7 +2288,7 @@
         const newAcc = selEl.value;
         const remember = $('chk-rcv-remember') ? $('chk-rcv-remember').checked : false;
         const applyOpen = $('chk-rcv-apply-open') ? $('chk-rcv-apply-open').checked : false;
-        const isClosedPeriod = c.f29.state === 'declarado' || doc.closed;
+        const isClosedPeriod = isPeriodClosed(c) || doc.closed;
         let updated = 0;
         if (!isClosedPeriod) {
           doc.account = newAcc;
