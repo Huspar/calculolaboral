@@ -1,3 +1,4 @@
+/* Hallmark · built: the project · redesign: polish · scope: app · genre: modern-minimal */
 /* 
  * CálculoLaboral · Estilos complementarios para Suite Contadores (/demo-contadores)
  * Basado 100% en el sistema de diseño del Asistente Pyme (app.css)
@@ -50,11 +51,9 @@
 }
 .tabla-contable th {
     text-align: left;
-    font-size: 11px;
-    letter-spacing: .05em;
-    text-transform: uppercase;
+    font-size: 12px;
     color: var(--muted);
-    font-weight: 700;
+    font-weight: 600;
     padding: 10px 12px;
     background: var(--canvas);
     border-bottom: 1px solid var(--line);
@@ -2440,7 +2439,7 @@
 .torre-sii-barra-fill {
     height: 100%;
     background: var(--forest-700);
-    transition: width .3s ease;
+    transition: transform .3s ease, opacity .3s ease;
 }
 .fila-sii-activa {
     background: rgba(15, 94, 79, 0.05) !important;
@@ -3971,7 +3970,7 @@
     background: var(--surface);
 }
 #dlg-equipo-estudio.app-dialogo-medio {
-    width: min(710px, calc(100vw - 32px));
+    width: min(710px, calc(100% - 32px));
 }
 .equipo-dlg-cabeza-der {
     display: flex;
@@ -4648,7 +4647,7 @@
         align-items: stretch;
     }
     .app-dialogo {
-        max-width: calc(100vw - 24px);
+        max-width: calc(100% - 24px);
     }
 }
 
@@ -5067,7 +5066,7 @@
 .suite-graf-fill {
     height: 100%;
     border-radius: 999px;
-    transition: width 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 .suite-graf-fill.fill-marca { background: #00382E; }
 .suite-graf-fill.fill-ok { background: #0F766E; }
@@ -5343,7 +5342,7 @@
 }
 .torre-seg-tramo {
     height: 100%;
-    transition: width 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 .torre-seg-ok { background: #0F766E; }
 .torre-seg-warn { background: #D97706; }
@@ -6525,7 +6524,7 @@ dialog.syn-modal[data-syn-accent="indigo"] {
     height: 100%;
     border-radius: 999px;
     background: var(--syn-accent);
-    transition: width 0.3s var(--syn-ease);
+    transition: transform 0.3s var(--syn-ease), opacity 0.3s var(--syn-ease);
 }
 .syn-cli-prog-fill.ok {
     background: var(--syn-sage);
@@ -6714,7 +6713,7 @@ dialog.syn-modal[data-syn-accent="indigo"] {
 
 /* ---------- Modal Reutilizable Synchro (#dlg-syn-detalle) ---------- */
 dialog.syn-modal {
-    width: min(620px, calc(100vw - 24px));
+    width: min(620px, calc(100% - 24px));
     border: 1px solid var(--syn-border);
     border-radius: 16px;
     padding: 0;
@@ -7460,7 +7459,7 @@ dialog.app-dialogo {
     height: 100%;
     border-radius: 999px;
     background: var(--syn-accent, #F97316);
-    transition: width .25s ease;
+    transition: transform .25s ease, opacity .25s ease;
 }
 .bancos-toolbar-head {
     display: flex;
@@ -8968,4 +8967,105 @@ body[data-syn-theme="cobalto"] #dlg-suite-config {
 }
 #dash-cartera-tbody .mono {
     white-space: nowrap;
+}
+
+/* ==========================================================================
+   AUDITORÍA HALLMARK: LAYOUT 1280px, TOPBAR, MÓVIL 390px Y FLOOR GATES
+   ========================================================================== */
+html,
+body {
+    overflow-x: clip;
+}
+#pm-panel.syn-theme h1,
+#pm-panel.syn-theme h2 {
+    text-wrap: balance;
+}
+#pm-panel.syn-theme .fin-kpi .fin-kpi-val,
+#pm-panel.syn-theme .fin-kpi .saas-kpi-num {
+    font-variant-numeric: tabular-nums;
+}
+#pm-panel.syn-theme button:active,
+#pm-panel.syn-theme .btn:active {
+    transform: translateY(1px);
+}
+#pm-panel.syn-theme :focus-visible {
+    transition: none;
+}
+
+/* 1. Evitar desborde de Cartera del período sobre Próximos vencimientos en 1280px */
+#pm-panel.syn-theme .syn-dash-main,
+#pm-panel.syn-theme .syn-dash-rail,
+#pm-panel.syn-theme .syn-dash-main > .panel,
+#pm-panel.syn-theme .syn-dash-rail > .panel {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+#pm-panel.syn-theme #suite-dashboard .tabla-contable-wrap {
+    overflow-x: auto;
+    max-width: 100%;
+}
+#pm-panel.syn-theme #suite-dashboard .tabla-contable {
+    min-width: 0;
+    width: 100%;
+}
+#pm-panel.syn-theme #suite-dashboard .tabla-contable th,
+#pm-panel.syn-theme #suite-dashboard .tabla-contable td {
+    padding: 8px 8px;
+}
+@media screen and (max-width: 1360px) and (min-width: 1081px) {
+    #pm-panel.syn-theme .syn-dash-grid {
+        grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr);
+    }
+}
+@media screen and (max-width: 1080px) {
+    #pm-panel.syn-theme .syn-dash-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* 2. Topbar: liberar espacio ocultando estudio duplicado en <=1520px y evitar colisión con buscador */
+@media screen and (max-width: 1520px) and (min-width: 901px) {
+    #pm-panel.syn-theme .syn-bc-estudio,
+    #pm-panel.syn-theme .syn-bc-sep {
+        display: none;
+    }
+}
+@media screen and (min-width: 901px) {
+    #pm-panel.syn-theme .syn-top-izq {
+        flex: 0 0 auto;
+        gap: 8px;
+    }
+    #pm-panel.syn-theme .syn-bc-mod {
+        max-width: 145px;
+    }
+    #pm-panel.syn-theme .syn-ctx-trigger {
+        min-width: 0;
+        max-width: 225px;
+        flex: 0 1 auto;
+    }
+    #pm-panel.syn-theme .syn-search-wrap {
+        flex: 1 1 120px;
+        min-width: 100px;
+        max-width: 195px;
+    }
+}
+
+/* 3. Móvil 390px: tabla Cartera del período sin recorte horizontal */
+@media screen and (max-width: 560px) {
+    #pm-panel.syn-theme #suite-dashboard .tabla-contable th:nth-child(2),
+    #pm-panel.syn-theme #suite-dashboard .tabla-contable td:nth-child(2),
+    #pm-panel.syn-theme #suite-dashboard .tabla-contable th:nth-child(3),
+    #pm-panel.syn-theme #suite-dashboard .tabla-contable td:nth-child(3),
+    #pm-panel.syn-theme #suite-dashboard .tabla-contable th:nth-child(4),
+    #pm-panel.syn-theme #suite-dashboard .tabla-contable td:nth-child(4),
+    #pm-panel.syn-theme #suite-dashboard .tabla-contable th:nth-child(6),
+    #pm-panel.syn-theme #suite-dashboard .tabla-contable td:nth-child(6) {
+        display: none;
+    }
+    #pm-panel.syn-theme #suite-dashboard .tabla-contable th,
+    #pm-panel.syn-theme #suite-dashboard .tabla-contable td {
+        padding: 8px 6px;
+        font-size: 12px;
+    }
 }

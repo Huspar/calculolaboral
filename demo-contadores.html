@@ -1493,10 +1493,10 @@
           <button type="button" class="btn btn-chico btn-primario" id="btn-bancos-ver-buzon">Revisar envíos</button>
         </div>
 
-        <div class="fin-filtros" role="tablist" aria-label="Secciones de bancos y conciliación">
-          <button type="button" class="fin-chip activo" data-subbanco="conciliacion" role="tab" aria-selected="true" aria-controls="sub-conciliacion">Movimientos del Banco</button>
-          <button type="button" class="fin-chip" data-subbanco="cartera" role="tab" aria-selected="false" aria-controls="sub-bancos-cartera">Facturas por Cobrar y Pagar</button>
-          <button type="button" class="fin-chip" data-subbanco="tesoreria" role="tab" aria-selected="false" aria-controls="sub-tesoreria">Reglas y Estimación</button>
+        <div class="cl-subtabs" role="tablist" aria-label="Secciones de bancos y conciliación">
+          <button type="button" class="cl-subtab activo" data-subbanco="conciliacion" role="tab" aria-selected="true" aria-controls="sub-conciliacion">Movimientos del Banco</button>
+          <button type="button" class="cl-subtab" data-subbanco="cartera" role="tab" aria-selected="false" aria-controls="sub-bancos-cartera">Facturas por Cobrar y Pagar</button>
+          <button type="button" class="cl-subtab" data-subbanco="tesoreria" role="tab" aria-selected="false" aria-controls="sub-tesoreria">Reglas y Estimación</button>
         </div>
 
         <!-- Pestaña 1: Movimientos del Banco (Cara a Cara) -->
@@ -1557,7 +1557,7 @@
           <div class="suite-graf-card" id="aging-grafico-resumen" aria-label="Antigüedad de facturas por cobrar y por pagar" style="margin-bottom:14px"></div>
           <div class="fin-cols-2 fin-cols-2-tablas">
             <div class="panel">
-              <div class="panel-head"><div><h2>Te deben (Facturas por Cobrar)</h2><p class="panel-ayuda" id="aging-cxc-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
+              <div class="panel-head"><div><h2>Te deben (Facturas por Cobrar)</h2><p class="panel-ayuda" id="aging-cxc-buckets">0-30d: $0 | 31-60d: $0 | +60d: $0</p></div></div>
               <div class="panel-cuerpo">
                 <div class="tabla-contable-wrap">
                   <table class="tabla-contable compacta">
@@ -1568,7 +1568,7 @@
               </div>
             </div>
             <div class="panel">
-              <div class="panel-head"><div><h2>Debes (Facturas por Pagar)</h2><p class="panel-ayuda" id="aging-cxp-buckets">0-30d: $0 · 31-60d: $0 · +60d: $0</p></div></div>
+              <div class="panel-head"><div><h2>Debes (Facturas por Pagar)</h2><p class="panel-ayuda" id="aging-cxp-buckets">0-30d: $0 | 31-60d: $0 | +60d: $0</p></div></div>
               <div class="panel-cuerpo">
                 <div class="tabla-contable-wrap">
                   <table class="tabla-contable compacta">
@@ -4065,12 +4065,12 @@
     <div class="portal-resumen-f29" id="portal-resumen-f29">
       <div class="portal-resumen-f29-head">
         <strong>Resumen mensual F29 del período</strong>
-        <span class="texto-ayuda mono" id="portal-f29-periodo">—</span>
+        <span class="texto-ayuda mono" id="portal-f29-periodo">-</span>
       </div>
       <div class="portal-resumen-f29-grid">
-        <div><span class="acuse-lbl">Estado</span><strong id="portal-f29-estado">—</strong></div>
-        <div><span class="acuse-lbl">Monto F29 (cód. 91)</span><strong class="mono" id="portal-f29-monto">—</strong></div>
-        <div><span class="acuse-lbl">IVA débito / crédito</span><strong class="mono" id="portal-f29-iva">—</strong></div>
+        <div><span class="acuse-lbl">Estado</span><strong id="portal-f29-estado">-</strong></div>
+        <div><span class="acuse-lbl">Monto F29 (cód. 91)</span><strong class="mono" id="portal-f29-monto">-</strong></div>
+        <div><span class="acuse-lbl">IVA débito / crédito</span><strong class="mono" id="portal-f29-iva">-</strong></div>
         <div><span class="acuse-lbl">Vencimiento</span><strong class="mono">día 20 (electrónico; día 12 general / 28 sin pago)</strong></div>
       </div>
       <div id="portal-f29-aviso" class="portal-f29-aviso" hidden>

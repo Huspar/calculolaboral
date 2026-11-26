@@ -3896,7 +3896,9 @@
                 }
             });
 
+            window._suiteSilenciarAvisoAF = !!o.silencioso;
             if ($('btn-af-importar-rcv')) $('btn-af-importar-rcv').click();
+            window._suiteSilenciarAvisoAF = false;
             refrescarTodo();
             if (!o.silencioso) {
                 D.avisar('Ejemplo completo cargado en todos los módulos (Nómina, Finiquitos, F29, BHE, Bancos, Balance, P&L y DDJJ).');
@@ -6191,7 +6193,9 @@
                     }
                 });
                 refrescarTodo();
-                D.avisar(agregado ? ('Se importaron ' + agregado + ' bien(es) desde compras de activo fijo del RCV.') : 'No hay nuevos activos fijos detectados en el RCV actual.');
+                if (!window._suiteSilenciarAvisoAF) {
+                    D.avisar(agregado ? ('Se importaron ' + agregado + ' bien(es) desde compras de activo fijo del RCV.') : 'No hay nuevos activos fijos detectados en el RCV actual.');
+                }
             });
         }
         if ($('btn-af-asiento-diario')) {
