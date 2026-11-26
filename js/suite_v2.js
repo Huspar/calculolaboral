@@ -356,7 +356,9 @@
     selectedWorkerId: null,
     selectedBankId: null,
     selectedF29Code: '538',
+    selectedRcvId: null,
     bankRules: {},
+    supplierRules: {},
     finiquitoCause: '161',
     balanceScope: 'acumulado',
     studioName: 'Asesorías Pérez Ltda.',
@@ -1120,6 +1122,94 @@
     };
   }
 
+  const RCV_ACCOUNTS = [
+    { code: '41010', label: '41010 · Costo de ventas / Insumos' },
+    { code: '41020', label: '41020 · Envases y empaques' },
+    { code: '41030', label: '41030 · Arriendos y gastos básicos' },
+    { code: '41040', label: '41040 · Fletes y despacho' },
+    { code: '41050', label: '41050 · Mantención y reparaciones' },
+    { code: '41090', label: '41090 · Gastos generales (revisar giro)' },
+    { code: '12010', label: '12010 · Activo fijo / Maquinaria' }
+  ];
+
+  function accountShortLabel(code) {
+    const found = RCV_ACCOUNTS.find((a) => a.code === code);
+    return found ? found.label : code;
+  }
+
+  function ensureRcvDocs(c) {
+    if (Array.isArray(c.rcvDocs) && c.rcvDocs.length) return c.rcvDocs;
+    if (c.id === 'san-isidro') {
+      c.rcvDocs = [
+        { id: 'rcv1', folio: '88412', rut: '76.112.400-5', supplier: 'Molinos del Sur S.A.', neto: 794118, iva: 150882, account: '41010', plazo: 'Vence en 18 h', plazoTag: 'tag--on', action: 'Aceptar', actionMsg: 'Acuse aceptado en SII para folio 88412', closed: false },
+        { id: 'rcv2', folio: '88519', rut: '76.112.400-5', supplier: 'Molinos del Sur S.A.', neto: 412605, iva: 78395, account: '41090', plazo: 'Aceptado', plazoTag: 'tag--in', action: 'Verificado', actionMsg: 'Documento 88519 ya aceptado en SII', closed: false },
+        { id: 'rcv3', folio: '20491', rut: '77.409.118-2', supplier: 'Envases Chile SpA', neto: 346218, iva: 65782, account: '41020', plazo: 'Vence en 36 h', plazoTag: 'tag--out', action: 'Aceptar', actionMsg: 'Acuse aceptado en SII para folio 20491', closed: false },
+        { id: 'rcv4', folio: '77104', rut: '81.201.000-K', supplier: 'Supermercado Jumbo (Cód. 761)', neto: 151261, iva: 28739, account: '41090', plazo: 'Contado', plazoTag: 'tag--in', action: 'Pedir respaldo', actionMsg: 'Solicitud de respaldo enviada al cliente', closed: false }
+      ];
+    } else {
+      const closed = c.f29.state === 'declarado';
+      const baseNeto = Math.max(120000, Math.round((c.rcv.comprasNeto || 1000000) * 0.22));
+      const baseIva = Math.round(baseNeto * 0.19);
+      const secNeto = Math.round(baseNeto * 0.55);
+      const secIva = Math.round(secNeto * 0.19);
+      c.rcvDocs = [
+        { id: `${c.id}-r1`, folio: '50114', rut: '76.889.210-1', supplier: 'Distribuidora Central Ltda.', neto: baseNeto, iva: baseIva, account: '41010', plazo: closed ? 'Cerrado SII' : 'Aceptado', plazoTag: 'tag--in', action: closed ? 'Cerrado' : 'Aceptar', actionMsg: 'Acuse confirmado en SII', closed },
+        { id: `${c.id}-r2`, folio: '50208', rut: '76.889.210-1', supplier: 'Distribuidora Central Ltda.', neto: secNeto, iva: secIva, account: '41090', plazo: closed ? 'Cerrado SII' : 'Aceptado', plazoTag: 'tag--in', action: closed ? 'Cerrado' : 'Aceptar', actionMsg: 'Acuse confirmado en SII', closed },
+        { id: `${c.id}-r3`, folio: '11902', rut: '96.512.330-4', supplier: 'Servicios Eléctricos y Gas S.A.', neto: 210084, iva: 39916, account: '41030', plazo: 'Contado', plazoTag: 'tag--in', action: 'Verificado', actionMsg: 'Servicio básico verificado', closed }
+      ];
+    }
+    return c.rcvDocs;
+  }
+
+  function renderRcvExplainBlock(c) {
+    const docs = ensureRcvDocs(c);
+    const sel = docs.find((d) => d.id === state.selectedRcvId) || docs[0];
+    if (!sel) return '';
+    state.selectedRcvId = sel.id;
+    const isClosedPeriod = c.f29.state === 'declarado' || sel.closed;
+    const ruleKey = `${c.id}::${sel.rut}`;
+    const savedRule = state.supplierRules[ruleKey];
+    const sameOpen = docs.filter((d) => d.rut === sel.rut && !d.closed && c.f29.state !== 'declarado');
+    const othersCount = Math.max(0, sameOpen.length - 1);
+
+    return `
+      <div class="v2-ins-block" id="v2-rcv-supplier-block">
+        <div class="v2-ins-head">
+          <h2 class="v2-ins-title">Cuenta por proveedor</h2>
+          <span class="tag ${savedRule ? 'tag--in' : 'tag--out'} mono">Folio ${sel.folio}</span>
+        </div>
+        <dl class="v2-ins-kv">
+          <dt>Proveedor</dt><dd style="font-family:var(--font-sans);font-weight:600">${sel.supplier}</dd>
+          <dt>RUT emisor</dt><dd>${sel.rut}</dd>
+          <dt>Monto neto</dt><dd>${fmt(sel.neto)}</dd>
+        </dl>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label for="sel-rcv-account" class="muted" style="font-size:11.5px">Cuenta contable de gasto / activo</label>
+          <select id="sel-rcv-account" class="v2-ins-select" ${isClosedPeriod ? 'disabled' : ''}>
+            ${RCV_ACCOUNTS.map((a) => `<option value="${a.code}" ${sel.account === a.code ? 'selected' : ''}>${a.label}</option>`).join('')}
+          </select>
+        </div>
+        <label class="v2-ins-check">
+          <input type="checkbox" id="chk-rcv-remember" checked>
+          <span>Recordar esta cuenta por defecto para <strong>${sel.supplier}</strong> en próximos meses.</span>
+        </label>
+        ${!isClosedPeriod && othersCount > 0 ? `
+          <label class="v2-ins-check">
+            <input type="checkbox" id="chk-rcv-apply-open" checked>
+            <span>Aplicar también a los otros <strong>${othersCount}</strong> documento(s) abierto(s) de este proveedor en el mes.</span>
+          </label>
+        ` : ''}
+        ${isClosedPeriod ? `
+          <div class="v2-ins-note is-warn">Período cerrado/declarado: los documentos históricos están protegidos y no se reescriben. Puedes guardar la regla solo para meses futuros.</div>
+        ` : ''}
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:2px">
+          <button type="button" class="btn btn--primary" data-apply-rcv-account="${sel.id}">${isClosedPeriod ? 'Guardar regla para meses futuros' : 'Guardar y aplicar cuenta'}</button>
+          ${savedRule ? `<button type="button" class="btn btn--sm" data-clear-supplier-rule="${ruleKey}">Quitar regla guardada (${savedRule.account})</button>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
   function renderF29ExplainBlock(c) {
     const exp = buildF29Explanation(c, state.selectedF29Code || '538');
     return `
@@ -1192,9 +1282,12 @@
         </div>
       `;
     } else if (state.clientSub === 'rcv') {
+      const rcvDocs = ensureRcvDocs(c);
+      const selRcv = rcvDocs.find((d) => d.id === state.selectedRcvId) || rcvDocs[0];
+      if (selRcv) state.selectedRcvId = selRcv.id;
       $('v2-canvas').innerHTML = `
         <div class="v2-pulse-bar">
-          <span class="muted">Registro Compras y Ventas · Cálculo SII</span>
+          <span class="muted">Registro Compras y Ventas · Haz clic en un documento para reclasificar proveedor</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <label class="btn btn--sm">Importar CSV Ventas SII<input type="file" accept=".csv,.txt" id="v2-csv-ventas" class="sr-only"></label>
             <label class="btn btn--sm">Importar CSV Compras SII<input type="file" accept=".csv,.txt" id="v2-csv-compras" class="sr-only"></label>
@@ -1203,11 +1296,22 @@
         </div>
         <div class="v2-table-wrap">
           <table class="v2-table">
-            <thead><tr><th>Folio</th><th>Proveedor</th><th class="num">Neto</th><th class="num">IVA</th><th>Plazo 8 días</th><th>Acción</th></tr></thead>
+            <thead><tr><th>Folio</th><th>Proveedor</th><th>Cuenta</th><th class="num">Neto</th><th class="num">IVA</th><th>Plazo 8 días</th><th>Acción</th></tr></thead>
             <tbody>
-              <tr><td class="mono">88412</td><td>Molinos del Sur S.A.</td><td class="num">$794.118</td><td class="num">$150.882</td><td><span class="tag tag--on">Vence en 18 h</span></td><td><button type="button" class="btn btn--sm" data-quick-ok="Acuse aceptado en SII para folio 88412">Aceptar</button></td></tr>
-              <tr><td class="mono">20491</td><td>Envases Chile SpA</td><td class="num">$346.218</td><td class="num">$65.782</td><td><span class="tag tag--out">Vence en 36 h</span></td><td><button type="button" class="btn btn--sm" data-quick-ok="Acuse aceptado en SII para folio 20491">Aceptar</button></td></tr>
-              <tr><td class="mono">77104</td><td>Supermercado Jumbo (Cód. 761)</td><td class="num">$151.261</td><td class="num">$28.739</td><td><span class="tag tag--in">Contado</span></td><td><button type="button" class="btn btn--sm" data-quick-ok="Solicitud de respaldo enviada al cliente">Pedir respaldo</button></td></tr>
+              ${rcvDocs.map((d) => {
+                const hasRule = !!state.supplierRules[`${c.id}::${d.rut}`];
+                return `
+                  <tr class="${selRcv && selRcv.id === d.id ? 'is-selected' : ''}" data-select-rcv="${d.id}">
+                    <td class="mono">${d.folio}</td>
+                    <td><strong>${d.supplier}</strong></td>
+                    <td><span class="mono" style="font-size:11.5px">${d.account}</span>${hasRule ? ' <span class="tag tag--in">Regla</span>' : ''}</td>
+                    <td class="num">${fmt(d.neto)}</td>
+                    <td class="num">${fmt(d.iva)}</td>
+                    <td><span class="tag ${d.plazoTag}">${d.plazo}</span></td>
+                    <td><button type="button" class="btn btn--sm" data-quick-ok="${d.actionMsg}">${d.action}</button></td>
+                  </tr>
+                `;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -1231,7 +1335,7 @@
     }
 
     $('v2-inspector').innerHTML = `
-      ${state.clientSub === 'f29' ? renderF29ExplainBlock(c) : ''}
+      ${state.clientSub === 'f29' ? renderF29ExplainBlock(c) : state.clientSub === 'rcv' ? renderRcvExplainBlock(c) : ''}
       <div class="v2-ins-block">
         <div class="v2-ins-head">
           <h2 class="v2-ins-title">Semáforo Pre-SII</h2>
@@ -1899,7 +2003,7 @@
 
   /* ==================== EVENTS ==================== */
   document.addEventListener('click', (e) => {
-    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-f29], [data-select-inbox]');
+    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-f29], [data-select-rcv], [data-select-inbox]');
     if (!t) return;
 
     if (t.id === 'btn-open-cmdk' || t.id === 'btn-switch-client') { openCmdk(); return; }
@@ -1995,6 +2099,7 @@
     if (t.dataset.openClient) { enterClient(t.dataset.openClient, t.dataset.openArea || 'impuestos', t.dataset.openSub || null); return; }
     if (t.dataset.selectWorker) { state.selectedWorkerId = t.dataset.selectWorker; render(); return; }
     if (t.dataset.selectF29 && !e.target.closest('input')) { state.selectedF29Code = t.dataset.selectF29; render(); return; }
+    if (t.dataset.selectRcv && !e.target.closest('button')) { state.selectedRcvId = t.dataset.selectRcv; render(); return; }
     if (t.dataset.selectBank) { state.selectedBankId = t.dataset.selectBank; render(); return; }
     if (t.dataset.selectInbox) { state.selectedInboxId = t.dataset.selectInbox; render(); return; }
     if (t.dataset.resolveInbox) {
@@ -2022,6 +2127,49 @@
         toast('Movimiento vuelto a pendiente');
         render();
       }
+      return;
+    }
+    if (t.dataset.applyRcvAccount) {
+      const c = getClient();
+      const docs = ensureRcvDocs(c);
+      const doc = docs.find((d) => d.id === t.dataset.applyRcvAccount);
+      const selEl = $('sel-rcv-account');
+      if (doc && selEl) {
+        const newAcc = selEl.value;
+        const remember = $('chk-rcv-remember') ? $('chk-rcv-remember').checked : false;
+        const applyOpen = $('chk-rcv-apply-open') ? $('chk-rcv-apply-open').checked : false;
+        const isClosedPeriod = c.f29.state === 'declarado' || doc.closed;
+        let updated = 0;
+        if (!isClosedPeriod) {
+          doc.account = newAcc;
+          updated = 1;
+          if (applyOpen) {
+            docs.forEach((other) => {
+              if (other.id !== doc.id && other.rut === doc.rut && !other.closed) {
+                other.account = newAcc;
+                updated++;
+              }
+            });
+          }
+        }
+        const ruleKey = `${c.id}::${doc.rut}`;
+        if (remember) {
+          state.supplierRules[ruleKey] = { supplier: doc.supplier, account: newAcc };
+        }
+        const accLabel = accountShortLabel(newAcc);
+        if (isClosedPeriod) {
+          toast(remember ? `Regla guardada para ${doc.supplier} (${accLabel}) en próximos meses` : 'Período cerrado: sin cambios en documentos');
+        } else {
+          toast(`${updated} doc(s) de ${doc.supplier} → ${newAcc}${remember ? ' · regla guardada' : ''}`);
+        }
+        render();
+      }
+      return;
+    }
+    if (t.dataset.clearSupplierRule) {
+      delete state.supplierRules[t.dataset.clearSupplierRule];
+      toast('Regla de proveedor eliminada');
+      render();
       return;
     }
     if (t.dataset.saveBankRule) {
