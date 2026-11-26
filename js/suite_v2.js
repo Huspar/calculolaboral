@@ -433,6 +433,7 @@
     auxFilter: 'todos',
     selectedAuxId: null,
     lastPlanSync: '',
+    gatewayConnected: false,
     studioChart: [
       { code: '11010', name: 'Caja', type: 'Activo' },
       { code: '11020', name: 'Banco cuenta corriente', type: 'Activo' },
@@ -495,6 +496,54 @@
     clearTimeout(toast._t);
     toast._t = setTimeout(() => { el.hidden = true; }, 3400);
   }
+
+  /* ==================== ADAPTADOR OPCIONAL SII GATEWAY (vía /api/studio-proxy) ==================== */
+  async function gatewayCall(method, upstreamPath, body) {
+    if (!state.gatewayConnected) return null;
+    try {
+      const url = '/api/studio-proxy?path=' + encodeURIComponent(upstreamPath);
+      const opts = { method, credentials: 'same-origin', headers: { accept: 'application/json' } };
+      if (body !== undefined && method !== 'GET' && method !== 'DELETE') {
+        opts.headers['content-type'] = 'application/json';
+        opts.body = JSON.stringify(body);
+      }
+      const res = await fetch(url, opts);
+      const data = await res.json().catch(() => ({}));
+      return { ok: res.ok, status: res.status, data };
+    } catch (_) {
+      return null;
+    }
+  }
+
+  async function syncRangeFromGateway(companyId, fromPeriod, toPeriod, jobType = 'RCV_COMPRAS') {
+    const res = await gatewayCall('POST', `/api/v1/accounting/${encodeURIComponent(companyId)}/sync-range`, { fromPeriod, toPeriod, jobType });
+    if (!res) { toast('Modo demo local: configura /api/studio-proxy para sincronizar SII en vivo'); return null; }
+    if (!res.ok) {
+      toast((res.data && (res.data.message || res.data.error)) || `Error sync-range (${res.status})`);
+      return res;
+    }
+    const warn = res.data && res.data.priorCoverage && res.data.priorCoverage.warning;
+    toast(warn ? `Sync encolada · Aviso IVA: ${warn}` : `Sync encolada (${(res.data && res.data.enqueuedCount) || 1} mes(es))`);
+    return res;
+  }
+
+  async function probeStudioGateway() {
+    if (typeof fetch !== 'function' || location.protocol === 'file:') return;
+    try {
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = ctrl ? setTimeout(() => ctrl.abort(), 2500) : null;
+      const res = await fetch('/api/studio-proxy?action=status', { credentials: 'same-origin', signal: ctrl ? ctrl.signal : undefined });
+      if (timer) clearTimeout(timer);
+      if (!res.ok) return;
+      const data = await res.json().catch(() => null);
+      if (data && data.ok && data.configured && (!data.sessionRequired || data.authenticated)) {
+        state.gatewayConnected = true;
+        renderSidebar();
+      }
+    } catch (_) { /* Modo demo local sin proxy: silencioso */ }
+  }
+
+  window.CLStudioGateway = { call: gatewayCall, syncRange: syncRangeFromGateway, probe: probeStudioGateway };
 
   function getClient() {
     return state.clients.find((c) => c.id === state.clientId) || state.clients[0];
@@ -2503,6 +2552,19 @@
     if (updated) parts.push(`${updated} actualizado(s)`);
     if (socios) parts.push(`${socios} socio`);
     if (pens) parts.push(`${pens} pensionado`);
+    gatewayCall('PUT', `/api/v1/studio/companies/${encodeURIComponent(c.id)}/lre-history`, {
+      year: Number(currentPeriod().iso.slice(0, 4)) || 2026,
+      imports: c.lreHistory.imports,
+      rentaNetaAnual: c.lreHistory.rentaNetaAnual,
+      iuscRetenidoAnual: c.lreHistory.iuscRetenidoAnual,
+      lastFile: c.lreHistory.lastFile,
+      workersSnapshot: c.workers.map((w) => ({
+        rut: w.rut, name: w.name, ingreso: w.ingreso, afp: w.afp, base: w.base,
+        tipoRegimen: w.tipoRegimen || 'dependiente', pensionMensual: w.pensionMensual || 0,
+        cotizaAfpVoluntaria: !!w.cotizaAfpVoluntaria, sinContrato: !!w.sinContrato,
+        sinPlanIsapre: !!w.sinPlanIsapre, licenciaSinTipo: !!w.licenciaSinTipo
+      }))
+    });
     toast(`LRE migrado (${parts.join(' · ')}) · DJ 1887 actualizada`);
     state.workerFilter = 'todos';
     render();
@@ -2751,6 +2813,7 @@
     }
     if (t.dataset.propagatePlan) {
       state.lastPlanSync = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+      gatewayCall('PUT', '/api/v1/studio/chart', { accounts: state.studioChart });
       toast(`Plan de cuentas (${state.studioChart.length} cuentas) aplicado a ${state.clients.length} empresas · cuentas con movimiento protegidas`);
       render();
       return;
@@ -2896,6 +2959,11 @@
         const ruleKey = `${c.id}::${doc.rut}`;
         if (remember) {
           state.supplierRules[ruleKey] = { supplier: doc.supplier, account: newAcc };
+          gatewayCall('PUT', `/api/v1/studio/companies/${encodeURIComponent(c.id)}/supplier-rules`, {
+            rutEmisor: doc.rut,
+            supplierName: doc.supplier,
+            accountCode: newAcc
+          });
         }
         const accLabel = accountShortLabel(newAcc);
         if (isClosedPeriod) {
@@ -2920,6 +2988,11 @@
         toast('Regla de glosa eliminada');
       } else {
         state.bankRules[key] = { pattern: t.dataset.rulePattern, account: t.dataset.ruleAccount };
+        gatewayCall('PUT', `/api/v1/studio/companies/${encodeURIComponent(getClient().id)}/bank-rules`, {
+          pattern: t.dataset.rulePattern,
+          accountCode: String(t.dataset.ruleAccount || '').split(' ')[0],
+          accountLabel: t.dataset.ruleAccount
+        });
         toast(`Regla guardada: «${t.dataset.rulePattern}»`);
       }
       render();
@@ -3160,4 +3233,5 @@
   else if (location.hash === '#cliente-contabilidad') enterClient('san-isidro', 'contabilidad', 'balance');
   else if (location.hash === '#olas') enterStudio('olas');
   else render();
+  probeStudioGateway();
 })();
