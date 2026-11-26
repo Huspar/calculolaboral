@@ -2776,7 +2776,8 @@
     const mcpTools = [
       'list_companies', 'get_rcv_documents', 'get_bhe_documents',
       'get_f29_summary', 'get_sync_status', 'get_f22_ddjj',
-      'get_tgr_status', 'get_previred_status', 'get_tax_alerts'
+      'get_tgr_status', 'get_previred_status', 'get_tax_alerts',
+      'get_morning_report'
     ];
     const integrations = [
       {
@@ -2798,10 +2799,10 @@
       {
         id: 'mcp',
         name: 'Conector MCP · Claude, ChatGPT y Agentes IA',
-        sub: '9 herramientas oficiales de solo lectura autenticadas por token de estudio',
+        sub: '10 herramientas oficiales de solo lectura (incluye Reporte Matutino 04:45)',
         endpoint: 'https://connect.calculolaboral.cl/mcp',
         statusTag: 'tag--in',
-        statusLabel: '9 herramientas · Solo lectura'
+        statusLabel: '10 herramientas · Solo lectura'
       },
       {
         id: 'portal',
@@ -2919,6 +2920,7 @@
             <input type="text" id="inp-conn-name" class="v2-ins-select" placeholder="Razón social" aria-label="Razón social">
             <input type="password" id="inp-conn-pass" class="v2-ins-select" autocomplete="off" placeholder="${isPrev ? 'Clave PreviRed' : 'Clave Tributaria SII'}" aria-label="Clave cifrada">
             <button type="button" class="btn btn--primary btn--sm" data-conn-action="connect-real-company" data-conn-kind="${isPrev ? 'previred' : 'sii'}">Guardar en bóveda y sincronizar</button>
+            <button type="button" class="btn btn--sm" data-conn-action="morning-report">Generar Reporte Matutino ahora</button>
             <button type="button" class="btn btn--sm" data-conn-action="probe-gateway">Verificar estado del Gateway</button>
           </div>
         </div>
@@ -3576,6 +3578,17 @@
       c.f29.retenciones = Number(t.dataset.syncF29048) || 0;
       toast(`F29 Cód. 048 alineado con Nómina LRE 3161 (${fmt(c.f29.retenciones)})`);
       render();
+      return;
+    }
+    if (t.dataset.connAction === 'morning-report') {
+      gatewayCall('POST', '/api/v1/studio/morning-report/generate').then((res) => {
+        if (res && res.ok && res.data) {
+          const d = res.data;
+          toast(`Reporte Matutino generado: ${d.companiesChecked || 0} empresas revisadas · ${d.alertCount || 0} alertas`);
+        } else {
+          toast((res && res.data && (res.data.message || res.data.error)) || 'No se pudo generar el Reporte Matutino');
+        }
+      });
       return;
     }
     if (t.dataset.connAction === 'probe-gateway') {
