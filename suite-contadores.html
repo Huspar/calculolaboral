@@ -780,8 +780,55 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 </section>
 
 <section id="copiloto-mcp" class="ls-section">
-<h2>Pregúntale a tu cartera de empresas desde Claude o ChatGPT (solo lectura)</h2>
-<p>Conecta tu estudio contable mediante el protocolo abierto MCP usando tokens revocables por enlace HTTPS o configuración de escritorio. Consulta tus empresas sincronizadas en lenguaje natural sin exponer tu Clave Tributaria a la IA ni permitir escrituras en el SII. Revisa todos los detalles técnicos y prompts en la guía de <a href="conector-mcp-contadores-chile" class="font-semibold text-[#00382E] underline">Conector MCP para contadores en Chile</a>.</p>
+<h2>Conecta tu IA directo al SII y a tus alertas laborales, sin cambiar de ERP</h2>
+<p>A diferencia de los sistemas cerrados que exigen migrar toda tu contabilidad para hablar con una IA, nuestro Conector MCP conecta <strong>Claude, ChatGPT, Gemini o Copilot</strong> directamente a tus empresas sincronizadas del SII, PreviRed y TGR —en modo solo lectura, con <strong>tokens revocables y registro de consultas</strong>. Revisa la guía técnica en <a href="conector-mcp-contadores-chile" class="font-semibold text-[#00382E] underline">Conector MCP para contadores en Chile</a>.</p>
+
+<div class="sc-table-wrap" style="margin:1.1rem 0 1.25rem;">
+<table class="sc-table">
+<thead>
+<tr>
+<th scope="col" colspan="5" style="text-transform:none;letter-spacing:0;font-size:.82rem;color:#0f172a;background:#F8FAF9;">Ejemplo de consulta MCP: «¿Qué empresas de mi cartera tienen bloqueos de F29, acuses 8 días o PreviRed hoy?»</th>
+</tr>
+<tr>
+<th scope="col">Empresa (ejemplo)</th>
+<th scope="col">F29 Cód. 091</th>
+<th scope="col">Acuses 8 días</th>
+<th scope="col">PreviRed / Ley Bustos</th>
+<th scope="col">Prioridad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Constructora Andes Sur SpA</strong></td>
+<td class="font-mono-num">$1.420.000</td>
+<td>Al día</td>
+<td style="color:#b91c1c;font-weight:700;">Mora · Riesgo Art. 162 CT</td>
+<td style="color:#b91c1c;font-weight:700;">Critico</td>
+</tr>
+<tr>
+<td><strong>Panadería San Isidro SpA</strong></td>
+<td class="font-mono-num">$612.400</td>
+<td style="color:#b91c1c;font-weight:700;">2 facturas vencen en 18 h</td>
+<td>Al día</td>
+<td style="font-weight:700;color:#0f172a;">Revisar hoy</td>
+</tr>
+<tr>
+<td><strong>Importadora Pacífico Ltda.</strong></td>
+<td class="font-mono-num">$3.662.000</td>
+<td>Al día</td>
+<td>2 fichas incompletas</td>
+<td style="font-weight:700;color:#0f172a;">Pendiente</td>
+</tr>
+<tr class="sc-dest">
+<td><strong>Distribuidora Norte SpA</strong></td>
+<td class="font-mono-num">$489.100</td>
+<td>Al día</td>
+<td style="color:#00382E;">Validado</td>
+<td style="color:#00382E;">Listo</td>
+</tr>
+</tbody>
+</table>
+</div>
 
 <div class="sc-pilares">
 <div class="sc-pilar">
@@ -797,8 +844,8 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <p>Pregunta por clientes puntuales o por toda tu cartera sincronizada. El conector nunca modifica datos ni envía acuses o declaraciones al SII, TGR o PreviRed.</p>
 </div>
 <div class="sc-pilar">
-<h3>4. Privacidad y control del estudio</h3>
-<p>Tu Clave Tributaria no llega a la IA. Los resúmenes de lectura consultados son procesados por Claude o ChatGPT bajo sus términos de privacidad (Ley N° 19.628) y puedes revocar cualquier token al instante.</p>
+<h3>4. Privacidad, revocación y registro de consultas</h3>
+<p>Tu Clave Tributaria nunca llega a la IA. Cada consulta queda registrada (herramienta, empresa y fecha) y puedes revocar cualquier token en 1 clic desde tu panel del estudio (Ley N° 19.628).</p>
 </div>
 </div>
 
@@ -887,6 +934,47 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 </table>
 </div>
 <p class="ls-note">Condiciones aplicables a Suite Contadores en calculolaboral.cl según planes vigentes a noviembre de 2026.</p>
+
+<h3 style="font-size:1.15rem;font-weight:800;color:#0f172a;margin:1.75rem 0 .65rem;">Suite Contadores vs. lo habitual en el mercado</h3>
+<p>Diferencias concretas que impactan el costo mensual y la operación diaria de un estudio contable en Chile:</p>
+<div class="sc-table-wrap">
+<table class="sc-table">
+<thead>
+<tr>
+<th scope="col">Criterio</th>
+<th scope="col">Cálculo Laboral (Suite Contadores)</th>
+<th scope="col">Lo habitual en el mercado</th>
+</tr>
+</thead>
+<tbody>
+<tr class="sc-dest">
+<td><strong>Conector IA (MCP)</strong></td>
+<td>Incluido desde plan Estudio (o add-on en CLP) y funciona directo con SII/laboral sin obligarte a mudar tu ERP.</td>
+<td>Cobro adicional mensual en UF y solo funciona si migras toda tu cartera a su ERP.</td>
+</tr>
+<tr>
+<td><strong>Seguridad MCP</strong></td>
+<td>Solo lectura por diseño, tokens revocables en 1 clic y registro de consultas por estudio.</td>
+<td>Copilotos cerrados o accesos sin trazabilidad clara de qué consultó cada usuario.</td>
+</tr>
+<tr>
+<td><strong>Bancos y pasarelas</strong></td>
+<td>Cartolas CSV/Excel sin claves ni cobro por banco + Split Transbank / Getnet / MercadoPago.</td>
+<td>Cobro mensual extra en UF por cada cuenta bancaria conectada.</td>
+</tr>
+<tr>
+<td><strong>Turno Nocturno 24/7</strong></td>
+<td>Sincronización de madrugada + Vigía 8 días (Ley 19.983) + semáforo PreviRed/TGR/Ley Bustos.</td>
+<td>Descargas manuales o alertas sin cruce laboral-previsional.</td>
+</tr>
+<tr>
+<td><strong>Costo al escalar</strong></td>
+<td>Tarifa plana en pesos (mensual o anual) y opción de empresas ilimitadas en servidor propio en Chile.</td>
+<td>Precios en UF con recargos mensuales por cada empresa, usuario, banco y módulo extra.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 
 <section id="planes" class="ls-section">
@@ -894,6 +982,47 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <div class="ap-piloto">
 <p class="ap-piloto-t">Precio plano en servidor propio en Chile · 90 días gratis de acceso anticipado</p>
 <p>Al operar sobre nuestra propia infraestructura en Chile no pagamos ni traspasamos cobros por consulta al SII ni por documento. Puedes elegir <strong>pago mensual sin permanencia</strong> o <strong>prepago anual</strong>, con opción de <strong>empresas ilimitadas a precio plano</strong> en Estudio Ilimitado. Si postulas al cupo inicial (20 estudios), partes con <strong>90 días gratis desde el alta</strong>, sin tarjeta.</p>
+</div>
+
+<div class="sc-form-box" id="selector-plan" style="margin-top:0;margin-bottom:1.35rem;background:#F8FAF9;border-color:#D6EBE4;">
+<p style="margin:0 0 .25rem;font-weight:800;color:#0f172a;font-size:1.05rem;">¿Qué plan necesito? Calcula tu costo exacto en pesos</p>
+<p style="margin:0;font-size:.88rem;color:#475569;">Responde 3 datos de tu estudio y revisa el plan exacto sin esperar cotización ni reuniones.</p>
+<div class="sc-form-grid" style="margin-top:.85rem;">
+<div class="sc-field">
+<label for="calc-plan-empresas">¿Cuántas empresas llevas?</label>
+<select id="calc-plan-empresas">
+<option value="10">Hasta 10 empresas</option>
+<option value="30" selected>Entre 11 y 30 empresas</option>
+<option value="50">Más de 30 empresas (ilimitadas)</option>
+</select>
+</div>
+<div class="sc-field">
+<label for="calc-plan-usuarios">¿Cuántos usuarios en tu equipo?</label>
+<select id="calc-plan-usuarios">
+<option value="1">1 usuario</option>
+<option value="3" selected>2 a 3 usuarios</option>
+<option value="5">4 a 5 usuarios</option>
+</select>
+</div>
+<div class="sc-field">
+<label for="calc-plan-mcp">¿Usas Claude/ChatGPT (MCP) y Turno Nocturno?</label>
+<select id="calc-plan-mcp">
+<option value="si" selected>Sí, quiero MCP + Turno Nocturno</option>
+<option value="no">No, solo Suite base</option>
+</select>
+</div>
+</div>
+<div id="calc-plan-resultado" style="margin-top:.95rem;padding:.95rem 1.1rem;background:#ffffff;border:1px solid #cbd5e1;border-radius:.85rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.85rem;">
+<div>
+<div style="font-size:.78rem;font-weight:700;color:#00382E;text-transform:uppercase;letter-spacing:.04em;">Plan recomendado</div>
+<div id="calc-plan-nombre" style="font-size:1.1rem;font-weight:800;color:#0f172a;">Estudio (hasta 30 empresas · 3 usuarios)</div>
+<div id="calc-plan-detalle" style="font-size:.85rem;color:#475569;margin-top:.15rem;">Incluye MCP, Turno Nocturno 24/7, Monitor Tributario y Portal Marca Blanca · $0 por banco o consulta SII.</div>
+</div>
+<div style="text-align:right;">
+<div id="calc-plan-precio-anual" class="font-mono-num" style="font-size:1.35rem;font-weight:800;color:#00382E;">$299.900 + IVA/año</div>
+<div id="calc-plan-precio-mensual" class="font-mono-num" style="font-size:.82rem;color:#475569;">o $32.900 + IVA/mes sin permanencia</div>
+</div>
+</div>
 </div>
 
 <div class="sc-ciclo-wrap" role="tablist" aria-label="Modalidad de pago de Suite Contadores">
@@ -1160,6 +1289,50 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    var selEmp = document.getElementById('calc-plan-empresas');
+    var selUsr = document.getElementById('calc-plan-usuarios');
+    var selMcp = document.getElementById('calc-plan-mcp');
+    function actualizarSelectorPlan() {
+        if (!selEmp || !selUsr || !selMcp) return;
+        var emp = Number(selEmp.value) || 10;
+        var usr = Number(selUsr.value) || 1;
+        var mcp = selMcp.value === 'si';
+        var nombre = '';
+        var detalle = '';
+        var anual = '';
+        var mensual = '';
+        if (emp > 30 || usr > 3) {
+            nombre = 'Estudio ilimitado (empresas sin tope · hasta 5 usuarios)';
+            detalle = 'Incluye MCP, Turno Nocturno 24/7, Monitor Tributario y Portal Marca Blanca · $0 por empresa, banco o consulta SII.';
+            anual = '$549.900 + IVA/año';
+            mensual = 'o $59.900 + IVA/mes sin permanencia ($45.742/mes anual)';
+        } else if (emp > 10 || usr > 1 || mcp) {
+            nombre = 'Estudio (hasta 30 empresas · hasta 3 usuarios)';
+            detalle = 'Incluye MCP, Turno Nocturno 24/7, Monitor Tributario y Portal Marca Blanca · $0 por banco o consulta SII.';
+            anual = '$299.900 + IVA/año';
+            mensual = 'o $32.900 + IVA/mes sin permanencia ($24.992/mes anual)';
+        } else {
+            nombre = 'Contador independiente (hasta 10 empresas · 1 usuario)';
+            detalle = 'Nómina, Previred 105, LRE 147, F29, BHE, Conciliación y Balance 8 col. (Add-on MCP opcional: +$29.900 + IVA/año).';
+            anual = '$149.900 + IVA/año';
+            mensual = 'o $16.900 + IVA/mes sin permanencia ($12.492/mes anual)';
+        }
+        var elNom = document.getElementById('calc-plan-nombre');
+        var elDet = document.getElementById('calc-plan-detalle');
+        var elAnu = document.getElementById('calc-plan-precio-anual');
+        var elMen = document.getElementById('calc-plan-precio-mensual');
+        if (elNom) elNom.textContent = nombre;
+        if (elDet) elDet.textContent = detalle;
+        if (elAnu) elAnu.textContent = anual;
+        if (elMen) elMen.textContent = mensual;
+    }
+    if (selEmp && selUsr && selMcp) {
+        selEmp.addEventListener('change', actualizarSelectorPlan);
+        selUsr.addEventListener('change', actualizarSelectorPlan);
+        selMcp.addEventListener('change', actualizarSelectorPlan);
+        actualizarSelectorPlan();
+    }
 
     document.querySelectorAll('[data-sc-ciclo]').forEach(function (btnC) {
         btnC.addEventListener('click', function () {

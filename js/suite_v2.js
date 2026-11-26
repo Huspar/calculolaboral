@@ -1067,15 +1067,46 @@
       }).join('');
     }
 
-    $('v2-canvas').innerHTML = `<div class="v2-table-wrap"><table class="v2-table"><thead>${headCols}</thead><tbody>${rowsHtml}</tbody></table></div>`;
+    const totalEmp = state.clients.length;
+    const completedEmp = state.clients.filter((c) => c.status === 'cerrado' || (c.f29.state === 'declarado' && c.nomina.previredOk)).length;
+    const blockedEmp = state.clients.filter((c) => c.status === 'critico' || !c.nomina.previredOk || getClientPayrollBlockers(c).length > 0).length;
+    const inProgressEmp = Math.max(0, totalEmp - completedEmp - blockedEmp);
+    const pctDone = totalEmp ? Math.round((completedEmp / totalEmp) * 100) : 0;
+    const batchLive = state.liveSyncBatch;
+
+    const progressStrip = `
+      <div class="v2-f29-hint" style="margin-bottom:12px;display:block;padding:12px 14px">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="display:flex;flex-wrap:wrap;gap:14px;font-size:12px">
+            <span><strong>Empresas en período:</strong> <span class="mono">${totalEmp}</span></span>
+            <span style="color:#00382E"><strong>Completadas:</strong> <span class="mono">${completedEmp}</span></span>
+            <span class="muted"><strong>En proceso:</strong> <span class="mono">${inProgressEmp}</span></span>
+            <span style="color:${blockedEmp ? '#b91c1c' : '#475569'}"><strong>Con bloqueos:</strong> <span class="mono">${blockedEmp}</span></span>
+          </div>
+          <span class="mono" style="font-size:12px;font-weight:700;color:#00382E">${pctDone}% cierre</span>
+        </div>
+        <div style="height:7px;background:#e2e8f0;border-radius:999px;overflow:hidden;display:flex">
+          <div style="width:${pctDone}%;background:#00382E"></div>
+          <div style="width:${totalEmp ? Math.round((inProgressEmp / totalEmp) * 100) : 0}%;background:#94a3b8"></div>
+          <div style="width:${totalEmp ? Math.round((blockedEmp / totalEmp) * 100) : 0}%;background:#b91c1c"></div>
+        </div>
+      </div>
+    `;
+
+    $('v2-canvas').innerHTML = `${progressStrip}<div class="v2-table-wrap"><table class="v2-table"><thead>${headCols}</thead><tbody>${rowsHtml}</tbody></table></div>`;
     $('v2-inspector').innerHTML = `
       <div class="v2-ins-block">
         <h2 class="v2-ins-title">Operación en lote</h2>
-        <p class="muted" style="margin:0;font-size:12.5px">Marca varias empresas para aprobar lotes limpios sin abrir empresa por empresa.</p>
+        <p class="muted" style="margin:0;font-size:12.5px">Marca varias empresas para aprobar lotes limpios sin abrir empresa por empresa, o lanza una sincronización SII masiva.</p>
         <dl class="v2-ins-kv" style="margin:6px 0 0">
           <dt>Cartera activa</dt><dd>${state.clients.length} empresas</dd>
           <dt>Motores conectados</dt><dd>F29 · Previred · LRE</dd>
+          <dt>Con bloqueos</dt><dd style="color:${blockedEmp ? '#b91c1c' : '#00382E'};font-weight:700">${blockedEmp} empresa(s)</dd>
         </dl>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">
+          <button type="button" class="btn btn--primary btn--sm" data-ola-action="batch-sync-sii">Sincronizar cartera SII en lote</button>
+          ${batchLive ? `<div class="v2-ins-note" style="font-size:11.5px;margin-top:2px">Lote <span class="mono">${batchLive.batchId || 'local'}</span>: ${batchLive.completed || 0}/${batchLive.total || 0} completadas · ${batchLive.inProgress || 0} en proceso · ${batchLive.failed || 0} con error.</div>` : ''}
+        </div>
       </div>
     `;
   }
@@ -2853,7 +2884,7 @@
     `;
 
     if (sel.id === 'mcp') {
-      const demoOut = state.mcpDemoOutput || 'Haz clic en cualquiera de las 3 consultas para probar el Conector MCP en vivo sobre tus 6 empresas demo.';
+      const demoOut = state.mcpDemoOutput || 'Haz clic en cualquiera de las consultas para probar el Conector MCP en vivo sobre tu cartera demo.';
       const claudeSnippet = JSON.stringify({
         mcpServers: {
           'calculo-laboral': {
@@ -2862,10 +2893,20 @@
           }
         }
       }, null, 2);
+      const tokensList = Array.isArray(state.mcpTokensList) ? state.mcpTokensList : [];
+      const accessLogs = Array.isArray(state.mcpAccessLogs) ? state.mcpAccessLogs : [];
+      const sampleLogs = [
+        { toolName: 'get_morning_report', companyRut: 'Cartera completa', clientLabel: 'Claude Desktop (ejemplo)', status: 'ok', createdAt: 'Hoy 08:15' },
+        { toolName: 'get_tax_alerts', companyRut: '76.543.210-3', clientLabel: 'ChatGPT MCP (ejemplo)', status: 'ok', createdAt: 'Hoy 08:17' },
+        { toolName: 'get_previred_status', companyRut: '77.120.450-8', clientLabel: 'Claude Web (ejemplo)', status: 'ok', createdAt: 'Hoy 08:19' }
+      ];
+      const logsToShow = accessLogs.length ? accessLogs.slice(0, 6) : sampleLogs;
+      const isSampleLogs = !accessLogs.length;
+
       $('v2-inspector').innerHTML = `
         <div class="v2-ins-block">
-          <div class="v2-ins-head"><h2 class="v2-ins-title">Conector MCP (Solo lectura)</h2><span class="tag tag--in">9 tools</span></div>
-          <p class="muted" style="margin:0;font-size:12px">Conecta Claude Desktop, Claude Web o agentes IA a tu cartera. Al ser solo lectura, el agente nunca modifica declaraciones ni envía nada al SII.</p>
+          <div class="v2-ins-head"><h2 class="v2-ins-title">Conector MCP (Solo lectura)</h2><span class="tag tag--in">10 tools</span></div>
+          <p class="muted" style="margin:0;font-size:12px">Conecta Claude, ChatGPT, Gemini o Copilot a tu cartera sin cambiar de ERP. Solo lectura por diseño, tokens revocables y registro de consultas.</p>
           <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">
             ${mcpTools.map((fn) => `<span class="tag tag--out mono" style="font-size:10.5px">${fn}</span>`).join('')}
           </div>
@@ -2874,8 +2915,36 @@
             <button type="button" class="btn btn--sm" data-conn-action="copy-mcp-json">Copiar JSON</button>
             <a href="/conector-mcp-contadores-chile" target="_blank" rel="noopener" class="btn btn--sm" style="text-decoration:none">Guía ↗</a>
           </div>
-          ${state.mcpTokenLive ? `<div class="v2-ins-note" style="margin-top:6px;font-size:11.5px">Token emitido una sola vez. Cópialo ahora en tu configuración de Claude.</div>` : ''}
-          <pre class="mono" style="margin:6px 0 0;padding:8px;background:var(--ink-paper-2,#f4f5f6);border:1px solid var(--ink-rule);border-radius:6px;font-size:10.5px;overflow:auto;max-height:115px">${claudeSnippet}</pre>
+          ${state.mcpTokenLive ? `<div class="v2-ins-note" style="margin-top:6px;font-size:11.5px">Token emitido una sola vez. Cópialo ahora en tu configuración de Claude/ChatGPT.</div>` : ''}
+          <pre class="mono" style="margin:6px 0 0;padding:8px;background:var(--ink-paper-2,#f4f5f6);border:1px solid var(--ink-rule);border-radius:6px;font-size:10.5px;overflow:auto;max-height:110px">${claudeSnippet}</pre>
+        </div>
+        <div class="v2-ins-block v2-ins-block--soft">
+          <div class="v2-ins-head">
+            <h2 class="v2-ins-title">Seguridad: tokens y registro de consultas</h2>
+            <button type="button" class="btn btn--sm" data-conn-action="refresh-mcp-audit">Actualizar</button>
+          </div>
+          ${tokensList.length ? `
+            <div class="v2-ins-list" style="margin-bottom:8px">
+              ${tokensList.slice(0, 4).map((tk) => `
+                <div class="v2-ins-row">
+                  <div style="font-size:11.5px"><strong>${tk.label || 'Token MCP'}</strong> <span class="mono muted">${tk.prefix || tk.id.slice(0, 8)}</span></div>
+                  <button type="button" class="btn btn--sm" data-revoke-mcp-token="${tk.id}" style="color:#b91c1c">Revocar</button>
+                </div>
+              `).join('')}
+            </div>
+          ` : `<p class="muted" style="margin:0 0 6px;font-size:11.5px">Tokens activos en gateway: ${tokensList.length}. Pulsa «Actualizar» o emite un token para verlo aquí y revocarlo en 1 clic.</p>`}
+          <div style="font-size:11px;font-weight:700;color:#334155;margin:4px 0">${isSampleLogs ? 'Registro de consultas MCP (ejemplo de formato)' : `Registro real de consultas (${accessLogs.length})`}</div>
+          <div class="v2-ins-list">
+            ${logsToShow.map((lg) => `
+              <div class="v2-ins-row" style="font-size:11px">
+                <div>
+                  <strong class="mono">${lg.toolName || lg.tool || 'mcp_tool'}</strong>
+                  <div class="muted">${lg.companyRut || lg.companyId || 'Estudio'} · ${lg.clientLabel || 'Cliente MCP'}</div>
+                </div>
+                <span class="mono muted">${String(lg.createdAt || '').slice(0, 16).replace('T', ' ')}</span>
+              </div>
+            `).join('')}
+          </div>
         </div>
         <div class="v2-ins-block v2-ins-block--soft">
           <div class="v2-ins-head"><h2 class="v2-ins-title">Prueba en vivo sobre tu cartera</h2><span class="mono muted">MCP</span></div>
@@ -3578,6 +3647,60 @@
       c.f29.retenciones = Number(t.dataset.syncF29048) || 0;
       toast(`F29 Cód. 048 alineado con Nómina LRE 3161 (${fmt(c.f29.retenciones)})`);
       render();
+      return;
+    }
+    if (t.dataset.olaAction === 'batch-sync-sii') {
+      const gwConnected = !!state.gatewayConnected || !!(state.gateway && state.gateway.configured);
+      if (!gwConnected || !(state.liveCompanies && state.liveCompanies.length)) {
+        state.liveSyncBatch = {
+          batchId: 'demo-' + String(Date.now()).slice(-4),
+          total: state.clients.length,
+          completed: state.clients.filter((c) => c.status !== 'critico').length,
+          inProgress: 0,
+          failed: state.clients.filter((c) => c.status === 'critico').length
+        };
+        toast('Lote demo verificado (conecta RUT reales en Conexiones para encolar en el SII)');
+        renderStudioOlas();
+        return;
+      }
+      gatewayCall('POST', '/api/v1/sync/batch', { mode: 'rcv' }).then((res) => {
+        if (res && res.ok && res.data) {
+          state.liveSyncBatch = res.data;
+          toast(`Sincronización masiva encolada: ${res.data.total || 0} empresa(s)`);
+          renderStudioOlas();
+        } else {
+          toast((res && res.data && (res.data.message || res.data.error)) || 'No se pudo iniciar la sincronización en lote');
+        }
+      });
+      return;
+    }
+    if (t.dataset.connAction === 'refresh-mcp-audit') {
+      Promise.all([
+        gatewayCall('GET', '/api/v1/mcp/tokens'),
+        gatewayCall('GET', '/api/v1/mcp/access-logs?limit=20')
+      ]).then(([tkRes, logRes]) => {
+        if (tkRes && tkRes.ok && tkRes.data) {
+          state.mcpTokensList = Array.isArray(tkRes.data) ? tkRes.data : (tkRes.data.tokens || tkRes.data.items || []);
+        }
+        if (logRes && logRes.ok && logRes.data) {
+          state.mcpAccessLogs = Array.isArray(logRes.data) ? logRes.data : (logRes.data.logs || logRes.data.items || []);
+        }
+        toast('Tokens y registro de consultas MCP actualizados');
+        renderStudioConexiones();
+      });
+      return;
+    }
+    if (t.dataset.revokeMcpToken) {
+      const tid = t.dataset.revokeMcpToken;
+      gatewayCall('DELETE', `/api/v1/mcp/tokens/${encodeURIComponent(tid)}`).then((res) => {
+        if (res && res.ok) {
+          state.mcpTokensList = (state.mcpTokensList || []).filter((x) => x.id !== tid);
+          toast('Token MCP revocado de inmediato');
+          renderStudioConexiones();
+        } else {
+          toast((res && res.data && (res.data.message || res.data.error)) || 'No se pudo revocar el token');
+        }
+      });
       return;
     }
     if (t.dataset.connAction === 'morning-report') {

@@ -21,7 +21,9 @@ const ALLOWED_PATH_PATTERNS = [
   /^\/api\/v1\/studio\/chart$/,
   /^\/api\/v1\/studio\/morning-report(\/(history|generate))?$/,
   /^\/api\/v1\/studio\/companies\/[a-zA-Z0-9_-]{1,100}\/(supplier-rules|bank-rules|period-closures|lre-history|aux-docs(\/[a-zA-Z0-9_-]{1,100})?)$/,
-  /^\/api\/v1\/mcp\/tokens(\/[a-zA-Z0-9_-]{1,100})?$/
+  /^\/api\/v1\/mcp\/tokens(\/[a-zA-Z0-9_-]{1,100})?$/,
+  /^\/api\/v1\/mcp\/access-logs$/,
+  /^\/api\/v1\/sync\/batch(\/[a-zA-Z0-9_-]{1,100})?$/
 ];
 
 const CREDENTIALS_PATH_PATTERN = /^\/api\/v1\/companies\/[a-zA-Z0-9_-]{1,100}\/credentials$/;
