@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Suite Contadores v2 · CálculoLaboral</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/suite_v2.css">
+</head>
+<body>
+  <div class="v2-app" id="v2-app">
+    <!-- SIDEBAR DUAL (cambia entre Nivel 1 Estudio y Nivel 2 Cliente) -->
+    <aside class="v2-sidebar" id="v2-sidebar" aria-label="Navegación principal">
+      <div class="v2-brand-row">
+        <a href="#hoy" class="v2-brand" id="v2-brand-home">
+          <span class="v2-brand-mark" aria-hidden="true">CL</span>
+          <span>CálculoLaboral</span>
+        </a>
+        <button type="button" class="v2-kbd-btn" id="btn-open-cmdk" title="Ir rápido (Ctrl+K)">⌘K</button>
+      </div>
+
+      <!-- Workspace Switcher arriba del sidebar (sin truncar) -->
+      <div class="v2-ws-box" id="v2-ws-box"></div>
+
+      <!-- Menú dinámico: 4 ítems en Estudio / 5 ítems en Cliente -->
+      <nav class="v2-nav" id="v2-nav" aria-label="Espacio activo"></nav>
+
+      <!-- Pie limpio: utilitarios fuera del canvas -->
+      <div class="v2-sidebar-foot">
+        <div class="v2-foot-row">
+          <span>Asesorías Pérez Ltda.</span>
+          <span class="mono">6 RUT</span>
+        </div>
+        <div class="v2-foot-actions">
+          <button type="button" class="v2-foot-btn" id="btn-new-client">+ Empresa</button>
+          <button type="button" class="v2-foot-btn" id="btn-reset-demo">Reiniciar</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- STAGE PRINCIPAL -->
+    <div class="v2-stage">
+      <!-- Topbar ultra-limpio de 52px (solo 3 grupos) -->
+      <header class="v2-topbar">
+        <div class="v2-topbar-left">
+          <button type="button" class="v2-mobile-menu-btn" id="btn-mobile-menu" aria-label="Abrir menú">☰</button>
+          <h1 class="v2-page-title" id="v2-page-title">Mesa de Cierre</h1>
+          <div class="v2-subtabs" id="v2-subtabs" role="tablist" aria-label="Vistas del módulo"></div>
+        </div>
+        <div class="v2-topbar-right">
+          <div class="v2-period-ctrl" aria-label="Período tributario">
+            <button type="button" id="btn-period-prev" aria-label="Mes anterior">‹</button>
+            <span class="v2-period-label" id="v2-period-label">Noviembre 2026</span>
+            <button type="button" id="btn-period-next" aria-label="Mes siguiente">›</button>
+          </div>
+          <button type="button" class="btn btn--primary" id="v2-primary-cta">Aprobar F29 listos</button>
+        </div>
+      </header>
+
+      <!-- Barra de selección en lote (oculta hasta seleccionar filas) -->
+      <div class="v2-batch-bar" id="v2-batch-bar" hidden>
+        <span id="v2-batch-count">0 seleccionados</span>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn" id="btn-batch-action">Aprobar lote</button>
+          <button type="button" class="btn" id="btn-batch-clear">Limpiar</button>
+        </div>
+      </div>
+
+      <!-- WORKBENCH 70/30: Canvas vivo a la izquierda + Inspector colapsable a la derecha -->
+      <main class="v2-workbench" id="v2-workbench">
+        <section class="v2-canvas" id="v2-canvas" aria-live="polite"></section>
+        <aside class="v2-inspector" id="v2-inspector" aria-label="Inspector contextual"></aside>
+      </main>
+    </div>
+  </div>
+
+  <!-- Navegación inferior móvil (<= 820px) -->
+  <nav class="v2-mobile-nav" id="v2-mobile-nav" aria-label="Accesos rápidos"></nav>
+
+  <!-- Paleta de comandos ⌘K -->
+  <div class="v2-backdrop" id="v2-cmdk-backdrop" hidden>
+    <div class="v2-cmdk" role="dialog" aria-modal="true" aria-label="Saltar a empresa o módulo">
+      <input type="search" class="v2-cmdk-input" id="v2-cmdk-input" placeholder="Buscar empresa, RUT, F29, Nómina, Bancos…">
+      <div class="v2-cmdk-list" id="v2-cmdk-list"></div>
+    </div>
+  </div>
+
+  <!-- Slide-over Drawer: Nueva empresa -->
+  <div class="v2-drawer-wrap" id="v2-drawer-wrap" hidden>
+    <div class="v2-drawer" role="dialog" aria-modal="true" aria-labelledby="v2-drawer-title">
+      <div class="v2-ins-head">
+        <h2 class="v2-page-title" id="v2-drawer-title">Nueva empresa en cartera</h2>
+        <button type="button" class="btn btn--sm" id="btn-close-drawer">Cerrar</button>
+      </div>
+      <form id="form-new-client" style="display:flex;flex-direction:column;gap:12px">
+        <div class="v2-field">
+          <label for="nc-name">Razón social</label>
+          <input type="text" id="nc-name" required placeholder="Ej. Ferretería Central SpA">
+        </div>
+        <div class="v2-field">
+          <label for="nc-rut">RUT</label>
+          <input type="text" id="nc-rut" required placeholder="77.412.890-K" class="mono">
+        </div>
+        <div class="v2-field">
+          <label for="nc-regime">Régimen tributario</label>
+          <select id="nc-regime">
+            <option value="14 D3">14 D3 · Pro Pyme General</option>
+            <option value="14 D8">14 D8 · Pro Pyme Transparente</option>
+            <option value="14 A">14 A · Semi Integrado</option>
+          </select>
+        </div>
+        <div class="v2-field">
+          <label for="nc-workers">Dotación inicial</label>
+          <input type="number" id="nc-workers" min="0" value="4" class="mono">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button type="submit" class="btn btn--primary" style="flex:1">Agregar a cartera</button>
+          <button type="button" class="btn" id="btn-cancel-drawer">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="v2-toast" id="v2-toast" hidden role="status" aria-live="polite"></div>
+
+  <script src="js/suite_v2.js"></script>
+</body>
+</html>
