@@ -41,10 +41,9 @@
       <span class="app-logo-texto">Cálculo<span>Laboral</span></span>
     </a>
 
-    <!-- Bloque del Estudio + CTA principal oscuro -->
+    <!-- Bloque del Estudio + CTA principal -->
     <div class="app-empresa">
       <strong id="study-name-display">Asesorías Pérez Ltda.</strong>
-      <span class="mono syn-study-sub">Suite Estudios Contables</span>
       <select id="estudio-selector-side" class="side-estudio-select" hidden aria-label="Estudio contable activo en menú móvil"></select>
       <button type="button" class="syn-side-cta" id="btn-side-nuevo-cliente">
         <span class="material-icons" aria-hidden="true">add</span>
@@ -52,40 +51,38 @@
       </button>
     </div>
 
-    <!-- Navegación por Grupos Estructurados -->
+    <!-- Navegación en 2 bloques limpios (Estudio / Operación del cliente) -->
     <nav class="app-nav" id="suite-modulos" aria-label="Módulos contables">
       <button type="button" class="suite-mod-btn activo" data-modulo="dashboard" aria-current="page">
         <span class="material-icons" aria-hidden="true">grid_view</span>
-        <span>Dashboard</span>
+        <span>Resumen</span>
       </button>
-
-      <p class="app-nav-grupo">Gestión del Estudio</p>
       <button type="button" class="suite-mod-btn" data-modulo="torre" aria-current="false">
         <span class="material-icons" aria-hidden="true">apartment</span>
-        <span>Cartera de Clientes</span>
+        <span>Cartera</span>
         <span class="app-nav-chip" id="nav-count-clientes" hidden>0</span>
-      </button>
-      <button type="button" class="suite-mod-btn" data-modulo="importador" aria-current="false" hidden>
-        <span class="material-icons" aria-hidden="true">cloud_upload</span>
-        <span>Carga Masiva SII</span>
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="buzon" aria-current="false">
         <span class="material-icons" aria-hidden="true">inbox</span>
         <span>Buzón</span>
         <span class="app-nav-chip" id="nav-buzon-pend" hidden>0</span>
       </button>
-
-      <p class="app-nav-grupo">Nómina y Laboral</p>
-      <button type="button" class="suite-mod-btn" data-modulo="remuneraciones" aria-current="false">
-        <span class="material-icons" aria-hidden="true">receipt_long</span>
-        <span>Remuneraciones</span>
-        <span class="app-nav-chip" id="nav-count-liq" hidden>10</span>
+      <button type="button" class="suite-mod-btn" data-modulo="reportes" aria-current="false">
+        <span class="material-icons" aria-hidden="true">picture_as_pdf</span>
+        <span>Informes y Portal</span>
       </button>
 
-      <p class="app-nav-grupo">Tributario y Renta</p>
+      <div class="furrow-nav-sep" role="separator" aria-hidden="true"></div>
+      <p class="app-nav-grupo">Operación del cliente</p>
+
+      <button type="button" class="suite-mod-btn" data-modulo="remuneraciones" aria-current="false">
+        <span class="material-icons" aria-hidden="true">receipt_long</span>
+        <span>Nómina</span>
+        <span class="app-nav-chip" id="nav-count-liq" hidden>10</span>
+      </button>
       <button type="button" class="suite-mod-btn" data-modulo="f29" aria-current="false">
         <span class="material-icons" aria-hidden="true">receipt</span>
-        <span>Impuestos Mes</span>
+        <span>Impuestos (F29)</span>
         <span class="app-nav-chip" id="nav-f29-estado" hidden>F29</span>
       </button>
       <button type="button" class="suite-mod-btn" data-modulo="ddjj" aria-current="false">
@@ -93,8 +90,6 @@
         <span>Renta y DDJJ</span>
         <span class="app-nav-chip" id="nav-ddjj-at" hidden>AT 2026</span>
       </button>
-
-      <p class="app-nav-grupo">Contabilidad y Finanzas</p>
       <button type="button" class="suite-mod-btn" data-modulo="bancos" aria-current="false">
         <span class="material-icons" aria-hidden="true">sync_alt</span>
         <span>Bancos</span>
@@ -104,9 +99,9 @@
         <span class="material-icons" aria-hidden="true">account_balance</span>
         <span>Contabilidad</span>
       </button>
-      <button type="button" class="suite-mod-btn" data-modulo="reportes" aria-current="false">
-        <span class="material-icons" aria-hidden="true">picture_as_pdf</span>
-        <span>Informes y Portal</span>
+      <button type="button" class="suite-mod-btn" data-modulo="importador" aria-current="false" hidden>
+        <span class="material-icons" aria-hidden="true">cloud_upload</span>
+        <span>Carga Masiva SII</span>
       </button>
 
       <div class="syn-side-clientes" id="side-clientes-rapidos" hidden aria-hidden="true"></div>
@@ -353,141 +348,139 @@
         </div>
       </section>
 
-      <!-- ==================== VISTA 0: DASHBOARD DEL ESTUDIO (MESA DE TRABAJO SAAS) ==================== -->
+      <!-- ==================== VISTA 0: DASHBOARD DEL ESTUDIO (MESA DE CIERRE FURROW) ==================== -->
       <section class="vista" id="suite-dashboard">
-        <div class="v-head saas-dash-head">
+        <div class="v-head saas-dash-head furrow-dash-head">
           <div>
-            <h1 class="v-titulo">Resumen del Estudio</h1>
-            <p class="v-sub">Período <strong class="mono" id="dash-periodo-lbl">2026-11</strong> · Estado operativo de tu cartera y vencimientos del mes.</p>
+            <h1 class="v-titulo">Mesa de Cierre del Estudio</h1>
+            <p class="v-sub">Período <strong class="mono" id="dash-periodo-lbl">2026-11</strong> · Estado real de cartera, impuestos y plazos legales.</p>
           </div>
           <div class="v-acciones">
-            <button type="button" class="btn btn-chico" id="btn-dash-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar datos de ejemplo</button>
+            <button type="button" class="btn btn-chico" id="btn-dash-ejemplo"><span class="material-icons" aria-hidden="true">play_arrow</span>Cargar ejemplo</button>
+            <button type="button" class="btn btn-chico" data-dash-ir="torre">Ver toda la cartera</button>
           </div>
         </div>
 
-        <!-- 4 KPIs limpios en superficie blanca uniforme (sin fondos pastel) -->
-        <div class="fin-kpis fin-kpis-4 saas-kpi-row" style="margin-bottom:16px">
-          <div class="fin-kpi syn-kpi-card" id="dash-kpi-clientes-card">
+        <!-- Tira contable horizontal reglada (sin 4 cajas flotantes) -->
+        <div class="furrow-ledger-strip saas-kpi-row" role="region" aria-label="Indicadores del período">
+          <div class="furrow-ledger-cell" id="dash-kpi-clientes-card">
             <span class="fin-kpi-label">Empresas activas</span>
             <span class="fin-kpi-val saas-kpi-num" id="dash-k-clientes">1</span>
             <span class="fin-kpi-meta" id="dash-k-clientes-meta">Activo: Panadería San Isidro SpA</span>
           </div>
-          <div class="fin-kpi syn-kpi-card" id="dash-kpi-f29-card">
+          <div class="furrow-ledger-cell" id="dash-kpi-f29-card">
             <span class="fin-kpi-label">F29 estimado cartera</span>
             <span class="fin-kpi-val saas-kpi-num" id="dash-k-f29">$0</span>
             <span class="fin-kpi-meta" id="dash-k-f29-meta">Consolidado cód. 91</span>
           </div>
-          <div class="fin-kpi syn-kpi-card" id="dash-kpi-acuses-card">
+          <div class="furrow-ledger-cell" id="dash-kpi-acuses-card">
             <span class="fin-kpi-label">Acuses RCV por vencer</span>
             <span class="fin-kpi-val saas-kpi-num" id="dash-k-acuses">0</span>
             <span class="fin-kpi-meta" id="dash-k-acuses-meta">Plazo 8 días Ley 19.983</span>
           </div>
-          <div class="fin-kpi syn-kpi-card" id="dash-kpi-cierre-card">
+          <div class="furrow-ledger-cell" id="dash-kpi-cierre-card">
             <span class="fin-kpi-label">Períodos cerrados</span>
             <span class="fin-kpi-val saas-kpi-num" id="dash-k-cerrados">0 / 1</span>
             <span class="fin-kpi-meta" id="dash-k-cerrados-meta">Cierre tributario mensual</span>
           </div>
         </div>
 
-        <!-- Grilla principal 2/3 mesa de trabajo + 1/3 vencimientos y actividad -->
-        <div class="syn-dash-grid">
-          <div class="syn-dash-main">
-            <!-- Tabla operativa de Cartera del período -->
-            <section class="panel syn-panel" aria-labelledby="dash-cli-titulo">
-              <div class="panel-head">
-                <div>
-                  <h2 id="dash-cli-titulo">Cartera del período</h2>
-                </div>
-                <button type="button" class="btn btn-chico" data-dash-ir="torre">Ver toda la cartera</button>
-              </div>
-              <div class="panel-cuerpo" style="padding:0">
-                <div class="tabla-contable-wrap">
-                  <table class="tabla-contable compacta saas-cartera-tabla">
-                    <thead>
-                      <tr>
-                        <th scope="col">Empresa</th>
-                        <th scope="col">RCV</th>
-                        <th scope="col">Nómina</th>
-                        <th scope="col">Banco</th>
-                        <th scope="col" class="num">F29 estimado</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col" class="num">Acción</th>
-                      </tr>
-                    </thead>
-                    <tbody id="dash-cartera-tbody"></tbody>
-                  </table>
-                </div>
-                <div id="dash-clientes-cards" hidden></div>
-              </div>
-            </section>
-
-            <!-- Gráfico Principal con Tooltip Oscuro + Selector de Rango -->
-            <section class="panel syn-panel" aria-labelledby="dash-chart-titulo">
-              <div class="panel-cuerpo" id="dash-milestone-chart" aria-live="polite"></div>
-            </section>
-
-            <!-- Ruta de Cierre Mensual (movida fuera del Dashboard global) -->
-            <section class="panel syn-panel dash-cierre-panel" id="dash-cierre-4pasos" aria-labelledby="dash-cierre-titulo" hidden>
-              <div class="panel-head dash-cierre-head">
-                <div>
-                  <h2 id="dash-cierre-titulo">Cierre mensual: <span id="dash-cierre-cliente">Panadería San Isidro SpA</span></h2>
-                </div>
-                <span class="sello sello-guardada" id="dash-cierre-avance">0 de 4 listos</span>
-              </div>
-              <div class="dash-cierre-grid" role="list">
-                <button type="button" class="dash-cierre-paso" data-dash-ir="f29" role="listitem">
-                  <div class="dash-cierre-top">
-                    <strong class="dash-cierre-tit">1. Documentos SII</strong>
-                    <span class="sello sello-guardada" id="cierre-p1-estado">Pendiente</span>
-                  </div>
-                  <span class="dash-cierre-desc" id="cierre-p1-desc">RCV ventas/compras y BHE</span>
-                </button>
-                <button type="button" class="dash-cierre-paso" data-dash-ir="remuneraciones" role="listitem">
-                  <div class="dash-cierre-top">
-                    <strong class="dash-cierre-tit">2. Nómina y Previred</strong>
-                    <span class="sello sello-guardada" id="cierre-p2-estado">Pendiente</span>
-                  </div>
-                  <span class="dash-cierre-desc" id="cierre-p2-desc">Liquidaciones, Previred y LRE</span>
-                </button>
-                <button type="button" class="dash-cierre-paso" data-dash-ir="bancos" role="listitem">
-                  <div class="dash-cierre-top">
-                    <strong class="dash-cierre-tit">3. Bancos</strong>
-                    <span class="sello sello-guardada" id="cierre-p3-estado">Pendiente</span>
-                  </div>
-                  <span class="dash-cierre-desc" id="cierre-p3-desc">Cartola y conciliación</span>
-                </button>
-                <button type="button" class="dash-cierre-paso" data-dash-ir="balance" role="listitem">
-                  <div class="dash-cierre-top">
-                    <strong class="dash-cierre-tit">4. Balance y Cierre</strong>
-                    <span class="sello sello-guardada" id="cierre-p4-estado">Pendiente</span>
-                  </div>
-                  <span class="dash-cierre-desc" id="cierre-p4-desc">Balance 8 Col. y cierre</span>
-                </button>
-              </div>
-            </section>
+        <!-- Protagonista central a 100% de ancho: Cartera del período -->
+        <section class="panel syn-panel furrow-cartera-hero" aria-labelledby="dash-cli-titulo">
+          <div class="panel-head">
+            <div>
+              <h2 id="dash-cli-titulo">Cartera del período</h2>
+              <p class="panel-ayuda">Avance mensual por empresa en RCV, nómina, bancos y F29.</p>
+            </div>
+            <span class="mono syn-pill-neutro" id="dash-cal-mes-tag">Nov 2026</span>
           </div>
+          <div class="panel-cuerpo" style="padding:0">
+            <div class="tabla-contable-wrap">
+              <table class="tabla-contable compacta saas-cartera-tabla">
+                <thead>
+                  <tr>
+                    <th scope="col">Empresa</th>
+                    <th scope="col">RCV</th>
+                    <th scope="col">Nómina</th>
+                    <th scope="col">Banco</th>
+                    <th scope="col" class="num">F29 estimado</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col" class="num">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-cartera-tbody"></tbody>
+              </table>
+            </div>
+            <div id="dash-clientes-cards" hidden></div>
+          </div>
+        </section>
 
-          <aside class="syn-dash-rail" aria-label="Vencimientos y actividad reciente">
-            <section class="panel syn-panel">
-              <div class="panel-head">
-                <h2>Próximos vencimientos</h2>
-                <span class="mono syn-pill-neutro" id="dash-cal-mes-tag">Nov 2026</span>
-              </div>
-              <div class="panel-cuerpo">
-                <div class="syn-venc-lista" id="dash-vencimientos-lista"></div>
-              </div>
-            </section>
+        <!-- Franja inferior 50/50: Vencimientos reglados + Actividad / Seguimiento F29 compacto -->
+        <div class="syn-dash-grid furrow-dash-bottom">
+          <section class="panel syn-panel">
+            <div class="panel-head">
+              <h2>Vencimientos fiscales del mes</h2>
+            </div>
+            <div class="panel-cuerpo furrow-ruled-body">
+              <div class="syn-venc-lista furrow-venc-ruled" id="dash-vencimientos-lista"></div>
+            </div>
+          </section>
 
+          <div class="furrow-dash-col-der">
             <section class="panel syn-panel">
               <div class="panel-head">
                 <h2>Actividad reciente</h2>
               </div>
-              <div class="panel-cuerpo">
+              <div class="panel-cuerpo furrow-ruled-body">
                 <div class="syn-act-lista" id="dash-actividad-lista"></div>
               </div>
             </section>
-          </aside>
+
+            <section class="panel syn-panel furrow-chart-compact" aria-labelledby="dash-chart-titulo">
+              <div class="panel-cuerpo" id="dash-milestone-chart" aria-live="polite"></div>
+            </section>
+          </div>
         </div>
+
+        <!-- Ruta de Cierre Mensual (oculta en Dashboard global, preservada para compatibilidad JS) -->
+        <section class="panel syn-panel dash-cierre-panel" id="dash-cierre-4pasos" aria-labelledby="dash-cierre-titulo" hidden>
+          <div class="panel-head dash-cierre-head">
+            <div>
+              <h2 id="dash-cierre-titulo">Cierre mensual: <span id="dash-cierre-cliente">Panadería San Isidro SpA</span></h2>
+            </div>
+            <span class="sello sello-guardada" id="dash-cierre-avance">0 de 4 listos</span>
+          </div>
+          <div class="dash-cierre-grid" role="list">
+            <button type="button" class="dash-cierre-paso" data-dash-ir="f29" role="listitem">
+              <div class="dash-cierre-top">
+                <strong class="dash-cierre-tit">1. Documentos SII</strong>
+                <span class="sello sello-guardada" id="cierre-p1-estado">Pendiente</span>
+              </div>
+              <span class="dash-cierre-desc" id="cierre-p1-desc">RCV ventas/compras y BHE</span>
+            </button>
+            <button type="button" class="dash-cierre-paso" data-dash-ir="remuneraciones" role="listitem">
+              <div class="dash-cierre-top">
+                <strong class="dash-cierre-tit">2. Nómina y Previred</strong>
+                <span class="sello sello-guardada" id="cierre-p2-estado">Pendiente</span>
+              </div>
+              <span class="dash-cierre-desc" id="cierre-p2-desc">Liquidaciones, Previred y LRE</span>
+            </button>
+            <button type="button" class="dash-cierre-paso" data-dash-ir="bancos" role="listitem">
+              <div class="dash-cierre-top">
+                <strong class="dash-cierre-tit">3. Bancos</strong>
+                <span class="sello sello-guardada" id="cierre-p3-estado">Pendiente</span>
+              </div>
+              <span class="dash-cierre-desc" id="cierre-p3-desc">Cartola y conciliación</span>
+            </button>
+            <button type="button" class="dash-cierre-paso" data-dash-ir="balance" role="listitem">
+              <div class="dash-cierre-top">
+                <strong class="dash-cierre-tit">4. Balance y Cierre</strong>
+                <span class="sello sello-guardada" id="cierre-p4-estado">Pendiente</span>
+              </div>
+              <span class="dash-cierre-desc" id="cierre-p4-desc">Balance 8 Col. y cierre</span>
+            </button>
+          </div>
+        </section>
       </section>
 
       <section class="vista" id="suite-remuneraciones" hidden>

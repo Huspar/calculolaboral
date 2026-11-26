@@ -9293,3 +9293,138 @@ dialog.syn-modal[data-syn-theme="furrow"] {
         --print-border: #DCD7CC;
     }
 }
+
+/* ==========================================================================
+   REDISEÑO ESTRUCTURAL FURROW: SHELL + MESA DE CIERRE DEL DASHBOARD
+   ========================================================================== */
+.furrow-nav-sep {
+    height: 1px;
+    background: var(--syn-border);
+    margin: 10px 6px 6px;
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-empresa {
+    padding: 6px 6px 10px;
+    display: grid;
+    gap: 8px;
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-nav-grupo {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 4px 8px 4px;
+}
+/* Topbar despejada: sin breadcrumb duplicado en desktop */
+@media screen and (min-width: 901px) {
+    #pm-panel.syn-theme[data-syn-theme="furrow"] .syn-breadcrumb {
+        display: none;
+    }
+    #pm-panel.syn-theme[data-syn-theme="furrow"] .cloud-sync-txt,
+    #pm-panel.syn-theme[data-syn-theme="furrow"] #btn-equipo-estudio .top-btn-txt {
+        display: none;
+    }
+    #pm-panel.syn-theme[data-syn-theme="furrow"] #cloud-sync-pill,
+    #pm-panel.syn-theme[data-syn-theme="furrow"] #btn-equipo-estudio {
+        padding: 0 8px;
+        min-width: 36px;
+    }
+}
+
+/* Tira contable horizontal (reemplaza 4 cajas KPI flotantes) */
+.furrow-ledger-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: var(--syn-surface);
+    border-top: 1px solid var(--syn-ink);
+    border-bottom: 1px solid var(--syn-border);
+    border-left: 1px solid var(--syn-border);
+    border-right: 1px solid var(--syn-border);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+.furrow-ledger-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px 16px;
+    border-right: 1px solid var(--syn-border);
+    min-width: 0;
+}
+.furrow-ledger-cell:last-child {
+    border-right: 0;
+}
+.furrow-ledger-cell .fin-kpi-val {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(19px, 1.8vw, 24px);
+    font-weight: 700;
+    color: var(--syn-ink);
+    line-height: 1.15;
+}
+.furrow-cartera-hero {
+    margin-bottom: 16px;
+}
+.furrow-dash-bottom {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 16px;
+    align-items: start;
+}
+.furrow-dash-col-der {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+}
+.furrow-ruled-body {
+    padding: 0 18px !important;
+}
+/* Eliminar cajas anidadas dentro de Próximos vencimientos -> filas regladas */
+.furrow-venc-ruled {
+    display: grid;
+    gap: 0 !important;
+}
+.furrow-venc-ruled > * {
+    border: 0 !important;
+    border-bottom: 1px solid var(--syn-border) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    padding: 12px 0 !important;
+    box-shadow: none !important;
+}
+.furrow-venc-ruled > *:last-child {
+    border-bottom: 0 !important;
+}
+/* Compactar gráfico F29 para no desperdiciar 350px cuando hay pocos meses */
+.furrow-chart-compact .syn-chart-svg,
+.furrow-chart-compact svg {
+    max-height: 165px;
+}
+
+@media screen and (max-width: 960px) {
+    .furrow-ledger-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .furrow-ledger-cell:nth-child(2) {
+        border-right: 0;
+    }
+    .furrow-ledger-cell:nth-child(1),
+    .furrow-ledger-cell:nth-child(2) {
+        border-bottom: 1px solid var(--syn-border);
+    }
+    .furrow-dash-bottom {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+}
+@media screen and (max-width: 480px) {
+    .furrow-ledger-strip {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .furrow-ledger-cell {
+        border-right: 0;
+        border-bottom: 1px solid var(--syn-border);
+    }
+    .furrow-ledger-cell:last-child {
+        border-bottom: 0;
+    }
+}
