@@ -1720,7 +1720,19 @@
       const rcvDocs = ensureRcvDocs(c);
       const selRcv = rcvDocs.find((d) => d.id === state.selectedRcvId) || rcvDocs[0];
       if (selRcv) state.selectedRcvId = selRcv.id;
+      const pendDocs = rcvDocs.filter((d) => !d.acuseDone && d.plazoTag !== 'tag--in');
       $('v2-canvas').innerHTML = `
+        ${pendDocs.length ? `
+          <div class="v2-f29-hint" style="margin-bottom:8px;border-color:#fecaca;background:#fff5f5">
+            <span><strong>${pendDocs.length} factura(s) en riesgo de perder IVA:</strong> en Chile tienes 8 días corridos para aceptar facturas a crédito en el SII. Pulsa <strong>Dar acuse</strong> en cada fila o acúsalas juntas.</span>
+            <button type="button" class="btn btn--primary btn--sm" data-acuse-all="1">Acusar las ${pendDocs.length} pendientes</button>
+          </div>
+        ` : `
+          <div class="v2-f29-hint" style="margin-bottom:8px">
+            <span><strong>RCV al día:</strong> todas las facturas tienen su acuse resuelto y tu Crédito Fiscal IVA (Cód. 537) está cubierto.</span>
+            <button type="button" class="btn btn--sm" data-client-sub="f29">Volver al F29 →</button>
+          </div>
+        `}
         <div class="v2-pulse-bar">
           <span class="muted">Registro Compras y Ventas · Haz clic en un documento para reclasificar proveedor</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -1735,6 +1747,7 @@
             <tbody>
               ${rcvDocs.map((d) => {
                 const hasRule = !!state.supplierRules[`${c.id}::${d.rut}`];
+                const isPending = !d.acuseDone && d.plazoTag !== 'tag--in';
                 return `
                   <tr class="${selRcv && selRcv.id === d.id ? 'is-selected' : ''}" data-select-rcv="${d.id}">
                     <td class="mono">${d.folio}</td>
@@ -1743,7 +1756,9 @@
                     <td class="num">${fmt(d.neto)}</td>
                     <td class="num">${fmt(d.iva)}</td>
                     <td><span class="tag ${d.plazoTag}">${d.plazo}</span></td>
-                    <td><button type="button" class="btn btn--sm" data-quick-ok="${d.actionMsg}">${d.action}</button></td>
+                    <td>${isPending
+                      ? `<button type="button" class="btn btn--primary btn--sm" data-acuse-doc="${d.id}">Dar acuse</button>`
+                      : `<span class="muted" style="font-size:12px">Acusado ✓</span>`}</td>
                   </tr>
                 `;
               }).join('')}
@@ -1845,13 +1860,19 @@
           return `
             <div class="v2-ins-list" style="font-size:12px">
               <div class="v2-ins-row">
-                <span>Cruce LRE 3161 vs F29 Cód. 048</span>
+                <div>
+                  <div>Impuesto sueldos (Nómina vs F29 Cód. 048)</div>
+                  ${diff048 !== 0 ? `<div class="muted" style="font-size:11px">El F29 tiene ${fmt(c.f29.retenciones || 0)}, pero tus sueldos suman ${fmt(iuscNom)}.</div>` : ''}
+                </div>
                 ${diff048 === 0
                   ? `<span class="tag tag--in">Cuadrado</span>`
                   : `<button type="button" class="tag tag--on" style="cursor:pointer;border:0" data-open-client="${c.id}" data-open-area="remuneraciones" data-open-sub="nomina" title="Ver Impuesto Único en Nómina">Dif. ${fmt(diff048)} →</button>`}
               </div>
               <div class="v2-ins-row">
-                <span>Acuses 8d en Crédito Cód. 537</span>
+                <div>
+                  <div>Facturas sin acuse (plazo 8 días SII)</div>
+                  ${c.rcv.pendingAcuses ? `<div class="muted" style="font-size:11px">Acúsalas en Compras para no perder el Crédito IVA.</div>` : ''}
+                </div>
                 ${c.rcv.pendingAcuses
                   ? `<button type="button" class="tag tag--danger" style="cursor:pointer;border:1px solid #fecaca" data-client-sub="rcv" title="Ver facturas con acuse pendiente">${c.rcv.pendingAcuses} en riesgo →</button>`
                   : `<span class="tag tag--in">OK</span>`}
@@ -4058,6 +4079,28 @@
         toast('Split de pasarela aplicado y asiento cuadrado');
         render();
       }
+      return;
+    }
+    if (t.dataset.acuseDoc || t.dataset.acuseAll) {
+      const c = getClient();
+      const docs = ensureRcvDocs(c);
+      let count = 0;
+      docs.forEach((d) => {
+        const isPend = !d.acuseDone && d.plazoTag !== 'tag--in';
+        if (isPend && (t.dataset.acuseAll || d.id === t.dataset.acuseDoc)) {
+          d.acuseDone = true;
+          d.plazo = 'Acusado';
+          d.plazoTag = 'tag--in';
+          d.action = 'Acusado ✓';
+          count++;
+        }
+      });
+      const remaining = docs.filter((d) => !d.acuseDone && d.plazoTag !== 'tag--in').length;
+      c.rcv.pendingAcuses = remaining;
+      c.rcv.state = remaining > 0 ? 'alerta' : 'ok';
+      c.rcv.label = remaining > 0 ? `${remaining} acuse(s) < 48h` : 'RCV 100% cuadrado';
+      toast(remaining === 0 ? `Listo: ${count} acuse(s) aceptados. Brecha de Crédito IVA resuelta.` : `Acuse aceptado (${remaining} pendiente)`);
+      render();
       return;
     }
     if (t.dataset.syncF29Iusc !== undefined) {
