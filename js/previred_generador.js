@@ -21,7 +21,7 @@
     var CAMPOS = 105;
 
     // Tablas de equivalencia del documento oficial
-    var AFP = { cuprum: '03', habitat: '05', provida: '08', planvital: '29', capital: '33', modelo: '34', uno: '35' };
+    var AFP = { cuprum: '03', habitat: '05', provida: '08', planvital: '29', capital: '33', modelo: '34', uno: '35', sinafp: '00', '00': '00' };
     var SALUD = {
         'banmedica': '01', 'consalud': '02', 'vidatres': '03', 'colmena': '04', 'cruzblanca': '05',
         'nuevamasvida': '10', 'codelco': '11', 'bcoestado': '12', 'cruzdelnorte': '25', 'fonasa': '07'

@@ -41,6 +41,9 @@
 
   function calcularWorkerReal(w, iso) {
     const E = window.CLLiquidacionEngine;
+    const tipo = w.tipoRegimen || 'dependiente';
+    const mesVals = valoresMesActual(iso);
+
     if (!E) {
       return {
         imponible: w.base + 180000,
@@ -50,7 +53,25 @@
         detalle: null
       };
     }
-    const mesVals = valoresMesActual(iso);
+
+    // 1) Socio con Sueldo Empresarial (Art. 31 N°6 LIR): sin aportes patronales ni cotizaciones obligatorias; tributa IUSC (F29 Cód. 48)
+    if (tipo === 'socio') {
+      const sueldo = Math.max(0, Number(w.base) || 0);
+      const imp = E.impuestoUnico(sueldo, mesVals.utm);
+      const liquido = Math.max(0, sueldo - imp.monto);
+      const res = {
+        haberesImponibles: [{ concepto: 'Sueldo empresarial (LRE 2161)', monto: sueldo }],
+        descuentosLegales: [{ concepto: 'Impuesto único (F29 Cód. 48)', monto: imp.monto }],
+        totalImponible: sueldo,
+        totalHaberes: sueldo,
+        totalDescuentos: imp.monto,
+        liquido,
+        montos: { afp: 0, salud: 0, afc: 0, impuesto: imp.monto, apv: 0, creditoCCAF: 0 },
+        empleador: { lineas: [], total: 0, costoTotal: sueldo }
+      };
+      return { imponible: sueldo, liquido, impUnico: imp.monto, costoEmpleador: 0, detalle: res };
+    }
+
     const datos = {
       periodo: iso,
       trabajador: {
@@ -66,6 +87,47 @@
       mes: { diasTrabajados: 30, gratificacion: 'legal' }
     };
     const res = E.calcular(datos, mesVals);
+
+    // 2) Trabajador Pensionado por Vejez (Arts. 16, 69 y 85 D.L. 3.500; Ley 19.728; Ley 21.735)
+    if (tipo === 'pensionado') {
+      const imponible = res.totalImponible || 0;
+      const tope90 = Math.round(90.0 * mesVals.uf);
+      const pensionMensual = Math.max(0, Number(w.pensionMensual) || 0);
+      const tasaAfp = (mesVals.afp && mesVals.afp[w.afp]) || 0.1127;
+      const afp = w.cotizaAfpVoluntaria ? Math.round(Math.min(imponible, tope90) * tasaAfp) : 0;
+      const topeSaludEfectivo = Math.max(0, tope90 - pensionMensual);
+      const baseSalud = Math.min(imponible, topeSaludEfectivo);
+      const salud = Math.round(baseSalud * 0.07);
+      const baseTrib = Math.max(0, imponible - afp - salud);
+      const imp = E.impuestoUnico(baseTrib, mesVals.utm);
+      // Mutual Ley 16.744 (0,90%) + SANNA (0,03%) = 0,93% sobre imponible tope 90 UF; AFC, SIS y Ley 21.735 = $0
+      const mutual = Math.round(Math.min(imponible, tope90) * 0.0093);
+      const totalDesc = afp + salud + imp.monto;
+      const liquido = Math.max(0, imponible - totalDesc);
+      const descLegales = [];
+      if (afp > 0) descLegales.push({ concepto: `AFP ${w.afp} (voluntaria)`, monto: afp });
+      descLegales.push({ concepto: 'Salud Fonasa 7% (tope 90 UF − pensión)', monto: salud });
+      descLegales.push({ concepto: 'Impuesto único', monto: imp.monto });
+      const emp = {
+        lineas: [{ clave: 'mutual', concepto: 'Mutual + SANNA (0,93%)', monto: mutual }],
+        total: mutual,
+        costoTotal: imponible + mutual
+      };
+      const det = {
+        haberesImponibles: res.haberesImponibles || [],
+        descuentosLegales: descLegales,
+        totalImponible: imponible,
+        totalHaberes: imponible,
+        totalDescuentos: totalDesc,
+        liquido,
+        bases: { baseAfp: Math.min(imponible, tope90), baseSalud, baseAfc: 0 },
+        montos: { afp, salud, afc: 0, impuesto: imp.monto, apv: 0, creditoCCAF: 0 },
+        empleador: emp
+      };
+      return { imponible, liquido, impUnico: imp.monto, costoEmpleador: mutual, detalle: det };
+    }
+
+    // 3) Dependiente estándar
     const emp = E.aportesEmpleador(res, datos, mesVals);
     res.empleador = emp;
     const impUnicoLine = (res.descuentosLegales || []).find((l) => /impuesto/i.test(l.concepto));
@@ -80,15 +142,22 @@
 
   function generarPreviredReal(c, iso) {
     if (!window.CLPrevired || !c.workers.length) return null;
-    const resultados = c.workers.map((w) => {
+    const elegibles = c.workers.filter((w) => (w.tipoRegimen || 'dependiente') !== 'socio');
+    const excluidosSocio = c.workers.length - elegibles.length;
+    if (!elegibles.length) {
+      return { salida: { texto: '', filas: [], errores: [] }, totales: { afp: 0, sis: 0, salud: 0, mutual: 0, afcTrabajador: 0, afcEmpleador: 0, total: 0, lineas: 0 }, excluidosSocio };
+    }
+    const resultados = elegibles.map((w) => {
       const calc = calcularWorkerReal(w, iso);
+      const tipo = w.tipoRegimen || 'dependiente';
       return {
         record: {
           rut: w.rut,
           nombre: w.name,
           sexo: w.sexo || 'F',
           nacionalidad: '0',
-          afp: w.afp,
+          tipoTrabajador: tipo === 'pensionado' ? (w.cotizaAfpVoluntaria ? '1' : '2') : '0',
+          afp: (tipo === 'pensionado' && !w.cotizaAfpVoluntaria) ? '00' : w.afp,
           salud: 'fonasa',
           dias: 30,
           jornada: 42,
@@ -100,13 +169,14 @@
     });
     const salida = window.CLPrevired.desdeLiquidaciones(resultados, { periodo: iso, mutual: 'ACHS', ccaf: '' });
     const totales = salida && salida.filas ? window.CLPrevired.totales(salida.filas) : null;
-    return { salida, totales };
+    return { salida, totales, excluidosSocio };
   }
 
   function generarLreReal(c, iso) {
     if (!window.CLLre || !c.workers.length) return null;
     const trabajadores = c.workers.map((w) => {
       const calc = calcularWorkerReal(w, iso);
+      const tipo = w.tipoRegimen || 'dependiente';
       const d = calc.detalle || {};
       const findDesc = (re) => {
         const l = (d.descuentosLegales || []).find((x) => re.test(x.concepto));
@@ -125,13 +195,15 @@
         salud: 'fonasa',
         jornadaHoras: 42,
         dias: 30,
+        pensionadoVejez: tipo === 'pensionado',
         v: {
-          '2101': w.base,
-          '2105': gratLine ? gratLine.monto : 0,
+          '2101': tipo === 'socio' ? 0 : w.base,
+          '2105': tipo === 'socio' ? 0 : (gratLine ? gratLine.monto : 0),
+          '2161': tipo === 'socio' ? w.base : 0,
           '3110': findDesc(/^afp/i),
           '3141': findDesc(/^salud/i),
-          '3161': findDesc(/cesant/i),
-          '3151': findDesc(/impuesto/i),
+          '3151': findDesc(/cesant/i),
+          '3161': findDesc(/impuesto/i),
           '4110': findEmp('sis'),
           '4161': findEmp('afc'),
           '4155': findEmp('mutual'),
@@ -166,9 +238,9 @@
         { id: 'w1', name: 'Camila Rojas Fuentes', rut: rutConDv(19876543), sexo: 'F', ingreso: '2021-04-01', cargo: 'Jefa de Producción', base: 1450000, afp: 'Habitat', estado: 'Listo' },
         { id: 'w2', name: 'María González Pérez', rut: rutConDv(12345678), sexo: 'F', ingreso: '2020-08-15', cargo: 'Maestra Panadera', base: 1180000, afp: 'Cuprum', estado: 'Listo' },
         { id: 'w3', name: 'Pedro Soto Ramírez', rut: rutConDv(15876543), sexo: 'M', ingreso: '2023-02-01', cargo: 'Repartidor', base: 850000, afp: 'Modelo', estado: 'Sin contrato', sinContrato: true },
-        { id: 'w4', name: 'Andrés Muñoz Tapia', rut: rutConDv(16543210), sexo: 'M', ingreso: '2019-06-01', cargo: 'Administrador', base: 2400000, afp: 'Capital', estado: 'Listo' },
+        { id: 'w4', name: 'Andrés Muñoz Tapia', rut: rutConDv(16543210), sexo: 'M', ingreso: '2019-06-01', cargo: 'Socio Administrador', base: 2400000, afp: 'Capital', estado: 'Listo', tipoRegimen: 'socio' },
         { id: 'w5', name: 'Valentina Castro León', rut: rutConDv(20111222), sexo: 'F', ingreso: '2024-01-10', cargo: 'Cajera', base: 700000, afp: 'Uno', estado: 'Sin plan Isapre', sinPlanIsapre: true },
-        { id: 'w6', name: 'Jorge Vergara Salas', rut: rutConDv(10999888), sexo: 'M', ingreso: '2018-11-01', cargo: 'Encargado Bodega', base: 1050000, afp: 'Provida', estado: 'Tope 90 UF' }
+        { id: 'w6', name: 'Jorge Vergara Salas', rut: rutConDv(10999888), sexo: 'M', ingreso: '2018-11-01', cargo: 'Encargado Bodega', base: 1050000, afp: 'Provida', estado: 'Listo', tipoRegimen: 'pensionado', pensionMensual: 650000, cotizaAfpVoluntaria: false }
       ],
       bankTx: [
         {
@@ -1130,17 +1202,17 @@
       });
     }
     docs.push({
-      title: 'Retenciones BHE (Cód. 151)',
-      sub: 'Boletas de honorarios electrónicas recibidas',
+      title: 'Retenciones BHE (Cód. 151 · 15,25%)',
+      sub: 'Boletas de honorarios 2026 (Ley 21.133)',
       amount: bheRet
     });
     return {
       code: '048',
       title: 'Impuesto Único y Retenciones (151)',
       amount: ret,
-      source: 'Nómina + BHE',
+      source: 'Nómina (incl. Socio) + BHE 15,25%',
       docs,
-      note: { warn: false, text: 'Cruza automáticamente el Impuesto Único calculado en Remuneraciones con las retenciones de boletas de honorarios.' },
+      note: { warn: false, text: 'Retención BHE vigente 2026: 15,25% (Ley 21.133 · F29 Cód. 151; próximo tramo: 16% en 2027). Incluye IUSC de dependientes y sueldo empresarial.' },
       cta: { label: 'Abrir nómina del período', attr: `data-open-client="${c.id}" data-open-area="remuneraciones"` }
     };
   }
@@ -1445,10 +1517,11 @@
       const mesVals = valoresMesActual(iso);
       const FinCalc = window.FiniquitoCalculator;
       const finRows = computed.map(({ w, calc }) => {
+        const isSocio = (w.tipoRegimen || 'dependiente') === 'socio';
         const gratLine = (calc.detalle && calc.detalle.haberesImponibles || []).find((h) => /gratific/i.test(h.concepto));
         const gratMonto = gratLine ? gratLine.monto : 0;
         let fRes = null;
-        if (FinCalc) {
+        if (FinCalc && !isSocio) {
           try {
             fRes = new FinCalc({
               startDate: w.ingreso || '2022-03-01',
@@ -1479,17 +1552,20 @@
           <table class="v2-table">
             <thead><tr><th>Trabajador</th><th>Ingreso</th><th class="num">Años</th><th class="num">IAS</th><th class="num">Aviso previo</th><th class="num">Vacaciones</th><th class="num">Total finiquito</th></tr></thead>
             <tbody>
-              ${finRows.map(({ w, fRes }) => `
-                <tr class="${selFin && selFin.w.id === w.id ? 'is-selected' : ''}" data-select-worker="${w.id}" style="cursor:pointer">
-                  <td><strong>${w.name}</strong><span class="v2-cell-sub mono">${w.rut}</span></td>
-                  <td class="mono">${w.ingreso || '2022-03-01'}</td>
-                  <td class="num">${fRes ? fRes.serviceTime.years : 0}</td>
-                  <td class="num">${fmt(fRes ? fRes.indemnities.yearsOfService.total : 0)}</td>
-                  <td class="num">${fmt(fRes ? fRes.indemnities.notice.total : 0)}</td>
-                  <td class="num">${fmt(fRes ? fRes.indemnities.vacation.total : 0)}</td>
-                  <td class="num"><strong>${fmt(fRes ? fRes.total : 0)}</strong></td>
-                </tr>
-              `).join('')}
+              ${finRows.map(({ w, fRes }) => {
+                const isSocio = (w.tipoRegimen || 'dependiente') === 'socio';
+                return `
+                  <tr class="${selFin && selFin.w.id === w.id ? 'is-selected' : ''}" data-select-worker="${w.id}" style="cursor:pointer">
+                    <td><strong>${w.name}</strong><span class="v2-cell-sub mono">${w.rut}${isSocio ? ' · Socio empresarial' : ''}</span></td>
+                    <td class="mono">${w.ingreso || '2022-03-01'}</td>
+                    <td class="num">${isSocio ? '—' : (fRes ? fRes.serviceTime.years : 0)}</td>
+                    <td class="num">${isSocio ? '—' : fmt(fRes ? fRes.indemnities.yearsOfService.total : 0)}</td>
+                    <td class="num">${isSocio ? '—' : fmt(fRes ? fRes.indemnities.notice.total : 0)}</td>
+                    <td class="num">${isSocio ? '—' : fmt(fRes ? fRes.indemnities.vacation.total : 0)}</td>
+                    <td class="num">${isSocio ? '<span class="tag tag--out">Bloqueado (Socio)</span>' : `<strong>${fmt(fRes ? fRes.total : 0)}</strong>`}</td>
+                  </tr>
+                `;
+              }).join('')}
             </tbody>
             <tfoot><tr><td colspan="6">Finiquitos Art. ${state.finiquitoCause} CT · UF ${fmt(mesVals.uf)}</td><td class="num">${fmt(totFin)}</td></tr></tfoot>
           </table>
@@ -1497,12 +1573,16 @@
       `;
 
       const sf = selFin && selFin.fRes;
+      const selIsSocio = selFin && (selFin.w.tipoRegimen || 'dependiente') === 'socio';
       $('v2-inspector').innerHTML = selFin ? `
         <div class="v2-ins-block">
           <div class="v2-ins-head">
             <h2 class="v2-ins-title">${selFin.w.name}</h2>
-            <span class="tag ${sf && sf.economics.isCapped ? 'tag--on' : 'tag--in'}">${sf && sf.economics.isCapped ? 'Tope 90 UF' : `Art. ${state.finiquitoCause}`}</span>
+            <span class="tag ${selIsSocio ? 'tag--danger' : sf && sf.economics.isCapped ? 'tag--on' : 'tag--in'}">${selIsSocio ? 'Finiquito bloqueado' : sf && sf.economics.isCapped ? 'Tope 90 UF' : `Art. ${state.finiquitoCause}`}</span>
           </div>
+          ${selIsSocio ? `
+            <div class="v2-ins-note is-warn">Sueldo empresarial (Art. 31 N° 6 LIR / Art. 7° CT): el socio con administración carece de subordinación laboral, por lo que no corresponde cálculo de finiquito estándar (IAS, aviso previo ni feriado proporcional).</div>
+          ` : ''}
           <div class="v2-ins-row">
             <span>Causal legal</span>
             <select id="sel-fin-cause" style="height:28px;border:1px solid var(--ink-rule);border-radius:6px;padding:0 6px;background:var(--ink-paper)">
@@ -1551,7 +1631,7 @@
               <tr>
                 <td><strong>Archivo Nómina Previred (.txt)</strong></td>
                 <td class="mono">105 campos · sep ";" · v100</td>
-                <td><span class="tag ${totalBlockCount ? 'tag--danger' : 'tag--in'}">${blockers.length ? `Bloqueado: ${blockers.length} ficha(s) incompleta(s)` : prevErr.length ? prevErr[0] : `${tot.lineas} filas · 0 errores`}</span></td>
+                <td><span class="tag ${totalBlockCount ? 'tag--danger' : 'tag--in'}">${blockers.length ? `Bloqueado: ${blockers.length} ficha(s) incompleta(s)` : prevErr.length ? prevErr[0] : `${tot.lineas} filas${prev && prev.excluidosSocio ? ` · ${prev.excluidosSocio} socio excl.` : ''} · 0 errores`}</span></td>
                 <td class="num">${blockers.length ? `<button type="button" class="btn btn--sm" data-go-incomplete="1">Completar fichas (${blockers.length})</button>` : `<button type="button" class="btn btn--primary btn--sm" id="btn-dl-previred">Descargar TXT</button>`}</td>
               </tr>
               <tr>
@@ -1626,7 +1706,7 @@
               return `
                 <tr class="${activeSel && activeSel.w.id === w.id ? 'is-selected' : ''}" data-select-worker="${w.id}" style="cursor:pointer">
                   <td><input type="checkbox" data-batch-id="${w.id}" ${state.selectedIds.has(w.id) ? 'checked' : ''} aria-label="Seleccionar ${w.name}"></td>
-                  <td><strong>${w.name}</strong><span class="v2-cell-sub">${w.cargo}</span></td>
+                  <td><strong>${w.name}</strong><span class="v2-cell-sub">${w.cargo}${w.tipoRegimen === 'socio' ? ' · Socio empresarial' : w.tipoRegimen === 'pensionado' ? ' · Pensionado vejez' : ''}</span></td>
                   <td class="mono">${w.rut}</td>
                   <td>${w.afp}</td>
                   <td class="num v2-col-calc v2-col-calc-start" data-row-imp="${w.id}">${fmt(calc.imponible)}</td>
@@ -1676,10 +1756,33 @@
             <span class="tag ${!wMissing.length && (w.estado === 'Listo' || w.estado === 'Pagado') ? 'tag--in' : 'tag--danger'}">${wMissing.length ? wMissing[0].label : w.estado}</span>
           </div>
           <div class="muted" style="font-size:12px">${w.cargo} · <span class="mono">${w.rut}</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:2px">
+            <label for="sel-worker-regimen" class="muted" style="font-size:11.5px">Régimen previsional / tributario</label>
+            <select id="sel-worker-regimen" class="v2-ins-select">
+              <option value="dependiente" ${(w.tipoRegimen || 'dependiente') === 'dependiente' ? 'selected' : ''}>Dependiente (Código del Trabajo)</option>
+              <option value="socio" ${w.tipoRegimen === 'socio' ? 'selected' : ''}>Socio con sueldo empresarial (Art. 31 N°6)</option>
+              <option value="pensionado" ${w.tipoRegimen === 'pensionado' ? 'selected' : ''}>Pensionado por vejez (Art. 69 D.L. 3.500)</option>
+            </select>
+          </div>
+          ${w.tipoRegimen === 'pensionado' ? `
+            <div class="v2-ins-row">
+              <span>Pensión mensual ($)</span>
+              <input type="number" class="v2-inline-input" id="inp-worker-pension" value="${w.pensionMensual || 0}" aria-label="Pensión mensual de ${w.name}">
+            </div>
+            <label class="v2-ins-check">
+              <input type="checkbox" id="chk-worker-afp-vol" ${w.cotizaAfpVoluntaria ? 'checked' : ''}>
+              <span>Cotiza AFP voluntariamente (PreviRed Tipo 1; por defecto Tipo 2 exento).</span>
+            </label>
+          ` : ''}
           <div class="v2-ins-row">
-            <span>Sueldo base ($)</span>
+            <span>${w.tipoRegimen === 'socio' ? 'Sueldo empresarial ($)' : 'Sueldo base ($)'}</span>
             <input type="number" class="v2-inline-input" id="inp-worker-base" value="${w.base}" aria-label="Sueldo base de ${w.name}">
           </div>
+          ${w.tipoRegimen === 'socio' ? `
+            <div class="v2-ins-note">Sueldo empresarial (Art. 31 N° 6 LIR): sin aportes patronales ni finiquito laboral. Excluido de PreviRed (LRE 2161/3161). Colación/movilización tributan IUSC (F29 Cód. 48).</div>
+          ` : w.tipoRegimen === 'pensionado' ? `
+            <div class="v2-ins-note">Pensionado por vejez (Art. 69 y 16 D.L. 3.500): exento de AFP, AFC, SIS y Ley 21.735; mantiene Salud (tope 90 UF menos pensión) y Mutual/SANNA.</div>
+          ` : ''}
           <dl class="v2-ins-kv" id="v2-worker-kv" style="margin-top:4px">
             ${(d.haberesImponibles || []).map((h) => `<dt>${h.concepto}</dt><dd>${fmt(h.monto)}</dd>`).join('')}
             ${(d.descuentosLegales || []).map((x) => `<dt>${x.concepto}</dt><dd>−${fmt(x.monto)}</dd>`).join('')}
@@ -2445,6 +2548,17 @@
       if (ws) ws.textContent = state.studioName;
       return;
     }
+    if (e.target.id === 'inp-worker-pension') {
+      const c = getClient();
+      const w = (c.workers || []).find((x) => x.id === state.selectedWorkerId);
+      if (w) {
+        w.pensionMensual = Math.max(0, Number(e.target.value) || 0);
+        render();
+        const el = $('inp-worker-pension');
+        if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+      }
+      return;
+    }
     if (e.target.id === 'inp-worker-base') {
       const c = getClient();
       const w = c.workers.find((x) => x.id === state.selectedWorkerId);
@@ -2516,6 +2630,27 @@
   document.addEventListener('change', (e) => {
     if (e.target.id === 'chk-postergar') { getClient().f29.postergar = e.target.checked; render(); return; }
     if (e.target.id === 'sel-fin-cause') { state.finiquitoCause = e.target.value; render(); return; }
+    if (e.target.id === 'sel-worker-regimen') {
+      const c = getClient();
+      const w = (c.workers || []).find((x) => x.id === state.selectedWorkerId);
+      if (w) {
+        w.tipoRegimen = e.target.value;
+        if (w.tipoRegimen === 'pensionado' && !w.pensionMensual) w.pensionMensual = 500000;
+        toast(`Régimen actualizado: ${w.tipoRegimen === 'socio' ? 'Socio sueldo empresarial' : w.tipoRegimen === 'pensionado' ? 'Pensionado por vejez' : 'Dependiente'}`);
+        render();
+      }
+      return;
+    }
+    if (e.target.id === 'chk-worker-afp-vol') {
+      const c = getClient();
+      const w = (c.workers || []).find((x) => x.id === state.selectedWorkerId);
+      if (w) {
+        w.cotizaAfpVoluntaria = e.target.checked;
+        toast(w.cotizaAfpVoluntaria ? 'Cotización AFP voluntaria activada (PreviRed Tipo 1)' : 'Exento de AFP (PreviRed Tipo 2)');
+        render();
+      }
+      return;
+    }
     if (e.target.id === 'v2-csv-cartola') {
       const file = e.target.files && e.target.files[0];
       if (!file || !window.CLImportadores) return;
