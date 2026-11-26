@@ -1,0 +1,174 @@
+/* Hallmark · built: Hallmark · theme: Furrow (2/3, seed chilean-accounting-firm-suite-d232·f9695310·2026-11-26·r0) · redesign: full · scope: app · genre: modern-minimal */
+/*
+ * CálculoLaboral · Suite Contadores — Hoja Maestra Furrow (construida desde cero)
+ * Papel cálido manila, tinta carbón en filetes 1px, botones moldeados 6px,
+ * tablas tipo registro contable oficial y Geist Mono tabular en cifras.
+ */
+
+:root {
+    --f-paper: oklch(96% 0.011 85);
+    --f-paper-2: oklch(99.5% 0.005 85);
+    --f-paper-3: oklch(92% 0.016 85);
+    --f-sheet: oklch(99.3% 0.004 85);
+    --f-ink: oklch(18% 0.006 60);
+    --f-ink-2: oklch(28% 0.008 60);
+    --f-muted: oklch(44% 0.012 60);
+    --f-rule: oklch(86% 0.014 85);
+    --f-accent: oklch(70% 0.19 40);
+    --f-accent-hover: oklch(64% 0.19 40);
+    --f-accent-ink: oklch(18% 0.006 60);
+    --f-accent-soft: oklch(92% 0.045 50);
+    --f-green: oklch(44% 0.11 150);
+    --f-green-soft: oklch(92% 0.04 150);
+    --f-radius-card: 10px;
+    --f-radius-ctrl: 6px;
+}
+
+/* ---------- Contenedores de Fase 1: Cartera (#suite-torre) y Buzón (#suite-buzon) ---------- */
+.furrow-inline-create {
+    margin-bottom: 16px;
+    background: var(--f-paper-2);
+    border: 1px solid var(--f-rule);
+    border-radius: var(--f-radius-card);
+}
+.furrow-inline-create > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--f-ink);
+    min-height: 44px;
+}
+.furrow-inline-create > summary::-webkit-details-marker {
+    display: none;
+}
+.furrow-inline-create-body {
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--f-rule);
+    padding-top: 12px;
+}
+.furrow-create-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(150px, 1fr) minmax(130px, 0.8fr) auto;
+    gap: 10px;
+    align-items: end;
+}
+.furrow-create-grid input,
+.furrow-create-grid select {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid var(--f-rule);
+    border-radius: var(--f-radius-ctrl);
+    background: var(--f-paper-2);
+    color: var(--f-ink);
+    font-size: 13.5px;
+}
+
+/* Cartera: tabla maestra protagonista + alertas regladas debajo */
+#suite-torre .furrow-torre-head-acciones {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+#suite-torre .furrow-alertas-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+#suite-torre .furrow-graf-compact {
+    margin-bottom: 16px;
+}
+
+/* Buzón: Inbox Split 65/35 limpio + Caja Chica colapsable */
+#suite-buzon .furrow-buzon-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+#suite-buzon .furrow-buzon-filtros {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
+#suite-buzon .furrow-buzon-filtros select,
+#suite-buzon .furrow-sal-form input,
+#suite-buzon .furrow-sal-form textarea {
+    width: 100%;
+    min-height: 38px;
+    padding: 8px 10px;
+    border: 1px solid var(--f-rule);
+    border-radius: var(--f-radius-ctrl);
+    background: var(--f-paper-2);
+    color: var(--f-ink);
+    font-size: 13px;
+}
+#suite-buzon .furrow-sal-form {
+    display: grid;
+    gap: 10px;
+}
+#suite-buzon .furrow-sal-contactos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+#suite-buzon .furrow-sal-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+#suite-buzon .furrow-disclosure {
+    margin-top: 16px;
+    background: var(--f-paper-2);
+    border: 1px solid var(--f-rule);
+    border-radius: var(--f-radius-card);
+}
+#suite-buzon .furrow-disclosure > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    min-height: 48px;
+}
+#suite-buzon .furrow-disclosure > summary::-webkit-details-marker {
+    display: none;
+}
+#suite-buzon .furrow-disclosure-body {
+    padding: 14px 18px 18px;
+    border-top: 1px solid var(--f-rule);
+}
+
+/* Responsive Fase 1 (<= 1024px y 390px) */
+@media screen and (max-width: 1024px) {
+    #suite-buzon .furrow-buzon-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .furrow-create-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media screen and (max-width: 640px) {
+    .furrow-create-grid,
+    #suite-buzon .furrow-buzon-filtros,
+    #suite-buzon .furrow-sal-contactos {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    #suite-torre .furrow-torre-head-acciones .btn,
+    #suite-buzon .furrow-sal-acciones .btn {
+        min-height: 44px;
+    }
+}

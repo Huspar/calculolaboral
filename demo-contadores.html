@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/assets/css/app.css?v=1.38.0">
 <link rel="stylesheet" href="/assets/css/polish.css?v=1.0.1">
 <link rel="stylesheet" href="/assets/css/suite_contadores.css?v=2.3.3">
+<link rel="stylesheet" href="/assets/css/suite_furrow.css?v=1.0.0">
 </head>
 <body class="app-body">
 <a class="app-saltar" href="#app-content">Saltar al contenido</a>
@@ -2289,64 +2290,136 @@
       <section class="vista" id="suite-torre" hidden>
         <div class="v-head">
           <div>
-            <h1 class="v-titulo">Cartera de Clientes del Estudio</h1>
-            <p class="v-sub">Resumen operativo por cliente, régimen SII, estado de cierre tributario y cambio en un clic para el período <span class="mono" id="torre-periodo-badge">2026-11</span>.</p>
+            <h1 class="v-titulo">Cartera de Clientes</h1>
+            <p class="v-sub">Período <span class="mono" id="torre-periodo-badge">2026-11</span> · Estado de cierre, régimen SII y acceso directo por empresa.</p>
           </div>
-          <div class="v-acciones torre-alta-grid">
-            <input type="text" id="torre-nuevo-nombre" class="lq-input-compacto" placeholder="Razón social del nuevo cliente" aria-label="Nombre nuevo cliente">
-            <div><input type="text" id="torre-nuevo-rut" class="lq-input-compacto torre-input-rut" placeholder="RUT (ej. 76.543.210-3)" maxlength="12" aria-label="RUT nuevo cliente"><span class="pm-error" id="torre-nuevo-rut-err" hidden role="alert"></span></div>
-            <select id="torre-nuevo-regimen" class="torre-select-regimen" aria-label="Régimen tributario nuevo cliente">
-              <option value="14D3">14 D3</option>
-              <option value="14D3_MAYOR">14 D3 &gt;50k</option>
-              <option value="14D8">14 D8</option>
-              <option value="14D8_MAYOR">14 D8 &gt;50k</option>
-              <option value="14A">14 A</option>
+          <div class="v-acciones furrow-torre-head-acciones">
+            <select id="torre-sync-tipo" class="lq-select lq-select-sm torre-sync-select" aria-label="Módulo a sincronizar">
+              <option value="ALL" selected>Todo (SII + TGR + PreviRed)</option>
+              <option value="F22_SUMMARY">Solo F22 SII</option>
+              <option value="DDJJ_SUMMARY">Solo DDJJ SII</option>
+              <option value="TGR_DEBT">Solo TGR</option>
+              <option value="PREVIRED_STATUS">Solo PreviRed</option>
             </select>
-            <button class="btn btn-primario" type="button" id="btn-torre-crear-cliente">Crear y trabajar</button>
+            <button type="button" class="btn btn-chico btn-primario suite-btn-sync-all" id="btn-torre-sync-all" title="Encolar sincronización SII para todas las empresas conectadas del estudio">
+              <span class="material-icons" aria-hidden="true">sync</span><span>Sincronizar SII</span>
+            </button>
           </div>
         </div>
 
-        <div class="fin-kpis fin-kpis-4" style="margin-bottom:14px">
-          <div class="fin-kpi"><span class="fin-kpi-label">Clientes en estudio</span><span class="fin-kpi-val mono" id="torre-k-clientes">0</span></div>
-          <div class="fin-kpi" id="torre-kpi-card-abiertos"><span class="fin-kpi-label">Períodos abiertos</span><span class="fin-kpi-val mono" id="torre-k-abiertos">0</span></div>
-          <div class="fin-kpi" id="torre-kpi-card-cerrados"><span class="fin-kpi-label">Períodos cerrados</span><span class="fin-kpi-val mono ok" id="torre-k-cerrados">0</span></div>
-          <div class="fin-kpi fin-kpi-destacado"><span class="fin-kpi-label">F29 consolidado (cód. 91)</span><span class="fin-kpi-val mono" id="torre-k-f29total">$0</span></div>
+        <!-- Tira contable horizontal reglada -->
+        <div class="furrow-ledger-strip" role="region" aria-label="Resumen de cartera">
+          <div class="furrow-ledger-cell"><span class="fin-kpi-label">Clientes en estudio</span><span class="fin-kpi-val mono" id="torre-k-clientes">0</span></div>
+          <div class="furrow-ledger-cell" id="torre-kpi-card-abiertos"><span class="fin-kpi-label">Períodos abiertos</span><span class="fin-kpi-val mono" id="torre-k-abiertos">0</span></div>
+          <div class="furrow-ledger-cell" id="torre-kpi-card-cerrados"><span class="fin-kpi-label">Períodos cerrados</span><span class="fin-kpi-val mono ok" id="torre-k-cerrados">0</span></div>
+          <div class="furrow-ledger-cell"><span class="fin-kpi-label">F29 consolidado (cód. 91)</span><span class="fin-kpi-val mono" id="torre-k-f29total">$0</span></div>
         </div>
-        <div class="suite-graf-card" id="torre-grafico-resumen" aria-label="Avance gráfico de declaraciones en cartera"></div>
 
-        <div class="panel torre-alertas-panel" id="torre-alertas-panel" style="margin-bottom:16px">
+        <!-- Alta rápida de cliente colapsable (sin aplastar el encabezado) -->
+        <details class="furrow-inline-create" id="torre-alta-details">
+          <summary>
+            <span>+ Agregar nueva empresa a la cartera</span>
+            <span class="material-icons" aria-hidden="true">expand_more</span>
+          </summary>
+          <div class="furrow-inline-create-body">
+            <div class="furrow-create-grid">
+              <div class="lq-field">
+                <label for="torre-nuevo-nombre">Razón social</label>
+                <input type="text" id="torre-nuevo-nombre" placeholder="Ej. Comercial Los Robles SpA">
+              </div>
+              <div class="lq-field">
+                <label for="torre-nuevo-rut">RUT empresa</label>
+                <input type="text" id="torre-nuevo-rut" class="torre-input-rut" placeholder="76.543.210-3" maxlength="12">
+                <span class="pm-error" id="torre-nuevo-rut-err" hidden role="alert"></span>
+              </div>
+              <div class="lq-field">
+                <label for="torre-nuevo-regimen">Régimen SII</label>
+                <select id="torre-nuevo-regimen" class="torre-select-regimen">
+                  <option value="14D3">14 D3</option>
+                  <option value="14D3_MAYOR">14 D3 &gt;50k</option>
+                  <option value="14D8">14 D8</option>
+                  <option value="14D8_MAYOR">14 D8 &gt;50k</option>
+                  <option value="14A">14 A</option>
+                </select>
+              </div>
+              <button class="btn btn-primario" type="button" id="btn-torre-crear-cliente">Crear y trabajar</button>
+            </div>
+          </div>
+        </details>
+
+        <div class="torre-sii-progreso-panel" id="torre-sii-progreso-panel" hidden role="status" aria-live="polite">
+          <div class="torre-sii-progreso-cabeza">
+            <div class="torre-sii-progreso-txt">
+              <span class="material-icons sii-spin" aria-hidden="true">sync</span>
+              <strong id="torre-sii-progreso-label">Sincronizando cartera SII...</strong>
+              <span class="mono" id="torre-sii-progreso-empresa"></span>
+            </div>
+            <span class="mono torre-sii-progreso-pct" id="torre-sii-progreso-pct">0%</span>
+          </div>
+          <div class="torre-sii-barra-track" aria-hidden="true">
+            <div class="torre-sii-barra-fill" id="torre-sii-barra-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Protagonista: Lista Maestra de Clientes a 100% de ancho -->
+        <section class="panel" style="margin-bottom:16px">
           <div class="panel-head">
             <div>
-              <h2>
-                Bandeja de alertas de cartera
-                <span class="torre-alerta-total-pill mono" id="torre-alertas-total-pill">0</span>
-              </h2>
-              <p class="panel-ayuda">Vencimientos RCV, F29, deudas en TGR, mora PreviRed y observaciones SII en todas tus empresas conectadas.</p>
+              <h2>Empresas activas del estudio</h2>
+              <p class="panel-ayuda">Pulsa «Trabajar» para abrir nómina, F29, bancos y contabilidad de esa empresa.</p>
+            </div>
+            <div class="v-acciones">
+              <button type="button" class="btn btn-chico" id="btn-torre-portal" title="Compartir portal de solo lectura con el cliente activo">
+                <span class="material-icons" aria-hidden="true">share</span><span>Portal cliente</span>
+              </button>
+              <button type="button" class="btn btn-chico" id="btn-torre-webhooks" hidden aria-hidden="true">Webhooks</button>
+            </div>
+          </div>
+          <div class="panel-cuerpo" style="padding:0">
+            <div class="tabla-contable-wrap">
+              <table class="tabla-contable">
+                <thead>
+                  <tr>
+                    <th scope="col">Cliente / Empresa</th>
+                    <th scope="col">RUT</th>
+                    <th scope="col">Régimen</th>
+                    <th scope="col">Conexión SII</th>
+                    <th scope="col" class="num">Trabajadores</th>
+                    <th scope="col" class="num">F29 cód. 91</th>
+                    <th scope="col">F29 del período</th>
+                    <th scope="col">Estado cierre</th>
+                    <th scope="col" class="num">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-torre-clientes"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Bandeja de alertas de cartera debajo de la lista principal -->
+        <section class="panel torre-alertas-panel" id="torre-alertas-panel" style="margin-bottom:16px">
+          <div class="panel-head">
+            <div>
+              <h2>Alertas tributarias y laborales <span class="torre-alerta-total-pill mono" id="torre-alertas-total-pill">0</span></h2>
+              <p class="panel-ayuda">Plazos RCV, F29, TGR, PreviRed y observaciones SII.</p>
             </div>
             <div class="v-acciones torre-alertas-controles">
               <span class="torre-riesgo-total" id="torre-alertas-riesgo-wrap">
-                Monto en riesgo: <strong class="mono" id="torre-alerta-riesgo-total">$0</strong>
+                En riesgo: <strong class="mono" id="torre-alerta-riesgo-total">$0</strong>
               </span>
               <button type="button" class="btn btn-chico" id="btn-torre-alertas-refresh">
-                <span class="material-icons" aria-hidden="true">refresh</span><span>Actualizar alertas</span>
+                <span class="material-icons" aria-hidden="true">refresh</span><span>Actualizar</span>
               </button>
             </div>
           </div>
           <div class="panel-cuerpo">
-            <div class="torre-alertas-filtros">
-              <div class="fin-filtros" id="torre-alertas-sev-filtros" role="tablist" aria-label="Filtrar alertas por severidad">
-                <button type="button" class="fin-chip activo" data-alerta-sev="TODAS" role="tab" aria-selected="true">
-                  Todas <span class="fin-chip-cnt" id="torre-sev-cnt-todas">0</span>
-                </button>
-                <button type="button" class="fin-chip" data-alerta-sev="CRITICAL" role="tab" aria-selected="false">
-                  Críticas <span class="fin-chip-cnt crit" id="torre-sev-cnt-crit">0</span>
-                </button>
-                <button type="button" class="fin-chip" data-alerta-sev="WARNING" role="tab" aria-selected="false">
-                  Preventivas <span class="fin-chip-cnt warn" id="torre-sev-cnt-warn">0</span>
-                </button>
-                <button type="button" class="fin-chip" data-alerta-sev="INFO" role="tab" aria-selected="false">
-                  Informativas <span class="fin-chip-cnt" id="torre-sev-cnt-info">0</span>
-                </button>
+            <div class="furrow-alertas-bar">
+              <div class="cl-subtabs" id="torre-alertas-sev-filtros" role="tablist" aria-label="Filtrar alertas por severidad">
+                <button type="button" class="cl-subtab activo" data-alerta-sev="TODAS" role="tab" aria-selected="true">Todas (<span id="torre-sev-cnt-todas">0</span>)</button>
+                <button type="button" class="cl-subtab" data-alerta-sev="CRITICAL" role="tab" aria-selected="false">Críticas (<span id="torre-sev-cnt-crit">0</span>)</button>
+                <button type="button" class="cl-subtab" data-alerta-sev="WARNING" role="tab" aria-selected="false">Preventivas (<span id="torre-sev-cnt-warn">0</span>)</button>
+                <button type="button" class="cl-subtab" data-alerta-sev="INFO" role="tab" aria-selected="false">Informativas (<span id="torre-sev-cnt-info">0</span>)</button>
               </div>
               <div class="torre-alertas-select-wrap">
                 <label for="torre-alerta-modulo" class="sr-only">Filtrar por módulo</label>
@@ -2371,8 +2444,8 @@
                     <th scope="col">Severidad</th>
                     <th scope="col">Empresa / RUT</th>
                     <th scope="col">Módulo</th>
-                    <th scope="col">Detalle de alerta</th>
-                    <th scope="col" class="num">Monto en riesgo</th>
+                    <th scope="col">Detalle</th>
+                    <th scope="col" class="num">Monto</th>
                     <th scope="col" class="num">Acción</th>
                   </tr>
                 </thead>
@@ -2381,68 +2454,9 @@
             </div>
             <div class="fin-cards-lista" id="torre-alertas-cards"></div>
           </div>
-        </div>
+        </section>
 
-        <div class="torre-sii-progreso-panel" id="torre-sii-progreso-panel" hidden role="status" aria-live="polite">
-          <div class="torre-sii-progreso-cabeza">
-            <div class="torre-sii-progreso-txt">
-              <span class="material-icons sii-spin" aria-hidden="true">sync</span>
-              <strong id="torre-sii-progreso-label">Sincronizando cartera SII...</strong>
-              <span class="mono" id="torre-sii-progreso-empresa"></span>
-            </div>
-            <span class="mono torre-sii-progreso-pct" id="torre-sii-progreso-pct">0%</span>
-          </div>
-          <div class="torre-sii-barra-track" aria-hidden="true">
-            <div class="torre-sii-barra-fill" id="torre-sii-barra-fill" style="width:0%"></div>
-          </div>
-        </div>
-
-        <div class="panel" style="margin-bottom:16px">
-          <div class="panel-head">
-            <div>
-              <h2>Cartera activa de clientes del estudio</h2>
-              <p class="panel-ayuda">Cambia de cliente con «Trabajar» para abrir sus liquidaciones, RCV, F29, libros y DDJJ en el mismo período.</p>
-            </div>
-            <div class="v-acciones">
-              <button type="button" class="btn btn-chico" id="btn-torre-portal" title="Compartir portal de solo lectura con el cliente activo">
-                <span class="material-icons" aria-hidden="true">share</span><span>Portal cliente</span>
-              </button>
-              <button type="button" class="btn btn-chico" id="btn-torre-webhooks" title="Configurar webhooks HMAC-SHA256 del estudio">
-                <span class="material-icons" aria-hidden="true">webhook</span><span>Webhooks</span>
-              </button>
-              <select id="torre-sync-tipo" class="lq-select lq-select-sm torre-sync-select" aria-label="Módulo a sincronizar">
-                <option value="ALL" selected>Todo (SII + TGR + PreviRed)</option>
-                <option value="F22_SUMMARY">Solo F22 SII</option>
-                <option value="DDJJ_SUMMARY">Solo DDJJ SII</option>
-                <option value="TGR_DEBT">Solo TGR</option>
-                <option value="PREVIRED_STATUS">Solo PreviRed</option>
-              </select>
-              <button type="button" class="btn btn-chico btn-primario suite-btn-sync-all" id="btn-torre-sync-all" title="Encolar sincronización SII para todas las empresas conectadas del estudio">
-                <span class="material-icons" aria-hidden="true">sync</span><span>Sincronizar cartera SII</span>
-              </button>
-            </div>
-          </div>
-          <div class="panel-cuerpo">
-            <div class="tabla-contable-wrap">
-              <table class="tabla-contable">
-                <thead>
-                  <tr>
-                    <th scope="col">Cliente / Empresa</th>
-                    <th scope="col">RUT</th>
-                    <th scope="col">Régimen</th>
-                    <th scope="col">Conexión SII</th>
-                    <th scope="col" class="num">Trabajadores</th>
-                    <th scope="col" class="num">F29 cód. 91</th>
-                    <th scope="col">F29 del período</th>
-                    <th scope="col">Estado cierre</th>
-                    <th scope="col" class="num">Acción</th>
-                  </tr>
-                </thead>
-                <tbody id="tbody-torre-clientes"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+        <div class="suite-graf-card furrow-graf-compact" id="torre-grafico-resumen" aria-label="Avance gráfico de declaraciones en cartera" hidden></div>
       </section>
 
       <!-- ==================== VISTA 7: IMPORTADOR UNIFICADO ==================== -->
@@ -3029,8 +3043,8 @@
       <section class="vista" id="suite-buzon" hidden>
         <div class="v-head">
           <div>
-            <h1>Buzón del Estudio</h1>
-            <p class="v-sub">Documentos recibidos desde el Portal Cliente Marca Blanca y envíos de seguimiento del período.</p>
+            <h1 class="v-titulo">Buzón del Estudio</h1>
+            <p class="v-sub">Recepción de documentos desde el Portal Cliente y envíos de seguimiento.</p>
           </div>
           <div class="v-acciones">
             <button type="button" class="btn btn-primario" id="btn-buzon-abrir-portal">
@@ -3043,44 +3057,40 @@
           <span class="material-icons" aria-hidden="true">info</span>
           <div class="buzon-demo-txt">
             <strong>Modo demostración sin sesión activa.</strong>
-            <span>Inicia sesión para recibir archivos reales desde el Portal Cliente, o carga envíos de ejemplo para probar el flujo hacia Bancos.</span>
+            <span>Inicia sesión para recibir archivos reales desde el Portal, o carga envíos de ejemplo para probar el flujo hacia Bancos.</span>
           </div>
           <div class="buzon-demo-acciones">
-            <button type="button" class="btn btn-chico" id="btn-buzon-cargar-demo">Cargar envíos de ejemplo</button>
+            <button type="button" class="btn btn-chico" id="btn-buzon-cargar-demo">Cargar ejemplos</button>
             <button type="button" class="btn btn-chico btn-primario" id="btn-buzon-iniciar-sesion">Iniciar sesión</button>
           </div>
         </div>
 
-        <div class="buzon-layout">
+        <div class="furrow-buzon-grid">
           <div class="panel buzon-recibidos-panel">
             <div class="panel-head">
               <div>
                 <h2>Documentos recibidos</h2>
-                <p class="panel-ayuda">Cartolas bancarias, novedades de sueldo y respaldos enviados por tus clientes.</p>
+                <p class="panel-ayuda">Cartolas bancarias, novedades de sueldo y respaldos del mes.</p>
               </div>
               <span class="texto-ayuda mono" id="buzon-resumen-conteo">0 archivos</span>
             </div>
             <div class="panel-cuerpo">
-              <div class="buzon-filtros" role="region" aria-label="Filtros del buzón">
+              <div class="furrow-buzon-filtros" role="region" aria-label="Filtros del buzón">
                 <div class="lq-field">
                   <label for="buzon-filtro-cliente">Cliente</label>
-                  <select id="buzon-filtro-cliente">
-                    <option value="">Todos los clientes</option>
-                  </select>
+                  <select id="buzon-filtro-cliente"><option value="">Todos</option></select>
                 </div>
                 <div class="lq-field">
                   <label for="buzon-filtro-periodo">Período</label>
-                  <select id="buzon-filtro-periodo">
-                    <option value="">Todos los períodos</option>
-                  </select>
+                  <select id="buzon-filtro-periodo"><option value="">Todos</option></select>
                 </div>
                 <div class="lq-field">
                   <label for="buzon-filtro-tipo">Tipo</label>
                   <select id="buzon-filtro-tipo">
                     <option value="">Todos</option>
-                    <option value="cartola">Cartola bancaria</option>
-                    <option value="novedades">Novedades sueldo</option>
-                    <option value="otro">Otro documento</option>
+                    <option value="cartola">Cartola</option>
+                    <option value="novedades">Novedades</option>
+                    <option value="otro">Otro</option>
                   </select>
                 </div>
                 <div class="lq-field">
@@ -3114,7 +3124,7 @@
               <div class="buzon-vacio" id="buzon-vacio">
                 <span class="material-icons buzon-vacio-ico" aria-hidden="true">inbox</span>
                 <h3>Sin documentos pendientes</h3>
-                <p>Cuando tus clientes suban cartolas bancarias (CSV o Excel), novedades de sueldo o respaldos desde su Portal Marca Blanca, aparecerán aquí listos para aplicar o descargar.</p>
+                <p>Cuando tus clientes suban cartolas o respaldos desde su Portal Marca Blanca, aparecerán aquí listos para aplicar o descargar.</p>
                 <div class="buzon-vacio-acciones">
                   <button type="button" class="btn btn-primario" id="btn-buzon-vacio-portal">
                     <span class="material-icons" aria-hidden="true">send</span>Enviar enlace del Portal al cliente
@@ -3128,19 +3138,19 @@
             <div class="panel-head">
               <div>
                 <h2>Envíos al cliente</h2>
-                <p class="panel-ayuda">Mensajes listos para copiar o abrir en tu correo.</p>
+                <p class="panel-ayuda">Plantillas listas para correo o WhatsApp.</p>
               </div>
               <span class="sello sello-guardada" id="buzon-sal-cliente">Cliente activo</span>
             </div>
             <div class="panel-cuerpo">
               <div class="buzon-plantillas" role="group" aria-label="Tipo de mensaje rápido">
-                <button type="button" class="btn btn-chico buzon-tpl-btn activo" data-buzon-tpl="portal" aria-pressed="true">Enviar enlace del Portal</button>
-                <button type="button" class="btn btn-chico buzon-tpl-btn" data-buzon-tpl="cartola" aria-pressed="false">Solicitar cartola</button>
-                <button type="button" class="btn btn-chico buzon-tpl-btn" data-buzon-tpl="f29" aria-pressed="false">Recordatorio F29</button>
+                <button type="button" class="btn btn-chico buzon-tpl-btn activo" data-buzon-tpl="portal" aria-pressed="true">Portal</button>
+                <button type="button" class="btn btn-chico buzon-tpl-btn" data-buzon-tpl="cartola" aria-pressed="false">Pedir cartola</button>
+                <button type="button" class="btn btn-chico buzon-tpl-btn" data-buzon-tpl="f29" aria-pressed="false">F29</button>
               </div>
 
-              <div class="buzon-sal-form">
-                <div class="buzon-sal-contactos">
+              <div class="furrow-sal-form">
+                <div class="furrow-sal-contactos">
                   <div class="lq-field">
                     <label for="buzon-sal-correo">Correo (opcional)</label>
                     <input type="email" id="buzon-sal-correo" placeholder="contacto@empresa.cl" autocomplete="email">
@@ -3151,16 +3161,16 @@
                   </div>
                 </div>
                 <div class="lq-field">
-                  <label for="buzon-sal-asunto">Asunto (para correo)</label>
+                  <label for="buzon-sal-asunto">Asunto</label>
                   <input type="text" id="buzon-sal-asunto" maxlength="160">
                 </div>
                 <div class="lq-field">
-                  <label for="buzon-sal-mensaje">Mensaje editable</label>
-                  <textarea id="buzon-sal-mensaje" rows="6"></textarea>
+                  <label for="buzon-sal-mensaje">Mensaje</label>
+                  <textarea id="buzon-sal-mensaje" rows="5"></textarea>
                 </div>
-                <div class="buzon-sal-acciones">
+                <div class="furrow-sal-acciones">
                   <button type="button" class="btn btn-primario" id="btn-buzon-abrir-gmail">
-                    <span class="material-icons" aria-hidden="true">mail</span>Abrir en Gmail
+                    <span class="material-icons" aria-hidden="true">mail</span>Gmail
                   </button>
                   <button type="button" class="btn" id="btn-buzon-abrir-whatsapp">
                     <span class="material-icons" aria-hidden="true">chat</span>WhatsApp
@@ -3170,36 +3180,37 @@
                   </button>
                 </div>
                 <div class="buzon-sal-alt">
-                  <button type="button" class="btn-texto" id="btn-buzon-abrir-mailto">Usar app de correo del equipo (Outlook / Mail)</button>
+                  <button type="button" class="btn-texto" id="btn-buzon-abrir-mailto">Abrir en app de correo del equipo</button>
                 </div>
               </div>
 
               <div class="buzon-historial-salientes">
-                <h3 class="preval-bloque-titulo">Últimos envíos del período</h3>
+                <h3 class="preval-bloque-titulo">Últimos envíos</h3>
                 <ul class="buzon-sal-lista" id="buzon-sal-lista"></ul>
-                <p class="texto-ayuda" id="buzon-sal-vacio">Aún no registras envíos en este período.</p>
+                <p class="texto-ayuda" id="buzon-sal-vacio">Sin envíos registrados en este período.</p>
               </div>
             </div>
           </aside>
         </div>
 
-        <div class="panel" id="buzon-caja-chica-panel" style="margin-top:16px">
-          <div class="panel-head">
+        <details class="furrow-disclosure" id="buzon-caja-chica-panel">
+          <summary>
             <div>
-              <h2>Caja Chica y Rendiciones (gastos sin factura)</h2>
-              <p class="panel-ayuda">Registra boletas menores, peajes o viáticos del mes y centralízalos al Libro Diario en 1 clic.</p>
+              <strong>Caja Chica y Rendiciones (gastos sin factura)</strong>
+              <span class="texto-ayuda" style="margin-left:8px">Total: <strong class="mono" id="caja-chica-total">$0</strong></span>
             </div>
-            <div class="v-acciones">
-              <span class="texto-ayuda">Total rendido: <strong class="mono" id="caja-chica-total">$0</strong></span>
+            <span class="material-icons" aria-hidden="true">expand_more</span>
+          </summary>
+          <div class="furrow-disclosure-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+              <p class="panel-ayuda" style="margin:0">Registra boletas menores, peajes o viáticos del mes y centralízalos al Libro Diario en 1 clic.</p>
               <button type="button" class="btn btn-chico btn-primario" id="btn-caja-chica-centralizar">
                 <span class="material-icons" aria-hidden="true">menu_book</span>Centralizar en Diario
               </button>
             </div>
-          </div>
-          <div class="panel-cuerpo">
             <div class="caja-chica-form">
               <input type="date" id="cc-gasto-fecha" class="f29-decl-input" aria-label="Fecha del gasto">
-              <input type="text" id="cc-gasto-concepto" class="ddjj-soc-in" placeholder="Concepto (ej. Peajes despacho, insumos aseo, boleta ferretería)">
+              <input type="text" id="cc-gasto-concepto" class="ddjj-soc-in" placeholder="Concepto (ej. Peajes despacho, boleta ferretería)">
               <input type="text" id="cc-gasto-monto" class="f29-decl-input mono" inputmode="numeric" placeholder="Monto ($)">
               <select id="cc-gasto-centro" class="lq-select lq-select-sm" aria-label="Centro de costo"></select>
               <button type="button" class="btn btn-chico" id="btn-cc-gasto-agregar"><span class="material-icons" aria-hidden="true">add</span>Agregar</button>
@@ -3219,7 +3230,7 @@
               </table>
             </div>
           </div>
-        </div>
+        </details>
       </section>
 
       <section class="vista" id="suite-reportes" hidden>
