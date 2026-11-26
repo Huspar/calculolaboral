@@ -1300,6 +1300,24 @@
           ${batchLive ? `<div class="v2-ins-note" style="font-size:11.5px;margin-top:2px">Lote <span class="mono">${batchLive.batchId || 'local'}</span>: ${batchLive.completed || 0}/${batchLive.total || 0} completadas · ${batchLive.inProgress || 0} en proceso · ${batchLive.failed || 0} con error.</div>` : ''}
         </div>
       </div>
+      <div class="v2-ins-block v2-ins-block--soft">
+        <div class="v2-ins-head">
+          <h2 class="v2-ins-title">Avisos F29 en lote (WhatsApp)</h2>
+          <button type="button" class="btn btn--sm" data-ola-action="copy-all-f29-wa">Copiar todos</button>
+        </div>
+        <p class="muted" style="margin:0 0 6px;font-size:11.5px">Envía el monto F29 (Cód. 091) y recordatorio de vencimiento a cada cliente sin redactar correo por correo.</p>
+        <div class="v2-ins-list" style="font-size:11.5px">
+          ${state.clients.filter((c) => c.f29.state !== 'pagado').slice(0, 5).map((c) => {
+            const msg = encodeURIComponent(`Hola, te compartimos el resumen de F29 ${currentPeriod().label} de ${c.name} (RUT ${c.rut}): total estimado Cód. 091 ${fmt(f29Total(c))}. Plazo legal SII: día 20. — ${state.studioName}`);
+            return `
+              <div class="v2-ins-row">
+                <div><strong>${c.name.split(' ').slice(0, 2).join(' ')}</strong><div class="muted mono">${fmt(f29Total(c))} · ${f29StateLabel(c.f29.state)}</div></div>
+                <a href="https://wa.me/?text=${msg}" target="_blank" rel="noopener" class="btn btn--sm" style="text-decoration:none">WhatsApp ↗</a>
+              </div>
+            `;
+          }).join('') || '<div class="muted">Todos los F29 del período están pagados.</div>'}
+        </div>
+      </div>
     `;
   }
 
@@ -2856,7 +2874,7 @@
           <table class="v2-table">
             <thead><tr><th style="width:72px">Código</th><th>Estado de Resultados (P&amp;L) · ${state.balanceScope === 'mes' ? currentPeriod().label : 'Acumulado'}</th><th>Tipo</th><th class="num">Monto CLP</th></tr></thead>
             <tbody>
-              ${ingresos.map((f) => `<tr><td class="mono">${f.codigo}</td><td><strong>${f.nombre}</strong></td><td><span class="tag tag--in">Ingreso</span></td><td class="num">${fmt(f.ganancia)}</td></tr>`).join('')}
+              ${ingresos.map((f) => `<tr data-jump-mayor="${f.codigo}" style="cursor:pointer" title="Ver movimientos en Libro Mayor"><td class="mono">${f.codigo}</td><td><strong>${f.nombre}</strong></td><td><span class="tag tag--in">Ingreso</span></td><td class="num">${fmt(f.ganancia)}</td></tr>`).join('')}
               ${gastos.map((f) => `<tr><td class="mono">${f.codigo}</td><td>${f.nombre}</td><td><span class="tag tag--out">Gasto / Costo</span></td><td class="num">−${fmt(f.perdida)}</td></tr>`).join('')}
             </tbody>
             <tfoot>
@@ -2878,6 +2896,14 @@
             <button type="button" class="btn btn--sm" style="flex:1" data-emit-doc="resultados-pdf">Emitir P&amp;L PDF</button>
             <button type="button" class="btn btn--sm" data-emit-doc="contab-xlsx">Excel (.xlsx)</button>
           </div>
+        </div>
+        <div class="v2-ins-block v2-ins-block--soft">
+          <div class="v2-ins-head"><h2 class="v2-ins-title">Principales Ratios Financieros</h2><span class="mono muted">P&amp;L</span></div>
+          <dl class="v2-ins-kv">
+            <dt>Margen operativo</dt><dd>${margen}%</dd>
+            <dt>Liquidez (Activo / Pasivo)</dt><dd>${Number(t.pasivo || 0) > 0 ? (Number(t.activo || 0) / Number(t.pasivo || 0)).toFixed(2).replace('.', ',') + 'x' : '—'}</dd>
+            <dt>Endeudamiento</dt><dd>${Number(t.activo || 0) > 0 ? ((Number(t.pasivo || 0) / Number(t.activo || 0)) * 100).toFixed(1).replace('.', ',') + '%' : '0,0%'}</dd>
+          </dl>
         </div>
       `;
       return;
@@ -3926,7 +3952,7 @@
 
   /* ==================== EVENTS ==================== */
   document.addEventListener('click', (e) => {
-    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox], [data-select-conn], [data-select-mayor], [data-select-monitor]');
+    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox], [data-select-conn], [data-select-mayor], [data-select-monitor], [data-jump-mayor]');
     if (!t) return;
 
     if (t.id === 'btn-open-cmdk' || t.id === 'btn-switch-client') { openCmdk(); return; }
@@ -4223,6 +4249,20 @@
       c.f29.retenciones = Number(t.dataset.syncF29Iusc) || 0;
       toast(`F29 Cód. 048 alineado con Nómina LRE 3161 (${fmt(c.f29.retenciones)})`);
       render();
+      return;
+    }
+    if (t.dataset.jumpMayor) {
+      state.selectedMayorCode = t.dataset.jumpMayor;
+      state.clientSub = 'mayor';
+      render();
+      toast(`Trazabilidad: Libro Mayor filtrado en cuenta ${t.dataset.jumpMayor}`);
+      return;
+    }
+    if (t.dataset.olaAction === 'copy-all-f29-wa') {
+      const pend = state.clients.filter((c) => c.f29.state !== 'pagado');
+      const lines = pend.map((c) => `• ${c.name} (${c.rut}): F29 ${currentPeriod().label} Cód. 091 ${fmt(f29Total(c))} — ${f29StateLabel(c.f29.state)} (vence día 20)`).join('\n');
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(lines).catch(() => {});
+      toast(`${pend.length} avisos F29 copiados al portapapeles para enviar por WhatsApp/correo`);
       return;
     }
     if (t.dataset.olaAction === 'batch-sync-sii') {
