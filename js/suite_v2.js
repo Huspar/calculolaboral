@@ -1835,22 +1835,34 @@
       <div class="v2-ins-block">
         <div class="v2-ins-head">
           <h2 class="v2-ins-title">Auditor F29 / RCV · SII vs Motor</h2>
-          <span class="tag ${c.rcv.pendingAcuses ? 'tag--danger' : 'tag--in'}">${c.rcv.pendingAcuses ? 'Brecha detectada' : 'Cuadrado'}</span>
+          ${c.rcv.pendingAcuses
+            ? `<button type="button" class="tag tag--danger" style="cursor:pointer;border:1px solid #fecaca" data-client-sub="rcv" title="Ir a Compras y Acuses">Brecha detectada →</button>`
+            : `<span class="tag tag--in">Cuadrado</span>`}
         </div>
         ${(() => {
           const iuscNom = (c.workers || []).reduce((s, w) => s + (calcularWorkerReal(w, currentPeriod().iso).impUnico || 0), 0);
           const diff048 = (c.f29.retenciones || 0) - iuscNom;
           return `
             <div class="v2-ins-list" style="font-size:12px">
-              <div class="v2-ins-row"><span>Cruce LRE 3161 vs F29 Cód. 048</span><span class="tag ${diff048 === 0 ? 'tag--in' : 'tag--on'}">${diff048 === 0 ? 'Cuadrado' : `Dif. ${fmt(diff048)}`}</span></div>
-              <div class="v2-ins-row"><span>Acuses 8d en Crédito Cód. 537</span><span class="tag ${c.rcv.pendingAcuses ? 'tag--danger' : 'tag--in'}">${c.rcv.pendingAcuses ? `${c.rcv.pendingAcuses} en riesgo` : 'OK'}</span></div>
+              <div class="v2-ins-row">
+                <span>Cruce LRE 3161 vs F29 Cód. 048</span>
+                ${diff048 === 0
+                  ? `<span class="tag tag--in">Cuadrado</span>`
+                  : `<button type="button" class="tag tag--on" style="cursor:pointer;border:0" data-open-client="${c.id}" data-open-area="remuneraciones" data-open-sub="nomina" title="Ver Impuesto Único en Nómina">Dif. ${fmt(diff048)} →</button>`}
+              </div>
+              <div class="v2-ins-row">
+                <span>Acuses 8d en Crédito Cód. 537</span>
+                ${c.rcv.pendingAcuses
+                  ? `<button type="button" class="tag tag--danger" style="cursor:pointer;border:1px solid #fecaca" data-client-sub="rcv" title="Ver facturas con acuse pendiente">${c.rcv.pendingAcuses} en riesgo →</button>`
+                  : `<span class="tag tag--in">OK</span>`}
+              </div>
               <div class="v2-ins-row"><span>Postergación IVA (Cód. 756/755)</span>
                 <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer">
                   <input type="checkbox" id="chk-postergar" ${c.f29.postergar ? 'checked' : ''}> <span class="mono">${c.f29.postergar ? 'Sí' : 'No'}</span>
                 </label>
               </div>
             </div>
-            ${diff048 !== 0 ? `<button type="button" class="btn btn--sm" style="margin-top:6px" data-sync-f29-048="${iuscNom}">Alinear Cód. 048 con Nómina (${fmt(iuscNom)})</button>` : ''}
+            ${diff048 !== 0 ? `<button type="button" class="btn btn--sm" style="margin-top:6px" data-sync-f29-iusc="${iuscNom}">Alinear Cód. 048 con Nómina (${fmt(iuscNom)})</button>` : ''}
           `;
         })()}
       </div>
@@ -3782,7 +3794,7 @@
 
   /* ==================== EVENTS ==================== */
   document.addEventListener('click', (e) => {
-    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox], [data-select-conn], [data-select-mayor]');
+    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox], [data-select-conn], [data-select-mayor], [data-select-monitor]');
     if (!t) return;
 
     if (t.id === 'btn-open-cmdk' || t.id === 'btn-switch-client') { openCmdk(); return; }
@@ -4048,13 +4060,13 @@
       }
       return;
     }
-    if (t.dataset.syncF29048 !== undefined) {
+    if (t.dataset.syncF29Iusc !== undefined) {
       const c = getClient();
       if (isPeriodClosed(c)) {
         toast('Mes cerrado y bloqueado: reabre el período con motivo antes de modificar el F29');
         return;
       }
-      c.f29.retenciones = Number(t.dataset.syncF29048) || 0;
+      c.f29.retenciones = Number(t.dataset.syncF29Iusc) || 0;
       toast(`F29 Cód. 048 alineado con Nómina LRE 3161 (${fmt(c.f29.retenciones)})`);
       render();
       return;
