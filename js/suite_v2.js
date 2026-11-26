@@ -430,6 +430,29 @@
     selectedF29Code: '538',
     selectedRcvId: null,
     workerFilter: 'todos',
+    auxFilter: 'todos',
+    selectedAuxId: null,
+    lastPlanSync: '',
+    studioChart: [
+      { code: '11010', name: 'Caja', type: 'Activo' },
+      { code: '11020', name: 'Banco cuenta corriente', type: 'Activo' },
+      { code: '11050', name: 'Clientes nacionales', type: 'Activo' },
+      { code: '11080', name: 'IVA Crédito Fiscal', type: 'Activo' },
+      { code: '11090', name: 'PPM por recuperar', type: 'Activo' },
+      { code: '12010', name: 'Activo fijo / Maquinaria', type: 'Activo' },
+      { code: '21010', name: 'Proveedores nacionales', type: 'Pasivo' },
+      { code: '21030', name: 'Remuneraciones por pagar', type: 'Pasivo' },
+      { code: '21035', name: 'Cotizaciones PreviRed por pagar', type: 'Pasivo' },
+      { code: '21040', name: 'Impuesto único por pagar', type: 'Pasivo' },
+      { code: '21050', name: 'IVA Débito Fiscal', type: 'Pasivo' },
+      { code: '21055', name: 'F29 por pagar (IVA + PPM)', type: 'Pasivo' },
+      { code: '41010', name: 'Costo de ventas / Insumos', type: 'Pérdida' },
+      { code: '41020', name: 'Envases y empaques', type: 'Pérdida' },
+      { code: '41030', name: 'Arriendos y servicios básicos', type: 'Pérdida' },
+      { code: '42010', name: 'Remuneraciones', type: 'Pérdida' },
+      { code: '42015', name: 'Aportes empleador (SIS/AFC/Mutual)', type: 'Pérdida' },
+      { code: '51010', name: 'Ventas afectas del giro', type: 'Ganancia' }
+    ],
     reopenPromptOpen: false,
     reopenError: '',
     bankRules: {},
@@ -669,10 +692,11 @@
         },
         contabilidad: {
           title: 'Contabilidad',
-          cta: 'Exportar Balance CSV',
+          cta: state.clientSub === 'plan' ? 'Aplicar plan al Estudio' : 'Exportar Balance CSV',
           tabs: [
             { id: 'balance', label: 'Balance 8 Col.' },
-            { id: 'diario', label: 'Libro Diario' }
+            { id: 'diario', label: 'Libro Diario' },
+            { id: 'plan', label: 'Plan de Cuentas' }
           ]
         }
       };
@@ -1812,7 +1836,113 @@
     }
   }
 
+  function ensureAuxDocs(c) {
+    if (Array.isArray(c.auxDocs) && c.auxDocs.length) return c.auxDocs;
+    if (c.id === 'san-isidro') {
+      c.auxDocs = [
+        { id: 'ax1', kind: 'cxc', folio: '3990', party: 'Distribuidora Oriente SpA', rut: '76.440.120-4', issued: '18/09', days: 68, amount: 640000, status: 'Abierto' },
+        { id: 'ax2', kind: 'cxc', folio: '4109', party: 'Café Central Ltda.', rut: '77.210.890-1', issued: '15/10', days: 42, amount: 1250000, status: 'Abierto' },
+        { id: 'ax3', kind: 'cxp', folio: '88412', party: 'Molinos del Sur S.A.', rut: '76.112.400-5', issued: '14/11', days: 12, amount: 945000, status: 'Abierto' },
+        { id: 'ax4', kind: 'cxc', folio: '4152', party: 'Hotel Providencia S.A.', rut: '96.712.440-8', issued: '21/11', days: 0, amount: 890000, status: 'Abierto' },
+        { id: 'ax5', kind: 'cxp', folio: '20491', party: 'Envases Chile SpA', rut: '77.409.118-2', issued: '24/11', days: 0, amount: 412000, status: 'Abierto' }
+      ];
+    } else {
+      const vBase = Math.max(450000, Math.round((c.rcv.ventasNeto || 2000000) * 0.14));
+      const cBase = Math.max(280000, Math.round((c.rcv.comprasNeto || 1200000) * 0.16));
+      c.auxDocs = [
+        { id: `${c.id}-ax1`, kind: 'cxc', folio: '1108', party: 'Cliente Corporativo Principal', rut: '76.901.112-3', issued: '19/10', days: 38, amount: vBase, status: 'Abierto' },
+        { id: `${c.id}-ax2`, kind: 'cxp', folio: '50114', party: 'Distribuidora Central Ltda.', rut: '76.889.210-1', issued: '16/11', days: 10, amount: cBase, status: 'Abierto' }
+      ];
+    }
+    return c.auxDocs;
+  }
+
+  function auxAgingLabel(days) {
+    if (days <= 0) return { label: 'Al día', cls: 'tag--in' };
+    if (days <= 30) return { label: `${days} d (1–30)`, cls: 'tag--out' };
+    if (days <= 60) return { label: `${days} d (31–60)`, cls: 'tag--on' };
+    return { label: `${days} d (> 60)`, cls: 'tag--danger' };
+  }
+
   function renderClientBancos(c) {
+    if (state.clientSub === 'cxc') {
+      const allAux = ensureAuxDocs(c);
+      const openAux = allAux.filter((d) => d.status === 'Abierto');
+      const totCxc = openAux.filter((d) => d.kind === 'cxc').reduce((s, d) => s + d.amount, 0);
+      const totCxp = openAux.filter((d) => d.kind === 'cxp').reduce((s, d) => s + d.amount, 0);
+      const vencido30 = openAux.filter((d) => d.days > 30).reduce((s, d) => s + d.amount, 0);
+      const filtered = allAux.filter((d) => {
+        if (state.auxFilter === 'cxc') return d.kind === 'cxc';
+        if (state.auxFilter === 'cxp') return d.kind === 'cxp';
+        if (state.auxFilter === 'vencido') return d.status === 'Abierto' && d.days > 30;
+        return true;
+      });
+      const selAux = filtered.find((d) => d.id === state.selectedAuxId) || filtered[0] || null;
+      if (selAux) state.selectedAuxId = selAux.id;
+
+      $('v2-canvas').innerHTML = `
+        <div class="v2-tape">
+          <div class="v2-tape-cell"><span class="v2-tape-label">Por cobrar (CxC)</span><span class="v2-tape-val is-in">${fmt(totCxc)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Por pagar (CxP)</span><span class="v2-tape-val">${fmt(totCxp)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Vencido &gt; 30 días</span><span class="v2-tape-val ${vencido30 ? 'is-danger' : ''}">${fmt(vencido30)}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Posición neta</span><span class="v2-tape-val">${fmt(totCxc - totCxp)}</span></div>
+        </div>
+        <div class="v2-pulse-bar">
+          <div class="v2-filter-pills" role="group" aria-label="Filtrar auxiliar por cobrar y pagar">
+            <button type="button" class="v2-pill-btn" data-aux-filter="todos" aria-pressed="${state.auxFilter === 'todos'}">Todos <span class="mono">${allAux.length}</span></button>
+            <button type="button" class="v2-pill-btn" data-aux-filter="cxc" aria-pressed="${state.auxFilter === 'cxc'}">Por Cobrar</button>
+            <button type="button" class="v2-pill-btn" data-aux-filter="cxp" aria-pressed="${state.auxFilter === 'cxp'}">Por Pagar</button>
+            <button type="button" class="v2-pill-btn" data-aux-filter="vencido" aria-pressed="${state.auxFilter === 'vencido'}">Vencidos &gt; 30d</button>
+          </div>
+          <span class="muted" style="font-size:12px">Auxiliar por antigüedad · Al día / 1–30 / 31–60 / &gt;60 d</span>
+        </div>
+        <div class="v2-table-wrap">
+          <table class="v2-table">
+            <thead><tr><th>Tipo</th><th>Folio</th><th>Contraparte</th><th>Emisión</th><th>Antigüedad</th><th class="num">Saldo</th><th>Estado</th></tr></thead>
+            <tbody>
+              ${filtered.map((d) => {
+                const ag = auxAgingLabel(d.days);
+                return `
+                  <tr class="${selAux && selAux.id === d.id ? 'is-selected' : ''}" data-select-aux="${d.id}" style="cursor:pointer">
+                    <td><span class="tag ${d.kind === 'cxc' ? 'tag--in' : 'tag--out'}">${d.kind === 'cxc' ? 'CxC' : 'CxP'}</span></td>
+                    <td class="mono">${d.folio}</td>
+                    <td><strong>${d.party}</strong><span class="v2-cell-sub mono">${d.rut}</span></td>
+                    <td class="mono">${d.issued}</td>
+                    <td>${d.status === 'Saldado' ? '<span class="muted">Saldado</span>' : `<span class="tag ${ag.cls}">${ag.label}</span>`}</td>
+                    <td class="num"><strong>${fmt(d.amount)}</strong></td>
+                    <td><span class="tag ${d.status === 'Saldado' ? 'tag--in' : 'tag--out'}">${d.status}</span></td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      $('v2-inspector').innerHTML = selAux ? `
+        <div class="v2-ins-block" id="v2-aux-inspector">
+          <div class="v2-ins-head">
+            <h2 class="v2-ins-title">${selAux.kind === 'cxc' ? 'Cuenta por Cobrar' : 'Cuenta por Pagar'}</h2>
+            <span class="tag ${selAux.status === 'Saldado' ? 'tag--in' : auxAgingLabel(selAux.days).cls}">${selAux.status === 'Saldado' ? 'Saldado' : auxAgingLabel(selAux.days).label}</span>
+          </div>
+          <dl class="v2-ins-kv">
+            <dt>Contraparte</dt><dd style="font-family:var(--font-sans);font-weight:600">${selAux.party}</dd>
+            <dt>RUT</dt><dd>${selAux.rut}</dd>
+            <dt>Folio DTE</dt><dd>#${selAux.folio}</dd>
+            <dt>Emisión</dt><dd>${selAux.issued}</dd>
+            <dt>Saldo</dt><dd><strong>${fmt(selAux.amount)}</strong></dd>
+          </dl>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+            ${selAux.status === 'Abierto'
+              ? `<button type="button" class="btn btn--primary" data-settle-aux="${selAux.id}">${selAux.kind === 'cxc' ? 'Registrar cobro en Banco' : 'Registrar pago en Banco'}</button>`
+              : `<div class="v2-ins-note">Movimiento ya saldado y registrado en Conciliación Bancaria.</div>`}
+            <button type="button" class="btn btn--sm" data-quick-ok="Recordatorio enviado por folio #${selAux.folio} (${selAux.party})">${selAux.kind === 'cxc' ? 'Enviar recordatorio de cobro' : 'Solicitar comprobante de pago'}</button>
+          </div>
+        </div>
+      ` : '';
+      return;
+    }
+
     const selected = c.bankTx.find((b) => b.id === state.selectedBankId) || c.bankTx[0] || null;
     if (selected) state.selectedBankId = selected.id;
     const conc = c.bankTx.filter((t) => t.status === 'Conciliado').length;
@@ -1988,9 +2118,66 @@
   }
 
   function renderClientContabilidad(c) {
-    const { asientos, bal } = buildAccountingReal(c);
+    const { asientos, mayor, bal } = buildAccountingReal(c);
     const t = bal.totales || {};
     const cuadra = t.debito === t.credito;
+
+    if (state.clientSub === 'plan') {
+      const usedCodes = new Set((bal.filas || []).map((f) => String(f.codigo)));
+      const protectedCount = state.studioChart.filter((a) => usedCodes.has(a.code)).length;
+      $('v2-canvas').innerHTML = `
+        <div class="v2-tape">
+          <div class="v2-tape-cell"><span class="v2-tape-label">Cuentas maestro</span><span class="v2-tape-val">${state.studioChart.length}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">En uso (protegidas)</span><span class="v2-tape-val is-in">${protectedCount}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Empresas estudio</span><span class="v2-tape-val">${state.clients.length}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Última propagación</span><span class="v2-tape-val" style="font-size:13px">${state.lastPlanSync || 'Pendiente'}</span></div>
+        </div>
+        <div class="v2-table-wrap">
+          <table class="v2-table">
+            <thead><tr><th style="width:92px">Código</th><th>Cuenta contable (Plan del Estudio)</th><th>Tipo</th><th>Uso en ${c.name.split(' ')[0]}</th><th class="num">Acción</th></tr></thead>
+            <tbody>
+              ${state.studioChart.map((a) => {
+                const inUse = usedCodes.has(a.code);
+                return `
+                  <tr>
+                    <td class="mono"><strong>${a.code}</strong></td>
+                    <td>${a.name}</td>
+                    <td><span class="tag tag--out">${a.type}</span></td>
+                    <td><span class="tag ${inUse ? 'tag--in' : 'tag--out'}">${inUse ? 'En uso · protegida' : 'Sin movimientos'}</span></td>
+                    <td class="num">${inUse ? '<span class="muted" style="font-size:11.5px">Protegida</span>' : `<button type="button" class="btn btn--sm" data-del-studio-acc="${a.code}">Quitar</button>`}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      $('v2-inspector').innerHTML = `
+        <div class="v2-ins-block" id="v2-plan-propagate-block">
+          <div class="v2-ins-head">
+            <h2 class="v2-ins-title">Propagar plan del Estudio</h2>
+            <span class="tag tag--in">${state.clients.length} empresas</span>
+          </div>
+          <p class="muted" style="margin:0;font-size:12px;line-height:1.4">Aplica este Plan de Cuentas maestro a todas las empresas del estudio. Las cuentas con movimientos contables quedan protegidas y nunca se eliminan ni sobrescriben.</p>
+          <button type="button" class="btn btn--primary" data-propagate-plan="1">Aplicar plan a mis ${state.clients.length} empresas</button>
+        </div>
+        <div class="v2-ins-block v2-ins-block--soft">
+          <h2 class="v2-ins-title">Agregar cuenta al maestro</h2>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <input type="text" id="inp-acc-code" class="v2-ins-select mono" placeholder="Código (ej. 41060)" aria-label="Código de cuenta">
+            <input type="text" id="inp-acc-name" class="v2-ins-select" placeholder="Nombre (ej. Software y suscripciones)" aria-label="Nombre de cuenta">
+            <select id="sel-acc-type" class="v2-ins-select" aria-label="Tipo de cuenta">
+              <option value="Pérdida">Pérdida (Gasto)</option>
+              <option value="Activo">Activo</option>
+              <option value="Pasivo">Pasivo</option>
+              <option value="Ganancia">Ganancia (Ingreso)</option>
+            </select>
+            <button type="button" class="btn btn--sm" data-add-studio-acc="1">Agregar al plan maestro</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
 
     if (state.clientSub === 'diario') {
       $('v2-canvas').innerHTML = `
@@ -2368,7 +2555,7 @@
 
   /* ==================== EVENTS ==================== */
   document.addEventListener('click', (e) => {
-    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-f29], [data-select-rcv], [data-select-inbox]');
+    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox]');
     if (!t) return;
 
     if (t.id === 'btn-open-cmdk' || t.id === 'btn-switch-client') { openCmdk(); return; }
@@ -2477,6 +2664,11 @@
         render(); return;
       }
       if (state.level === 'client' && state.clientArea === 'contabilidad') {
+        if (state.clientSub === 'plan') {
+          state.lastPlanSync = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+          toast(`Plan de cuentas (${state.studioChart.length} cuentas) propagado a ${state.clients.length} empresas · cuentas con movimiento protegidas`);
+          render(); return;
+        }
         const c = getClient();
         const { bal } = buildAccountingReal(c);
         const csv = 'Codigo;Cuenta;Deudor;Acreedor;Activo;Pasivo;Perdida;Ganancia\n' +
@@ -2525,6 +2717,69 @@
     if (t.dataset.selectF29 && !e.target.closest('input')) { state.selectedF29Code = t.dataset.selectF29; render(); return; }
     if (t.dataset.selectRcv && !e.target.closest('button')) { state.selectedRcvId = t.dataset.selectRcv; render(); return; }
     if (t.dataset.selectBank) { state.selectedBankId = t.dataset.selectBank; render(); return; }
+    if (t.dataset.selectAux) { state.selectedAuxId = t.dataset.selectAux; render(); return; }
+    if (t.dataset.auxFilter) { state.auxFilter = t.dataset.auxFilter; render(); return; }
+    if (t.dataset.settleAux) {
+      const c = getClient();
+      const doc = ensureAuxDocs(c).find((d) => d.id === t.dataset.settleAux);
+      if (doc && doc.status === 'Abierto') {
+        doc.status = 'Saldado';
+        const isCxc = doc.kind === 'cxc';
+        c.bankTx.unshift({
+          id: `aux-tx-${Date.now()}`,
+          date: '26/11',
+          desc: `${isCxc ? 'Cobro' : 'Pago'} ${doc.party} (#${doc.folio})`,
+          amount: isCxc ? doc.amount : -doc.amount,
+          status: 'Conciliado',
+          match: `Auxiliar ${isCxc ? 'CxC' : 'CxP'} · Folio #${doc.folio}`,
+          confidence: 'Alta',
+          account: isCxc ? '11050 · Clientes nacionales' : '21010 · Proveedores nacionales',
+          rulePattern: doc.party.split(' ').slice(0, 2).join(' '),
+          checks: [
+            { ok: true, label: `Monto exacto saldado (${fmt(doc.amount)})` },
+            { ok: true, label: `Registrado desde Auxiliar ${isCxc ? 'CxC' : 'CxP'}` },
+            { ok: true, label: `RUT contraparte ${doc.rut}` }
+          ],
+          docs: [{ title: `Factura #${doc.folio} · ${doc.party}`, sub: `Auxiliar ${isCxc ? 'Por Cobrar' : 'Por Pagar'}`, amount: isCxc ? doc.amount : -doc.amount }]
+        });
+        c.bancos.total = Math.max(c.bancos.total || 0, c.bankTx.length);
+        c.bancos.matched = Math.min(c.bancos.total, (c.bancos.matched || 0) + 1);
+        toast(`${isCxc ? 'Cobro' : 'Pago'} registrado en Banco · Folio #${doc.folio} saldado`);
+        render();
+      }
+      return;
+    }
+    if (t.dataset.propagatePlan) {
+      state.lastPlanSync = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+      toast(`Plan de cuentas (${state.studioChart.length} cuentas) aplicado a ${state.clients.length} empresas · cuentas con movimiento protegidas`);
+      render();
+      return;
+    }
+    if (t.dataset.addStudioAcc) {
+      const code = ($('inp-acc-code') && $('inp-acc-code').value.trim()) || '';
+      const name = ($('inp-acc-name') && $('inp-acc-name').value.trim()) || '';
+      const type = ($('sel-acc-type') && $('sel-acc-type').value) || 'Pérdida';
+      if (!/^\d{4,6}$/.test(code) || name.length < 3) {
+        toast('Ingresa un código numérico (4–6 dígitos) y un nombre de cuenta válido');
+        return;
+      }
+      if (state.studioChart.some((a) => a.code === code)) {
+        toast(`El código ${code} ya existe en el plan maestro`);
+        return;
+      }
+      state.studioChart.push({ code, name, type });
+      state.studioChart.sort((a, b) => a.code.localeCompare(b.code));
+      toast(`Cuenta ${code} · ${name} agregada al plan maestro`);
+      render();
+      return;
+    }
+    if (t.dataset.delStudioAcc) {
+      const code = t.dataset.delStudioAcc;
+      state.studioChart = state.studioChart.filter((a) => a.code !== code);
+      toast(`Cuenta ${code} quitada del plan maestro`);
+      render();
+      return;
+    }
     if (t.dataset.selectInbox) { state.selectedInboxId = t.dataset.selectInbox; render(); return; }
     if (t.dataset.resolveInbox) {
       const it = state.inbox.find((x) => x.id === t.dataset.resolveInbox);
