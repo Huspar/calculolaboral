@@ -9280,3 +9280,16 @@ dialog.syn-modal[data-syn-theme="furrow"] {
 #pm-panel.syn-theme[data-syn-theme="furrow"] .app-barra button.activo .material-icons {
     color: var(--color-paper-2);
 }
+.side-swatch.sw-furrow {
+    background: linear-gradient(135deg, oklch(96% 0.011 85) 50%, oklch(70% 0.19 40) 50%);
+    border: 1px solid oklch(44% 0.012 60);
+}
+@media print {
+    body[data-syn-theme="furrow"] {
+        --print-primary: #1B1917;
+        --print-accent: #C2410C;
+        --print-soft: #F5F3EE;
+        --print-ink: #1B1917;
+        --print-border: #DCD7CC;
+    }
+}
