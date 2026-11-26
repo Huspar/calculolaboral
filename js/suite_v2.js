@@ -2245,11 +2245,19 @@
               <dt><strong>Total a pagar</strong></dt><dd><strong>${fmt(sf.total)}</strong></dd>
             </dl>
           ` : ''}
-          ${c.nomina.leyBustos ? `<div class="tag tag--on" style="justify-content:center">Bloqueo Ley Bustos Art. 162 CT</div>` : ''}
+          ${c.nomina.leyBustos ? `
+            <div class="v2-ins-note is-warn" style="margin-top:4px">
+              <strong>Bloqueo Ley Bustos (Art. 162 CT):</strong> hay cotizaciones impagas en PreviRed. Primero regulariza PreviRed antes de ratificar el finiquito.
+              <div style="margin-top:6px"><button type="button" class="btn btn--primary btn--sm" data-fix-ley-bustos="1">1. Marcar PreviRed regularizado</button></div>
+            </div>
+          ` : ''}
           <div style="display:flex;gap:8px;margin-top:6px">
             <button type="button" class="btn btn--primary btn--sm" style="flex:1" data-emit-doc="finiquito-pdf"${selIsSocio ? ' disabled' : ''}>Emitir Finiquito PDF</button>
             <button type="button" class="btn btn--sm" data-emit-doc="finiquitos-xlsx">Lote Excel</button>
           </div>
+          ${!selIsSocio && selFin.w.estado === 'Finiquito abierto' ? `
+            <button type="button" class="btn btn--sm" style="margin-top:6px;width:100%" data-close-finiquito="${selFin.w.id}"${c.nomina.leyBustos ? ' disabled title="Primero regulariza PreviRed arriba"' : ''}>2. Marcar finiquito ratificado y cerrado</button>
+          ` : ''}
         </div>
       ` : '';
       return;
@@ -2404,7 +2412,9 @@
         <div class="v2-ins-block">
           <div class="v2-ins-head">
             <h2 class="v2-ins-title">${w.name}</h2>
-            <span class="tag ${!wMissing.length && (w.estado === 'Listo' || w.estado === 'Pagado') ? 'tag--in' : 'tag--danger'}">${wMissing.length ? wMissing[0].label : w.estado}</span>
+            ${!wMissing.length && w.estado === 'Finiquito abierto'
+              ? `<button type="button" class="tag tag--danger" style="cursor:pointer;border:1px solid #fecaca" data-client-sub="finiquitos" title="Ir a Finiquitos para emitir y cerrar">Finiquito abierto →</button>`
+              : `<span class="tag ${!wMissing.length && (w.estado === 'Listo' || w.estado === 'Pagado' || w.estado === 'Finiquito cerrado') ? 'tag--in' : 'tag--danger'}">${wMissing.length ? wMissing[0].label : w.estado}</span>`}
           </div>
           <div class="muted" style="font-size:12px">${w.cargo} · <span class="mono">${w.rut}</span></div>
           <div style="display:flex;flex-direction:column;gap:6px;margin-top:2px">
@@ -2452,7 +2462,11 @@
         ${c.nomina.leyBustos ? `
           <div class="v2-ins-block v2-ins-block--soft">
             <h2 class="v2-ins-title">Alerta Ley Bustos (Art. 162 CT)</h2>
-            <p class="muted" style="margin:0;font-size:12.5px">Cotizaciones impagas con finiquito abierto. Regulariza PreviRed antes de ratificar el despido.</p>
+            <p class="muted" style="margin:0 0 8px;font-size:12.5px">Hay cotizaciones impagas con finiquito abierto. Para levantar el bloqueo: <strong>1)</strong> regulariza PreviRed y <strong>2)</strong> cierra el finiquito.</p>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button type="button" class="btn btn--primary btn--sm" data-fix-ley-bustos="1">1. Marcar PreviRed regularizado</button>
+              <button type="button" class="btn btn--sm" data-client-sub="finiquitos">2. Ir a Finiquito y cerrarlo →</button>
+            </div>
           </div>
         ` : ''}
       `;
@@ -4214,6 +4228,34 @@
         c.bancos.state = c.bancos.matched === c.bancos.total ? 'ok' : 'pendiente';
         c.bancos.label = `${Math.round((c.bancos.matched / c.bancos.total) * 100)}% match`;
         toast('Split de pasarela aplicado y asiento cuadrado');
+        render();
+      }
+      return;
+    }
+    if (t.dataset.fixLeyBustos) {
+      const c = getClient();
+      c.nomina.leyBustos = false;
+      c.nomina.previredOk = true;
+      c.nomina.state = getClientPayrollBlockers(c).length ? 'alerta' : 'ok';
+      c.nomina.label = `${c.workers.length} liq · PreviRed al día`;
+      if (c.status === 'critico' && !c.rcv.pendingAcuses) {
+        c.status = 'revisar';
+        c.cierre = 'PreviRed al día';
+      }
+      toast('PreviRed regularizado: bloqueo Ley Bustos (Art. 162 CT) levantado');
+      render();
+      return;
+    }
+    if (t.dataset.closeFiniquito) {
+      const c = getClient();
+      if (c.nomina.leyBustos) {
+        toast('Primero regulariza PreviRed para levantar el bloqueo de Ley Bustos');
+        return;
+      }
+      const w = (c.workers || []).find((x) => x.id === t.dataset.closeFiniquito);
+      if (w) {
+        w.estado = 'Finiquito cerrado';
+        toast(`Finiquito de ${w.name} marcado como ratificado y cerrado`);
         render();
       }
       return;
