@@ -1,4 +1,4 @@
-/* Hallmark · built: the project · redesign: polish · scope: app · genre: modern-minimal */
+/* Hallmark · built: Hallmark · theme: Furrow (2/3, seed chilean-accounting-firm-suite-d232·f9695310·2026-11-26·r0) · redesign: restyle · scope: app · genre: modern-minimal */
 /* 
  * CálculoLaboral · Estilos complementarios para Suite Contadores (/demo-contadores)
  * Basado 100% en el sistema de diseño del Asistente Pyme (app.css)
@@ -9068,4 +9068,215 @@ body {
         padding: 8px 6px;
         font-size: 12px;
     }
+}
+
+/* ==========================================================================
+   RESTYLE HALLMARK · TEMA FURROW (LIBRO CONTABLE MODERNO EN PAPEL CÁLIDO)
+   Tokens oficiales de references/themes/furrow.md adaptados a app contable
+   ========================================================================== */
+#pm-panel.syn-theme[data-syn-theme="furrow"][data-syn-accent],
+#pm-panel.syn-theme[data-syn-theme="furrow"],
+dialog.syn-modal[data-syn-theme="furrow"] {
+    --color-paper: oklch(96% 0.011 85);
+    --color-paper-2: oklch(99.5% 0.005 85);
+    --color-paper-3: oklch(92% 0.016 85);
+    --color-ink: oklch(18% 0.006 60);
+    --color-ink-2: oklch(28% 0.008 60);
+    --color-muted: oklch(44% 0.012 60);
+    --color-rule: oklch(86% 0.014 85);
+    --color-accent: oklch(70% 0.19 40);
+    --color-accent-hover: oklch(64% 0.19 40);
+    --color-accent-ink: oklch(18% 0.006 60);
+    --color-accent-soft: oklch(92% 0.045 50);
+    --color-green: oklch(44% 0.11 150);
+    --color-green-soft: oklch(92% 0.04 150);
+    --color-sheet: oklch(99.3% 0.004 85);
+
+    --syn-canvas: var(--color-paper);
+    --syn-surface: var(--color-paper-2);
+    --syn-surface-2: var(--color-paper-3);
+    --syn-side-bg: var(--color-paper-3);
+    --syn-border: var(--color-rule);
+    --syn-border-2: var(--color-muted);
+    --syn-ink: var(--color-ink);
+    --syn-ink-2: var(--color-ink-2);
+    --syn-muted: var(--color-muted);
+    --syn-faint: var(--color-muted);
+    --syn-accent: var(--color-accent);
+    --syn-accent-hover: var(--color-accent-hover);
+    --syn-accent-soft: var(--color-accent-soft);
+    --syn-accent-ink: var(--color-ink);
+    --syn-sage: var(--color-green);
+    --syn-dark: var(--color-ink);
+    --syn-dark-hover: var(--color-ink-2);
+}
+
+/* Sidebar cálido tipo libreta de registro */
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-side {
+    background: var(--color-paper-3);
+    border-right: 1px solid var(--color-rule);
+    color: var(--color-ink);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-logo-isotipo {
+    background: var(--color-ink);
+    border-radius: 8px;
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-logo-isotipo svg {
+    color: var(--color-paper-2);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-logo-texto,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-empresa strong {
+    color: var(--color-ink);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-logo-texto span {
+    color: var(--color-muted);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-study-sub,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-nav-grupo {
+    color: var(--color-muted);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] #suite-modulos .suite-mod-btn {
+    color: var(--color-ink-2);
+    border-radius: 6px;
+    border: 1px solid transparent;
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] #suite-modulos .suite-mod-btn:hover {
+    background: var(--color-paper);
+    color: var(--color-ink);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] #suite-modulos .suite-mod-btn.activo {
+    background: var(--color-paper-2);
+    color: var(--color-ink);
+    border-color: var(--color-ink);
+    box-shadow: 0 1px 1px var(--color-rule);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] #suite-modulos .suite-mod-btn.activo .material-icons {
+    color: var(--color-ink) !important;
+}
+
+/* Topbar y superficies con radios sobrios (10px) y filetes finos */
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-topbar {
+    background: var(--color-paper-2);
+    border-bottom: 1px solid var(--color-rule);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .panel,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .fin-kpi {
+    background: var(--color-paper-2);
+    border: 1px solid var(--color-rule);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px oklch(18% 0.006 60 / 0.05);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .panel-head {
+    border-bottom: 1px solid var(--color-rule);
+}
+
+/* Regla Furrow: nunca usar mandarina como texto de cifra; tinta sólida siempre */
+#pm-panel.syn-theme[data-syn-theme="furrow"] #dash-kpi-f29-card .fin-kpi-val,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .fin-kpi .fin-kpi-val {
+    color: var(--color-ink);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .fin-kpi .fin-kpi-val.ok {
+    color: var(--color-green);
+}
+
+/* Botones moldeados Furrow (6px): primario mandarina con tinta oscura, secundario papel blanco */
+#pm-panel.syn-theme[data-syn-theme="furrow"] .btn,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-ctx-trigger,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-search-input {
+    border-radius: 6px;
+    border-color: var(--color-rule);
+    background: var(--color-paper-2);
+    color: var(--color-ink);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .btn {
+    box-shadow: inset 0 1px 0 var(--color-sheet), 0 1px 1px var(--color-rule);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .btn:hover {
+    background: var(--color-paper);
+    border-color: var(--color-muted);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .btn-primario,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .btn-primario *,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-side-cta,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-side-cta * {
+    color: var(--color-accent-ink) !important;
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .btn-primario,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-side-cta {
+    background: var(--color-accent) !important;
+    border: 1px solid color-mix(in oklab, var(--color-accent) 72%, var(--color-ink)) !important;
+    border-radius: 6px;
+    box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-sheet) 35%, transparent), inset 0 -1px 0 color-mix(in oklab, var(--color-ink) 14%, transparent);
+    font-weight: 600;
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .btn-primario .material-icons,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-side-cta .material-icons {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .btn-primario:hover,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-side-cta:hover {
+    background: var(--color-accent-hover) !important;
+}
+
+/* Filtros activos y pestañas underline en tinta */
+#pm-panel.syn-theme[data-syn-theme="furrow"] .fin-chip.activo,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .conc-filtro-btn.activo,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .buzon-tpl-btn.activo {
+    background: var(--color-ink) !important;
+    border-color: var(--color-ink) !important;
+    color: var(--color-paper-2) !important;
+    border-radius: 6px;
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .cl-subtab.activo {
+    color: var(--color-ink);
+    border-bottom-color: var(--color-ink);
+}
+
+/* Tablas estilo registro contable (filete superior de tinta 1px, filas limpias) */
+#pm-panel.syn-theme[data-syn-theme="furrow"] .tabla-contable-wrap {
+    border-radius: 6px;
+    border-color: var(--color-rule);
+    background: var(--color-paper-2);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .tabla-contable thead th {
+    background: var(--color-paper-2);
+    color: var(--color-muted);
+    border-top: 1px solid var(--color-ink);
+    border-bottom: 1px solid var(--color-ink);
+    font-weight: 600;
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .tabla-contable td {
+    border-bottom: 1px solid var(--color-rule);
+}
+
+/* Gráficos y barras de progreso en tinta + verde limpio */
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-bar-1,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-leg-dot.s1 {
+    fill: var(--color-green);
+    background: var(--color-green);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-bar-2,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .syn-leg-dot.s2 {
+    fill: var(--color-ink);
+    background: var(--color-ink);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .bancos-prog-fill,
+#pm-panel.syn-theme[data-syn-theme="furrow"] .saas-mini-fill {
+    background: var(--color-green) !important;
+}
+
+/* Barra inferior móvil Furrow */
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-barra {
+    background: var(--color-paper-2);
+    border-top: 1px solid var(--color-rule);
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-barra button.activo {
+    background: var(--color-ink);
+    color: var(--color-paper-2);
+    border-radius: 8px;
+}
+#pm-panel.syn-theme[data-syn-theme="furrow"] .app-barra button.activo .material-icons {
+    color: var(--color-paper-2);
 }

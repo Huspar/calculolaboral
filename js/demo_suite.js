@@ -3131,7 +3131,7 @@
     }
 
     function aplicarTemaSuite(tema) {
-        var norm = (tema === 'editorial' || tema === 'cobalto') ? tema : 'slate';
+        var norm = (tema === 'slate' || tema === 'editorial' || tema === 'cobalto' || tema === 'furrow') ? tema : 'furrow';
         var panel = $('pm-panel');
         var dlg = $('dlg-syn-detalle');
         if (panel) panel.setAttribute('data-syn-theme', norm);
@@ -4615,7 +4615,7 @@
 
         // Inicializar paleta de colores guardada (3 temas WCAG AA: slate, editorial, cobalto)
         var temaGuardado = 'slate';
-        try { temaGuardado = window.localStorage.getItem(K_SYN_THEME) || 'slate'; } catch (e) { }
+        try { temaGuardado = window.localStorage.getItem(K_SYN_THEME) || 'furrow'; } catch (e) { }
         aplicarTemaSuite(temaGuardado);
         Array.prototype.forEach.call(document.querySelectorAll('[data-set-theme]'), function (btnT) {
             btnT.addEventListener('click', function () {
