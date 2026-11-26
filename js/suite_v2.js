@@ -822,6 +822,10 @@
           <span class="v2-nav-left">Conexiones</span>
           <span class="v2-nav-count">SII · MCP</span>
         </button>
+        <button type="button" class="v2-nav-btn" data-studio-nav="monitor" ${state.studioView === 'monitor' ? 'aria-current="page"' : ''}>
+          <span class="v2-nav-left">Monitor SII · TGR</span>
+          <span class="v2-nav-count">${urgentCount ? `${urgentCount}!` : '24/7'}</span>
+        </button>
         <div style="margin-top:14px;padding:0 6px">
           <a href="/suite-contadores" class="v2-ws-switch" style="text-decoration:none;justify-content:space-between">
             <span>Ver planes · 90 días gratis</span><span>↗</span>
@@ -889,7 +893,7 @@
     const ctaEl = $('v2-primary-cta');
 
     if (state.level === 'studio') {
-      const titles = { hoy: 'Mesa de Cierre', olas: 'Cierre en Lote', bandeja: 'Bandeja', empresas: 'Empresas', conexiones: 'Conexiones e Integraciones' };
+      const titles = { hoy: 'Mesa de Cierre', olas: 'Cierre en Lote', bandeja: 'Bandeja', empresas: 'Empresas', conexiones: 'Conexiones e Integraciones', monitor: 'Monitor Tributario y Previsional' };
       titleEl.textContent = titles[state.studioView] || 'Mesa de Cierre';
       if (state.studioView === 'olas') {
         const tabs = [
@@ -911,6 +915,9 @@
       } else if (state.studioView === 'conexiones') {
         tabsEl.innerHTML = '';
         ctaEl.textContent = 'Verificar Gateway SII';
+      } else if (state.studioView === 'monitor') {
+        tabsEl.innerHTML = '';
+        ctaEl.textContent = 'Actualizar Monitor';
       } else {
         tabsEl.innerHTML = '';
         ctaEl.textContent = 'Aprobar F29 listos';
@@ -3189,6 +3196,150 @@
     if (n > 0) $('v2-batch-count').textContent = `${n} seleccionados en lote`;
   }
 
+  function evaluateMonitorRow(c) {
+    const blockers = getClientPayrollBlockers(c);
+    const hasAcuses = (c.rcv && c.rcv.pendingAcuses) || 0;
+    const hasBustos = !!(c.nomina && c.nomina.leyBustos);
+    const prevMora = !!(c.nomina && !c.nomina.previredOk);
+    const f29Pend = !(c.f29 && (c.f29.state === 'declarado' || c.f29.state === 'pagado'));
+    const tgrPending = c.f29 && c.f29.state === 'declarado' && !c.f29.paidDate;
+    const riskAmount = (hasBustos || prevMora ? 1850000 : 0) + (hasAcuses ? hasAcuses * 450000 : 0) + (tgrPending ? f29Total(c) : 0);
+    let level = 'ok';
+    if (hasBustos || prevMora || hasAcuses >= 2) level = 'riesgo';
+    else if (hasAcuses > 0 || blockers.length > 0 || f29Pend || tgrPending) level = 'revisar';
+    return {
+      c,
+      level,
+      levelLabel: level === 'riesgo' ? 'Riesgo' : level === 'revisar' ? 'Revisar' : 'Al día',
+      levelTag: level === 'riesgo' ? 'tag--danger' : level === 'revisar' ? 'tag--out' : 'tag--in',
+      siiText: hasAcuses ? `${hasAcuses} acuse(s) < 48h` : (f29Pend ? `F29 ${f29StateLabel(c.f29.state)}` : 'RCV y F29 al día'),
+      siiOk: !hasAcuses && !f29Pend,
+      tgrText: tgrPending ? `F29 declarado sin pago` : 'Sin deuda / giros',
+      tgrOk: !tgrPending,
+      prevText: hasBustos ? 'Ley Bustos Art. 162' : prevMora ? 'Mora PreviRed' : blockers.length ? `${blockers.length} ficha(s) bloq.` : 'PreviRed al día',
+      prevOk: !hasBustos && !prevMora && blockers.length === 0,
+      riskAmount,
+      targetArea: hasBustos || prevMora || blockers.length ? 'remuneraciones' : (hasAcuses || f29Pend ? 'impuestos' : 'resumen')
+    };
+  }
+
+  function renderStudioMonitor() {
+    if (!state.monitorFilter) state.monitorFilter = 'todas';
+    const evaluated = state.clients.map(evaluateMonitorRow);
+    const counts = {
+      todas: evaluated.length,
+      riesgo: evaluated.filter((r) => r.level === 'riesgo').length,
+      revisar: evaluated.filter((r) => r.level === 'revisar').length,
+      ok: evaluated.filter((r) => r.level === 'ok').length
+    };
+    const siiTgrAlerts = evaluated.filter((r) => !r.siiOk || !r.tgrOk).length;
+    const prevBlockers = evaluated.filter((r) => !r.prevOk).length;
+    const totalRisk = evaluated.reduce((s, r) => s + r.riskAmount, 0);
+    const rows = evaluated.filter((r) => state.monitorFilter === 'todas' || r.level === state.monitorFilter);
+    const sel = rows.find((r) => r.c.id === state.selectedMonitorId) || rows[0] || evaluated[0] || null;
+    if (sel) state.selectedMonitorId = sel.c.id;
+
+    const gwConnected = !!state.gatewayConnected || !!(state.gateway && state.gateway.configured);
+    const mr = state.morningReportLive;
+    const lastSweep = (mr && mr.generatedAt) ? String(mr.generatedAt).slice(0, 16).replace('T', ' ') : 'Hoy 04:45 · Turno Nocturno';
+
+    $('v2-canvas').innerHTML = `
+      <div class="v2-tape">
+        <div class="v2-tape-cell"><span class="v2-tape-label">Empresas vigiladas</span><span class="v2-tape-val">${evaluated.length}</span></div>
+        <div class="v2-tape-cell"><span class="v2-tape-label">Alertas SII / TGR</span><span class="v2-tape-val ${siiTgrAlerts ? 'is-danger' : 'is-in'}">${siiTgrAlerts}</span></div>
+        <div class="v2-tape-cell"><span class="v2-tape-label">Bloqueos PreviRed / Bustos</span><span class="v2-tape-val ${prevBlockers ? 'is-danger' : 'is-in'}">${prevBlockers}</span></div>
+        <div class="v2-tape-cell"><span class="v2-tape-label">Monto en riesgo</span><span class="v2-tape-val ${totalRisk ? 'is-danger' : 'is-in'}">${fmt(totalRisk)}</span></div>
+      </div>
+      <div class="v2-pulse-bar">
+        <div class="v2-filter-pills" role="group" aria-label="Filtrar monitor">
+          ${[
+            ['todas', 'Todas', counts.todas],
+            ['riesgo', 'Riesgo', counts.riesgo],
+            ['revisar', 'Revisar', counts.revisar],
+            ['ok', 'Al día', counts.ok]
+          ].map(([k, lbl, n]) => `
+            <button type="button" class="v2-pill-btn" data-monitor-filter="${k}" aria-pressed="${state.monitorFilter === k}">
+              <span>${lbl}</span><span class="mono">${n}</span>
+            </button>
+          `).join('')}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+          <span class="mono muted">${lastSweep}</span>
+          <button type="button" class="btn btn--sm" data-monitor-action="refresh">Actualizar ahora</button>
+        </div>
+      </div>
+      <div class="v2-table-wrap">
+        <table class="v2-table">
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>SII (Acuses / F29)</th>
+              <th>TGR (Deuda / Giros)</th>
+              <th>PreviRed / Bustos</th>
+              <th class="num">Monto en riesgo</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.length ? rows.map((r) => `
+              <tr class="${sel && sel.c.id === r.c.id ? 'is-selected' : ''}" data-select-monitor="${r.c.id}" style="cursor:pointer">
+                <td><strong>${r.c.name}</strong><span class="v2-cell-sub mono">${r.c.rut}</span></td>
+                <td>${r.siiText}</td>
+                <td>${r.tgrText}</td>
+                <td>${r.prevText}</td>
+                <td class="num mono">${fmt(r.riskAmount)}</td>
+                <td><span class="tag ${r.levelTag}">${r.levelLabel}</span></td>
+              </tr>
+            `).join('') : `<tr><td colspan="6" class="muted" style="text-align:center;padding:24px">Sin empresas en este filtro.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    const topAlerts = evaluated.filter((r) => r.level !== 'ok').slice(0, 3);
+    $('v2-inspector').innerHTML = `
+      ${sel ? `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head">
+            <h2 class="v2-ins-title">${sel.c.name}</h2>
+            <span class="tag ${sel.levelTag}">${sel.levelLabel}</span>
+          </div>
+          <div class="muted mono" style="font-size:11.5px;margin-top:-4px">${sel.c.rut} · Régimen ${sel.c.regime}</div>
+          <ul class="v2-ev-list" style="margin:6px 0">
+            <li class="${sel.siiOk ? 'is-ok' : 'is-fail'}"><span>SII: ${sel.siiText}</span></li>
+            <li class="${sel.tgrOk ? 'is-ok' : 'is-fail'}"><span>TGR: ${sel.tgrText}</span></li>
+            <li class="${sel.prevOk ? 'is-ok' : 'is-fail'}"><span>PreviRed: ${sel.prevText}</span></li>
+          </ul>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+            <button type="button" class="btn btn--primary btn--sm" data-monitor-pdf="${sel.c.id}">Emitir Expediente Tributario PDF</button>
+            <button type="button" class="btn btn--sm" data-open-client="${sel.c.id}" data-open-area="${sel.targetArea}">Abrir empresa →</button>
+          </div>
+        </div>
+      ` : ''}
+      <div class="v2-ins-block v2-ins-block--soft">
+        <div class="v2-ins-head">
+          <h2 class="v2-ins-title">Reporte Matutino · Turno Nocturno 24/7</h2>
+          <span class="tag ${gwConnected ? 'tag--in' : 'tag--out'}">${gwConnected ? 'VPS' : 'Demo local'}</span>
+        </div>
+        <dl class="v2-ins-kv">
+          <dt>Empresas chequeadas</dt><dd class="mono">${mr && mr.companiesChecked != null ? mr.companiesChecked : evaluated.length}</dd>
+          <dt>Novedades nocturnas</dt><dd class="mono">${mr && mr.alertCount != null ? mr.alertCount : (counts.riesgo + counts.revisar)}</dd>
+          <dt>Próximo barrido</dt><dd class="mono">03:30 / 04:45</dd>
+        </dl>
+        ${topAlerts.length ? `
+          <div class="v2-ins-list" style="margin-top:6px">
+            ${topAlerts.map((al) => `
+              <button type="button" class="v2-ins-row-btn" data-select-monitor="${al.c.id}">
+                <span><strong>${al.c.name.split(' ').slice(0, 2).join(' ')}</strong> · ${!al.prevOk ? al.prevText : al.siiText}</span>
+                <span class="mono">${fmt(al.riskAmount)}</span>
+              </button>
+            `).join('')}
+          </div>
+        ` : `<p class="muted" style="margin:6px 0 0;font-size:12px">Sin alertas prioritarias hoy.</p>`}
+      </div>
+    `;
+  }
+
   function render() {
     renderSidebar();
     renderTopbar();
@@ -3198,6 +3349,7 @@
       else if (state.studioView === 'olas') renderStudioOlas();
       else if (state.studioView === 'bandeja') renderStudioBandeja();
       else if (state.studioView === 'conexiones') renderStudioConexiones();
+      else if (state.studioView === 'monitor') renderStudioMonitor();
       else renderStudioEmpresas();
     } else {
       const c = getClient();
@@ -3961,6 +4113,36 @@
       });
       return;
     }
+    if (t.dataset.selectMonitor) {
+      state.selectedMonitorId = t.dataset.selectMonitor;
+      renderStudioMonitor();
+      return;
+    }
+    if (t.dataset.monitorFilter) {
+      state.monitorFilter = t.dataset.monitorFilter;
+      renderStudioMonitor();
+      return;
+    }
+    if (t.dataset.monitorPdf) {
+      const targetC = state.clients.find((x) => x.id === t.dataset.monitorPdf) || state.clients[0];
+      if (targetC) {
+        if (state.accountMode === 'studio') markOnboardStep('mcpOrDoc');
+        emitDocument('expediente-pdf', targetC);
+      }
+      return;
+    }
+    if (t.dataset.monitorAction === 'refresh') {
+      gatewayCall('POST', '/api/v1/studio/morning-report/generate').then((res) => {
+        if (res && res.ok && res.data) {
+          state.morningReportLive = res.data;
+          toast(`Monitor actualizado: ${res.data.companiesChecked || 0} empresas chequeadas · ${res.data.alertCount || 0} alertas`);
+        } else {
+          toast('Monitor actualizado sobre la cartera actual');
+        }
+        renderStudioMonitor();
+      });
+      return;
+    }
     if (t.dataset.connAction === 'morning-report') {
       gatewayCall('POST', '/api/v1/studio/morning-report/generate').then((res) => {
         if (res && res.ok && res.data) {
@@ -4009,6 +4191,18 @@
           state.gateway = info || { mode: 'demo-local', configured: false };
           toast(state.gateway.configured ? 'Gateway SII verificado y operativo' : 'Gateway en modo Demo local');
           render();
+        });
+        return;
+      }
+      if (state.level === 'studio' && state.studioView === 'monitor') {
+        gatewayCall('POST', '/api/v1/studio/morning-report/generate').then((res) => {
+          if (res && res.ok && res.data) {
+            state.morningReportLive = res.data;
+            toast(`Monitor actualizado: ${res.data.companiesChecked || 0} empresas · ${res.data.alertCount || 0} alertas`);
+          } else {
+            toast('Monitor actualizado sobre la cartera actual');
+          }
+          renderStudioMonitor();
         });
         return;
       }
@@ -4613,6 +4807,7 @@
   else if (location.hash === '#cliente-bancos') enterClient('san-isidro', 'bancos', 'match');
   else if (location.hash === '#cliente-contabilidad') enterClient('san-isidro', 'contabilidad', 'balance');
   else if (location.hash === '#olas') enterStudio('olas');
+  else if (location.hash === '#monitor') enterStudio('monitor');
   else render();
   if (new URLSearchParams(location.search).get('crear') === '1' && state.accountMode !== 'studio') {
     openAccountDrawer();
