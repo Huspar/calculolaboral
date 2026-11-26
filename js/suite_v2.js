@@ -3087,7 +3087,7 @@
 
   /* ==================== EVENTS ==================== */
   document.addEventListener('click', (e) => {
-    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox]');
+    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox], [data-select-conn]');
     if (!t) return;
 
     if (t.id === 'btn-open-cmdk' || t.id === 'btn-switch-client') { openCmdk(); return; }
