@@ -171,10 +171,67 @@
         { id: 'w6', name: 'Jorge Vergara Salas', rut: rutConDv(10999888), sexo: 'M', ingreso: '2018-11-01', cargo: 'Encargado Bodega', base: 1050000, afp: 'Provida', estado: 'Tope 90 UF' }
       ],
       bankTx: [
-        { id: 'b1', date: '24/11', desc: 'Abono Transbank Ventas POS', amount: 1840500, status: 'Por conciliar', match: 'Boletas diarias #412–439' },
-        { id: 'b2', date: '22/11', desc: 'Pago Molinos del Sur S.A.', amount: -945000, status: 'Por conciliar', match: 'Factura #88412 ($945.000)' },
-        { id: 'b3', date: '19/11', desc: 'Cargo Supermercado Jumbo', amount: -180000, status: 'Por conciliar', match: 'Cód. 761 · Pedir justificación giro' },
-        { id: 'b4', date: '15/11', desc: 'Pago Previred Octubre', amount: -1482000, status: 'Conciliado', match: 'Planilla #904122' }
+        {
+          id: 'b1', date: '24/11', desc: 'Abono Transbank Ventas POS', amount: 1840500, status: 'Por conciliar',
+          match: '1 abono → 2 docs (Boletas POS + comisión)',
+          confidence: 'Alta',
+          account: '11050 · Clientes / Ventas POS',
+          rulePattern: 'Transbank',
+          checks: [
+            { ok: true, label: 'Monto neto POS cuadra al peso (incluye comisión)' },
+            { ok: true, label: 'Liquidación dentro de 2 días hábiles' },
+            { ok: true, label: 'Glosa "Transbank" reconocida en historial' }
+          ],
+          docs: [
+            { title: 'Boletas electrónicas POS #412–439', sub: 'DTE 39 · Ventas 22–23/11', amount: 1858905 },
+            { title: 'Comisión Transbank (1,0% aprox.)', sub: 'Cuenta 43020 · Gastos bancarios', amount: -18405 }
+          ]
+        },
+        {
+          id: 'b2', date: '22/11', desc: 'Pago Molinos del Sur S.A.', amount: -945000, status: 'Por conciliar',
+          match: 'Factura #88412 ($945.000)',
+          confidence: 'Alta',
+          account: '21010 · Proveedores nacionales',
+          rulePattern: 'Molinos del Sur',
+          checks: [
+            { ok: true, label: 'Monto exacto ($945.000)' },
+            { ok: true, label: '4 días desde emisión en RCV' },
+            { ok: true, label: 'Razón social coincide con RUT emisor' }
+          ],
+          docs: [
+            { title: 'Factura afecta #88412 · Molinos del Sur', sub: 'RCV Compras · Neto $794.118 + IVA $150.882', amount: -945000 }
+          ]
+        },
+        {
+          id: 'b3', date: '19/11', desc: 'Cargo Supermercado Jumbo', amount: -180000, status: 'Por conciliar',
+          match: 'Cód. 761 · Pedir justificación giro',
+          confidence: 'Revisar',
+          account: '41090 · Gastos por clasificar (Cód. 761)',
+          rulePattern: 'Supermercado Jumbo',
+          checks: [
+            { ok: true, label: 'Monto exacto ($180.000)' },
+            { ok: true, label: 'Fecha coincide con compra (19/11)' },
+            { ok: false, label: 'Supermercado Cód. 761: verificar relación con el giro' }
+          ],
+          docs: [
+            { title: 'Boleta / Factura #77104 · Supermercado Jumbo', sub: 'RCV Cód. 761 · Requiere respaldo de giro', amount: -180000 }
+          ]
+        },
+        {
+          id: 'b4', date: '15/11', desc: 'Pago Previred Octubre', amount: -1482000, status: 'Conciliado',
+          match: 'Planilla #904122',
+          confidence: 'Alta',
+          account: '21035 · Cotizaciones por pagar',
+          rulePattern: 'Previred',
+          checks: [
+            { ok: true, label: 'Monto exacto ($1.482.000)' },
+            { ok: true, label: 'Pagado dentro de plazo legal' },
+            { ok: true, label: 'Glosa "Previred" coincide con planilla' }
+          ],
+          docs: [
+            { title: 'Planilla PreviRed #904122 (Octubre)', sub: 'AFP + Salud + AFC + Mutual · 6 trabajadores', amount: -1482000 }
+          ]
+        }
       ]
     },
     {
@@ -193,7 +250,22 @@
         { id: 'a2', name: 'Luis Herrera Soto', rut: rutConDv(15887412), sexo: 'M', ingreso: '2022-05-01', cargo: 'Carpintero', base: 980000, afp: 'Provida', estado: 'Listo' }
       ],
       bankTx: [
-        { id: 'ab1', date: '23/11', desc: 'Estado de Pago Obra Temuco', amount: 15200000, status: 'Conciliado', match: 'Factura #1104' }
+        {
+          id: 'ab1', date: '23/11', desc: 'Estado de Pago Obra Temuco', amount: 15200000, status: 'Conciliado',
+          match: '1 pago → 2 facturas (#1104 y #1108)',
+          confidence: 'Alta',
+          account: '11050 · Clientes nacionales',
+          rulePattern: 'Obra Temuco',
+          checks: [
+            { ok: true, label: 'Suma de 2 facturas coincide exacto ($15.200.000)' },
+            { ok: true, label: '6 días desde emisión de estado de pago' },
+            { ok: true, label: 'Referencia de obra en glosa bancaria' }
+          ],
+          docs: [
+            { title: 'Factura afecta #1104 · Avance Obra Temuco', sub: 'DTE 33 · Emitida 17/11', amount: 10400000 },
+            { title: 'Factura afecta #1108 · Adicional Hormigón', sub: 'DTE 33 · Emitida 19/11', amount: 4800000 }
+          ]
+        }
       ]
     },
     {
@@ -283,6 +355,8 @@
     query: '',
     selectedWorkerId: null,
     selectedBankId: null,
+    selectedF29Code: '538',
+    bankRules: {},
     finiquitoCause: '161',
     balanceScope: 'acumulado',
     studioName: 'Asesorías Pérez Ltda.',
@@ -908,9 +982,174 @@
     `;
   }
 
+  function buildF29Explanation(c, code) {
+    const iva = Math.max(0, (c.f29.debito || 0) - (c.f29.credito || 0));
+    const isProPyme = c.regime === '14 D3' || c.regime === '14 D8';
+    const iso = currentPeriod().iso;
+
+    if (code === '538') {
+      const deb = c.f29.debito || 0;
+      const factIva = Math.round(deb * 0.62);
+      const bolIva = Math.max(0, deb - factIva);
+      return {
+        code: '538',
+        title: 'Débito fiscal IVA',
+        amount: deb,
+        source: 'RCV Ventas SII',
+        docs: deb > 0 ? [
+          { title: 'Facturas electrónicas afectas (DTE 33)', sub: 'Resumen RCV ventas · tasa 19%', amount: factIva },
+          { title: 'Boletas electrónicas POS (DTE 39)', sub: 'Cierre diario ventas con boleta', amount: bolIva }
+        ] : [
+          { title: 'Sin ventas afectas a IVA en el período', sub: 'Giro exento o sin movimiento afecto', amount: 0 }
+        ],
+        note: null,
+        cta: { label: 'Abrir documentos en RCV', attr: 'data-client-sub="rcv"' }
+      };
+    }
+    if (code === '537') {
+      const cred = c.f29.credito || 0;
+      const docs = [];
+      if (cred > 0) {
+        if (c.id === 'san-isidro') {
+          const d1 = 150882, d2 = 65782, d3 = 28739;
+          const resto = Math.max(0, cred - d1 - d2 - d3);
+          docs.push(
+            { title: 'Factura #88412 · Molinos del Sur S.A.', sub: 'Insumos del giro · Acuse pendiente', amount: d1 },
+            { title: 'Factura #20491 · Envases Chile SpA', sub: 'Empaques · Acuse pendiente', amount: d2 },
+            { title: 'Boleta #77104 · Supermercado Jumbo', sub: 'Cód. 761 · Verificar relación con el giro', amount: d3 },
+            { title: 'Otras facturas del giro (RCV Compras)', sub: 'Documentos aceptados del período', amount: resto }
+          );
+        } else {
+          const d1 = Math.round(cred * 0.54);
+          const d2 = Math.max(0, cred - d1);
+          docs.push(
+            { title: 'Proveedores principales del giro (DTE 33)', sub: 'RCV Compras con derecho a crédito', amount: d1 },
+            { title: 'Servicios y suministros afectos', sub: 'RCV Compras aceptadas', amount: d2 }
+          );
+        }
+      } else {
+        docs.push({ title: 'Sin crédito fiscal registrado', sub: 'Sin compras afectas con derecho a crédito', amount: 0 });
+      }
+      return {
+        code: '537',
+        title: 'Crédito fiscal IVA',
+        amount: cred,
+        source: 'RCV Compras SII',
+        docs,
+        note: c.rcv.pendingAcuses ? { warn: true, text: `Hay ${c.rcv.pendingAcuses} documento(s) con acuse de recibo pendiente dentro del plazo de 8 días.` } : null,
+        cta: { label: 'Revisar facturas en RCV', attr: 'data-client-sub="rcv"' }
+      };
+    }
+    if (code === '089') {
+      const rem = Math.max(0, (c.f29.credito || 0) - (c.f29.debito || 0));
+      return {
+        code: '089',
+        title: 'IVA determinado del período',
+        amount: iva,
+        source: 'Cálculo Cód. 538 − 537',
+        docs: [
+          { title: 'Cód. 538 · Débito fiscal IVA', sub: 'Ventas afectas del mes', amount: c.f29.debito || 0 },
+          { title: 'Cód. 537 · Crédito fiscal IVA', sub: 'Compras con derecho a crédito', amount: -(c.f29.credito || 0) }
+        ],
+        note: rem > 0
+          ? { warn: false, text: `Crédito supera al débito: se genera remanente de crédito fiscal por ${fmt(rem)} para el mes siguiente.` }
+          : { warn: false, text: `IVA neto determinado del período: ${fmt(iva)}.` },
+        cta: null
+      };
+    }
+    if (code === '755') {
+      return {
+        code: '755',
+        title: 'Postergación IVA (Art. 64)',
+        amount: c.f29.postergar ? iva : 0,
+        source: `Régimen ${c.regime}`,
+        docs: [
+          { title: 'IVA determinado (Cód. 089)', sub: c.f29.postergar ? 'Postergado a mes +2' : 'No postergado', amount: iva },
+          { title: 'Monto postergado en Cód. 755', sub: 'Ajustable en Semáforo Pre-SII', amount: c.f29.postergar ? iva : 0 }
+        ],
+        note: { warn: false, text: c.f29.postergar ? 'Postergación activa: el IVA se traslada al vencimiento de mes +2 y el F29 actual paga solo PPM y retenciones.' : 'Puedes activar o desactivar la postergación en el bloque Semáforo Pre-SII.' },
+        cta: null
+      };
+    }
+    if (code === '062') {
+      const ppm = c.f29.ppm || 0;
+      const base = c.rcv.ventasNeto || 0;
+      const tasa = base > 0 ? ((ppm / base) * 100).toFixed(2) : '0.00';
+      return {
+        code: '062',
+        title: 'PPM obligatorio mensual',
+        amount: ppm,
+        source: `Base neta · ${tasa}%`,
+        docs: [
+          { title: 'Ingresos netos del período (RCV)', sub: `Régimen ${c.regime}`, amount: base },
+          { title: `PPM calculado (tasa ref. ${tasa}%)`, sub: 'Línea Cód. 062 Formulario 29', amount: ppm }
+        ],
+        note: isProPyme
+          ? { warn: true, text: `Alerta ProPyme (${c.regime}): la base PPM considera ingresos efectivamente percibidos. Verifica si hay facturas a crédito aún no cobradas en Bancos.` }
+          : { warn: false, text: `Régimen ${c.regime}: base PPM sobre ingresos brutos devengados del período.` },
+        cta: isProPyme ? { label: 'Verificar cobros en Bancos', attr: `data-open-client="${c.id}" data-open-area="bancos"` } : null
+      };
+    }
+    // 048: Impuesto Único + Retenciones BHE (151)
+    const ret = c.f29.retenciones || 0;
+    const computed = c.workers.map((w) => ({ w, calc: calcularWorkerReal(w, iso) }));
+    const impUnicoTotal = computed.reduce((s, x) => s + (x.calc.impUnico || 0), 0);
+    const bheRet = Math.max(0, ret - impUnicoTotal);
+    const docs = [];
+    if (impUnicoTotal > 0) {
+      const conImp = computed.filter((x) => (x.calc.impUnico || 0) > 0);
+      docs.push({
+        title: `Impuesto Único 2ª Cat. (${conImp.length} trab.)`,
+        sub: conImp.map((x) => x.w.name.split(' ')[0]).join(', '),
+        amount: impUnicoTotal
+      });
+    }
+    docs.push({
+      title: 'Retenciones BHE (Cód. 151)',
+      sub: 'Boletas de honorarios electrónicas recibidas',
+      amount: bheRet
+    });
+    return {
+      code: '048',
+      title: 'Impuesto Único y Retenciones (151)',
+      amount: ret,
+      source: 'Nómina + BHE',
+      docs,
+      note: { warn: false, text: 'Cruza automáticamente el Impuesto Único calculado en Remuneraciones con las retenciones de boletas de honorarios.' },
+      cta: { label: 'Abrir nómina del período', attr: `data-open-client="${c.id}" data-open-area="remuneraciones"` }
+    };
+  }
+
+  function renderF29ExplainBlock(c) {
+    const exp = buildF29Explanation(c, state.selectedF29Code || '538');
+    return `
+      <div class="v2-ins-block" id="v2-f29-explain-block">
+        <div class="v2-ins-head">
+          <h2 class="v2-ins-title">Cód. ${exp.code} · ${exp.title}</h2>
+          <span class="tag tag--in mono">${fmt(exp.amount)}</span>
+        </div>
+        <div class="muted" style="font-size:11.5px;margin-top:-6px">Origen: ${exp.source}</div>
+        <div class="v2-doc-list">
+          ${exp.docs.map((d) => `
+            <div class="v2-doc-row">
+              <div class="v2-doc-row__meta">
+                <span class="v2-doc-row__title" title="${d.title}">${d.title}</span>
+                <span class="v2-doc-row__sub">${d.sub}</span>
+              </div>
+              <span class="v2-doc-row__amt">${fmt(d.amount)}</span>
+            </div>
+          `).join('')}
+        </div>
+        ${exp.note ? `<div class="v2-ins-note ${exp.note.warn ? 'is-warn' : ''}">${exp.note.text}</div>` : ''}
+        ${exp.cta ? `<button type="button" class="btn btn--sm" ${exp.cta.attr}>${exp.cta.label}</button>` : ''}
+      </div>
+    `;
+  }
+
   function renderClientImpuestos(c) {
     const iva = Math.max(0, c.f29.debito - c.f29.credito);
     const total = f29Total(c);
+    if (!state.selectedF29Code) state.selectedF29Code = '538';
 
     if (state.clientSub === 'f29') {
       const lines = [
@@ -928,17 +1167,21 @@
           <div class="v2-tape-cell"><span class="v2-tape-label">IVA neto (089)</span><span class="v2-tape-val" data-f29-tape="iva">${fmt(iva)}</span></div>
           <div class="v2-tape-cell"><span class="v2-tape-label">Total F29 (091)</span><span class="v2-tape-val is-in" data-f29-tape="total">${fmt(total)}</span></div>
         </div>
+        <div class="v2-f29-hint">
+          <span>Haz clic en cualquier código del F29 para ver en el Inspector los documentos exactos que lo componen.</span>
+          <span class="mono">Régimen ${c.regime}</span>
+        </div>
         <div class="v2-table-wrap">
           <table class="v2-table">
             <thead><tr><th style="width:78px">Código</th><th>Glosa oficial Formulario 29</th><th class="num" style="width:160px">Monto ($)</th></tr></thead>
             <tbody>
               ${lines.map((l) => `
-                <tr class="${l.editable ? '' : 'is-calc-row'}">
+                <tr class="${l.editable ? '' : 'is-calc-row'}${state.selectedF29Code === l.code ? ' is-selected' : ''}" data-select-f29="${l.code}">
                   <td class="mono"><strong>${l.code}</strong></td>
                   <td>${l.glosa}</td>
                   <td class="num">
                     ${l.editable
-                      ? `<input type="number" class="v2-inline-input" data-f29-field="${l.field}" value="${l.val}" aria-label="Código ${l.code}">`
+                      ? `<input type="number" class="v2-inline-input" data-f29-field="${l.field}" data-f29-code="${l.code}" value="${l.val}" aria-label="Código ${l.code}">`
                       : `<span class="mono" data-f29-code-val="${l.code}">${fmt(l.val)}</span>`}
                   </td>
                 </tr>
@@ -988,6 +1231,7 @@
     }
 
     $('v2-inspector').innerHTML = `
+      ${state.clientSub === 'f29' ? renderF29ExplainBlock(c) : ''}
       <div class="v2-ins-block">
         <div class="v2-ins-head">
           <h2 class="v2-ins-title">Semáforo Pre-SII</h2>
@@ -1282,16 +1526,82 @@
         </table>
       </div>
     `;
-    $('v2-inspector').innerHTML = selected ? `
-      <div class="v2-ins-block">
-        <div class="v2-ins-head"><h2 class="v2-ins-title">Conciliación asistida</h2><span class="tag ${selected.status === 'Conciliado' ? 'tag--in' : 'tag--out'}">${selected.status}</span></div>
-        <dl class="v2-ins-kv"><dt>Movimiento</dt><dd>${selected.desc}</dd><dt>Monto</dt><dd>${fmt(selected.amount)}</dd><dt>Cruce sugerido</dt><dd>${selected.match}</dd><dt>Pendientes</dt><dd>${pend}</dd></dl>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
-          ${selected.status !== 'Conciliado' ? `<button type="button" class="btn btn--primary" data-match-tx="${selected.id}">Cuadrar movimiento</button>` : ''}
-          <button type="button" class="btn" data-quick-ok="Micro-solicitud sin clave enviada por ${selected.desc}">Pedir respaldo al cliente</button>
+    if (selected) {
+      const checks = selected.checks || [
+        { ok: true, label: `Monto en cartola: ${fmt(selected.amount)}` },
+        { ok: true, label: `Fecha movimiento: ${selected.date}` },
+        { ok: false, label: 'Sin documento RCV vinculado automáticamente' }
+      ];
+      const docs = selected.docs || [
+        { title: selected.match || 'Sin documento asociado', sub: 'Clasificación manual / cartola CSV', amount: selected.amount }
+      ];
+      const docsSum = docs.reduce((s, d) => s + d.amount, 0);
+      const diff = selected.amount - docsSum;
+      const multiLabel = docs.length > 1 ? `1 pago → ${docs.length} docs` : '1 pago → 1 doc';
+      const conf = selected.confidence || (selected.status === 'Conciliado' ? 'Alta' : 'Revisar');
+      const rulePattern = selected.rulePattern || selected.desc.split(' ').slice(0, 2).join(' ');
+      const ruleAccount = selected.account || (selected.amount >= 0 ? '11050 · Clientes nacionales' : '21010 · Proveedores nacionales');
+      const ruleKey = `${c.id}::${rulePattern.toLowerCase()}`;
+      const ruleSaved = !!state.bankRules[ruleKey];
+
+      $('v2-inspector').innerHTML = `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head">
+            <h2 class="v2-ins-title">Evidencia del calce</h2>
+            <span class="tag ${selected.status === 'Conciliado' ? 'tag--in' : conf === 'Alta' ? 'tag--in' : 'tag--out'}">${selected.status === 'Conciliado' ? 'Conciliado' : `Confianza ${conf}`}</span>
+          </div>
+          <div class="v2-ev-list">
+            ${checks.map((ch) => `
+              <div class="v2-ev-item">
+                <span class="v2-ev-mark ${ch.ok ? 'is-ok' : 'is-warn'}" aria-hidden="true">${ch.ok ? '✓' : '✗'}</span>
+                <span>${ch.label}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:11.5px;margin-top:4px">
+            <span class="muted">Documentos vinculados</span>
+            <span class="mono muted">${multiLabel}</span>
+          </div>
+          <div class="v2-doc-list">
+            ${docs.map((d) => `
+              <div class="v2-doc-row">
+                <div class="v2-doc-row__meta">
+                  <span class="v2-doc-row__title" title="${d.title}">${d.title}</span>
+                  <span class="v2-doc-row__sub">${d.sub}</span>
+                </div>
+                <span class="v2-doc-row__amt">${fmt(d.amount)}</span>
+              </div>
+            `).join('')}
+          </div>
+          <dl class="v2-ins-kv">
+            <dt>Monto banco</dt><dd>${fmt(selected.amount)}</dd>
+            <dt>Diferencia calce</dt><dd>${fmt(diff)}</dd>
+            <dt>Cuenta asiento</dt><dd style="font-family:var(--font-sans);font-size:12px">${ruleAccount}</dd>
+          </dl>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+            ${selected.status !== 'Conciliado'
+              ? `<button type="button" class="btn btn--primary" data-match-tx="${selected.id}">Confirmar calce y contabilizar</button>`
+              : `<button type="button" class="btn" data-unmatch-tx="${selected.id}">Desvincular calce</button>`}
+            <button type="button" class="btn" data-quick-ok="Micro-solicitud sin clave enviada por ${selected.desc}">Pedir respaldo al cliente</button>
+          </div>
         </div>
-      </div>
-    ` : `<div class="v2-ins-block"><h2 class="v2-ins-title">Cartola pendiente</h2><button type="button" class="btn btn--primary" data-quick-ok="Enlace sin clave enviado a ${c.name}">Pedir cartola al cliente</button></div>`;
+
+        <div class="v2-ins-block v2-ins-block--soft">
+          <div class="v2-ins-head">
+            <h2 class="v2-ins-title">Regla recurrente de glosa</h2>
+            ${ruleSaved ? '<span class="tag tag--in">Activa</span>' : '<span class="muted" style="font-size:11.5px">Opcional</span>'}
+          </div>
+          <p class="muted" style="margin:0;font-size:12px;line-height:1.4">
+            Si la glosa contiene <strong style="color:var(--ink)">«${rulePattern}»</strong> → asignar a <span class="mono">${ruleAccount}</span>.
+          </p>
+          <button type="button" class="btn btn--sm" data-save-bank-rule="${ruleKey}" data-rule-pattern="${rulePattern}" data-rule-account="${ruleAccount}">
+            ${ruleSaved ? 'Regla guardada (quitar)' : 'Guardar regla para próximos meses'}
+          </button>
+        </div>
+      `;
+    } else {
+      $('v2-inspector').innerHTML = `<div class="v2-ins-block"><h2 class="v2-ins-title">Cartola pendiente</h2><p class="muted" style="margin:0;font-size:12.5px">Pendientes por conciliar: ${pend}</p><button type="button" class="btn btn--primary" data-quick-ok="Enlace sin clave enviado a ${c.name}">Pedir cartola al cliente</button></div>`;
+    }
   }
 
   function buildAccountingReal(c) {
@@ -1589,7 +1899,7 @@
 
   /* ==================== EVENTS ==================== */
   document.addEventListener('click', (e) => {
-    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-inbox]');
+    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-f29], [data-select-inbox]');
     if (!t) return;
 
     if (t.id === 'btn-open-cmdk' || t.id === 'btn-switch-client') { openCmdk(); return; }
@@ -1684,6 +1994,7 @@
     if (t.dataset.jumpOla) { state.olaTab = t.dataset.jumpOla; enterStudio('olas'); return; }
     if (t.dataset.openClient) { enterClient(t.dataset.openClient, t.dataset.openArea || 'impuestos', t.dataset.openSub || null); return; }
     if (t.dataset.selectWorker) { state.selectedWorkerId = t.dataset.selectWorker; render(); return; }
+    if (t.dataset.selectF29 && !e.target.closest('input')) { state.selectedF29Code = t.dataset.selectF29; render(); return; }
     if (t.dataset.selectBank) { state.selectedBankId = t.dataset.selectBank; render(); return; }
     if (t.dataset.selectInbox) { state.selectedInboxId = t.dataset.selectInbox; render(); return; }
     if (t.dataset.resolveInbox) {
@@ -1694,7 +2005,35 @@
     if (t.dataset.matchTx) {
       const c = getClient();
       const tx = c.bankTx.find((x) => x.id === t.dataset.matchTx);
-      if (tx) { tx.status = 'Conciliado'; c.bancos.matched = Math.min(c.bancos.total, c.bancos.matched + 1); toast('Movimiento conciliado'); render(); }
+      if (tx) {
+        tx.status = 'Conciliado';
+        c.bancos.matched = Math.min(c.bancos.total || c.bankTx.length, c.bancos.matched + 1);
+        toast('Calce confirmado y contabilizado');
+        render();
+      }
+      return;
+    }
+    if (t.dataset.unmatchTx) {
+      const c = getClient();
+      const tx = c.bankTx.find((x) => x.id === t.dataset.unmatchTx);
+      if (tx && tx.status === 'Conciliado') {
+        tx.status = 'Por conciliar';
+        c.bancos.matched = Math.max(0, c.bancos.matched - 1);
+        toast('Movimiento vuelto a pendiente');
+        render();
+      }
+      return;
+    }
+    if (t.dataset.saveBankRule) {
+      const key = t.dataset.saveBankRule;
+      if (state.bankRules[key]) {
+        delete state.bankRules[key];
+        toast('Regla de glosa eliminada');
+      } else {
+        state.bankRules[key] = { pattern: t.dataset.rulePattern, account: t.dataset.ruleAccount };
+        toast(`Regla guardada: «${t.dataset.rulePattern}»`);
+      }
+      render();
       return;
     }
     if (t.dataset.quickOk) { toast(t.dataset.quickOk); return; }
@@ -1769,6 +2108,23 @@
       setTxt('[data-f29-code-val="089"]', fmt(iva));
       setTxt('[data-f29-code-val="755"]', fmt(c.f29.postergar ? iva : 0));
       setTxt('[data-f29-total]', fmt(total));
+      if (e.target.dataset.f29Code) state.selectedF29Code = e.target.dataset.f29Code;
+      const box = $('v2-f29-explain-block');
+      if (box) box.outerHTML = renderF29ExplainBlock(c);
+    }
+  });
+
+  document.addEventListener('focusin', (e) => {
+    if (e.target && e.target.dataset && e.target.dataset.f29Code) {
+      const code = e.target.dataset.f29Code;
+      if (state.selectedF29Code !== code) {
+        state.selectedF29Code = code;
+        document.querySelectorAll('tr[data-select-f29]').forEach((tr) => {
+          tr.classList.toggle('is-selected', tr.dataset.selectF29 === code);
+        });
+        const box = $('v2-f29-explain-block');
+        if (box) box.outerHTML = renderF29ExplainBlock(getClient());
+      }
     }
   });
 

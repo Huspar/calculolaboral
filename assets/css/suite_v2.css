@@ -819,6 +819,95 @@ a:hover { text-decoration-color: var(--ink-accent); }
 
 /* ---------- MOBILE BOTTOM NAV & RESPONSIVE (<= 1024px y 390px) ---------- */
 .v2-mobile-nav { display: none; }
+
+/* ---------- EXPLAINABLE INSPECTOR (F29 & BANCOS) ---------- */
+.v2-ev-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.v2-ev-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.v2-ev-mark {
+  flex: 0 0 14px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-align: center;
+}
+.v2-ev-mark.is-ok { color: var(--ink-accent); }
+.v2-ev-mark.is-warn { color: var(--ink-danger); }
+.v2-doc-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--ink-rule);
+}
+.v2-doc-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ink-rule-2);
+  font-size: 12px;
+}
+.v2-doc-row__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.v2-doc-row__title {
+  color: var(--ink);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v2-doc-row__sub {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+.v2-doc-row__amt {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  font-weight: 600;
+}
+.v2-ins-note {
+  padding: 9px 10px;
+  border-left: 2px solid var(--ink-accent);
+  background: var(--ink-paper);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+.v2-ins-note.is-warn {
+  border-left-color: var(--ink-danger);
+}
+.v2-f29-hint {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--ink-rule);
+  background: var(--ink-paper);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.v2-table tbody tr[data-select-f29] { cursor: pointer; }
+.v2-table tbody tr[data-select-f29].is-selected td:first-child,
+.v2-table tbody tr[data-select-bank].is-selected td:first-child {
+  box-shadow: inset 3px 0 0 var(--ink-accent);
+}
+
 @media (max-width: 1080px) {
   .v2-workbench { grid-template-columns: minmax(0, 1fr); }
   .v2-inspector { border-left: 0; border-top: 1px solid var(--ink); }
