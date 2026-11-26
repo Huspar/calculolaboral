@@ -41,7 +41,7 @@
         "Generación de archivo plano Previred (105 campos), CSV LRE Mi DT (147 columnas), nómina bancaria y asiento de centralización Excel",
         "Borrador de Formulario 29 desde RCV SII (cód. 48, cód. 151, crédito supermercado cód. 761 y contraste SII) y Acuse de Recibo Ley 19.983 individual o masivo en lote",
         "Importador de boletas BHE (15,25% en 2026) y cartolas bancarias Excel/CSV con conciliación automática, reglas repetitivas y cartera CxC/CxP",
-        "Libro Diario, Libro Mayor, Plan de Cuentas editable, Activo Fijo, Balance de 8 Columnas, RLI ProPyme (14 D3 y D8) y P&L / Flujo",
+        "Libro Diario, Libro Mayor, Plan de Cuentas del Estudio propagable, Balance de 8 Columnas, RLI ProPyme (14 D3 y D8), P&L con trazabilidad a Mayor y Ratios Financieros",
         "Borradores CSV de DDJJ 1887 (Cert. N°6), 1879 (Cert. N°1), 1947/1948, CPT Simplificado y Propuesta F22",
         "Torre de Control multiempresa con alertas TGR/PreviRed/SII, estado F29 del período, equipo con roles por estudio e Informe de Situación Tributaria PDF (corte diario o semanal)",
         "Portal Cliente Marca Blanca con buzón cifrado, resumen F29 con recordatorio sincronizado para WhatsApp/correo, Webhooks HMAC-SHA256, conector MCP para Claude y Monitor Tributario incluido en planes Estudio e Ilimitado"
@@ -693,14 +693,19 @@ window.addEventListener('load', function () {
 
 <!-- VIDEO -->
 <section class="ap-video" aria-labelledby="sc-video-t">
-<h2 id="sc-video-t" class="ap-video-t">Míralo en 2 minutos</h2>
+<h2 id="sc-video-t" class="ap-video-t">Recorrido general y tutoriales por módulo</h2>
+<p style="margin:0 0 .75rem;font-size:.9rem;color:#475569;">Estamos produciendo el nuevo video de presentación de la <strong>Suite Contadores v2</strong> y cápsulas tutoriales cortas para cada módulo. Mientras tanto puedes ver el recorrido anterior abajo o probar cada módulo en vivo en <a href="demo-contadores" class="font-semibold text-[#00382E] underline">/demo-contadores</a>.</p>
 <video class="ap-video-v" controls preload="none" playsinline width="1920" height="1080" poster="https://calculolaboral.cl/assets/video/suite-contadores-poster.jpg?v=1" aria-describedby="sc-video-texto" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="video">
 <source src="https://calculolaboral.cl/assets/video/suite-contadores.mp4?v=1" type="video/mp4">
 Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/assets/video/suite-contadores.mp4?v=1">Descárgalo en MP4</a>.
 </video>
 <details class="ap-video-texto" id="sc-video-texto">
-<summary>Transcripción del video (con voz y subtítulos)</summary>
-<p>¿Cierres de mes con 20 clientes repartidos entre Excel, Previred, el SII y WhatsApp? Con Suite Contadores de calculolaboral.cl, ordenas todo tu estudio en un solo panel. En la Torre de Control ves tu cartera completa: estado del F29, acuses pendientes, alertas de TGR, Previred y SII por monto en riesgo, roles de equipo y Webhooks. Cargas la nómina en Excel con parámetros 2026 de 42 horas e ingreso mínimo de $553.553, y exportas el TXT Previred de 105 campos y el LRE de 147 columnas con bandeja por cartera. En F29 cruzas RCV con códigos 48, 151 y 761, y ejecutas el Acuse masivo de recibo Ley 19.983 en lote, excluyendo supermercados por defecto, con confirmación previa y reintento. Importas boletas BHE al 15,25% omitiendo anuladas y concilias cartolas bancarias Excel o CSV con reglas automáticas contra el RCV, controlando cuentas por cobrar y pagar. De ahí pasas directo al Diario, Mayor, Activo Fijo, Balance de 8 Columnas, RLI ProPyme 14 D3 y D8, P&amp;L y borradores de DDJJ 1887, 1879, 1947 y Propuesta F22 AT 2026. Envías informes PDF diarios o semanales, resumen F29 con recordatorio por WhatsApp y un Portal Marca Blanca con enlaces revocables sin clave y buzón cifrado para recibir cartolas. Trabaja 100% local sin claves o conecta el SII con cifrado AES-256-GCM. Postula a 90 días gratis y planes desde $149.900 más IVA al año en calculolaboral.cl/demo-contadores.</p>
+<summary>Guía rápida por módulo (videos tutoriales v2 en producción)</summary>
+<p><strong>1. Estudio, Olas y Monitor SII·TGR:</strong> alta rápida de estudio, cartera multiempresa, Olas del Mes, Monitor SII/TGR/PreviRed y avisos F29 en lote por WhatsApp (<a href="demo-contadores#olas">ver en demo</a>).<br>
+<strong>2. F29 explicable y RCV:</strong> desglose código por código en el Inspector 30%, alerta PPM ProPyme, memoria de cuenta por proveedor, acuses 8 días, cierre/reapertura con motivo y Análisis Anual F29 (<a href="demo-contadores#cliente-f29">ver en demo</a>).<br>
+<strong>3. Nómina, PreviRed 105 y LRE 147:</strong> fichas incompletas con bloqueo PreviRed, Socio Sueldo Empresarial, Pensionado por vejez, finiquitos e importador CSV LRE para migrar en 1 minuto (<a href="demo-contadores#cliente-nomina">ver en demo</a>).<br>
+<strong>4. Conciliación Bancaria y CxC/CxP:</strong> evidencia de calce en 3 checks, 1 pago a N documentos, reglas de glosa y auxiliar Por Cobrar / Por Pagar por antigüedad (<a href="demo-contadores#cliente-bancos">ver en demo</a>).<br>
+<strong>5. Contabilidad y Conexiones MCP/SII:</strong> Balance 8 Columnas, P&amp;L con trazabilidad a Mayor, Ratios Financieros, Plan de Cuentas del Estudio propagable y Conector MCP (<a href="demo-contadores#cliente-contabilidad">ver en demo</a>).</p>
 </details>
 </section>
 
@@ -742,48 +747,48 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 </section>
 
 <section id="que-hace" class="ls-section">
-<h2>Qué puedes hacer hoy en Suite Contadores</h2>
-<p>Todos estos módulos ya operan en la <a href="demo-contadores" data-demo-track="1">suite interactiva</a> con el botón «Cargar ejemplo completo» (Panadería San Isidro SpA) o con tus propios archivos y empresas:</p>
+<h2>Qué puedes hacer hoy en Suite Contadores v2</h2>
+<p>Todos estos módulos ya operan hoy en la <a href="demo-contadores" data-demo-track="1">Suite Contadores v2</a> con 6 empresas de ejemplo precargadas o creando tu propio estudio en 10 segundos:</p>
 <div class="sc-pilares">
 <div class="sc-pilar">
-<span class="sc-pilar-tag">Nómina y plazos</span>
-<h3>1. Liquidaciones, finiquitos y pre-validación</h3>
-<p>Cargas tu nómina desde Excel (.xlsx), calculas liquidaciones o finiquitos en lote por cliente con UF, UTM y topes 2026 vigentes, pre-validas errores antes de exportar y revisas vencimientos legales (Mi DT, Previred día 13 y LRE).</p>
-</div>
-<div class="sc-pilar">
-<span class="sc-pilar-tag">Previred y Mi DT</span>
-<h3>2. TXT Previred, LRE, Bandeja y Asiento</h3>
-<p>Generas el TXT plano de 105 campos para Previred, el CSV LRE con nombre oficial <code>RUT_AAAAMM.csv</code> (147 columnas en ANSI/Windows-1252, bandeja LRE por cartera y guía de carga a Mi DT), la nómina bancaria y el asiento de centralización con códigos del Plan Base en Excel.</p>
+<span class="sc-pilar-tag">Espacio Estudio</span>
+<h3>1. Mesa de Cierre, Olas y avisos WhatsApp en lote</h3>
+<p>Gestionas tu cartera completa desde un solo panel: <strong>Mesa de Cierre</strong>, <strong>Olas del Mes</strong> con barra de avance en lote, guía de primeros pasos para estudios nuevos y <strong>avisos F29 en lote por WhatsApp</strong> para cobrar aprobaciones a tus clientes.</p>
 </div>
 <div class="sc-pilar">
 <span class="sc-pilar-tag">Impuestos mensuales</span>
-<h3>3. RCV, Borrador F29 y Acuse masivo Ley 19.983</h3>
-<p>Importas CSV de Compras y Ventas del SII o sincronizas el período desde el SII si conectas la empresa. Cruzas cód. 48 y 151, crédito de supermercado (cód. 761 F29), reajuste UTM, contraste contra resumen SII y envías acuses de recibo (ERM) a facturas a crédito en forma individual o en lote tras confirmación (excluyendo supermercados por defecto). <a href="calculadora-f29-chile" class="font-semibold text-[#00382E] underline">Calculadora F29</a>.</p>
+<h3>2. Hoja F29 explicable, RCV con memoria y Análisis Anual</h3>
+<p>Haces clic en cualquier código del F29 (538, 537, 089, 755, 062 con alerta PPM ProPyme y 048/151 al 15,25%) para ver en el Inspector 30% los documentos exactos que lo componen. Incluye reclasificación RCV por proveedor con memoria, resolución de acuses 8 días, flujo <em>Contabilizado → Declarado → Pagado</em> con cierre y reapertura con motivo obligatorio, y <strong>Análisis Anual F29 (Ene–Dic)</strong> con reajuste UTM Art. 27 en Excel y PDF. <a href="calculadora-f29-chile" class="font-semibold text-[#00382E] underline">Calculadora F29</a>.</p>
 </div>
 <div class="sc-pilar">
-<span class="sc-pilar-tag">Honorarios y bancos</span>
-<h3>4. Importador BHE y Conciliación Bancaria</h3>
-<p>Lees el CSV de Boletas de Honorarios Electrónicas del SII (retención 15,25% en 2026) y cartolas bancarias en Excel (<code>.xlsx</code> / <code>.xls</code>) o CSV para cruzar automáticamente contra el RCV (±$100), aplicar reglas repetitivas, centralizar en Diario y controlar cartera CxC/CxP.</p>
+<span class="sc-pilar-tag">Nómina, PreviRed y LRE</span>
+<h3>3. Remuneraciones 2026, Socio, Pensionado e Importador LRE</h3>
+<p>Calculas liquidaciones y finiquitos con parámetros 2026, filtro <strong>Fichas incompletas</strong> con bloqueo previo a PreviRed, <strong>Socio con Sueldo Empresarial</strong> (Art. 31 N°6 LIR, LRE 2161/3161, excluido de PreviRed y finiquito bloqueado) y <strong>Pensionado por vejez</strong> (tope Salud 90 UF menos pensión, PreviRed Tipo 1/2, LRE 1109). Exportas TXT PreviRed (105 campos) y CSV LRE (147 cols. ANSI) e importas LRE CSV de otro software para migrar en 1 minuto.</p>
+</div>
+<div class="sc-pilar">
+<span class="sc-pilar-tag">Bancos y cobranza</span>
+<h3>4. Conciliación Bancaria explicable y Auxiliar CxC/CxP</h3>
+<p>Subes cartolas CSV sin claves bancarias y revisas en el Inspector 30% la <strong>evidencia del calce</strong> (monto, fecha, glosa/RUT), soporte <strong>1 pago → N documentos</strong>, confirmación en 1 clic y reglas recurrentes de glosa. Incluye <strong>Auxiliar Por Cobrar / Por Pagar por antigüedad</strong> (Al día, 1–30, 31–60 y &gt;60 días) con registro directo en banco.</p>
 </div>
 <div class="sc-pilar">
 <span class="sc-pilar-tag">Contabilidad ProPyme</span>
-<h3>5. Diario, Mayor, Activo Fijo y Balance 8 Col.</h3>
-<p>Centralizas nómina, F29, bancos y depreciación de activo fijo con Plan de Cuentas editable. Obtienes Balance Tributario de 8 Columnas, hoja RLI ProPyme (Art. 14 D N°3 y D8) y Estados Financieros (P&amp;L y Flujo) en Excel y PDF. <a href="balance-8-columnas-rli-propyme-excel" class="font-semibold text-[#00382E] underline">Simulador Balance</a>.</p>
+<h3>5. Balance 8 Col., P&amp;L trazable, Ratios y Plan propagable</h3>
+<p>Centralizas ventas, compras, F29 y remuneraciones en Libro Diario, Mayor y <strong>Balance de 8 Columnas</strong> (<em>Acumulado</em> o <em>Movimientos del mes</em>) exportable en Excel y PDF, con <strong>trazabilidad P&amp;L a Mayor</strong>, <strong>Ratios Financieros</strong> y <strong>Plan de Cuentas del Estudio propagable</strong> que protege automáticamente las cuentas con movimientos. <a href="balance-8-columnas-rli-propyme-excel" class="font-semibold text-[#00382E] underline">Simulador Balance</a>.</p>
 </div>
 <div class="sc-pilar">
 <span class="sc-pilar-tag">Operación Renta</span>
-<h3>6. DDJJ (1887, 1879, 1947/1948), CPT y F22</h3>
-<p>Generas borradores CSV y certificados de apoyo sobre el marco vigente (AT 2026): DJ 1887 y Cert. N°6 de sueldos, DJ 1879 y Cert. N°1 de honorarios con tasa real 15,25%, DJ 1947/1948, CPT Simplificado y Propuesta F22 (IDPC vs. PPM).</p>
+<h3>6. Borradores DDJJ (1887, 1879, 1947/1948) y cruce LRE</h3>
+<p>Generas borradores de apoyo sobre el marco vigente (AT 2026) según régimen (14 D3, 14 D8 y 14 A), alimentando la <strong>DJ 1887</strong> con el histórico acumulado de los LRE CSV importados y las retenciones BHE al 15,25%.</p>
 </div>
 <div class="sc-pilar">
-<span class="sc-pilar-tag">Torre, reportes y portal</span>
-<h3>7. Torre TGR/SII, Informe PDF, Resumen F29 y Portal</h3>
-<p>Controlas la cartera con estado F29 del período y alertas consolidadas (TGR, PreviRed y SII), emites el <strong>Informe PDF de Situación Tributaria</strong> (corte diario o semanal), copias el resumen F29 con recordatorio de vencimiento (WhatsApp/correo) y compartes el <strong>Portal Cliente Marca Blanca</strong> con buzón cifrado para recibir cartolas y respaldos. Incluye gestión de equipo multiusuario.</p>
+<span class="sc-pilar-tag">Entregables y portal</span>
+<h3>7. Paquete Mensual PDF/Excel y Portal Cliente sin clave</h3>
+<p>Emites Paquete Mensual PDF, liquidaciones, finiquitos, Balance y Análisis Anual F29 en Excel/PDF reales con el nombre de tu estudio, más enlace de Portal Cliente sin clave para recibir respaldos y cartolas.</p>
 </div>
 <div class="sc-pilar">
-<span class="sc-pilar-tag">Integraciones y monitor</span>
-<h3>8. SII opcional, Webhooks HMAC, MCP y Monitor</h3>
-<p>Cuando quieras, conecta empresas al SII (Clave Tributaria o <code>.pfx</code>), recibe avisos automáticos con <strong>Webhooks HMAC-SHA256</strong>, genera tokens MCP de solo lectura para Claude y accede al <a href="monitor-tributario-previsional" class="font-semibold text-[#00382E] underline">Monitor Tributario y Previsional</a> incluido en los planes Estudio y Estudio ilimitado.</p>
+<span class="sc-pilar-tag">Automatización e IA</span>
+<h3>8. Monitor SII · TGR · PreviRed, SII Gateway y 10 tools MCP</h3>
+<p>Supervisas toda la cartera en el <strong>Monitor SII · TGR · PreviRed</strong> (Turno Nocturno 24/7 + Reporte Matutino), conectas SII de forma opcional con bóveda AES-256-GCM y consultas en solo lectura desde Claude/ChatGPT con <strong>10 herramientas MCP</strong>. <a href="conector-mcp-contadores-chile" class="font-semibold text-[#00382E] underline">Documentación MCP</a>.</p>
 </div>
 </div>
 </section>
@@ -825,7 +830,7 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <td class="font-mono-num">$1.420.000</td>
 <td>Al día</td>
 <td style="color:#b91c1c;font-weight:700;">Mora · Riesgo Art. 162 CT</td>
-<td style="color:#b91c1c;font-weight:700;">Critico</td>
+<td style="color:#b91c1c;font-weight:700;">Crítico</td>
 </tr>
 <tr>
 <td><strong>Panadería San Isidro SpA</strong></td>
@@ -904,7 +909,7 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 <div class="mcp-addon-acciones">
 <button type="button" id="btn-mcp-addon-anual" class="ls-btn ls-btn-primary">Agregar MCP anual ($35.581 IVA incl.)</button>
 <button type="button" id="btn-mcp-addon-mensual" class="ls-btn ls-btn-ghost" style="border:1.5px solid #00382E;">Mensual ($4.153 IVA incl.)</button>
-<a href="demo-contadores?mod=reportes" class="ls-btn ls-btn-ghost" data-demo-track="1" data-cta-slot="suite-mcp">Probar en /demo-contadores</a>
+<a href="conector-mcp-contadores-chile" class="ls-btn ls-btn-ghost" data-demo-track="1" data-cta-slot="suite-mcp">Ver documentación MCP</a>
 </div>
 </div>
 </section>
@@ -939,7 +944,7 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 </tr>
 <tr>
 <td><strong>Entregables incluidos</strong></td>
-<td>Liquidaciones y finiquitos PDF/XLSX, TXT Previred 105 campos, CSV LRE 147 col., F29, Acuse masivo Ley 19.983, BHE, Conciliación, Diario/Mayor, Activo Fijo, Balance 8 col., RLI, P&amp;L, DDJJ (1887/1879/1947-1948), CPT, F22, Informe PDF Situación Tributaria, Resumen F29 WhatsApp y Portal Cliente con buzón cifrado</td>
+<td>Liquidaciones y finiquitos PDF/XLSX, TXT Previred 105 campos, CSV LRE 147 col. (e importador LRE), F29 explicable + Análisis Anual, Acuse Ley 19.983, BHE 15,25%, Conciliación + Auxiliar CxC/CxP, Diario/Mayor, Balance 8 col., P&amp;L trazable + Ratios, Plan de Cuentas propagable, borradores DDJJ, Paquete PDF y avisos F29 WhatsApp</td>
 <td>Exportables en TXT, CSV, Excel y PDF listos para revisar, respaldar en JSON y presentar</td>
 </tr>
 <tr>
@@ -1122,21 +1127,21 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 </section>
 
 <section id="no-hace" class="ls-section">
-<h2>Qué NO hace hoy esta herramienta</h2>
+<h2>Qué NO incluye hoy esta herramienta</h2>
 <div class="ap-no">
-<p style="margin:0;font-weight:700;color:#881337;">Alcances reales y límites que conviene conocer antes de usarla:</p>
+<p style="margin:0;font-weight:700;color:#881337;">Transparencia total sobre lo que hoy todavía no hace Suite Contadores:</p>
 <ul>
-<li><strong>No presenta ni paga declaraciones por ti en SII, Previred o Mi DT:</strong> los TXT Previred (105 campos), CSV LRE (147 columnas), borradores F29, DDJJ y Propuesta F22 son archivos de apoyo que debes revisar y cargar con tus credenciales. La conexión SII opcional solo sincroniza RCV/F29/BHE/TGR y, si lo confirmas expresamente (individualmente o en lote), envía Acuses de Recibo Ley 19.983.</li>
-<li><strong>No hace scraping bancario ni solicita claves de Previred o bancos:</strong> la conciliación bancaria trabaja únicamente a partir de cartolas CSV o Excel (<code>.xlsx</code> / <code>.xls</code>) que tú subes y revisas.</li>
-<li><strong>No emite DTE (facturas, boletas ni guías de despacho) en el SII</strong>, ni reemplaza el criterio profesional del contador o la revisión legal de un abogado.</li>
-<li><strong>Marco Renta AT 2027 en preparación y edición simultánea:</strong> los borradores CSV de DDJJ (1887, 1879, 1947/1948) corresponden al año tributario vigente (AT 2026); el envío definitivo AT 2027 permanecerá bloqueado hasta que el SII publique los factores de actualización IPC en enero de 2027 y actualice validadores tras la Res. Ex. N° 116 (puedes consultar las fechas de vencimiento vigentes en el <a href="calendario-declaraciones-juradas-at-2027-chile" class="font-semibold text-[#00382E] underline">Calendario DDJJ AT 2027 según Res. Ex. N° 135</a>). Con sesión activa del estudio dispones de conexión SII cifrada, Portal Cliente Marca Blanca y tokens MCP; el cálculo sin sesión se mantiene local en tu navegador con respaldo JSON.</li>
+<li><strong>No presenta ni paga declaraciones por ti en SII, Previred o Mi DT:</strong> genera los archivos y borradores listos para revisar y cargar (TXT Previred 105 campos, CSV LRE 147 columnas, F29 y DDJJ). La conexión SII opcional sincroniza datos y solo envía acuses Ley 19.983 tras confirmación expresa.</li>
+<li><strong>No hace scraping bancario ni pide claves bancarias:</strong> la conciliación trabaja únicamente con cartolas CSV que tú subes; no se conecta directo a tu banco.</li>
+<li><strong>No es un ERP de facturación ni bodegas:</strong> <strong>no emite DTE</strong> (facturas, boletas ni guías), <strong>no incluye módulo de inventario, multi-bodega, punto de venta ni Activo Fijo con depreciación tributaria completa</strong>, y no reemplaza la revisión legal o contable profesional.</li>
+<li><strong>Integraciones y módulos en validación o etapa siguiente:</strong> el backend <strong>SII Gateway</strong> ya opera en Chile con bóveda AES-256-GCM, pero la captura en vivo de TGR, DDJJ y F22 sigue en validación con RUT reales (en modo demo sin sesión todo corre 100% local en tu navegador, sin persistencia multi-usuario en tiempo real ni app móvil nativa). Los borradores DDJJ corresponden a AT 2026 y el marco definitivo AT 2027 quedará bloqueado hasta que el SII publique los factores IPC en enero de 2027 (<a href="calendario-declaraciones-juradas-at-2027-chile" class="font-semibold text-[#00382E] underline">Calendario DDJJ AT 2027 Res. Ex. N° 135</a>).</li>
 </ul>
 </div>
 
 <div class="ls-cta-inline">
 <div>
-<p class="ls-cta-title">¿Quieres recorrer todos los módulos cargados antes de postular?</p>
-<p>Abre la suite y pulsa «Cargar ejemplo completo» (Panadería San Isidro SpA) o revisa el <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a> si llevas internamente una sola empresa.</p>
+<p class="ls-cta-title">¿Quieres probar los módulos en vivo antes de crear tu estudio?</p>
+<p>Abre <a href="demo-contadores">Suite Contadores v2</a> con 6 empresas de ejemplo ya cargadas, o revisa el <a href="asistente-laboral-pyme">Asistente Laboral Pyme</a> si administras internamente una sola empresa.</p>
 </div>
 <a class="ls-btn ls-btn-primary" href="demo-contadores" style="color:#ffffff !important;" data-cta="suite-contadores" data-cta-name="Suite Contadores" data-cta-slot="puente-demo" data-demo-track="1">
 <span>Abrir demo interactiva</span><span class="material-icons" aria-hidden="true">arrow_forward</span>
