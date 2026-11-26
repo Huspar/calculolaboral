@@ -165,9 +165,9 @@
       workers: [
         { id: 'w1', name: 'Camila Rojas Fuentes', rut: rutConDv(19876543), sexo: 'F', ingreso: '2021-04-01', cargo: 'Jefa de Producción', base: 1450000, afp: 'Habitat', estado: 'Listo' },
         { id: 'w2', name: 'María González Pérez', rut: rutConDv(12345678), sexo: 'F', ingreso: '2020-08-15', cargo: 'Maestra Panadera', base: 1180000, afp: 'Cuprum', estado: 'Listo' },
-        { id: 'w3', name: 'Pedro Soto Ramírez', rut: rutConDv(15876543), sexo: 'M', ingreso: '2023-02-01', cargo: 'Repartidor', base: 850000, afp: 'Modelo', estado: 'Revisar hrs' },
+        { id: 'w3', name: 'Pedro Soto Ramírez', rut: rutConDv(15876543), sexo: 'M', ingreso: '2023-02-01', cargo: 'Repartidor', base: 850000, afp: 'Modelo', estado: 'Sin contrato', sinContrato: true },
         { id: 'w4', name: 'Andrés Muñoz Tapia', rut: rutConDv(16543210), sexo: 'M', ingreso: '2019-06-01', cargo: 'Administrador', base: 2400000, afp: 'Capital', estado: 'Listo' },
-        { id: 'w5', name: 'Valentina Castro León', rut: rutConDv(20111222), sexo: 'F', ingreso: '2024-01-10', cargo: 'Cajera', base: 700000, afp: 'Uno', estado: 'Listo' },
+        { id: 'w5', name: 'Valentina Castro León', rut: rutConDv(20111222), sexo: 'F', ingreso: '2024-01-10', cargo: 'Cajera', base: 700000, afp: 'Uno', estado: 'Sin plan Isapre', sinPlanIsapre: true },
         { id: 'w6', name: 'Jorge Vergara Salas', rut: rutConDv(10999888), sexo: 'M', ingreso: '2018-11-01', cargo: 'Encargado Bodega', base: 1050000, afp: 'Provida', estado: 'Tope 90 UF' }
       ],
       bankTx: [
@@ -312,7 +312,7 @@
       f29: { state: 'revisar', folio: '', postergar: true, debito: 1292000, credito: 750500, ppm: 68000, retenciones: 95000, history: [610, 640, 590, 680, 710, 695, 670, 720, 685, 700, 704, 704] },
       cierre: 'Esperando cliente',
       workers: [
-        { id: 'c1', name: 'Javiera Núñez Paz', rut: rutConDv(19442108), sexo: 'F', ingreso: '2024-03-01', cargo: 'Barista', base: 680000, afp: 'Modelo', estado: 'Pendiente horas' }
+        { id: 'c1', name: 'Javiera Núñez Paz', rut: rutConDv(19442108), sexo: 'F', ingreso: '2024-03-01', cargo: 'Barista', base: 680000, afp: 'Modelo', estado: 'Licencia sin tipo', licenciaSinTipo: true }
       ],
       bankTx: []
     },
@@ -357,6 +357,7 @@
     selectedBankId: null,
     selectedF29Code: '538',
     selectedRcvId: null,
+    workerFilter: 'todos',
     reopenPromptOpen: false,
     reopenError: '',
     bankRules: {},
@@ -446,6 +447,18 @@
   function isPeriodClosed(c) {
     if (typeof c.periodClosed === 'boolean') return c.periodClosed;
     return c.f29.state === 'declarado' || c.f29.state === 'pagado';
+  }
+  function getWorkerMissing(w) {
+    const out = [];
+    if (w.sinContrato) out.push({ key: 'sinContrato', label: 'Sin contrato', fixLabel: 'Registrar contrato vigente' });
+    if (w.sinPlanIsapre) out.push({ key: 'sinPlanIsapre', label: 'Sin plan Isapre', fixLabel: 'Asignar plan Salud (Fonasa 7%)' });
+    if (w.licenciaSinTipo) out.push({ key: 'licenciaSinTipo', label: 'Licencia sin tipo', fixLabel: 'Definir tipo de licencia médica' });
+    return out;
+  }
+  function getClientPayrollBlockers(c) {
+    return (c.workers || [])
+      .map((w) => ({ w, missing: getWorkerMissing(w) }))
+      .filter((x) => x.missing.length > 0);
   }
 
   /* ==================== SIDEBAR + TOPBAR ==================== */
@@ -1520,13 +1533,15 @@
       const lre = generarLreReal(c, iso);
       const prevErr = prev && prev.salida ? prev.salida.errores : [];
       const lreErr = lre ? lre.errores : [];
+      const blockers = getClientPayrollBlockers(c);
+      const totalBlockCount = prevErr.length + blockers.length;
       const tot = prev && prev.totales ? prev.totales : { afp: 0, sis: 0, salud: 0, mutual: 0, afcTrabajador: 0, afcEmpleador: 0, total: 0, lineas: 0 };
 
       $('v2-canvas').innerHTML = `
         <div class="v2-tape">
           <div class="v2-tape-cell"><span class="v2-tape-label">Líneas Previred (105)</span><span class="v2-tape-val">${tot.lineas}</span></div>
           <div class="v2-tape-cell"><span class="v2-tape-label">Total cotizaciones</span><span class="v2-tape-val is-in">${fmt(tot.total)}</span></div>
-          <div class="v2-tape-cell"><span class="v2-tape-label">Errores Previred</span><span class="v2-tape-val">${prevErr.length}</span></div>
+          <div class="v2-tape-cell"><span class="v2-tape-label">Bloqueos PreviRed</span><span class="v2-tape-val ${totalBlockCount ? 'is-danger' : ''}">${totalBlockCount}</span></div>
           <div class="v2-tape-cell"><span class="v2-tape-label">Columnas LRE Mi DT</span><span class="v2-tape-val">${lre && lre.columnas ? lre.columnas.length : 147}</span></div>
         </div>
         <div class="v2-table-wrap">
@@ -1536,8 +1551,8 @@
               <tr>
                 <td><strong>Archivo Nómina Previred (.txt)</strong></td>
                 <td class="mono">105 campos · sep ";" · v100</td>
-                <td><span class="tag ${prevErr.length ? 'tag--on' : 'tag--in'}">${prevErr.length ? prevErr[0] : `${tot.lineas} filas · 0 errores`}</span></td>
-                <td class="num"><button type="button" class="btn btn--primary btn--sm" id="btn-dl-previred">Descargar TXT</button></td>
+                <td><span class="tag ${totalBlockCount ? 'tag--danger' : 'tag--in'}">${blockers.length ? `Bloqueado: ${blockers.length} ficha(s) incompleta(s)` : prevErr.length ? prevErr[0] : `${tot.lineas} filas · 0 errores`}</span></td>
+                <td class="num">${blockers.length ? `<button type="button" class="btn btn--sm" data-go-incomplete="1">Completar fichas (${blockers.length})</button>` : `<button type="button" class="btn btn--primary btn--sm" id="btn-dl-previred">Descargar TXT</button>`}</td>
               </tr>
               <tr>
                 <td><strong>Libro Remuneraciones Electrónico (LRE)</strong></td>
@@ -1566,12 +1581,28 @@
       return;
     }
 
+    const blockers = getClientPayrollBlockers(c);
+    const incompleteCount = blockers.length;
+    if (state.workerFilter === 'incompletas' && incompleteCount === 0) state.workerFilter = 'todos';
+    const visibleComputed = state.workerFilter === 'incompletas'
+      ? computed.filter(({ w }) => getWorkerMissing(w).length > 0)
+      : computed;
+    const activeSel = visibleComputed.find((x) => x.w.id === state.selectedWorkerId) || visibleComputed[0] || selectedObj;
+    if (activeSel) state.selectedWorkerId = activeSel.w.id;
+
     $('v2-canvas').innerHTML = `
       <div class="v2-tape">
         <div class="v2-tape-cell"><span class="v2-tape-label">Dotación</span><span class="v2-tape-val">${c.workers.length}</span></div>
         <div class="v2-tape-cell"><span class="v2-tape-label">Total imponible</span><span class="v2-tape-val" data-nom-tape="imponible">${fmt(totalImp)}</span></div>
         <div class="v2-tape-cell"><span class="v2-tape-label">Líquido a pagar</span><span class="v2-tape-val is-in" data-nom-tape="liquido">${fmt(totalLiquido)}</span></div>
         <div class="v2-tape-cell"><span class="v2-tape-label">Costo empleador</span><span class="v2-tape-val" data-nom-tape="empleador">${fmt(totalEmp)}</span></div>
+      </div>
+      <div class="v2-pulse-bar">
+        <div class="v2-filter-pills" role="group" aria-label="Filtrar fichas de trabajadores">
+          <button type="button" class="v2-pill-btn" data-worker-filter="todos" aria-pressed="${state.workerFilter === 'todos'}">Todos <span class="mono">${c.workers.length}</span></button>
+          <button type="button" class="v2-pill-btn" data-worker-filter="incompletas" aria-pressed="${state.workerFilter === 'incompletas'}">Fichas incompletas <span class="mono">${incompleteCount}</span></button>
+        </div>
+        <span class="tag ${incompleteCount ? 'tag--danger' : 'tag--in'}">${incompleteCount ? `PreviRed bloqueado · ${incompleteCount} ficha(s)` : 'Fichas completas · PreviRed listo'}</span>
       </div>
       <div class="v2-table-wrap">
         <table class="v2-table">
@@ -1588,17 +1619,22 @@
             </tr>
           </thead>
           <tbody>
-            ${computed.map(({ w, calc }) => `
-              <tr class="${selectedObj && selectedObj.w.id === w.id ? 'is-selected' : ''}" data-select-worker="${w.id}" style="cursor:pointer">
-                <td><input type="checkbox" data-batch-id="${w.id}" ${state.selectedIds.has(w.id) ? 'checked' : ''} aria-label="Seleccionar ${w.name}"></td>
-                <td><strong>${w.name}</strong><span class="v2-cell-sub">${w.cargo}</span></td>
-                <td class="mono">${w.rut}</td>
-                <td>${w.afp}</td>
-                <td class="num v2-col-calc v2-col-calc-start" data-row-imp="${w.id}">${fmt(calc.imponible)}</td>
-                <td class="num v2-col-calc" data-row-liq="${w.id}"><strong>${fmt(calc.liquido)}</strong></td>
-                <td class="v2-col-calc"><span class="tag ${w.estado === 'Listo' || w.estado === 'Pagado' ? 'tag--in' : 'tag--danger'}">${w.estado}</span></td>
-              </tr>
-            `).join('')}
+            ${visibleComputed.map(({ w, calc }) => {
+              const missing = getWorkerMissing(w);
+              const badgeText = missing.length ? missing.map((m) => m.label).join(' · ') : w.estado;
+              const isOk = !missing.length && (w.estado === 'Listo' || w.estado === 'Pagado');
+              return `
+                <tr class="${activeSel && activeSel.w.id === w.id ? 'is-selected' : ''}" data-select-worker="${w.id}" style="cursor:pointer">
+                  <td><input type="checkbox" data-batch-id="${w.id}" ${state.selectedIds.has(w.id) ? 'checked' : ''} aria-label="Seleccionar ${w.name}"></td>
+                  <td><strong>${w.name}</strong><span class="v2-cell-sub">${w.cargo}</span></td>
+                  <td class="mono">${w.rut}</td>
+                  <td>${w.afp}</td>
+                  <td class="num v2-col-calc v2-col-calc-start" data-row-imp="${w.id}">${fmt(calc.imponible)}</td>
+                  <td class="num v2-col-calc" data-row-liq="${w.id}"><strong>${fmt(calc.liquido)}</strong></td>
+                  <td class="v2-col-calc"><span class="tag ${isOk ? 'tag--in' : 'tag--danger'}">${badgeText}</span></td>
+                </tr>
+              `;
+            }).join('')}
           </tbody>
           <tfoot>
             <tr>
@@ -1612,14 +1648,32 @@
       </div>
     `;
 
-    if (selectedObj) {
-      const { w, calc } = selectedObj;
+    if (activeSel) {
+      const { w, calc } = activeSel;
       const d = calc.detalle || {};
+      const wMissing = getWorkerMissing(w);
       $('v2-inspector').innerHTML = `
+        ${wMissing.length ? `
+          <div class="v2-ins-block" id="v2-worker-blockers">
+            <div class="v2-ins-head">
+              <h2 class="v2-ins-title">Bloqueo PreviRed</h2>
+              <span class="tag tag--danger">${wMissing.length} faltante(s)</span>
+            </div>
+            <p class="muted" style="margin:0;font-size:12px;line-height:1.4">Completa los datos obligatorios antes de exportar el archivo PreviRed (105 campos).</p>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              ${wMissing.map((m) => `
+                <div class="v2-ins-row" style="padding:6px 0">
+                  <span><strong>${m.label}</strong></span>
+                  <button type="button" class="btn btn--primary btn--sm" data-fix-worker-flag="${w.id}:${m.key}">Completar</button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
         <div class="v2-ins-block">
           <div class="v2-ins-head">
             <h2 class="v2-ins-title">${w.name}</h2>
-            <span class="tag ${w.estado === 'Listo' || w.estado === 'Pagado' ? 'tag--in' : 'tag--danger'}">${w.estado}</span>
+            <span class="tag ${!wMissing.length && (w.estado === 'Listo' || w.estado === 'Pagado') ? 'tag--in' : 'tag--danger'}">${wMissing.length ? wMissing[0].label : w.estado}</span>
           </div>
           <div class="muted" style="font-size:12px">${w.cargo} · <span class="mono">${w.rut}</span></div>
           <div class="v2-ins-row">
@@ -1633,7 +1687,7 @@
             <dt>Aportes empleador</dt><dd>${fmt(calc.costoEmpleador)}</dd>
           </dl>
           <div style="display:flex;gap:8px;margin-top:6px">
-            <button type="button" class="btn btn--primary btn--sm" style="flex:1" id="btn-dl-previred">Previred 105</button>
+            <button type="button" class="btn btn--primary btn--sm" style="flex:1" id="btn-dl-previred">${incompleteCount ? `Previred bloqueado (${incompleteCount})` : 'Previred 105'}</button>
             <button type="button" class="btn btn--sm" id="btn-dl-lre">LRE 147</button>
           </div>
         </div>
@@ -1973,6 +2027,15 @@
 
   /* ==================== EXPORTADORES REALES ==================== */
   function triggerPreviredDownload(c) {
+    const blockers = getClientPayrollBlockers(c);
+    if (blockers.length) {
+      state.clientSub = 'nomina';
+      state.workerFilter = 'incompletas';
+      state.selectedWorkerId = blockers[0].w.id;
+      toast(`PreviRed bloqueado: completa ${blockers.length} ficha(s) incompleta(s) antes de exportar`);
+      render();
+      return;
+    }
     const res = generarPreviredReal(c, currentPeriod().iso);
     if (!res || !res.salida) { toast('Motor Previred no disponible o sin trabajadores'); return; }
     if (res.salida.errores && res.salida.errores.length) {
@@ -2183,6 +2246,30 @@
     if (t.dataset.olaTab) { state.olaTab = t.dataset.olaTab; state.selectedIds.clear(); render(); return; }
     if (t.dataset.inboxTab) { state.inboxTab = t.dataset.inboxTab; render(); return; }
     if (t.dataset.filter) { state.filter = t.dataset.filter; render(); return; }
+    if (t.dataset.workerFilter) { state.workerFilter = t.dataset.workerFilter; render(); return; }
+    if (t.dataset.goIncomplete) {
+      const blockers = getClientPayrollBlockers(getClient());
+      state.clientSub = 'nomina';
+      state.workerFilter = 'incompletas';
+      if (blockers.length) state.selectedWorkerId = blockers[0].w.id;
+      render();
+      return;
+    }
+    if (t.dataset.fixWorkerFlag) {
+      const [wId, flag] = t.dataset.fixWorkerFlag.split(':');
+      const c = getClient();
+      const w = (c.workers || []).find((x) => x.id === wId);
+      if (w && flag) {
+        w[flag] = false;
+        const rem = getWorkerMissing(w);
+        if (rem.length === 0) w.estado = 'Listo';
+        else w.estado = rem[0].label;
+        const left = getClientPayrollBlockers(c).length;
+        toast(left === 0 ? 'Todas las fichas completas · PreviRed desbloqueado' : `Ficha de ${w.name} actualizada (${left} pendiente)`);
+        render();
+      }
+      return;
+    }
     if (t.dataset.jumpOla) { state.olaTab = t.dataset.jumpOla; enterStudio('olas'); return; }
     if (t.dataset.openClient) { enterClient(t.dataset.openClient, t.dataset.openArea || 'impuestos', t.dataset.openSub || null); return; }
     if (t.dataset.selectWorker) { state.selectedWorkerId = t.dataset.selectWorker; render(); return; }
