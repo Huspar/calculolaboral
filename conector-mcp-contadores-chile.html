@@ -226,8 +226,20 @@ window.addEventListener('load', function () {
     .ls-toc ol { margin: 0; padding-left: 1.2rem; columns: 2; column-gap: 2rem; font-size: .9rem; }
     .ls-toc li { margin: .2rem 0; break-inside: avoid; }
     .ls-toc a { color: #0f4c41; font-weight: 500; }
+    .ref-shell { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 1rem; border: 1px solid #cbd5e1; border-radius: 1rem; background: #ffffff; overflow: hidden; margin-top: 1rem; }
+    .ref-side { background: #f8fafc; border-right: 1px solid #e2e8f0; padding: .85rem; display: flex; flex-direction: column; gap: .5rem; }
+    .ref-search { width: 100%; padding: .5rem .7rem; border: 1px solid #cbd5e1; border-radius: .6rem; font-size: .84rem; background: #ffffff; color: #0f172a; }
+    .ref-nav { display: flex; flex-direction: column; gap: 2px; max-height: 360px; overflow-y: auto; }
+    .ref-nav-btn { text-align: left; border: 0; background: transparent; padding: .48rem .6rem; border-radius: .5rem; font-size: .8rem; font-family: 'Geist Mono', ui-monospace, monospace; color: #334155; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: .4rem; }
+    .ref-nav-btn:hover { background: #e8f0ee; color: #00382E; }
+    .ref-nav-btn.is-active { background: #00382E; color: #ffffff; font-weight: 700; }
+    .ref-main { padding: 1.15rem 1.25rem; min-width: 0; }
+    .ref-tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin: .85rem 0 .5rem; }
+    .ref-tab { border: 1px solid #cbd5e1; background: #ffffff; color: #334155; padding: .35rem .75rem; border-radius: .5rem; font-size: .8rem; font-weight: 700; cursor: pointer; }
+    .ref-tab.is-active { background: #00382E; border-color: #00382E; color: #ffffff; }
     @media (max-width: 768px) {
-        .ls-toc ol, .sc-pilares { grid-template-columns: 1fr; columns: 1; }
+        .ls-toc ol, .sc-pilares, .ref-shell { grid-template-columns: 1fr; columns: 1; }
+        .ref-side { border-right: 0; border-bottom: 1px solid #e2e8f0; }
         .ls-hero-actions .ls-btn { flex: 1 1 100%; }
         .mcp-prompt-card { flex-direction: column; align-items: stretch; }
         .mcp-prompt-card .ls-btn { width: 100%; }
@@ -549,7 +561,8 @@ window.addEventListener('load', function () {
 <p class="ls-toc-title">En esta página</p>
 <ol>
 <li><a href="#como-funciona">Cómo conectarlo en Claude o ChatGPT</a></li>
-<li><a href="#que-puedes-preguntar">5 consultas listas para tu estudio</a></li>
+<li><a href="#que-puedes-preguntar">Prompt estrella y consultas listas</a></li>
+<li><a href="#referencia-tecnica">Referencia técnica (12 tools MCP y OpenAPI)</a></li>
 <li><a href="#seguridad-solo-lectura">Seguridad de credenciales y solo lectura</a></li>
 <li><a href="#planes-mcp">Precio del add-on e inclusión en Estudio</a></li>
 <li><a href="#preguntas-mcp">Preguntas frecuentes</a></li>
@@ -574,9 +587,23 @@ window.addEventListener('load', function () {
 </section>
 
 <section id="que-puedes-preguntar" class="ls-section">
-<h2>5 consultas reales que puedes copiar hoy</h2>
-<p>Una vez enlazado tu token, puedes preguntar por una empresa específica o cruzar toda tu cartera sincronizada en una sola conversación:</p>
+<h2>Prompt estrella y consultas listas para copiar</h2>
+<p>Una vez enlazado tu token, puedes preguntar por una empresa específica (usando su RUT en cualquier formato) o cruzar toda tu cartera sincronizada en una sola conversación:</p>
 <div class="mcp-prompts-stack" id="mcp-page-prompts">
+<div class="mcp-prompt-card" style="border:2px solid #00382E;background:#F8FAF9;">
+<div class="mcp-prompt-card-txt">
+<span class="mcp-prompt-card-tag">Prompt estrella · Diagnóstico diario (Turno Nocturno)</span>
+<span class="mcp-prompt-card-q">«¿Cómo está mi cartera hoy? Dame F29 pendiente, acuses de 8 días por vencer, mora PreviRed, deuda TGR y riesgo Ley Bustos por empresa.»</span>
+</div>
+<button type="button" class="ls-btn ls-btn-primary" data-copy-prompt="¿Cómo está mi cartera hoy? Dame F29 pendiente, acuses de 8 días por vencer, mora PreviRed, deuda TGR y riesgo Ley Bustos por empresa."><span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar</span></button>
+</div>
+<div class="mcp-prompt-card">
+<div class="mcp-prompt-card-txt">
+<span class="mcp-prompt-card-tag">Auditor F29 / RCV</span>
+<span class="mcp-prompt-card-q">«Audita el F29 de este período para el RUT 76.543.210-3: compara RCV + BHE contra la propuesta SII y explícame cada brecha por código.»</span>
+</div>
+<button type="button" class="ls-btn ls-btn-ghost" data-copy-prompt="Audita el F29 de este período para el RUT 76.543.210-3: compara RCV + BHE contra la propuesta SII y explícame cada brecha por código."><span class="material-icons" aria-hidden="true">content_copy</span><span>Copiar</span></button>
+</div>
 <div class="mcp-prompt-card">
 <div class="mcp-prompt-card-txt">
 <span class="mcp-prompt-card-tag">Estado de sincronización</span>
@@ -614,6 +641,38 @@ window.addEventListener('load', function () {
 </div>
 </div>
 <p id="mcp-page-copy-status" class="text-xs font-semibold text-[#00382E] mt-2" aria-live="polite"></p>
+</section>
+
+<section id="referencia-tecnica" class="ls-section">
+<h2>Referencia técnica: 12 herramientas MCP y OpenAPI 3.1</h2>
+<p>Explora el catálogo completo de herramientas de solo lectura (con glosario tributario-laboral chileno, Auditor F29 y Reporte Matutino) o abre la documentación interactiva en Scalar.</p>
+<div style="display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.75rem;">
+<a href="https://connect.calculolaboral.cl/reference" target="_blank" rel="noopener" class="ls-btn ls-btn-primary">Abrir Scalar API Reference ↗</a>
+<a href="https://connect.calculolaboral.cl/openapi.json" target="_blank" rel="noopener" class="ls-btn ls-btn-ghost">Descargar openapi.json</a>
+</div>
+<div class="ref-shell" id="mcp-ref-explorer">
+<div class="ref-side">
+<input type="search" id="ref-search-input" class="ref-search" placeholder="Filtrar tools o endpoints (Ctrl+K)" aria-label="Filtrar herramientas MCP y endpoints">
+<div class="ref-nav" id="ref-nav-list" role="listbox" aria-label="Catálogo MCP y API"></div>
+</div>
+<div class="ref-main">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.5rem;">
+<h3 id="ref-item-title" class="font-mono" style="margin:0;font-size:1.05rem;font-weight:800;color:#0f172a;">get_morning_report</h3>
+<span id="ref-item-kind" style="font-size:.75rem;font-weight:700;color:#00382E;">MCP · Solo lectura</span>
+</div>
+<p id="ref-item-desc" style="margin:.45rem 0 .65rem;font-size:.9rem;color:#475569;"></p>
+<div class="ref-tabs" role="tablist">
+<button type="button" class="ref-tab is-active" data-ref-tab="claude">Claude Desktop JSON</button>
+<button type="button" class="ref-tab" data-ref-tab="curl">cURL</button>
+<button type="button" class="ref-tab" data-ref-tab="node">Node.js</button>
+</div>
+<pre id="ref-code-block" class="mcp-code-box" style="margin-top:0;white-space:pre-wrap;"></pre>
+<div style="display:flex;align-items:center;gap:.75rem;margin-top:.6rem;">
+<button type="button" id="ref-copy-code" class="ls-btn ls-btn-ghost" style="min-height:38px;padding:.45rem 1rem;font-size:.82rem;">Copiar ejemplo</button>
+<span id="ref-copy-status" class="text-xs font-semibold text-[#00382E]" aria-live="polite"></span>
+</div>
+</div>
+</div>
 </section>
 
 <section id="seguridad-solo-lectura" class="ls-section">
@@ -799,6 +858,110 @@ document.addEventListener('DOMContentLoaded', function () {
     if (bA) bA.addEventListener('click', function () { comprar('mcp12'); });
     var bM = document.getElementById('btn-mcp-page-mensual');
     if (bM) bM.addEventListener('click', function () { comprar('mcp1'); });
+
+    var refItems = [
+        { id: 'get_morning_report', kind: 'MCP · Solo lectura', desc: 'Resumen matutino consolidado del Turno Nocturno (04:45): alertas F29, acuses 8 días, mora PreviRed, TGR y Ley Bustos por cartera.', path: '/api/v1/studio/morning-report', method: 'GET' },
+        { id: 'auditor_f29', kind: 'MCP · Solo lectura', desc: 'Contrasta el espejo RCV + BHE guardado contra la propuesta/resumen F29 del SII y detalla brechas por código (538, 537, 048, 151, 091). Acepta UUID o RUT.', path: '/api/v1/accounting/76543210-3/f29?period=2026-11', method: 'GET' },
+        { id: 'get_glossary', kind: 'MCP · Solo lectura', desc: 'Glosario tributario-laboral chileno estructurado para agentes IA (F29, códigos SII, acuse 8d Ley 19.983, Ley Bustos Art. 162 CT, LRE 147, BHE 15,25%).', path: '/openapi.json', method: 'GET' },
+        { id: 'get_tax_alerts', kind: 'MCP · Solo lectura', desc: 'Lista facturas a crédito próximas a vencer el plazo legal de 8 días corridos (Ley 19.983) y alertas tributarias activas.', path: '/api/v1/accounting/76543210-3/alerts', method: 'GET' },
+        { id: 'get_previred_status', kind: 'MCP · Solo lectura', desc: 'Estado previsional de cotizaciones en PreviRed y detección temprana de riesgo Ley Bustos (Art. 162 CT).', path: '/api/v1/accounting/76543210-3/previred', method: 'GET' },
+        { id: 'get_tgr_status', kind: 'MCP · Solo lectura', desc: 'Deudas tributarias, giros y convenios registrados en Tesorería General de la República (TGR).', path: '/api/v1/accounting/76543210-3/tgr', method: 'GET' },
+        { id: 'get_f29_summary', kind: 'MCP · Solo lectura', desc: 'Resumen F29 del período por empresa (IVA débito/crédito, PPM, Cód. 048, Cód. 151 y total Cód. 091).', path: '/api/v1/accounting/76543210-3/f29?period=2026-11', method: 'GET' },
+        { id: 'get_rcv_documents', kind: 'MCP · Solo lectura', desc: 'Documentos del Registro de Compras y Ventas (RCV) sincronizados del SII con estado de acuse.', path: '/api/v1/accounting/76543210-3/rcv?period=2026-11', method: 'GET' },
+        { id: 'get_bhe_documents', kind: 'MCP · Solo lectura', desc: 'Boletas de Honorarios Electrónicas (BHE) recibidas y retención 15,25% vigente en 2026.', path: '/api/v1/accounting/76543210-3/bhe?period=2026-11', method: 'GET' },
+        { id: 'get_f22_ddjj', kind: 'MCP · Solo lectura', desc: 'Estado y respaldos de Declaraciones Juradas (DDJJ) y Operación Renta F22.', path: '/api/v1/accounting/76543210-3/ddjj', method: 'GET' },
+        { id: 'list_companies', kind: 'MCP · Solo lectura', desc: 'Lista las empresas sincronizadas del estudio con RUT, régimen y estado de credenciales en bóveda.', path: '/api/v1/companies', method: 'GET' },
+        { id: 'get_sync_status', kind: 'MCP · Solo lectura', desc: 'Último estado de sincronización y salud de parsers del SII para una empresa (UUID o RUT).', path: '/api/v1/companies/76543210-3/status', method: 'GET' },
+        { id: 'GET /api/v1/me', kind: 'REST API · Studio', desc: 'Identidad del estudio autenticado, cantidad de empresas activas y cuota de rate limit vigente.', path: '/api/v1/me', method: 'GET' },
+        { id: 'GET /api/v1/mcp/access-logs', kind: 'REST API · Auditoría', desc: 'Registro inmutable de consultas MCP (herramienta, empresa, cliente IA, estado y fecha; sobrevive a revocación de tokens).', path: '/api/v1/mcp/access-logs?limit=50', method: 'GET' },
+        { id: 'POST /api/v1/sync/batch', kind: 'REST API · Lote', desc: 'Encola sincronización masiva de lectura para toda la cartera y devuelve batchId para seguimiento agregado.', path: '/api/v1/sync/batch', method: 'POST' },
+        { id: 'GET /health/ready', kind: 'REST API · Salud', desc: 'Verifica disponibilidad real del gateway, PostgreSQL y Redis en el servidor propio en Chile.', path: '/health/ready', method: 'GET' }
+    ];
+    var refNav = document.getElementById('ref-nav-list');
+    var refSearch = document.getElementById('ref-search-input');
+    var refTitle = document.getElementById('ref-item-title');
+    var refKind = document.getElementById('ref-item-kind');
+    var refDesc = document.getElementById('ref-item-desc');
+    var refCode = document.getElementById('ref-code-block');
+    var refCopyBtn = document.getElementById('ref-copy-code');
+    var refCopySt = document.getElementById('ref-copy-status');
+    var activeRefId = refItems[0].id;
+    var activeRefTab = 'claude';
+
+    function buildRefCode(item, tab) {
+        if (tab === 'claude') {
+            return JSON.stringify({
+                mcpServers: {
+                    'calculo-laboral': {
+                        url: 'https://connect.calculolaboral.cl/mcp',
+                        headers: { Authorization: 'Bearer <TU_TOKEN_MCP>' }
+                    }
+                }
+            }, null, 2) + '\n// Tool sugerida: ' + item.id;
+        }
+        if (tab === 'curl') {
+            var mFlag = item.method === 'POST' ? '-X POST \\\n  -H "Content-Type: application/json" \\\n  -d \'{"mode":"rcv"}\' \\\n  ' : '';
+            return 'curl -s ' + mFlag + '-H "x-api-key: <TU_API_KEY>" \\\n  -H "x-account-id: <TU_ESTUDIO>" \\\n  "https://connect.calculolaboral.cl' + item.path + '"';
+        }
+        return 'const res = await fetch("https://connect.calculolaboral.cl' + item.path + '", {\n  method: "' + item.method + '",\n  headers: { "x-api-key": process.env.SII_GATEWAY_API_KEY, "x-account-id": "mi-estudio" }\n});\nconst data = await res.json();\nconsole.log(res.headers.get("x-request-id"), data);';
+    }
+
+    function renderRefPanel() {
+        var q = (refSearch && refSearch.value || '').trim().toLowerCase();
+        var filtered = refItems.filter(function (it) {
+            return !q || it.id.toLowerCase().indexOf(q) >= 0 || it.desc.toLowerCase().indexOf(q) >= 0 || it.kind.toLowerCase().indexOf(q) >= 0;
+        });
+        if (!filtered.some(function (it) { return it.id === activeRefId; }) && filtered.length) {
+            activeRefId = filtered[0].id;
+        }
+        if (refNav) {
+            refNav.innerHTML = filtered.map(function (it) {
+                var act = it.id === activeRefId ? ' is-active' : '';
+                return '<button type="button" class="ref-nav-btn' + act + '" data-ref-id="' + it.id + '"><span>' + it.id + '</span></button>';
+            }).join('') || '<div class="text-xs text-slate-500 p-2">Sin coincidencias</div>';
+        }
+        var current = refItems.find(function (it) { return it.id === activeRefId; }) || refItems[0];
+        if (refTitle) refTitle.textContent = current.id;
+        if (refKind) refKind.textContent = current.kind;
+        if (refDesc) refDesc.textContent = current.desc;
+        if (refCode) refCode.textContent = buildRefCode(current, activeRefTab);
+    }
+
+    if (refNav) {
+        refNav.addEventListener('click', function (ev) {
+            var b = ev.target.closest('[data-ref-id]');
+            if (!b) return;
+            activeRefId = b.getAttribute('data-ref-id');
+            renderRefPanel();
+        });
+        document.querySelectorAll('[data-ref-tab]').forEach(function (tb) {
+            tb.addEventListener('click', function () {
+                activeRefTab = tb.getAttribute('data-ref-tab') || 'claude';
+                document.querySelectorAll('[data-ref-tab]').forEach(function (x) {
+                    x.classList.toggle('is-active', x === tb);
+                });
+                renderRefPanel();
+            });
+        });
+        if (refSearch) refSearch.addEventListener('input', renderRefPanel);
+        document.addEventListener('keydown', function (ev) {
+            if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'k' && refSearch) {
+                ev.preventDefault();
+                refSearch.focus();
+            }
+        });
+        if (refCopyBtn) {
+            refCopyBtn.addEventListener('click', function () {
+                var txt = (refCode && refCode.textContent) || '';
+                if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).catch(function () {});
+                if (refCopySt) {
+                    refCopySt.textContent = 'Ejemplo copiado.';
+                    setTimeout(function () { refCopySt.textContent = ''; }, 1600);
+                }
+            });
+        }
+        renderRefPanel();
+    }
 });
 </script>
 </body>

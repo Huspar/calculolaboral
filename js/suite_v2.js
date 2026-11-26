@@ -974,24 +974,38 @@
 
       <div class="v2-ins-block v2-ins-block--soft">
         <div class="v2-ins-head">
-          <h2 class="v2-ins-title">Requieren tu decisión hoy</h2>
-          <span class="mono muted">${counts.critico}</span>
+          <h2 class="v2-ins-title">Oportunidades de Acción</h2>
+          <span class="mono muted">${(() => {
+            let n = 0;
+            state.clients.forEach((c) => {
+              if (c.nomina.leyBustos) n++;
+              if (c.rcv.pendingAcuses) n++;
+              if (getClientPayrollBlockers(c).length) n++;
+              if (c.bancos && c.bancos.state !== 'ok') n++;
+            });
+            return n;
+          })()}</span>
         </div>
         <div class="v2-ins-list">
-          <div class="v2-ins-row">
-            <div>
-              <strong>Constructora Andes Sur</strong>
-              <div class="muted">Riesgo Ley Bustos (Art. 162 CT): finiquito abierto con Previred impago.</div>
-            </div>
-            <button type="button" class="btn btn--sm" data-open-client="andes-sur" data-open-area="remuneraciones">Revisar</button>
-          </div>
-          <div class="v2-ins-row">
-            <div>
-              <strong>Panadería San Isidro</strong>
-              <div class="muted">2 facturas a crédito vencen plazo 8 días en SII.</div>
-            </div>
-            <button type="button" class="btn btn--sm" data-open-client="san-isidro" data-open-area="impuestos" data-open-sub="rcv">Acusar</button>
-          </div>
+          ${(() => {
+            const ops = [];
+            state.clients.forEach((c) => {
+              if (c.nomina.leyBustos) ops.push({ prio: 1, name: c.name, msg: 'Riesgo Ley Bustos (Art. 162 CT): finiquito abierto con PreviRed impago.', cid: c.id, area: 'remuneraciones', sub: 'finiquitos', cta: 'Revisar' });
+              if (c.rcv.pendingAcuses) ops.push({ prio: 2, name: c.name, msg: `${c.rcv.pendingAcuses} factura(s) a crédito vencen plazo 8 días en SII.`, cid: c.id, area: 'impuestos', sub: 'rcv', cta: 'Acusar' });
+              const bl = getClientPayrollBlockers(c).length;
+              if (bl) ops.push({ prio: 3, name: c.name, msg: `${bl} ficha(s) incompleta(s) bloquean TXT PreviRed.`, cid: c.id, area: 'remuneraciones', sub: 'nomina', cta: 'Completar' });
+              if (c.bancos && c.bancos.state !== 'ok') ops.push({ prio: 4, name: c.name, msg: `Cartola pendiente (${c.bancos.label}): cruzar pagos y pasarelas.`, cid: c.id, area: 'bancos', sub: 'match', cta: 'Conciliar' });
+            });
+            return ops.sort((a, b) => a.prio - b.prio).slice(0, 5).map((op) => `
+              <div class="v2-ins-row">
+                <div>
+                  <strong>${op.name}</strong>
+                  <div class="muted">${op.msg}</div>
+                </div>
+                <button type="button" class="btn btn--sm" data-open-client="${op.cid}" data-open-area="${op.area}" data-open-sub="${op.sub}">${op.cta}</button>
+              </div>
+            `).join('') || '<div class="muted" style="font-size:12px">Sin acciones pendientes hoy.</div>';
+          })()}
         </div>
       </div>
 
@@ -1643,8 +1657,8 @@
       ` : ''}
       <div class="v2-ins-block">
         <div class="v2-ins-head">
-          <h2 class="v2-ins-title">Calibrador F29 · SII vs Motor</h2>
-          <span class="tag ${c.rcv.pendingAcuses ? 'tag--danger' : 'tag--in'}">${c.rcv.pendingAcuses ? 'Brecha detectada' : 'Calibrado'}</span>
+          <h2 class="v2-ins-title">Auditor F29 / RCV · SII vs Motor</h2>
+          <span class="tag ${c.rcv.pendingAcuses ? 'tag--danger' : 'tag--in'}">${c.rcv.pendingAcuses ? 'Brecha detectada' : 'Cuadrado'}</span>
         </div>
         ${(() => {
           const iuscNom = (c.workers || []).reduce((s, w) => s + (calcularWorkerReal(w, currentPeriod().iso).impUnico || 0), 0);
@@ -2808,7 +2822,7 @@
       'list_companies', 'get_rcv_documents', 'get_bhe_documents',
       'get_f29_summary', 'get_sync_status', 'get_f22_ddjj',
       'get_tgr_status', 'get_previred_status', 'get_tax_alerts',
-      'get_morning_report'
+      'get_morning_report', 'get_glossary', 'auditor_f29'
     ];
     const integrations = [
       {
@@ -2830,10 +2844,10 @@
       {
         id: 'mcp',
         name: 'Conector MCP · Claude, ChatGPT y Agentes IA',
-        sub: '10 herramientas oficiales de solo lectura (incluye Reporte Matutino 04:45)',
+        sub: '12 herramientas oficiales de solo lectura (incluye Reporte Matutino, Glosario y Auditor F29)',
         endpoint: 'https://connect.calculolaboral.cl/mcp',
         statusTag: 'tag--in',
-        statusLabel: '10 herramientas · Solo lectura'
+        statusLabel: '12 herramientas · Solo lectura'
       },
       {
         id: 'portal',
@@ -2905,14 +2919,15 @@
 
       $('v2-inspector').innerHTML = `
         <div class="v2-ins-block">
-          <div class="v2-ins-head"><h2 class="v2-ins-title">Conector MCP (Solo lectura)</h2><span class="tag tag--in">10 tools</span></div>
+          <div class="v2-ins-head"><h2 class="v2-ins-title">Conector MCP (Solo lectura)</h2><span class="tag tag--in">12 tools</span></div>
           <p class="muted" style="margin:0;font-size:12px">Conecta Claude, ChatGPT, Gemini o Copilot a tu cartera sin cambiar de ERP. Solo lectura por diseño, tokens revocables y registro de consultas.</p>
           <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">
             ${mcpTools.map((fn) => `<span class="tag tag--out mono" style="font-size:10.5px">${fn}</span>`).join('')}
           </div>
-          <div style="display:flex;gap:6px;margin-top:8px">
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
             <button type="button" class="btn btn--primary btn--sm" style="flex:1" data-conn-action="issue-mcp-token">Emitir token MCP real</button>
             <button type="button" class="btn btn--sm" data-conn-action="copy-mcp-json">Copiar JSON</button>
+            <a href="https://connect.calculolaboral.cl/reference" target="_blank" rel="noopener" class="btn btn--sm" style="text-decoration:none">API Docs ↗</a>
             <a href="/conector-mcp-contadores-chile" target="_blank" rel="noopener" class="btn btn--sm" style="text-decoration:none">Guía ↗</a>
           </div>
           ${state.mcpTokenLive ? `<div class="v2-ins-note" style="margin-top:6px;font-size:11.5px">Token emitido una sola vez. Cópialo ahora en tu configuración de Claude/ChatGPT.</div>` : ''}
@@ -3621,6 +3636,10 @@
     }
     if (t.dataset.applySplitTx) {
       const c = getClient();
+      if (isPeriodClosed(c)) {
+        toast('Mes cerrado y bloqueado: reabre el período en Impuestos con motivo para modificar conciliaciones');
+        return;
+      }
       const tx = c.bankTx.find((x) => x.id === t.dataset.applySplitTx);
       if (tx) {
         const bruta = Number(t.dataset.splitBruta) || tx.amount;
@@ -3644,6 +3663,10 @@
     }
     if (t.dataset.syncF29048 !== undefined) {
       const c = getClient();
+      if (isPeriodClosed(c)) {
+        toast('Mes cerrado y bloqueado: reabre el período con motivo antes de modificar el F29');
+        return;
+      }
       c.f29.retenciones = Number(t.dataset.syncF29048) || 0;
       toast(`F29 Cód. 048 alineado con Nómina LRE 3161 (${fmt(c.f29.retenciones)})`);
       render();
