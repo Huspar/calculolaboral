@@ -461,11 +461,175 @@
     finiquitoCause: '161',
     balanceScope: 'acumulado',
     studioName: 'Asesorías Pérez Ltda.',
+    accountMode: 'demo',
+    accountEmail: '',
+    studioClientsSaved: null,
+    onboardingMinimized: false,
+    onboardingHidden: false,
+    onboardingDone: { company: false, data: false, mcpOrDoc: false },
     sidebarCollapsed: false,
     selectedIds: new Set(),
     clients: INITIAL_CLIENTS(),
     inbox: INITIAL_INBOX()
   };
+
+  const ACCOUNT_KEY = 'cl_suite_account_v1';
+  function saveAccountState() {
+    if (state.accountMode !== 'studio') return;
+    try {
+      state.studioClientsSaved = state.clients;
+      localStorage.setItem(ACCOUNT_KEY, JSON.stringify({
+        studioName: state.studioName,
+        accountEmail: state.accountEmail,
+        clients: state.clients,
+        onboardingMinimized: !!state.onboardingMinimized,
+        onboardingHidden: !!state.onboardingHidden,
+        onboardingDone: state.onboardingDone
+      }));
+    } catch (_) {}
+  }
+  function loadSavedAccount() {
+    try {
+      const raw = localStorage.getItem(ACCOUNT_KEY);
+      if (!raw) return false;
+      const saved = JSON.parse(raw);
+      if (!saved || !saved.studioName) return false;
+      state.accountMode = 'studio';
+      state.studioName = saved.studioName;
+      state.accountEmail = saved.accountEmail || '';
+      state.clients = Array.isArray(saved.clients) ? saved.clients : [];
+      state.studioClientsSaved = state.clients;
+      state.onboardingMinimized = !!saved.onboardingMinimized;
+      state.onboardingHidden = !!saved.onboardingHidden;
+      state.onboardingDone = Object.assign({ company: state.clients.length > 0, data: false, mcpOrDoc: false }, saved.onboardingDone || {});
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+  function markOnboardStep(key) {
+    if (!state.onboardingDone) state.onboardingDone = { company: false, data: false, mcpOrDoc: false };
+    state.onboardingDone[key] = true;
+    saveAccountState();
+  }
+  function openAccountDrawer() {
+    const wrap = $('v2-account-drawer-wrap');
+    if (!wrap) return;
+    wrap.hidden = false;
+    setTimeout(() => $('acc-studio-name')?.focus(), 40);
+  }
+  function closeAccountDrawer() {
+    const wrap = $('v2-account-drawer-wrap');
+    if (wrap) wrap.hidden = true;
+  }
+  function syncSidebarFoot() {
+    const nameEl = $('v2-studio-name-foot');
+    const countEl = $('v2-studio-count-foot');
+    const btnAcc = $('btn-open-account');
+    if (nameEl) nameEl.textContent = state.studioName;
+    if (countEl) countEl.textContent = state.accountMode === 'studio' ? `Mi estudio · ${state.clients.length} RUT` : `Demo · ${state.clients.length} RUT`;
+    if (btnAcc) {
+      if (state.accountMode === 'studio') {
+        btnAcc.textContent = 'Ver demo';
+        btnAcc.style.background = '';
+        btnAcc.style.color = '';
+        btnAcc.style.borderColor = '';
+      } else if (state.studioClientsSaved !== null) {
+        btnAcc.textContent = 'Mi estudio';
+        btnAcc.style.background = '#00382E';
+        btnAcc.style.color = '#ffffff';
+        btnAcc.style.borderColor = '#00382E';
+      } else {
+        btnAcc.textContent = 'Crear mi estudio';
+        btnAcc.style.background = '#00382E';
+        btnAcc.style.color = '#ffffff';
+        btnAcc.style.borderColor = '#00382E';
+      }
+    }
+  }
+  function renderOnboardingHtml() {
+    if (state.accountMode !== 'studio') {
+      return `
+        <div class="v2-f29-hint" style="margin-bottom:10px">
+          <span><strong>Modo demo (6 empresas de ejemplo):</strong> explora libremente o crea tu propio estudio en 10 segundos para trabajar con tus empresas reales y guía paso a paso.</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button type="button" class="btn btn--primary btn--sm" data-open-account="1">${state.studioClientsSaved !== null ? 'Volver a mi estudio' : 'Crear mi estudio →'}</button>
+            <button type="button" class="btn btn--sm" data-studio-nav="conexiones">Conexiones SII · MCP</button>
+          </div>
+        </div>
+      `;
+    }
+    if (state.onboardingHidden) return '';
+    const d1 = !!state.onboardingDone.company || state.clients.length > 0;
+    const d2 = !!state.onboardingDone.data || (state.liveCompanies && state.liveCompanies.length > 0);
+    const d3 = !!state.onboardingDone.mcpOrDoc || !!state.mcpTokenLive;
+    const doneTotal = (d1 ? 1 : 0) + (d2 ? 1 : 0) + (d3 ? 1 : 0);
+    const allDone = doneTotal === 3;
+    if (allDone || state.onboardingMinimized) {
+      return `
+        <div class="v2-onboard" style="padding:10px 14px">
+          <div class="v2-onboard-head">
+            <div class="v2-onboard-title">
+              <span>${allDone ? 'Estudio configurado' : 'Primeros pasos de tu estudio'}</span>
+              <span class="mono" style="font-size:12px;color:#0F5E4F">${doneTotal}/3</span>
+            </div>
+            <div class="v2-onboard-ctrls">
+              ${!allDone ? `<button type="button" class="btn btn--sm" data-onboard-action="expand">Ver pasos</button>` : ''}
+              <button type="button" class="btn btn--sm" data-onboard-action="hide">Ocultar</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <section class="v2-onboard" aria-label="Primeros pasos de tu estudio">
+        <div class="v2-onboard-head">
+          <h2 class="v2-onboard-title">
+            <span>Primeros pasos de tu estudio</span>
+            <span class="mono" style="font-size:12px;color:#0F5E4F">${doneTotal}/3</span>
+          </h2>
+          <div class="v2-onboard-ctrls">
+            <button type="button" class="btn btn--sm" data-onboard-action="minimize">Minimizar</button>
+            <button type="button" class="btn btn--sm" data-onboard-action="hide">Ocultar</button>
+          </div>
+        </div>
+        <div class="v2-onboard-grid">
+          <div class="v2-onboard-card ${d1 ? 'is-done' : ''}">
+            <div>
+              <div class="v2-onboard-num">${d1 ? '✓ 01 · Listo' : '01 · Pendiente'}</div>
+              <h3>Crea tu primera empresa cliente</h3>
+              <p>Ingresa RUT, razón social y régimen tributario (14 D3, 14 D8 o 14 A) para abrir su ficha mensual.</p>
+            </div>
+            <div class="v2-onboard-actions">
+              <button type="button" class="btn ${d1 ? '' : 'btn--primary'} btn--sm" data-onboard-action="step-company">${d1 ? '+ Otra empresa' : 'Agregar empresa'}</button>
+            </div>
+          </div>
+          <div class="v2-onboard-card ${d2 ? 'is-done' : ''}">
+            <div>
+              <div class="v2-onboard-num">${d2 ? '✓ 02 · Listo' : '02 · Pendiente'}</div>
+              <h3>Trae tus datos (archivos o SII)</h3>
+              <p>Trabaja subiendo CSV de RCV/LRE sin entregar claves, o vincula el RUT al SII con cifrado AES-256-GCM.</p>
+            </div>
+            <div class="v2-onboard-actions">
+              <button type="button" class="btn ${d1 && !d2 ? 'btn--primary' : ''} btn--sm" data-onboard-action="step-data-file">Subir RCV / LRE</button>
+              <button type="button" class="btn btn--sm" data-onboard-action="step-data-sii">Conectar SII</button>
+            </div>
+          </div>
+          <div class="v2-onboard-card ${d3 ? 'is-done' : ''}">
+            <div>
+              <div class="v2-onboard-num">${d3 ? '✓ 03 · Listo' : '03 · Pendiente'}</div>
+              <h3>Conecta IA (MCP) o emite tu primer PDF</h3>
+              <p>Genera tu token de solo lectura para Claude/ChatGPT o descarga el primer Paquete Mensual PDF con tu marca.</p>
+            </div>
+            <div class="v2-onboard-actions">
+              <button type="button" class="btn ${d1 && d2 && !d3 ? 'btn--primary' : ''} btn--sm" data-onboard-action="step-mcp">Configurar MCP</button>
+              <button type="button" class="btn btn--sm" data-onboard-action="step-pdf">Emitir PDF</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
 
   const $ = (id) => document.getElementById(id);
   const fmt = (n) => {
@@ -634,12 +798,13 @@
       const pendingInbox = state.inbox.filter((i) => i.state === 'Por revisar').length;
       const urgentCount = state.clients.filter((c) => c.status === 'critico').length;
       wsBox.innerHTML = `
-        <div class="v2-ws-title">Espacio Estudio</div>
+        <div class="v2-ws-title">${state.accountMode === 'studio' ? 'Mi estudio' : 'Espacio Estudio (Demo)'}</div>
         <div class="v2-ws-meta">
           <span id="v2-studio-name-ws">${state.studioName}</span>
-          <span class="tag tag--in">En línea</span>
+          <span class="tag tag--in">${state.accountMode === 'studio' ? 'Activo' : 'Demo'}</span>
         </div>
       `;
+      syncSidebarFoot();
       const items = [
         { id: 'hoy', label: 'Hoy · Cierre', count: urgentCount ? `${urgentCount} urg.` : '' },
         { id: 'olas', label: 'Cierre en Lote', count: 'Lotes' },
@@ -899,10 +1064,7 @@
     const totalF29Cartera = rows.reduce((acc, c) => acc + f29Total(c), 0);
 
     $('v2-canvas').innerHTML = `
-      <div class="v2-f29-hint" style="margin-bottom:10px">
-        <span><strong>Cómo operar este mes:</strong> entra a cualquier empresa marcada en rojo para seguir su ruta guiada 1→4, o conecta SII y MCP en <strong>Conexiones</strong>.</span>
-        <button type="button" class="btn btn--sm" data-studio-nav="conexiones">Conexiones SII · MCP →</button>
-      </div>
+      ${renderOnboardingHtml()}
       <div class="v2-pulse-bar">
         <div class="v2-filter-pills" role="group" aria-label="Filtrar cartera">
           ${[
@@ -932,7 +1094,15 @@
             </tr>
           </thead>
           <tbody id="v2-hoy-tbody">
-            ${studioHoyRowsHtml(rows)}
+            ${rows.length ? studioHoyRowsHtml(rows) : `
+              <tr>
+                <td colspan="6" style="text-align:center;padding:28px 16px">
+                  <div style="font-weight:700;color:var(--ink);margin-bottom:4px">${state.accountMode === 'studio' ? 'Tu estudio está listo para cargar su primera empresa' : 'No hay empresas con este filtro'}</div>
+                  <div class="muted" style="font-size:12px;margin-bottom:10px">${state.accountMode === 'studio' ? 'Agrega un RUT manualmente o conéctalo en Conexiones para empezar a operar.' : 'Limpia el buscador o cambia de filtro.'}</div>
+                  ${state.accountMode === 'studio' ? `<button type="button" class="btn btn--primary btn--sm" id="btn-empty-new-client">+ Agregar mi primera empresa</button>` : ''}
+                </td>
+              </tr>
+            `}
           </tbody>
           <tfoot id="v2-hoy-tfoot">
             <tr>
@@ -3448,7 +3618,55 @@
 
     if (t.id === 'btn-open-cmdk' || t.id === 'btn-switch-client') { openCmdk(); return; }
     if (t.id === 'btn-back-studio' || t.dataset.backStudio) { enterStudio('hoy'); return; }
-    if (t.id === 'btn-new-client' || t.id === 'btn-ins-new-client') { openDrawer(); return; }
+    if (t.id === 'btn-new-client' || t.id === 'btn-ins-new-client' || t.id === 'btn-empty-new-client') { openDrawer(); return; }
+    if (t.id === 'btn-open-account' || t.dataset.openAccount === '1') {
+      if (state.accountMode === 'studio') {
+        saveAccountState();
+        state.accountMode = 'demo';
+        state.studioName = 'Asesorías Pérez Ltda.';
+        state.clients = INITIAL_CLIENTS();
+        toast('Modo demo activado (tu estudio real sigue guardado)');
+        enterStudio('hoy');
+      } else if (state.studioClientsSaved !== null) {
+        loadSavedAccount();
+        toast(`Volviste a ${state.studioName}`);
+        enterStudio('hoy');
+      } else {
+        openAccountDrawer();
+      }
+      return;
+    }
+    if (t.id === 'btn-close-account-drawer' || t.id === 'btn-cancel-account-drawer') { closeAccountDrawer(); return; }
+    if (t.dataset.onboardAction) {
+      const act = t.dataset.onboardAction;
+      if (act === 'minimize') { state.onboardingMinimized = true; saveAccountState(); renderStudioHoy(); return; }
+      if (act === 'expand') { state.onboardingMinimized = false; saveAccountState(); renderStudioHoy(); return; }
+      if (act === 'hide') { state.onboardingHidden = true; saveAccountState(); renderStudioHoy(); toast('Guía ocultada (puedes volver a verla desde Conexiones)'); return; }
+      if (act === 'show') { state.onboardingHidden = false; state.onboardingMinimized = false; saveAccountState(); enterStudio('hoy'); return; }
+      if (act === 'step-company') { openDrawer(); return; }
+      if (act === 'step-data-file') {
+        if (state.clients.length) {
+          markOnboardStep('data');
+          enterClient(state.clients[0].id, 'impuestos', 'rcv');
+        } else {
+          toast('Primero crea tu primera empresa en el paso 01');
+          openDrawer();
+        }
+        return;
+      }
+      if (act === 'step-data-sii') { state.selectedConn = 'sii'; markOnboardStep('data'); enterStudio('conexiones'); return; }
+      if (act === 'step-mcp') { state.selectedConn = 'mcp'; markOnboardStep('mcpOrDoc'); enterStudio('conexiones'); return; }
+      if (act === 'step-pdf') {
+        if (state.clients.length) {
+          markOnboardStep('mcpOrDoc');
+          emitDocument('paquete-pdf', state.clients[0]);
+        } else {
+          toast('Primero crea tu primera empresa en el paso 01');
+          openDrawer();
+        }
+        return;
+      }
+    }
     if (t.id === 'btn-close-drawer' || t.id === 'btn-cancel-drawer') { closeDrawer(); return; }
     if (t.id === 'btn-mobile-menu') { toggleMobileSidebar(); return; }
     if (t.id === 'btn-toggle-sidebar') {
@@ -4300,8 +4518,45 @@
 
   $('v2-cmdk-backdrop').addEventListener('click', (e) => { if (e.target.id === 'v2-cmdk-backdrop') closeCmdk(); });
   $('v2-drawer-wrap').addEventListener('click', (e) => { if (e.target.id === 'v2-drawer-wrap') closeDrawer(); });
+  $('v2-account-drawer-wrap')?.addEventListener('click', (e) => { if (e.target.id === 'v2-account-drawer-wrap') closeAccountDrawer(); });
   $('v2-sidebar-backdrop')?.addEventListener('click', closeMobileSidebar);
   $('v2-brand-home').addEventListener('click', (e) => { e.preventDefault(); enterStudio('hoy'); });
+
+  $('form-create-account')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const sName = ($('acc-studio-name')?.value || '').trim();
+    const sEmail = ($('acc-studio-email')?.value || '').trim();
+    const startMode = $('acc-start-mode')?.value || 'clean';
+    if (!sName || !/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(sEmail)) {
+      toast('Ingresa el nombre de tu estudio y un correo válido');
+      return;
+    }
+    state.accountMode = 'studio';
+    state.studioName = sName;
+    state.accountEmail = sEmail;
+    state.onboardingMinimized = false;
+    state.onboardingHidden = false;
+    state.clients = startMode === 'sample' ? [INITIAL_CLIENTS()[0]] : [];
+    state.onboardingDone = { company: state.clients.length > 0, data: false, mcpOrDoc: false };
+    saveAccountState();
+    e.target.reset();
+    closeAccountDrawer();
+    toast(`¡Bienvenido, ${sName}! Sigue los 3 pasos para configurar tu estudio.`);
+    enterStudio('hoy');
+    fetch('/api/send-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre: sName,
+        correo: sEmail,
+        telefono: '',
+        tipo: 'Estudio Contable',
+        fuente: 'Suite Contadores - Alta directa de estudio',
+        detalle: `Alta en /demo-contadores (modo: ${startMode})`,
+        monto_calculado: '0'
+      })
+    }).catch(() => {});
+  });
 
   $('form-new-client').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -4319,15 +4574,16 @@
       cierre: 'Recién creada',
       workers: [], bankTx: []
     });
+    if (state.accountMode === 'studio') markOnboardStep('company');
     e.target.reset();
     closeDrawer();
     toast(`${name} agregada a la cartera`);
-    enterClient(id, 'impuestos', 'f29');
+    enterClient(id, 'resumen');
   });
 
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openCmdk(); return; }
-    if (e.key === 'Escape') { closeCmdk(); closeDrawer(); closeMobileSidebar(); return; }
+    if (e.key === 'Escape') { closeCmdk(); closeDrawer(); closeAccountDrawer(); closeMobileSidebar(); return; }
     if (!$('v2-cmdk-backdrop').hidden) {
       const list = $('v2-cmdk-list');
       const entries = list._entries || [];
@@ -4349,6 +4605,7 @@
     }
   });
 
+  loadSavedAccount();
   if (location.hash === '#cliente-f29') enterClient('san-isidro', 'impuestos', 'f29');
   else if (location.hash === '#cliente-nomina') enterClient('san-isidro', 'remuneraciones', 'nomina');
   else if (location.hash === '#cliente-finiquitos') enterClient('san-isidro', 'remuneraciones', 'finiquitos');
@@ -4357,5 +4614,8 @@
   else if (location.hash === '#cliente-contabilidad') enterClient('san-isidro', 'contabilidad', 'balance');
   else if (location.hash === '#olas') enterStudio('olas');
   else render();
+  if (new URLSearchParams(location.search).get('crear') === '1' && state.accountMode !== 'studio') {
+    openAccountDrawer();
+  }
   probeStudioGateway();
 })();

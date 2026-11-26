@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/suite_v2.css">
+  <link rel="stylesheet" href="assets/css/suite_v2.css?v=1.1">
 </head>
 <body>
   <div class="v2-app" id="v2-app">
@@ -37,9 +37,10 @@
       <div class="v2-sidebar-foot">
         <div class="v2-foot-row">
           <span id="v2-studio-name-foot">Asesorías Pérez Ltda.</span>
-          <span class="mono">6 RUT</span>
+          <span class="mono" id="v2-studio-count-foot">Demo · 6 RUT</span>
         </div>
         <div class="v2-foot-actions">
+          <button type="button" class="v2-foot-btn" id="btn-open-account" style="background:#00382E;color:#ffffff;border-color:#00382E">Crear mi estudio</button>
           <button type="button" class="v2-foot-btn" id="btn-new-client">+ Empresa</button>
           <button type="button" class="v2-foot-btn" id="btn-reset-demo">Reiniciar</button>
         </div>
@@ -131,6 +132,39 @@
     </div>
   </div>
 
+  <!-- Slide-over Drawer: Crear cuenta de estudio -->
+  <div class="v2-drawer-wrap" id="v2-account-drawer-wrap" hidden>
+    <div class="v2-drawer" role="dialog" aria-modal="true" aria-labelledby="v2-account-title">
+      <div class="v2-ins-head">
+        <h2 class="v2-page-title" id="v2-account-title">Crear mi cuenta de estudio</h2>
+        <button type="button" class="btn btn--sm" id="btn-close-account-drawer">Cerrar</button>
+      </div>
+      <p class="muted" style="margin:0;font-size:12.5px;line-height:1.5">Configura tu espacio real en 10 segundos. Tu nombre aparecerá en los PDF/Excel y podrás seguir los 3 pasos guiados para cargar tu primera empresa.</p>
+      <form id="form-create-account" style="display:flex;flex-direction:column;gap:12px">
+        <div class="v2-field">
+          <label for="acc-studio-name">Nombre de tu estudio o contador</label>
+          <input type="text" id="acc-studio-name" required placeholder="Ej. Estudio Contable Silva SpA">
+        </div>
+        <div class="v2-field">
+          <label for="acc-studio-email">Correo profesional</label>
+          <input type="email" id="acc-studio-email" required placeholder="contacto@tuestudio.cl">
+        </div>
+        <div class="v2-field">
+          <label for="acc-start-mode">Punto de partida</label>
+          <select id="acc-start-mode">
+            <option value="clean" selected>Estudio limpio · crear mi primera empresa (recomendado)</option>
+            <option value="sample">Partir con 1 empresa de ejemplo para explorar</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button type="submit" class="btn btn--primary" style="flex:1">Crear mi estudio ahora</button>
+          <button type="button" class="btn" id="btn-cancel-account-drawer">Cancelar</button>
+        </div>
+        <p class="muted" style="margin:0;font-size:11.5px;line-height:1.45">Sin tarjeta ni cobro automático · 90 días de acceso anticipado. Tus datos se guardan en este navegador y te enviaremos los pasos de activación a tu correo.</p>
+      </form>
+    </div>
+  </div>
+
   <div class="v2-toast" id="v2-toast" hidden role="status" aria-live="polite"></div>
 
   <script src="js/constants.js"></script>
@@ -146,6 +180,6 @@
   <script src="js/lre_generador.js"></script>
   <script src="js/pyme_excel.js?v=2.1.1"></script>
   <script src="js/suite_v2_docs.js?v=1.3"></script>
-  <script src="js/suite_v2.js?v=2.10"></script>
+  <script src="js/suite_v2.js?v=2.11"></script>
 </body>
 </html>
