@@ -690,6 +690,63 @@
     return openPrintable(`Conciliación Bancaria — ${c.name} (${period.label})`, body, { studioName, landscape: false });
   }
 
+  // ---- 8. EXPEDIENTE TRIBUTARIO AUDITABLE (PDF) ----
+  function emitirExpedientePdf(ctx) {
+    const { c, studioName, period, f29Rows, f29Total, f29StateLabel, workersCalc, bankSummary, accounting } = ctx;
+    const balTot = (accounting && accounting.bal && accounting.bal.totales) || {};
+    const iuscNomina = workersCalc.reduce((s, x) => s + (x.calc.impUnico || 0), 0);
+    const diff048 = (c.f29.retenciones || 0) - iuscNomina;
+    const reopenLog = Array.isArray(c.f29.reopenLog) ? c.f29.reopenLog : [];
+
+    const body = `
+      ${docHeader(studioName, 'Expediente Tributario y Laboral Auditable', period.label, `EXP-${c.id.toUpperCase()}`)}
+      ${clientStrip(c, 'Folio F29 / Estado', c.f29.folio ? `${c.f29.folio} · ${f29StateLabel}` : f29StateLabel)}
+
+      <section class="doc-section">
+        <h2 class="doc-section-title">1. Guardia Cruzada Laboral-Previsional-Tributaria</h2>
+        <table class="doc-tbl">
+          <thead><tr><th>Control Cruzado</th><th>Fuentes Comparadas</th><th>Resultado</th></tr></thead>
+          <tbody>
+            <tr><td>Ley Bustos (Art. 162 inc. 5° CT)</td><td>PreviRed vs Finiquitos</td><td>${c.nomina.leyBustos ? 'ALERTA: Mora previsional con finiquito abierto' : 'Sin alerta activa'}</td></tr>
+            <tr><td>Cruce IUSC (LRE 3161 vs F29 Cód. 048)</td><td>Nómina ${fmt(iuscNomina)} vs F29 ${fmt(c.f29.retenciones || 0)}</td><td>${diff048 === 0 ? 'Cuadrado al peso' : `Diferencia ${fmt(diff048)} (revisar antes del día 20)`}</td></tr>
+            <tr><td>Acuses Ley 19.983 (8 días)</td><td>RCV Compras SII</td><td>${c.rcv.pendingAcuses ? `${c.rcv.pendingAcuses} factura(s) por acusar` : 'Al día'}</td></tr>
+            <tr><td>Conciliación Bancaria y Tesorería</td><td>Cartola vs RCV / CxC / CxP</td><td>${bankSummary.matched}/${bankSummary.total} (${bankSummary.pct}%) · CxC ${fmt(bankSummary.cxcOpen)}</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="doc-section">
+        <h2 class="doc-section-title">2. Resumen de Declaración F29 (${esc(period.label)})</h2>
+        <table class="doc-tbl">
+          <thead><tr><th style="width:70px">Cód.</th><th>Línea SII</th><th class="num">Monto CLP</th></tr></thead>
+          <tbody>
+            ${f29Rows.map((r) => `<tr><td class="mono">${esc(r.cod)}</td><td>${esc(r.label)}</td><td class="num">${fmt(r.val)}</td></tr>`).join('')}
+          </tbody>
+          <tfoot><tr><td class="mono">091</td><td>Total F29 · ${esc(f29StateLabel)}</td><td class="num">${fmt(f29Total)}</td></tr></tfoot>
+        </table>
+      </section>
+
+      <section class="doc-section">
+        <h2 class="doc-section-title">3. Bitácora de Cierres, Reaperturas y Cuadratura Contable</h2>
+        <table class="doc-tbl">
+          <tbody>
+            <tr><td>Partida doble Balance 8 Columnas</td><td class="num">${(balTot.debito || 0) === (balTot.credito || 0) ? 'Cuadrado (Debe = Haber)' : 'Revisar descuadre'}</td></tr>
+            <tr><td>Total Activo / Pasivo</td><td class="num">${fmt(balTot.activo || 0)} / ${fmt(balTot.pasivo || 0)}</td></tr>
+            <tr><td>Reaperturas registradas del período</td><td class="num">${reopenLog.length ? reopenLog.map((r) => `${r.at}: ${r.reason}`).join(' · ') : 'Ninguna'}</td></tr>
+          </tbody>
+        </table>
+        <div class="doc-note">Expediente emitido para fiscalización SII/DT, auditoría interna o traspaso ordenado de cartera.</div>
+      </section>
+
+      <div class="doc-signs">
+        <div class="doc-sign-box"><strong>${esc(studioName)}</strong>Contador Responsable · Certificación de Carpeta</div>
+        <div class="doc-sign-box"><strong>${esc(c.name)}</strong>Representante Legal (${esc(c.rut)})</div>
+      </div>
+      ${docFooter(studioName, c)}
+    `;
+    return openPrintable(`Expediente Tributario — ${c.name} (${period.label})`, body, { studioName, landscape: false });
+  }
+
   // ==================== EXPORTACIONES EXCEL (.xlsx OOXML) ====================
   function downloadXlsxSafe(filename, hojas, fallbackDownload) {
     if (window.CLPymeExcel && typeof window.CLPymeExcel.descargarXlsx === 'function') {
@@ -881,6 +938,7 @@
     emitirResultadosPdf,
     emitirContabilidadExcel,
     emitirBancosPdf,
+    emitirExpedientePdf,
     emitirBancosExcel
   };
 })();

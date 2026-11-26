@@ -1612,18 +1612,25 @@
       ` : ''}
       <div class="v2-ins-block">
         <div class="v2-ins-head">
-          <h2 class="v2-ins-title">Semáforo Pre-SII</h2>
-          <span class="tag ${c.rcv.pendingAcuses ? 'tag--on' : 'tag--in'}">${c.rcv.pendingAcuses ? `${c.rcv.pendingAcuses} alertas` : 'Sin reparos'}</span>
+          <h2 class="v2-ins-title">Calibrador F29 · SII vs Motor</h2>
+          <span class="tag ${c.rcv.pendingAcuses ? 'tag--danger' : 'tag--in'}">${c.rcv.pendingAcuses ? 'Brecha detectada' : 'Calibrado'}</span>
         </div>
-        <div class="v2-ins-list">
-          <div class="v2-ins-row"><span>RCV compras sin IVA castigado</span><span class="tag tag--in">OK</span></div>
-          <div class="v2-ins-row"><span>Supermercados cód. 761</span><span class="tag tag--out">Revisar</span></div>
-          <div class="v2-ins-row"><span>Postergación IVA (cód. 755)</span>
-            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer">
-              <input type="checkbox" id="chk-postergar" ${c.f29.postergar ? 'checked' : ''}> <span class="mono">${c.f29.postergar ? 'Sí' : 'No'}</span>
-            </label>
-          </div>
-        </div>
+        ${(() => {
+          const iuscNom = (c.workers || []).reduce((s, w) => s + (calcularWorkerReal(w, currentPeriod().iso).impUnico || 0), 0);
+          const diff048 = (c.f29.retenciones || 0) - iuscNom;
+          return `
+            <div class="v2-ins-list" style="font-size:12px">
+              <div class="v2-ins-row"><span>Cruce LRE 3161 vs F29 Cód. 048</span><span class="tag ${diff048 === 0 ? 'tag--in' : 'tag--on'}">${diff048 === 0 ? 'Cuadrado' : `Dif. ${fmt(diff048)}`}</span></div>
+              <div class="v2-ins-row"><span>Acuses 8d en Crédito Cód. 537</span><span class="tag ${c.rcv.pendingAcuses ? 'tag--danger' : 'tag--in'}">${c.rcv.pendingAcuses ? `${c.rcv.pendingAcuses} en riesgo` : 'OK'}</span></div>
+              <div class="v2-ins-row"><span>Postergación IVA (Cód. 756/755)</span>
+                <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer">
+                  <input type="checkbox" id="chk-postergar" ${c.f29.postergar ? 'checked' : ''}> <span class="mono">${c.f29.postergar ? 'Sí' : 'No'}</span>
+                </label>
+              </div>
+            </div>
+            ${diff048 !== 0 ? `<button type="button" class="btn btn--sm" style="margin-top:6px" data-sync-f29-048="${iuscNom}">Alinear Cód. 048 con Nómina (${fmt(iuscNom)})</button>` : ''}
+          `;
+        })()}
       </div>
 
       <div class="v2-ins-block v2-ins-block--soft" id="v2-f29-workflow-block">
@@ -2178,10 +2185,13 @@
     $('v2-canvas').innerHTML = `
       <div class="v2-pulse-bar">
         <span class="muted">Conciliación bancaria (${conc}/${c.bankTx.length} cuadrados)</span>
-        <label class="btn btn--sm">
-          Importar cartola CSV
-          <input type="file" accept=".csv,.txt" id="v2-csv-cartola" class="sr-only">
-        </label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button type="button" class="btn btn--sm" data-sample-cartola="1">Cargar cartola ejemplo + Transbank</button>
+          <label class="btn btn--sm">
+            Importar cartola CSV
+            <input type="file" accept=".csv,.txt" id="v2-csv-cartola" class="sr-only">
+          </label>
+        </div>
       </div>
       <div class="v2-table-wrap">
         <table class="v2-table">
@@ -2272,6 +2282,31 @@
             ${ruleSaved ? 'Regla guardada (quitar)' : 'Guardar regla para próximos meses'}
           </button>
         </div>
+
+        ${selected.amount > 0 ? (() => {
+          const feePct = Number(state.gatewayFeePct || 2.95);
+          const netoBanco = selected.amount;
+          const factor = 1 - (feePct / 100) * 1.19;
+          const ventaBruta = Math.round(netoBanco / (factor > 0.5 ? factor : 0.965));
+          const comNeta = Math.round(ventaBruta * (feePct / 100));
+          const ivaCom = Math.round(comNeta * 0.19);
+          return `
+            <div class="v2-ins-block v2-ins-block--soft">
+              <div class="v2-ins-head">
+                <h2 class="v2-ins-title">Split Pasarela (Transbank / Getnet / MP)</h2>
+                <span class="tag tag--in">${feePct.toFixed(2).replace('.', ',')}% + IVA</span>
+              </div>
+              <p class="muted" style="margin:0;font-size:11.5px">Separa venta bruta POS, comisión neta (42030) e IVA crédito comisión (11080) del abono bancario.</p>
+              <dl class="v2-ins-kv" style="margin-top:4px">
+                <dt>Venta bruta POS (DTE 39)</dt><dd>${fmt(ventaBruta)}</dd>
+                <dt>Comisión neta (42030)</dt><dd>−${fmt(comNeta)}</dd>
+                <dt>IVA comisión 19% (11080)</dt><dd>−${fmt(ivaCom)}</dd>
+                <dt><strong>Abono neto en banco</strong></dt><dd><strong>${fmt(netoBanco)}</strong></dd>
+              </dl>
+              <button type="button" class="btn btn--sm" style="margin-top:6px" data-apply-split-tx="${selected.id}" data-split-bruta="${ventaBruta}" data-split-com="${comNeta}" data-split-iva="${ivaCom}">Aplicar Split y cuadrar asiento</button>
+            </div>
+          `;
+        })() : ''}
 
         <div class="v2-ins-block v2-ins-block--soft">
           <div class="v2-ins-head"><h2 class="v2-ins-title">Informes bancarios</h2><span class="mono muted">PDF · XLSX</span></div>
@@ -2704,6 +2739,7 @@
         <h2 class="v2-ins-title">Entregables del mes · ${state.studioName}</h2>
         <div style="display:flex;flex-wrap:wrap;gap:6px">
           <button type="button" class="btn btn--sm" data-emit-doc="paquete-xlsx">Paquete Excel (.xlsx)</button>
+          <button type="button" class="btn btn--sm" data-emit-doc="expediente-pdf">Expediente Tributario PDF</button>
           <button type="button" class="btn btn--sm" data-emit-doc="f29-pdf">Hoja F29 PDF</button>
           <button type="button" class="btn btn--sm" data-emit-doc="liq-lote-pdf">Liquidaciones PDF</button>
           <button type="button" class="btn btn--sm" data-emit-doc="balance-pdf">Balance 8 Col. PDF</button>
@@ -3101,6 +3137,9 @@
     } else if (docType === 'bancos-pdf') {
       D.emitirBancosPdf(ctx);
       toast(`Informe de Conciliación Bancaria PDF listo para ${c.name}`);
+    } else if (docType === 'expediente-pdf') {
+      D.emitirExpedientePdf(ctx);
+      toast(`Expediente Tributario Auditable PDF listo para ${c.name}`);
     } else if (docType === 'bancos-xlsx') {
       D.emitirBancosExcel(ctx, ctx.auxDocs, downloadFile).then(() => toast(`Conciliación + Auxiliar CxC/CxP Excel (.xlsx) descargado`));
     }
@@ -3468,6 +3507,75 @@
       const cid = t.dataset.syncLiveCompany;
       const iso = currentPeriod().iso;
       syncRangeFromGateway(cid, iso, iso, 'RCV_COMPRAS');
+      return;
+    }
+    if (t.dataset.sampleCartola) {
+      const c = getClient();
+      const sampleTx = [
+        {
+          id: 'tbk-' + Date.now(),
+          date: '25/11',
+          desc: 'ABONO LIQUIDACION TRANSBANK POS #88421',
+          amount: 1420500,
+          status: 'Pendiente',
+          match: 'Liquidación POS Transbank (aplicar Split comisión)',
+          rulePattern: 'TRANSBANK',
+          checks: [
+            { ok: true, label: 'Abono neto Transbank detectado automáticamente' },
+            { ok: false, label: 'Pendiente aplicar Split: Venta bruta vs Comisión + IVA' }
+          ]
+        },
+        {
+          id: 'trf-' + (Date.now() + 1),
+          date: '24/11',
+          desc: 'TRASPASO DE 76.440.120-4 DISTRIBUIDORA ORIENTE',
+          amount: 640000,
+          status: 'Conciliado',
+          match: 'Auto-calce: Factura #3990 (RUT + monto exacto)',
+          rulePattern: 'DISTRIBUIDORA ORIENTE',
+          checks: [
+            { ok: true, label: 'RUT 76.440.120-4 coincide en glosa bancaria' },
+            { ok: true, label: 'Monto exacto $640.000 calza con CxC #3990' }
+          ]
+        }
+      ];
+      c.bankTx.unshift(...sampleTx);
+      c.bancos.total = c.bankTx.length;
+      c.bancos.matched = c.bankTx.filter((x) => x.status === 'Conciliado').length;
+      c.bancos.label = `${Math.round((c.bancos.matched / c.bancos.total) * 100)}% match`;
+      state.selectedBankId = sampleTx[0].id;
+      toast('Cartola BancoEstado + Transbank cargada y auto-calzada');
+      render();
+      return;
+    }
+    if (t.dataset.applySplitTx) {
+      const c = getClient();
+      const tx = c.bankTx.find((x) => x.id === t.dataset.applySplitTx);
+      if (tx) {
+        const bruta = Number(t.dataset.splitBruta) || tx.amount;
+        const com = Number(t.dataset.splitCom) || 0;
+        const ivaC = Number(t.dataset.splitIva) || 0;
+        tx.status = 'Conciliado';
+        tx.match = `Split Pasarela: Venta ${fmt(bruta)} − Com. ${fmt(com)} − IVA ${fmt(ivaC)}`;
+        tx.checks = [
+          { ok: true, label: `Venta bruta POS (DTE 39): ${fmt(bruta)}` },
+          { ok: true, label: `Comisión neta Cta. 42030: ${fmt(com)} + IVA 11080: ${fmt(ivaC)}` },
+          { ok: true, label: `Cuadrado exacto con abono banco ${fmt(tx.amount)}` }
+        ];
+        c.bancos.matched = c.bankTx.filter((x) => x.status === 'Conciliado').length;
+        c.bancos.total = c.bankTx.length;
+        c.bancos.state = c.bancos.matched === c.bancos.total ? 'ok' : 'pendiente';
+        c.bancos.label = `${Math.round((c.bancos.matched / c.bancos.total) * 100)}% match`;
+        toast('Split de pasarela aplicado y asiento cuadrado');
+        render();
+      }
+      return;
+    }
+    if (t.dataset.syncF29048 !== undefined) {
+      const c = getClient();
+      c.f29.retenciones = Number(t.dataset.syncF29048) || 0;
+      toast(`F29 Cód. 048 alineado con Nómina LRE 3161 (${fmt(c.f29.retenciones)})`);
+      render();
       return;
     }
     if (t.dataset.connAction === 'probe-gateway') {
