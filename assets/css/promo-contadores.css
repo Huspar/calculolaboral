@@ -19,10 +19,8 @@
 }
 .cl-suite-kicker {
     margin: 0 0 .35rem !important;
-    font-size: .72rem;
+    font-size: .78rem;
     font-weight: 700;
-    letter-spacing: .05em;
-    text-transform: uppercase;
     color: #00382E;
 }
 .cl-suite-titulo {
@@ -62,6 +60,11 @@
 .cl-suite-btn:hover {
     background: #00261F;
     color: #FFFFFF !important;
+}
+.cl-suite-btn:focus-visible,
+.cl-suite-link:focus-visible {
+    outline: 2px solid #00382E;
+    outline-offset: 2px;
 }
 .cl-suite-link {
     display: inline-flex;

@@ -907,6 +907,7 @@ div[style*="teal-forest-deep"] .font-mono-num > span {
     *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
 
@@ -965,5 +966,41 @@ button[aria-label="Abrir menú"] {
     body:has(input:focus, select:focus, textarea:focus) #mobile-result-bar {
         transform: translateY(100%) !important;
         pointer-events: none;
+    }
+}
+
+/* ---------- Hallmark polish global (72 paginas publicas) ---------- */
+html,
+body {
+    overflow-x: clip !important;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--teal-forest, #00382E);
+    outline-offset: 2px;
+}
+
+.teal-footer-curve a:focus-visible,
+.teal-footer-curve button:focus-visible {
+    outline-color: var(--teal-yellow, #FFB703);
+}
+
+.teal-footer-curve .uppercase.tracking-wider {
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+@media (pointer: coarse) {
+    .btn-yellow-pill,
+    .btn-dark-pill,
+    .btn-outline-pill,
+    .catalog-filter-btn {
+        min-height: 44px;
     }
 }

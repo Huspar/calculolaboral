@@ -164,13 +164,16 @@ window.addEventListener('load', function () {
             --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
+        html, body {
+            overflow-x: clip;
+        }
+
         body {
             font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #F8FAF9;
             color: var(--teal-text-dark);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            overflow-x: hidden;
         }
 
         .section-py {
@@ -383,7 +386,7 @@ window.addEventListener('load', function () {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s var(--ease-spring);
+            transition: background-color 0.2s var(--ease-spring), color 0.2s var(--ease-spring);
         }
         .how-step-pill:hover {
             color: var(--teal-forest);
@@ -633,8 +636,7 @@ window.addEventListener('load', function () {
     <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
         <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
             <div class="hidden sm:flex items-center gap-2">
-                <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
-                <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas según el Código del Trabajo</span>
+                <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026), fórmulas según el Código del Trabajo</span>
             </div>
             <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
                 <span>UF: <strong class="uf-value text-white font-bold">$41.322,93</strong></span>
@@ -654,7 +656,7 @@ window.addEventListener('load', function () {
                 <!-- Brand Logo: Official CálculoLaboral Brand Logo -->
                 <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
                     <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm active:scale-95 transition-transform shrink-0" style="background-color: #00382E;">
-                        <svg class="w-5 h-5" style="color: #FFB703;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="w-5 h-5" style="color: #FFB703;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <!-- Pedestal Base -->
                             <path d="M30 84h40M38 79h24"></path>
                             <!-- Vertical Pillar -->
@@ -992,14 +994,15 @@ window.addEventListener('load', function () {
         .clf-list li::before { content: "· "; color: var(--teal-yellow); font-weight: 700; }
         .clf-card.clf-all .clf-go, .clf-card.clf-all.is-active .clf-go { background: var(--teal-yellow); color: #111827; }
 
-        .clf-cap { display: flex; align-items: center; gap: 0.75rem; }
-        .clf-cap button { width: 38px; height: 38px; border-radius: 9999px; border: 1px solid #E2E8F0; background: #FFFFFF; color: var(--teal-forest); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s; }
+        .clf-cap { display: flex; align-items: center; gap: 0.75rem; position: relative; z-index: 25; }
+        .clf-cap button { width: 44px; height: 44px; border-radius: 9999px; border: 1px solid #E2E8F0; background: #FFFFFF; color: var(--teal-forest); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s; }
         .clf-cap button:hover { border-color: var(--teal-forest); }
+        .clf-cap button:focus-visible { outline: 2px solid var(--teal-forest); outline-offset: 2px; }
         .clf-cap-t { min-width: 170px; text-align: center; display: grid; gap: 1px; }
         .clf-cap-t b { font-size: 0.9rem; color: #111827; }
         .clf-cap-t span { font-family: 'Geist Mono', monospace; font-size: 0.75rem; color: #6B7280; }
         .clf-dots { display: flex; gap: 0; }
-        .clf-dots button { position: relative; width: 24px; height: 24px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+        .clf-dots button { position: relative; width: 28px; height: 36px; padding: 0; border: 0; background: transparent; cursor: pointer; }
         .clf-dots button::before { content: ""; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; border-radius: 9999px; background: #CBD5E1; transform: translate(-50%, -50%); transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s; }
         .clf-dots button[aria-current="true"]::before { width: 22px; background: var(--teal-forest); }
         .clf-dots button:focus-visible { outline: 2px solid var(--teal-forest); outline-offset: 2px; border-radius: 9999px; }
@@ -1047,8 +1050,8 @@ window.addEventListener('load', function () {
             .clf-hero { padding: 1.125rem 0 1.5rem; }
             .clf-grid { gap: 0.875rem; }
             .clf-h1 { font-size: 1.9rem; }
-            .clf-fan { height: 274px; }
-            .clf-card { top: 6px; width: 220px; min-height: 252px; margin-left: -110px; padding: 0.85rem; gap: 0.4rem; }
+            .clf-fan { height: 348px; }
+            .clf-card { top: 6px; width: 248px; min-height: 312px; margin-left: -124px; padding: 0.9rem; gap: 0.45rem; }
         }
 
     </style>
@@ -1064,14 +1067,13 @@ window.addEventListener('load', function () {
             <div class="clf-actions">
                 <div class="clf-ctas">
                     <a id="clf-cta" href="finiquito_calculator" class="btn-yellow-pill" style="color: #111827 !important;">
-                        <span style="color: #111827 !important;">Abrir</span>
-                        <span id="clf-cta-t" class="clf-cta-t" style="color: #111827 !important;">Finiquito</span>
+                        <span style="color: #111827 !important;">Abrir <span id="clf-cta-t" class="clf-cta-t" style="color: #111827 !important;">Finiquito</span></span>
                         <span class="material-icons text-base" aria-hidden="true" style="color: #111827 !important;">arrow_forward</span>
                     </a>
                     <a href="#calculadoras" class="clf-btn-o">
                         <span class="material-icons" aria-hidden="true" style="color: #047857;">apps</span>
                         <span>Ver todas</span>
-                        <b>15</b>
+                        <b>39</b>
                     </a>
                 </div>
                 <ul class="clf-trust">
@@ -1127,8 +1129,8 @@ window.addEventListener('load', function () {
                     <a class="clf-card clf-all clf-o3" href="#calculadoras" data-fan="todas" data-name="Ver todas" draggable="false" style="--o: -3; z-index: 17;">
                         <span class="clf-top"><span class="clf-ico"><span class="material-icons" aria-hidden="true">apps</span></span></span>
                         <span class="clf-k">Catálogo</span>
-                        <span class="clf-n">Las 15 herramientas</span>
-                        <ul class="clf-list"><li>Despido Art. 160</li><li>Carta de renuncia</li><li>Generador de finiquito</li><li>Anexo Ley 40 horas</li><li>y 3 más</li></ul>
+                        <span class="clf-n">Las 39 herramientas</span>
+                        <ul class="clf-list"><li>Despido Art. 160</li><li>Carta de renuncia</li><li>Generador de finiquito</li><li>Anexo Ley 40 horas</li><li>y 35 más</li></ul>
                         
                         <span class="clf-go">Ver todas<span class="material-icons" aria-hidden="true">arrow_forward</span></span>
                     </a>
@@ -1164,7 +1166,7 @@ window.addEventListener('load', function () {
                     <button type="button" id="clf-next" aria-label="Calculadora siguiente"><span class="material-icons" aria-hidden="true">chevron_right</span></button>
                 </div>
                 <div class="clf-dots" id="clf-dots"><button type="button" aria-label="Finiquito" aria-current="true"></button><button type="button" aria-label="Sueldo líquido" aria-current="false"></button><button type="button" aria-label="Sueldo part-time" aria-current="false"></button><button type="button" aria-label="Vacaciones" aria-current="false"></button><button type="button" aria-label="Seguro de cesantía" aria-current="false"></button><button type="button" aria-label="Ver todas" aria-current="false"></button><button type="button" aria-label="Horas extras" aria-current="false"></button><button type="button" aria-label="Despido injustificado" aria-current="false"></button></div>
-                <p class="clf-hint">Pasa el mouse o toca una tarjeta para traerla al frente</p>
+                <p class="clf-hint">Selecciona una tarjeta o usa las flechas para cambiar</p>
             </div>
 
         </div>
@@ -1186,13 +1188,13 @@ window.addEventListener('load', function () {
                 <!-- Interactive Filter Controls -->
                 <div class="mt-6 flex flex-wrap items-center justify-start gap-2">
                     <button type="button" onclick="filterCatalog('all', this)" class="catalog-filter-btn active-filter">
-                        Todas las herramientas (37)
+                        Todas las herramientas (39)
                     </button>
                     <button type="button" onclick="filterCatalog('trabajador', this)" class="catalog-filter-btn">
                         Trabajadores y personas (14)
                     </button>
                     <button type="button" onclick="filterCatalog('pyme', this)" class="catalog-filter-btn">
-                        Pymes, empleadores y contadores (23)
+                        Pymes, empleadores y contadores (25)
                     </button>
                 </div>
             </div>
@@ -2837,7 +2839,7 @@ window.addEventListener('load', function () {
 
                     <!-- Col 2: Calculadoras -->
                     <div class="space-y-3">
-                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Calculadoras</p>
+                        <p class="text-xs font-bold text-white/70 mb-0">Calculadoras</p>
                         <ul class="space-y-2 text-xs">
                             <li><a href="finiquito_calculator" class="text-white hover:text-[#FFB703] font-bold transition-colors">Finiquito Legal</a></li>
                             <li><a href="simulador-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Despido Injustificado</a></li>
@@ -2850,7 +2852,7 @@ window.addEventListener('load', function () {
 
                     <!-- Col 3: Guías Legales -->
                     <div class="space-y-3">
-                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Guías Legales</p>
+                        <p class="text-xs font-bold text-white/70 mb-0">Guías Legales</p>
                         <ul class="space-y-2 text-xs">
                             <li><a href="reclamar-despido-injustificado-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Cómo Reclamar Despido</a></li>
                             <li><a href="carta-de-renuncia-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Carta de Renuncia</a></li>
@@ -2858,13 +2860,13 @@ window.addEventListener('load', function () {
                             <li><a href="checklist-fiscalizacion-dt-pymes-chile" class="text-white/80 hover:text-[#FFB703] transition-colors">Checklist Fiscalización DT</a></li>
                             <li><a href="ley-40-horas-chile-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Ley 40 Horas</a></li>
                             <li><a href="aguinaldo-navidad-cierre-laboral-diciembre-2026" class="text-white/80 hover:text-[#FFB703] transition-colors">Cierre de Diciembre (Aguinaldo)</a></li>
-                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías →</a></li>
+                            <li><a href="blog" class="text-[#FFB703] hover:underline font-semibold block pt-1">Ver todas las guías</a></li>
                         </ul>
                     </div>
 
                     <!-- Col 4: Para Empresas -->
                     <div class="space-y-3">
-                        <p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Para Empresas</p>
+                        <p class="text-xs font-bold text-white/70 mb-0">Para Empresas</p>
                         <ul class="space-y-2 text-xs">
                             <li><a href="para-empleadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Portal Empleadores</a></li>
                             <li><a href="suite-contadores" class="text-white/80 hover:text-[#FFB703] transition-colors">Suite Contadores</a></li>
@@ -2886,9 +2888,7 @@ window.addEventListener('load', function () {
                     </div>
                     <div class="flex flex-wrap items-center justify-center gap-4">
                         <a href="terminos" class="hover:text-white transition-colors">Términos</a>
-                        <span>·</span>
                         <a href="privacidad" class="hover:text-white transition-colors">Privacidad</a>
-                        <span>·</span>
                         <a href="disclaimer" class="hover:text-white transition-colors">Disclaimer</a>
                         <span>·</span>
                         <span class="inline-flex items-center gap-1 text-emerald-400 font-medium">

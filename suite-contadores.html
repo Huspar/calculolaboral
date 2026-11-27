@@ -207,7 +207,7 @@ window.addEventListener('load', function () {
         --teal-yellow-hover: #FFAA00;
         --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
     }
-    body { overflow-x: hidden; }
+    html, body { overflow-x: clip; }
     main.site-container { min-width: 0; }
     .btn-yellow-pill:not(.hidden) {
         display: inline-flex;
@@ -222,7 +222,7 @@ window.addEventListener('load', function () {
         align-items: center;
         justify-content: center;
         gap: 8px;
-        transition: all 0.2s var(--ease-spring);
+        transition: background-color 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-spring);
         text-decoration: none;
         border: none;
         cursor: pointer;
@@ -243,7 +243,7 @@ window.addEventListener('load', function () {
         align-items: center;
         justify-content: center;
         gap: 8px;
-        transition: all 0.2s var(--ease-spring);
+        transition: background-color 0.2s var(--ease-spring), border-color 0.2s var(--ease-spring), color 0.2s var(--ease-spring);
         text-decoration: none;
         cursor: pointer;
     }
@@ -288,7 +288,7 @@ window.addEventListener('load', function () {
     .ls-btn-ghost:hover { border-color: #00382E; background: #f8faf9; }
 
     .ls-toc { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1rem 1.25rem; margin-bottom: 2.25rem; }
-    .ls-toc-title { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 0 0 .5rem; }
+    .ls-toc-title { font-size: .78rem; font-weight: 700; color: #64748b; margin: 0 0 .5rem; }
     .ls-toc ol { margin: 0; padding-left: 1.2rem; columns: 2; column-gap: 2rem; font-size: .9rem; }
     .ls-toc li { margin: .2rem 0; break-inside: avoid; }
     .ls-toc a { color: #0f4c41; font-weight: 500; }
@@ -302,7 +302,7 @@ window.addEventListener('load', function () {
 
     .sc-pilares { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1.1rem 0; }
     .sc-pilar { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.15rem 1.2rem; }
-    .sc-pilar-tag { display: inline-block; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #00382E; background: #e8f0ee; border-radius: 999px; padding: .2rem .55rem; margin-bottom: .55rem; }
+    .sc-pilar-tag { display: inline-block; font-size: .75rem; font-weight: 700; color: #00382E; background: #e8f0ee; border-radius: 999px; padding: .2rem .55rem; margin-bottom: .55rem; }
     .sc-pilar h3 { margin: 0 0 .4rem; font-size: 1.02rem; font-weight: 700; color: #0f172a; }
     .sc-pilar p { margin: 0 !important; font-size: .92rem; color: #475569; line-height: 1.55; }
 
@@ -311,7 +311,7 @@ window.addEventListener('load', function () {
 
     .sc-table-wrap { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #e2e8f0; border-radius: 1rem; background: #ffffff; margin: 1rem 0; }
     .sc-table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: .9rem; }
-    .sc-table th { text-align: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; background: #f8fafc; padding: .8rem 1rem; border-bottom: 1px solid #e2e8f0; }
+    .sc-table th { text-align: left; font-size: .78rem; font-weight: 700; color: #475569; background: #f8fafc; padding: .8rem 1rem; border-bottom: 1px solid #e2e8f0; }
     .sc-table td { padding: .85rem 1rem; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: top; }
     .sc-table tbody tr:last-child td { border-bottom: 0; }
     .sc-table tr.sc-dest td { background: #F8FAF9; color: #0f172a; font-weight: 600; }
@@ -808,7 +808,7 @@ Tu navegador no puede reproducir el video. <a href="https://calculolaboral.cl/as
 
 <section id="copiloto-mcp" class="ls-section">
 <h2>Conecta tu IA directo al SII y a tus alertas laborales, sin cambiar de ERP</h2>
-<p>A diferencia de los sistemas cerrados que exigen migrar toda tu contabilidad para hablar con una IA, nuestro Conector MCP conecta <strong>Claude, ChatGPT, Gemini o Copilot</strong> directamente a tus empresas sincronizadas del SII, PreviRed y TGR —en modo solo lectura, con <strong>tokens revocables y registro de consultas</strong>. Revisa la guía técnica en <a href="conector-mcp-contadores-chile" class="font-semibold text-[#00382E] underline">Conector MCP para contadores en Chile</a>.</p>
+<p>A diferencia de los sistemas cerrados que exigen migrar toda tu contabilidad para hablar con una IA, nuestro Conector MCP conecta <strong>Claude, ChatGPT, Gemini o Copilot</strong> directamente a tus empresas sincronizadas del SII, PreviRed y TGR, en modo solo lectura, con <strong>tokens revocables y registro de consultas</strong>. Revisa la guía técnica en <a href="conector-mcp-contadores-chile" class="font-semibold text-[#00382E] underline">Conector MCP para contadores en Chile</a>.</p>
 
 <div class="sc-table-wrap" style="margin:1.1rem 0 1.25rem;">
 <table class="sc-table">
