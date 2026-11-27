@@ -424,6 +424,13 @@
     clientSub: 'f29',
     periodIdx: 2,
     filter: 'todos',
+    ownerFilter: 'todos',
+    currentUser: 'Camila Vega',
+    empresasTab: 'cartera',
+    selectedCompanyId: null,
+    migratorClientId: null,
+    migratorOrigin: 'Nubox',
+    migratorProgress: {},
     query: '',
     selectedWorkerId: null,
     selectedBankId: null,
@@ -919,8 +926,11 @@
         ].map((t) => `<button type="button" class="v2-subtab" role="tab" data-inbox-tab="${t.id}" aria-selected="${state.inboxTab === t.id}">${t.label}</button>`).join('');
         ctaEl.textContent = 'Pedir documento';
       } else if (state.studioView === 'empresas') {
-        tabsEl.innerHTML = '';
-        ctaEl.textContent = '+ Nueva empresa';
+        tabsEl.innerHTML = [
+          { id: 'cartera', label: 'Cartera' },
+          { id: 'migrador', label: 'Migrador 3 Min' }
+        ].map((t) => `<button type="button" class="v2-subtab" role="tab" data-empresas-tab="${t.id}" aria-selected="${state.empresasTab === t.id}">${t.label}</button>`).join('');
+        ctaEl.textContent = state.empresasTab === 'migrador' ? 'Cargar los 3 archivos de ejemplo' : '+ Nueva empresa';
       } else if (state.studioView === 'conexiones') {
         tabsEl.innerHTML = '';
         ctaEl.textContent = 'Verificar Gateway SII';
@@ -985,14 +995,26 @@
   }
 
   /* ==================== NIVEL 1: ESPACIO ESTUDIO ==================== */
+  const ANALYSTS = ['Camila Vega', 'Diego Soto', 'Sin asignar'];
+  function getClientOwner(c) {
+    if (c && c.owner) return c.owner;
+    if (!c) return 'Sin asignar';
+    const camilaIds = new Set(['san-isidro', 'andes-sur', 'barrio-italia']);
+    c.owner = camilaIds.has(c.id) ? 'Camila Vega' : 'Diego Soto';
+    return c.owner;
+  }
+
   function studioHoyFiltered() {
     const q = state.query.trim().toLowerCase();
     return state.clients.filter((c) => {
       if (state.filter === 'critico' && c.status !== 'critico') return false;
       if (state.filter === 'esperando' && c.status !== 'esperando') return false;
-      if (state.filter === 'revisar' && c.f29.state === 'declarado') return false;
+      if (state.filter === 'revisar' && !(c.f29.state === 'revisar' || c.f29.state === 'listo')) return false;
       if (state.filter === 'cerrado' && c.status !== 'cerrado') return false;
-      if (q && !(c.name.toLowerCase().includes(q) || c.rut.toLowerCase().includes(q) || c.regime.toLowerCase().includes(q))) return false;
+      const own = getClientOwner(c);
+      if (state.ownerFilter === 'mios' && own !== state.currentUser) return false;
+      if (state.ownerFilter !== 'todos' && state.ownerFilter !== 'mios' && own !== state.ownerFilter) return false;
+      if (q && !(c.name.toLowerCase().includes(q) || c.rut.toLowerCase().includes(q) || c.regime.toLowerCase().includes(q) || own.toLowerCase().includes(q))) return false;
       return true;
     });
   }
@@ -1006,13 +1028,14 @@
       const nomTag = c.nomina.state === 'alerta' ? 'tag--danger' : c.nomina.state === 'esperando' ? 'tag--out' : 'tag--in';
       const bcoTag = c.bancos.state === 'ok' ? 'tag--in' : 'tag--out';
       const cierreTag = c.status === 'cerrado' ? 'tag--in' : c.status === 'critico' ? 'tag--danger' : 'tag--out';
+      const owner = getClientOwner(c);
       return `
         <tr>
           <td>
             <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="resumen">
               <span>${c.name}</span>
             </button>
-            <span class="v2-cell-sub mono">${c.rut} · ${c.regime}</span>
+            <span class="v2-cell-sub mono">${c.rut} · ${c.regime} · ${owner}</span>
           </td>
           <td>
             <button type="button" class="v2-cell-btn" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="rcv">
@@ -1069,15 +1092,7 @@
       revisar: state.clients.filter((c) => c.f29.state === 'revisar' || c.f29.state === 'listo').length,
       cerrado: state.clients.filter((c) => c.status === 'cerrado').length
     };
-    const q = state.query.trim().toLowerCase();
-    const rows = state.clients.filter((c) => {
-      if (state.filter === 'critico' && c.status !== 'critico') return false;
-      if (state.filter === 'esperando' && c.status !== 'esperando') return false;
-      if (state.filter === 'revisar' && !(c.f29.state === 'revisar' || c.f29.state === 'listo')) return false;
-      if (state.filter === 'cerrado' && c.status !== 'cerrado') return false;
-      if (q && !(c.name.toLowerCase().includes(q) || c.rut.toLowerCase().includes(q) || c.regime.toLowerCase().includes(q))) return false;
-      return true;
-    });
+    const rows = studioHoyFiltered();
     const totalF29Cartera = rows.reduce((acc, c) => acc + f29Total(c), 0);
 
     $('v2-canvas').innerHTML = `
@@ -1096,7 +1111,14 @@
             </button>
           `).join('')}
         </div>
-        <input type="search" class="v2-search-inline" id="v2-matrix-search" value="${state.query}" placeholder="Filtrar cliente o RUT…">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <select id="v2-owner-filter" class="v2-owner-sel" aria-label="Filtrar por analista responsable">
+            <option value="todos" ${state.ownerFilter === 'todos' ? 'selected' : ''}>Todos los analistas</option>
+            <option value="mios" ${state.ownerFilter === 'mios' ? 'selected' : ''}>Mis clientes (${state.currentUser.split(' ')[0]})</option>
+            ${ANALYSTS.map((a) => `<option value="${a}" ${state.ownerFilter === a ? 'selected' : ''}>${a}</option>`).join('')}
+          </select>
+          <input type="search" class="v2-search-inline" id="v2-matrix-search" value="${state.query}" placeholder="Filtrar cliente o RUT…">
+        </div>
       </div>
       <div class="v2-table-wrap">
         <table class="v2-table">
@@ -1403,34 +1425,190 @@
     ` : `<div class="v2-ins-block"><h2 class="v2-ins-title">Sin selección</h2></div>`;
   }
 
+  function getMigratorState(cid) {
+    if (!state.migratorProgress[cid]) {
+      state.migratorProgress[cid] = { lre: null, rcv: null, bal: null };
+    }
+    return state.migratorProgress[cid];
+  }
+
+  function runMigratorSampleAll(c) {
+    if (!c) return;
+    const mp = getMigratorState(c.id);
+    const sampleLre = [
+      'Rut trabajador(1101);Nombre;Fecha inicio contrato(1102);Pensionado vejez(1109);AFP(1141);Sueldo(2101);Sueldo empresarial(2161);Impuesto retenido(3161);Total tributable(5210)',
+      `${rutConDv(18334512)};Claudia Morales Díaz;15/03/2024;0;05;980000;0;12400;1180000`,
+      `${rutConDv(11223344)};Roberto Araya Soto;01/06/2021;0;33;0;2100000;51800;2100000`,
+      `${rutConDv(9445566)};Elena Fuenzalida Vera;10/08/2023;1;08;890000;0;0;1070000`
+    ].join('\n');
+    const parsedLre = parseLreCsv(sampleLre);
+    if (!parsedLre.error) {
+      parsedLre.workers.forEach((nw) => {
+        if (!c.workers.some((x) => x.rut === nw.rut)) {
+          c.workers.push({ id: 'mig-' + Date.now() + '-' + Math.random().toString(36).slice(2, 5), name: nw.name, rut: nw.rut, sexo: 'F', ingreso: nw.ingreso, cargo: nw.cargo, base: nw.base, afp: nw.afp, estado: 'Listo', tipoRegimen: nw.tipoRegimen, pensionMensual: nw.pensionMensual });
+        }
+      });
+      c.nomina.count = c.workers.length;
+      mp.lre = `${parsedLre.workers.length} trab. + histórico DJ 1887 (${state.migratorOrigin})`;
+    }
+    const F = window.CLContadoresF29;
+    if (F) {
+      const v = F.parsearRcv(F.ejemploRcvVentasCsv(), 'ventas');
+      const comp = F.parsearRcv(F.ejemploRcvComprasCsv(), 'compras');
+      const res = F.calcularF29({ ventas: v, compras: comp, regimen: c.regime.replace(/\s+/g, ''), periodo: currentPeriod().iso, impuestoUnico48: 0 });
+      c.f29.debito = res.cod538;
+      c.f29.credito = res.cod537;
+      if (res.cod62) c.f29.ppm = res.cod62;
+      c.rcv.pendingAcuses = 0;
+      c.rcv.state = 'ok';
+      c.rcv.label = 'RCV migrado';
+      mp.rcv = `Ventas + Compras (${fmt(f29Total(c))} F29)`;
+    } else {
+      mp.rcv = 'RCV Compras/Ventas importado';
+    }
+    c.openingBalance = { activo: 48200000, pasivo: 31500000, patrimonio: 16700000, source: state.migratorOrigin };
+    mp.bal = `Apertura cuadrada (${fmt(48200000)} Activo = Pasivo + Pat.)`;
+    recomputeClientStatus(c);
+    toast(`Migración 3/3 completada para ${c.name} desde ${state.migratorOrigin}`);
+    render();
+  }
+
   function renderStudioEmpresas() {
+    if (state.empresasTab === 'migrador') {
+      const targetC = state.clients.find((x) => x.id === state.migratorClientId) || state.clients[0];
+      if (targetC) state.migratorClientId = targetC.id;
+      const mp = targetC ? getMigratorState(targetC.id) : { lre: null, rcv: null, bal: null };
+      const done = [mp.lre, mp.rcv, mp.bal].filter(Boolean).length;
+      const pct = Math.round((done / 3) * 100);
+
+      $('v2-canvas').innerHTML = targetC ? `
+        <div class="v2-mig-box">
+          <div class="v2-mig-head">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <div>
+                <strong style="font-size:14px">Migrador «3 Minutos» · ${targetC.name}</strong>
+                <div class="muted" style="font-size:12px">Sube los 3 archivos que ya exportas de ${state.migratorOrigin} para levantar la empresa sin digitar.</div>
+              </div>
+              <span class="mono" style="font-size:12.5px;font-weight:700;color:#00382E">${done}/3 migrado</span>
+            </div>
+            <div class="v2-mig-bar"><div style="width:${pct}%"></div></div>
+          </div>
+
+          <div class="v2-mig-row">
+            <div class="v2-mig-meta">
+              <strong>01. LRE 147 CSV (Dirección del Trabajo)</strong>
+              <span>Crea fichas de trabajadores, AFP/Salud, sueldos base e histórico anual DJ 1887.</span>
+            </div>
+            <div class="v2-mig-acts">
+              <span class="mono" style="font-size:11.5px;color:${mp.lre ? '#00382E' : 'var(--ink-muted)'};font-weight:${mp.lre ? '700' : '500'}">${mp.lre ? `Importado · ${mp.lre}` : 'Pendiente'}</span>
+              <label class="btn btn--sm">Subir CSV<input type="file" accept=".csv,.txt" id="mig-file-lre" class="sr-only"></label>
+            </div>
+          </div>
+
+          <div class="v2-mig-row">
+            <div class="v2-mig-meta">
+              <strong>02. RCV Compras y Ventas CSV (SII)</strong>
+              <span>Calcula IVA débito/crédito, PPM y crea reglas automáticas de cuentas por proveedor.</span>
+            </div>
+            <div class="v2-mig-acts">
+              <span class="mono" style="font-size:11.5px;color:${mp.rcv ? '#00382E' : 'var(--ink-muted)'};font-weight:${mp.rcv ? '700' : '500'}">${mp.rcv ? `Importado · ${mp.rcv}` : 'Pendiente'}</span>
+              <label class="btn btn--sm">Subir CSV<input type="file" accept=".csv,.txt" id="mig-file-rcv" class="sr-only"></label>
+            </div>
+          </div>
+
+          <div class="v2-mig-row">
+            <div class="v2-mig-meta">
+              <strong>03. Balance de 8 Columnas CSV (${state.migratorOrigin})</strong>
+              <span>Carga saldos de apertura (Activo, Pasivo, Patrimonio) y verifica cuadratura al peso.</span>
+            </div>
+            <div class="v2-mig-acts">
+              <span class="mono" style="font-size:11.5px;color:${mp.bal ? '#00382E' : 'var(--ink-muted)'};font-weight:${mp.bal ? '700' : '500'}">${mp.bal ? `Importado · ${mp.bal}` : 'Pendiente'}</span>
+              <label class="btn btn--sm">Subir CSV<input type="file" accept=".csv,.txt" id="mig-file-bal" class="sr-only"></label>
+            </div>
+          </div>
+        </div>
+      ` : `<div class="v2-mig-box" style="padding:24px;text-align:center" class="muted">Primero crea una empresa con «+ Empresa».</div>`;
+
+      $('v2-inspector').innerHTML = `
+        <div class="v2-ins-block">
+          <h2 class="v2-ins-title">Configurar migración</h2>
+          <div class="v2-field">
+            <label for="sel-mig-client">Empresa destino</label>
+            <select id="sel-mig-client" class="v2-owner-sel" style="width:100%">
+              ${state.clients.map((c) => `<option value="${c.id}" ${targetC && c.id === targetC.id ? 'selected' : ''}>${c.name} (${c.rut})</option>`).join('')}
+            </select>
+          </div>
+          <div class="v2-field" style="margin-top:8px">
+            <label for="sel-mig-origin">Software anterior</label>
+            <select id="sel-mig-origin" class="v2-owner-sel" style="width:100%">
+              ${['Nubox', 'Kame ERP', 'Softland', 'Defontana', 'Excel'].map((o) => `<option value="${o}" ${state.migratorOrigin === o ? 'selected' : ''}>${o}</option>`).join('')}
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+            <button type="button" class="btn btn--primary" data-mig-sample-all="1">Cargar los 3 archivos de ejemplo</button>
+            ${targetC && done > 0 ? `<button type="button" class="btn" data-open-client="${targetC.id}" data-open-area="resumen">Abrir ${targetC.name.split(' ').slice(0, 2).join(' ')} →</button>` : ''}
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const selC = state.clients.find((x) => x.id === state.selectedCompanyId) || state.clients[0] || null;
+    if (selC) state.selectedCompanyId = selC.id;
+
     $('v2-canvas').innerHTML = `
       <div class="v2-table-wrap">
         <table class="v2-table">
-          <thead><tr><th>Razón social</th><th>RUT</th><th>Régimen</th><th class="num">Dotación</th><th>Estado mes</th><th></th></tr></thead>
+          <thead><tr><th>Razón social</th><th>RUT</th><th>Régimen</th><th class="v2-hide-mob">Responsable</th><th class="num">Dotación</th><th>Estado mes</th><th></th></tr></thead>
           <tbody>
-            ${state.clients.map((c) => `
-              <tr>
-                <td><strong>${c.name}</strong></td>
-                <td class="mono">${c.rut}</td>
-                <td><span class="tag tag--out">${c.regime}</span></td>
-                <td class="num">${c.workers.length}</td>
-                <td><span class="tag ${c.status === 'cerrado' ? 'tag--in' : c.status === 'critico' ? 'tag--on' : 'tag--out'}">${c.cierre}</span></td>
-                <td class="num"><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="impuestos">Entrar</button></td>
-              </tr>
-            `).join('')}
+            ${state.clients.map((c) => {
+              const owner = getClientOwner(c);
+              return `
+                <tr class="${selC && selC.id === c.id ? 'is-selected' : ''}" data-select-company="${c.id}" style="cursor:pointer">
+                  <td><strong>${c.name}</strong></td>
+                  <td class="mono">${c.rut}</td>
+                  <td><span class="tag tag--out">${c.regime}</span></td>
+                  <td class="v2-hide-mob">
+                    <select class="v2-owner-sel" data-assign-owner="${c.id}" aria-label="Responsable de ${c.name}">
+                      ${ANALYSTS.map((a) => `<option value="${a}" ${owner === a ? 'selected' : ''}>${a}</option>`).join('')}
+                    </select>
+                  </td>
+                  <td class="num">${c.workers.length}</td>
+                  <td><span class="tag ${c.status === 'cerrado' ? 'tag--in' : c.status === 'critico' ? 'tag--on' : 'tag--out'}">${c.cierre}</span></td>
+                  <td class="num"><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="resumen">Entrar</button></td>
+                </tr>
+              `;
+            }).join('')}
           </tbody>
         </table>
       </div>
     `;
     $('v2-inspector').innerHTML = `
+      ${selC ? `
+        <div class="v2-ins-block">
+          <div class="v2-ins-head">
+            <h2 class="v2-ins-title">${selC.name}</h2>
+            <span class="tag tag--out">${selC.regime}</span>
+          </div>
+          <div class="v2-field" style="margin-top:6px">
+            <label for="sel-ins-owner">Analista responsable</label>
+            <select id="sel-ins-owner" class="v2-owner-sel" data-assign-owner="${selC.id}" style="width:100%">
+              ${ANALYSTS.map((a) => `<option value="${a}" ${getClientOwner(selC) === a ? 'selected' : ''}>${a}</option>`).join('')}
+            </select>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <button type="button" class="btn btn--primary btn--sm" style="flex:1" data-open-client="${selC.id}" data-open-area="resumen">Abrir empresa →</button>
+            <button type="button" class="btn btn--sm" data-empresas-tab="migrador">Migrar CSV</button>
+          </div>
+        </div>
+      ` : ''}
       <div class="v2-ins-block">
         <h2 class="v2-ins-title">Resumen de cartera</h2>
         <dl class="v2-ins-kv">
           <dt>Total empresas</dt><dd>${state.clients.length}</dd>
-          <dt>Régimen 14 D3</dt><dd>${state.clients.filter((c) => c.regime === '14 D3').length}</dd>
-          <dt>Régimen 14 A</dt><dd>${state.clients.filter((c) => c.regime === '14 A').length}</dd>
-          <dt>Régimen 14 D8</dt><dd>${state.clients.filter((c) => c.regime === '14 D8').length}</dd>
+          <dt>Camila Vega</dt><dd>${state.clients.filter((c) => getClientOwner(c) === 'Camila Vega').length}</dd>
+          <dt>Diego Soto</dt><dd>${state.clients.filter((c) => getClientOwner(c) === 'Diego Soto').length}</dd>
+          <dt>Régimen 14 D3 / 14 A / 14 D8</dt><dd>${state.clients.filter((c) => c.regime === '14 D3').length} / ${state.clients.filter((c) => c.regime === '14 A').length} / ${state.clients.filter((c) => c.regime === '14 D8').length}</dd>
         </dl>
       </div>
       <div class="v2-ins-block v2-ins-block--soft">
@@ -4196,7 +4374,7 @@
 
   /* ==================== EVENTS ==================== */
   document.addEventListener('click', (e) => {
-    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox], [data-select-conn], [data-select-mayor], [data-select-monitor], [data-jump-mayor]');
+    const t = e.target.closest('button, [data-select-worker], [data-select-bank], [data-select-aux], [data-select-f29], [data-select-rcv], [data-select-inbox], [data-select-conn], [data-select-mayor], [data-select-monitor], [data-select-company], [data-jump-mayor]');
     if (!t) return;
 
     if (t.id === 'btn-open-cmdk' || t.id === 'btn-switch-client') { openCmdk(); return; }
@@ -4815,7 +4993,14 @@
     }
 
     if (t.id === 'v2-primary-cta') {
-      if (state.level === 'studio' && state.studioView === 'empresas') { openDrawer(); return; }
+      if (state.level === 'studio' && state.studioView === 'empresas') {
+        if (state.empresasTab === 'migrador') {
+          const targetC = state.clients.find((x) => x.id === state.migratorClientId) || state.clients[0];
+          runMigratorSampleAll(targetC);
+          return;
+        }
+        openDrawer(); return;
+      }
       if (state.level === 'studio' && state.studioView === 'conexiones') {
         probeStudioGateway().then((info) => {
           state.gateway = info || { mode: 'demo-local', configured: false };
@@ -4998,6 +5183,13 @@
     if (t.dataset.clientArea) { enterClient(state.clientId, t.dataset.clientArea); return; }
     if (t.dataset.clientSub) { state.clientSub = t.dataset.clientSub; render(); return; }
     if (t.dataset.olaTab) { state.olaTab = t.dataset.olaTab; state.selectedIds.clear(); render(); return; }
+    if (t.dataset.empresasTab) { state.empresasTab = t.dataset.empresasTab; render(); return; }
+    if (t.dataset.selectCompany && !e.target.closest('select, button')) { state.selectedCompanyId = t.dataset.selectCompany; render(); openMobileInspector(); return; }
+    if (t.dataset.migSampleAll) {
+      const targetC = state.clients.find((x) => x.id === state.migratorClientId) || state.clients[0];
+      runMigratorSampleAll(targetC);
+      return;
+    }
     if (t.dataset.inboxTab) { state.inboxTab = t.dataset.inboxTab; render(); return; }
     if (t.dataset.filter) { state.filter = t.dataset.filter; render(); return; }
     if (t.dataset.workerFilter) { state.workerFilter = t.dataset.workerFilter; render(); return; }
@@ -5358,6 +5550,52 @@
   });
 
   document.addEventListener('change', (e) => {
+    if (e.target.id === 'v2-owner-filter') {
+      state.ownerFilter = e.target.value || 'todos';
+      renderStudioHoy();
+      return;
+    }
+    if (e.target.dataset && e.target.dataset.assignOwner) {
+      const targetC = state.clients.find((x) => x.id === e.target.dataset.assignOwner);
+      if (targetC) {
+        targetC.owner = e.target.value;
+        toast(`${targetC.name} asignada a ${targetC.owner}`);
+        render();
+      }
+      return;
+    }
+    if (e.target.id === 'sel-mig-client') { state.migratorClientId = e.target.value; renderStudioEmpresas(); return; }
+    if (e.target.id === 'sel-mig-origin') { state.migratorOrigin = e.target.value; renderStudioEmpresas(); return; }
+    if (e.target.id === 'mig-file-lre' || e.target.id === 'mig-file-rcv' || e.target.id === 'mig-file-bal') {
+      const file = e.target.files && e.target.files[0];
+      const targetC = state.clients.find((x) => x.id === state.migratorClientId) || state.clients[0];
+      if (!file || !targetC) return;
+      const mp = getMigratorState(targetC.id);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const txt = String(reader.result || '');
+        if (e.target.id === 'mig-file-lre') {
+          const parsed = parseLreCsv(txt);
+          if (parsed.error) { toast(parsed.error); return; }
+          applyLreCsvToClient(targetC, txt, file.name);
+          mp.lre = `${parsed.workers.length} trab. (${file.name})`;
+        } else if (e.target.id === 'mig-file-rcv') {
+          const F = window.CLContadoresF29;
+          if (F) applyRcvToClient(targetC, null, txt);
+          mp.rcv = `RCV importado (${file.name})`;
+        } else {
+          const rows = txt.split(/\r?\n/).filter(Boolean).length;
+          targetC.openingBalance = { rows, source: file.name };
+          mp.bal = `${Math.max(1, rows - 1)} cuentas (${file.name})`;
+          toast(`Balance de apertura importado desde ${file.name}`);
+        }
+        recomputeClientStatus(targetC);
+        render();
+      };
+      reader.readAsText(file, 'windows-1252');
+      e.target.value = '';
+      return;
+    }
     if (e.target.id === 'chk-postergar') { getClient().f29.postergar = e.target.checked; render(); return; }
     if (e.target.id === 'sel-fin-cause') { state.finiquitoCause = e.target.value; render(); return; }
     if (e.target.id === 'sel-worker-regimen') {
