@@ -1284,3 +1284,159 @@ a:hover { text-decoration-color: var(--ink-accent); }
 @media (max-width: 960px) {
   .v2-onboard-grid { grid-template-columns: 1fr; }
 }
+
+/* ---------- RUTA LINEAL 1→4 (DISEÑO FASE 2) ---------- */
+.v2-route-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 0 10px;
+  margin: 0 0 10px;
+  border-bottom: 1px solid var(--ink-rule);
+}
+.v2-route-strip::-webkit-scrollbar { display: none; }
+.v2-route-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  border: 1px solid var(--ink-rule);
+  background: var(--ink-paper);
+  color: var(--ink-2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.v2-route-step:hover { border-color: var(--ink); color: var(--ink); }
+.v2-route-step.is-active {
+  background: #00382E;
+  border-color: #00382E;
+  color: #ffffff;
+}
+.v2-route-step.is-blocked:not(.is-active) {
+  border-color: #fca5a5;
+  background: #fef2f2;
+  color: #991b1b;
+}
+.v2-route-step.is-done:not(.is-active) {
+  border-color: #cbd5e1;
+  color: #00382E;
+}
+.v2-route-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  opacity: 0.85;
+}
+.v2-route-st {
+  font-size: 10.5px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+.v2-route-sep {
+  color: var(--ink-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* ---------- INSPECTOR ESPAÑOL LLANO ("QUÉ PASA → CONSECUENCIA → 1 BOTÓN") ---------- */
+.v2-plain-alert {
+  border: 1px solid #cbd5e1;
+  border-left: 3px solid #00382E;
+  background: var(--ink-paper);
+  border-radius: 10px;
+  padding: 11px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.v2-plain-alert.is-urgent {
+  border-left-color: #b91c1c;
+  background: #fffafa;
+}
+.v2-plain-alert-k {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+}
+.v2-plain-alert.is-urgent .v2-plain-alert-k { color: #b91c1c; }
+.v2-plain-alert p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.v2-plain-alert details {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  border-top: 1px solid var(--ink-rule);
+  padding-top: 6px;
+}
+.v2-plain-alert summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.v2-plain-alert details p {
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+
+/* ---------- LÍNEA SOBRIA DEMO VS VPS EN SIDEBAR ---------- */
+.v2-vps-line {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 4px 0 6px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--ink-rule);
+  font-size: 11px;
+  color: var(--ink-muted);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.v2-vps-line:hover { color: #00382E; }
+.v2-vps-line strong { color: #00382E; font-weight: 600; }
+
+/* ---------- INSPECTOR BOTTOM SHEET EN MÓVIL (< 768px) ---------- */
+.v2-ins-mob-bar { display: none; }
+@media (max-width: 768px) {
+  .v2-inspector.is-mobile-open {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 78dvh;
+    overflow-y: auto;
+    z-index: 60;
+    background: var(--ink-paper);
+    border-top: 2px solid #00382E;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -12px 32px rgba(15, 23, 42, 0.22);
+    padding: 12px 14px 20px;
+  }
+  .v2-inspector.is-mobile-open .v2-ins-mob-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--ink-rule);
+    position: sticky;
+    top: 0;
+    background: var(--ink-paper);
+    z-index: 2;
+  }
+}

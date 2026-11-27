@@ -526,8 +526,15 @@
     const nameEl = $('v2-studio-name-foot');
     const countEl = $('v2-studio-count-foot');
     const btnAcc = $('btn-open-account');
+    const vpsLine = $('v2-vps-status-line');
     if (nameEl) nameEl.textContent = state.studioName;
     if (countEl) countEl.textContent = state.accountMode === 'studio' ? `Mi estudio · ${state.clients.length} RUT` : `Demo · ${state.clients.length} RUT`;
+    if (vpsLine) {
+      const gwOk = !!state.gatewayConnected || !!(state.gateway && state.gateway.configured);
+      vpsLine.innerHTML = gwOk
+        ? `<span>VPS activa · Barrido 04:45</span><strong>13 tools MCP →</strong>`
+        : `<span>${state.accountMode === 'studio' ? `Mi estudio (${state.clients.length} RUT)` : `Modo Demo (${state.clients.length} empresas)`}</span><strong>Conectar SII/VPS →</strong>`;
+    }
     if (btnAcc) {
       if (state.accountMode === 'studio') {
         btnAcc.textContent = 'Ver demo';
@@ -743,6 +750,7 @@
     state.selectedBankId = c.bankTx[0]?.id || null;
     state.selectedIds.clear();
     closeMobileSidebar();
+    closeMobileInspector();
     render();
   }
 
@@ -751,6 +759,7 @@
     state.studioView = view;
     state.selectedIds.clear();
     closeMobileSidebar();
+    closeMobileInspector();
     render();
   }
 
@@ -3662,6 +3671,85 @@
     `;
   }
 
+  function renderClientRouteStrip(c) {
+    const blockers = getClientPayrollBlockers(c);
+    const s1Done = (c.rcv.pendingAcuses || 0) === 0;
+    const s2Done = !c.nomina.leyBustos && blockers.length === 0;
+    const s3Done = c.bancos && c.bancos.state === 'ok';
+    const s4Done = c.f29.state === 'declarado' || c.f29.state === 'pagado';
+    const steps = [
+      { n: '1', label: 'Compras y Acuses', area: 'impuestos', sub: 'rcv', done: s1Done, blocked: !s1Done, st: s1Done ? 'OK' : `${c.rcv.pendingAcuses} pend.` },
+      { n: '2', label: 'Sueldos y PreviRed', area: 'remuneraciones', sub: c.nomina.leyBustos ? 'finiquitos' : 'nomina', done: s2Done, blocked: !s2Done, st: c.nomina.leyBustos ? 'Bloqueo' : blockers.length ? `${blockers.length} ficha(s)` : 'OK' },
+      { n: '3', label: 'Bancos', area: 'bancos', sub: 'match', done: s3Done, blocked: !c.bankTx || c.bankTx.length === 0, st: s3Done ? '100%' : (!c.bankTx || !c.bankTx.length ? 'Sin cartola' : c.bancos.label) },
+      { n: '4', label: 'F29 y Balance', area: 'impuestos', sub: 'f29', done: s4Done, blocked: false, st: s4Done ? 'Cerrado' : f29StateLabel(c.f29.state) }
+    ];
+    return `
+      <nav class="v2-route-strip" aria-label="Ruta de cierre mensual 1 a 4">
+        ${steps.map((s, idx) => {
+          const active = (s.area === state.clientArea && (s.area !== 'impuestos' || (s.n === '1' ? state.clientSub === 'rcv' : state.clientSub !== 'rcv'))) || (s.n === '4' && state.clientArea === 'contabilidad');
+          const cls = `v2-route-step${active ? ' is-active' : ''}${s.blocked ? ' is-blocked' : s.done ? ' is-done' : ''}`;
+          return `${idx > 0 ? '<span class="v2-route-sep" aria-hidden="true">→</span>' : ''}<button type="button" class="${cls}" data-open-client="${c.id}" data-open-area="${s.area}" data-open-sub="${s.sub}"><span class="v2-route-num">${s.n}.</span><span>${s.label}</span><span class="v2-route-st">· ${s.st}</span></button>`;
+        }).join('')}
+      </nav>
+    `;
+  }
+
+  function renderPlainAlertBlock(c) {
+    const blockers = getClientPayrollBlockers(c);
+    if (c.nomina && c.nomina.leyBustos) {
+      return `
+        <div class="v2-plain-alert is-urgent">
+          <span class="v2-plain-alert-k">Qué resolver primero</span>
+          <p><strong>Hay un finiquito abierto con cotizaciones impagas.</strong> Si ratificas el despido así, queda nulo y sigue generando sueldos.</p>
+          <button type="button" class="btn btn--primary btn--sm" data-fix-ley-bustos="1">Regularizar PreviRed y levantar bloqueo</button>
+          <details><summary>¿Qué significa esto? (Ley Bustos)</summary><p>El Art. 162 del Código del Trabajo exige tener al día AFP, Salud y AFC al terminar un contrato. Regularizar PreviRed destraba el finiquito.</p></details>
+        </div>
+      `;
+    }
+    if (c.rcv && c.rcv.pendingAcuses > 0) {
+      return `
+        <div class="v2-plain-alert is-urgent">
+          <span class="v2-plain-alert-k">Qué resolver primero</span>
+          <p><strong>${c.rcv.pendingAcuses} factura(s) de compra vencen el plazo de 8 días.</strong> Sin aceptar el acuse pierdes ese Crédito Fiscal de IVA este mes.</p>
+          <button type="button" class="btn btn--primary btn--sm" data-acuse-all="1">Aceptar ${c.rcv.pendingAcuses} acuse(s) ahora</button>
+          <details><summary>¿Qué significa esto? (Ley 19.983)</summary><p>Las facturas a crédito tienen 8 días corridos en el SII para confirmar recibo de mercaderías o servicios y aprovechar el 19% de IVA crédito.</p></details>
+        </div>
+      `;
+    }
+    if (blockers.length > 0) {
+      return `
+        <div class="v2-plain-alert">
+          <span class="v2-plain-alert-k">Siguiente paso</span>
+          <p><strong>${blockers.length} ficha(s) de trabajador están incompletas.</strong> Sin esos datos no se puede generar el archivo PreviRed de 105 campos.</p>
+          <button type="button" class="btn btn--primary btn--sm" data-go-incomplete="1">Completar ${blockers.length} ficha(s) ahora</button>
+          <details><summary>¿Qué significa esto?</summary><p>PreviRed rechaza el archivo si falta el tipo de contrato, el plan de salud o el código de licencia médica de algún trabajador.</p></details>
+        </div>
+      `;
+    }
+    if (!c.bankTx || c.bankTx.length === 0) {
+      return `
+        <div class="v2-plain-alert">
+          <span class="v2-plain-alert-k">Siguiente paso</span>
+          <p><strong>Falta cargar la cartola bancaria del mes.</strong> Sin ella no se pueden cuadrar pagos ni separar comisiones de Transbank.</p>
+          <button type="button" class="btn btn--primary btn--sm" data-sample-cartola="1">Cargar cartola ejemplo + Transbank</button>
+          <details><summary>¿Qué significa esto?</summary><p>Puedes subir el archivo CSV/Excel del banco, pedirlo al cliente por enlace sin clave o probar con la cartola de ejemplo.</p></details>
+        </div>
+      `;
+    }
+    return '';
+  }
+
+  function openMobileInspector() {
+    if (window.innerWidth <= 768) {
+      const ins = $('v2-inspector');
+      if (ins) ins.classList.add('is-mobile-open');
+    }
+  }
+  function closeMobileInspector() {
+    const ins = $('v2-inspector');
+    if (ins) ins.classList.remove('is-mobile-open');
+  }
+
   function render() {
     renderSidebar();
     renderTopbar();
@@ -3680,6 +3768,20 @@
       else if (state.clientArea === 'remuneraciones') renderClientRemuneraciones(c);
       else if (state.clientArea === 'bancos') renderClientBancos(c);
       else renderClientContabilidad(c);
+      const canvasEl = $('v2-canvas');
+      if (canvasEl) canvasEl.insertAdjacentHTML('afterbegin', renderClientRouteStrip(c));
+      const plainAlert = renderPlainAlertBlock(c);
+      const insEl = $('v2-inspector');
+      if (insEl && plainAlert) insEl.insertAdjacentHTML('afterbegin', plainAlert);
+    }
+    const insFinal = $('v2-inspector');
+    if (insFinal && !insFinal.querySelector('#btn-close-mob-ins')) {
+      insFinal.insertAdjacentHTML('afterbegin', `
+        <div class="v2-ins-mob-bar">
+          <strong style="font-size:13px">Detalle y acción</strong>
+          <button type="button" class="btn btn--sm" id="btn-close-mob-ins">Cerrar</button>
+        </div>
+      `);
     }
   }
 
@@ -4925,11 +5027,12 @@
     }
     if (t.dataset.jumpOla) { state.olaTab = t.dataset.jumpOla; enterStudio('olas'); return; }
     if (t.dataset.openClient) { enterClient(t.dataset.openClient, t.dataset.openArea || 'impuestos', t.dataset.openSub || null); return; }
-    if (t.dataset.selectWorker) { state.selectedWorkerId = t.dataset.selectWorker; render(); return; }
-    if (t.dataset.selectF29 && !e.target.closest('input')) { state.selectedF29Code = t.dataset.selectF29; render(); return; }
-    if (t.dataset.selectRcv && !e.target.closest('button')) { state.selectedRcvId = t.dataset.selectRcv; render(); return; }
-    if (t.dataset.selectBank) { state.selectedBankId = t.dataset.selectBank; render(); return; }
-    if (t.dataset.selectAux) { state.selectedAuxId = t.dataset.selectAux; render(); return; }
+    if (t.id === 'btn-close-mob-ins') { closeMobileInspector(); return; }
+    if (t.dataset.selectWorker) { state.selectedWorkerId = t.dataset.selectWorker; render(); openMobileInspector(); return; }
+    if (t.dataset.selectF29 && !e.target.closest('input')) { state.selectedF29Code = t.dataset.selectF29; render(); openMobileInspector(); return; }
+    if (t.dataset.selectRcv && !e.target.closest('button')) { state.selectedRcvId = t.dataset.selectRcv; render(); openMobileInspector(); return; }
+    if (t.dataset.selectBank) { state.selectedBankId = t.dataset.selectBank; render(); openMobileInspector(); return; }
+    if (t.dataset.selectAux) { state.selectedAuxId = t.dataset.selectAux; render(); openMobileInspector(); return; }
     if (t.dataset.auxFilter) { state.auxFilter = t.dataset.auxFilter; render(); return; }
     if (t.dataset.settleAux) {
       const c = getClient();
@@ -5413,7 +5516,7 @@
 
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openCmdk(); return; }
-    if (e.key === 'Escape') { closeCmdk(); closeDrawer(); closeAccountDrawer(); closeMobileSidebar(); return; }
+    if (e.key === 'Escape') { closeCmdk(); closeDrawer(); closeAccountDrawer(); closeMobileSidebar(); closeMobileInspector(); return; }
     if (!$('v2-cmdk-backdrop').hidden) {
       const list = $('v2-cmdk-list');
       const entries = list._entries || [];
