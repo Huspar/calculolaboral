@@ -14,8 +14,36 @@
         novedades: 'Novedades de sueldo',
         otro: 'Documento del mes'
     };
+    var DEMO_CATALOG = {
+        'san-isidro': {
+            estudio: { nombre: 'Asesorías Pérez Ltda.', contador: 'Camila Vega', pie: 'Portal Marca Blanca emitido por Asesorías Pérez Ltda.' },
+            cliente: { id: 'san-isidro', nombre: 'Panadería San Isidro SpA', rut: '76.543.210-3', periodo: 'Noviembre 2026', cerradoTributario: false },
+            f29: { ivaDeterminado: 1527300, retenciones: 727679, ppm: 24125, totalPagar: 2279104, vencimientos: [{ titulo: 'Acuses 8 días (Ley 19.983)', fechaLimite: '2 por vencer', estado: 'critico' }, { titulo: 'PreviRed', fechaLimite: 'Día 13 · Al día', estado: 'ok' }, { titulo: 'Declaración F29 SII', fechaLimite: '20/11/2026', estado: 'proximo' }] },
+            pnl: { ingresos: 18400000, costos: 7460337, gastos: 10960000, resultado: -20337 },
+            laboral: { cantidadTrabajadores: 6, totalHaberes: 7630000, totalLiquido: 6398400, totalCostoEmpresa: 8060000, trabajadores: [] },
+            secciones: { buzon: true }
+        },
+        'andes-sur': {
+            estudio: { nombre: 'Asesorías Pérez Ltda.', contador: 'Camila Vega', pie: 'Portal Marca Blanca emitido por Asesorías Pérez Ltda.' },
+            cliente: { id: 'andes-sur', nombre: 'Constructora Andes Sur Ltda.', rut: '77.128.450-7', periodo: 'Noviembre 2026', cerradoTributario: false },
+            f29: { ivaDeterminado: 2890000, retenciones: 314000, ppm: 340000, totalPagar: 3544000, vencimientos: [{ titulo: 'PreviRed · Ley Bustos', fechaLimite: 'Regularizar', estado: 'critico' }, { titulo: 'Declaración F29 SII', fechaLimite: '20/11/2026', estado: 'proximo' }] },
+            pnl: { ingresos: 42500000, costos: 24100000, gastos: 9800000, resultado: 8600000 },
+            laboral: { cantidadTrabajadores: 2, totalHaberes: 3400000, totalLiquido: 2890000, totalCostoEmpresa: 3610000, trabajadores: [] },
+            secciones: { buzon: true }
+        },
+        'dental-providencia': {
+            estudio: { nombre: 'Asesorías Pérez Ltda.', contador: 'Diego Soto', pie: 'Portal Marca Blanca emitido por Asesorías Pérez Ltda.' },
+            cliente: { id: 'dental-providencia', nombre: 'Clínica Dental Providencia SpA', rut: '76.901.332-6', periodo: 'Noviembre 2026', cerradoTributario: false },
+            f29: { ivaDeterminado: 0, retenciones: 480000, ppm: 160000, totalPagar: 640000, vencimientos: [{ titulo: 'Cartola Banco BCI', fechaLimite: 'Pendiente subir', estado: 'proximo' }, { titulo: 'Declaración F29 SII', fechaLimite: '20/11/2026', estado: 'proximo' }] },
+            pnl: { ingresos: 14200000, costos: 3200000, gastos: 4900000, resultado: 6100000 },
+            laboral: { cantidadTrabajadores: 1, totalHaberes: 1100000, totalLiquido: 912000, totalCostoEmpresa: 1165000, trabajadores: [] },
+            secciones: { buzon: true }
+        }
+    };
+
     var buzonState = {
         token: '',
+        clienteId: '',
         esPreview: false,
         archivo: null
     };
@@ -264,12 +292,21 @@
         });
     }
 
+    function loadLocalBuzon(cid) {
+        try {
+            var raw = window.localStorage.getItem('cl_portal_demo_buzon_' + (cid || 'preview'));
+            return raw ? JSON.parse(raw) : [];
+        } catch (_) { return []; }
+    }
+
+    function saveLocalBuzon(cid, items) {
+        try {
+            window.localStorage.setItem('cl_portal_demo_buzon_' + (cid || 'preview'), JSON.stringify(items));
+        } catch (_) {}
+    }
+
     async function enviarAlBuzon(ev) {
         if (ev) ev.preventDefault();
-        if (buzonState.esPreview) {
-            feedbackBuzon('Vista previa Marca Blanca: con un enlace real emitido al cliente, los archivos llegan cifrados a tu bandeja en /demo-contadores.', 'ok');
-            return;
-        }
         var notaEl = $('pe-buzon-nota');
         var tipoEl = $('pe-buzon-tipo');
         var btn = $('btn-pe-buzon-enviar');
@@ -278,6 +315,24 @@
 
         if (!buzonState.archivo && !nota) {
             feedbackBuzon('Adjunta un archivo o escribe una nota para tu contador.', 'error');
+            return;
+        }
+        if (buzonState.esPreview) {
+            var prevItems = loadLocalBuzon(buzonState.clienteId);
+            prevItems.unshift({
+                nombreArchivo: buzonState.archivo ? buzonState.archivo.name : 'Nota sin adjunto.txt',
+                tipo: tipo,
+                tamanoBytes: buzonState.archivo ? buzonState.archivo.size : 1024,
+                nota: nota,
+                creado: new Date().toISOString(),
+                estado: 'enviado'
+            });
+            saveLocalBuzon(buzonState.clienteId, prevItems);
+            if (notaEl) notaEl.value = '';
+            if ($('pe-buzon-archivo')) $('pe-buzon-archivo').value = '';
+            seleccionarArchivoBuzon(null);
+            pintarListaBuzon(prevItems);
+            feedbackBuzon('Documento enviado en modo demostración. En producción llega cifrado a la Bandeja de tu estudio en /demo-contadores.', 'ok');
             return;
         }
 
@@ -314,9 +369,11 @@
 
     document.addEventListener('DOMContentLoaded', async function () {
         var qs = new URLSearchParams(window.location.search || '');
-        var preview = qs.get('preview') === '1';
+        var clienteId = (qs.get('cliente') || qs.get('empresa') || '').trim();
+        var preview = qs.get('preview') === '1' || Boolean(clienteId);
         var token = (qs.get('t') || '').trim();
-        buzonState.esPreview = preview;
+        buzonState.esPreview = preview && !token;
+        buzonState.clienteId = clienteId || 'preview';
         buzonState.token = token;
 
         var drop = $('pe-buzon-drop');
@@ -350,17 +407,15 @@
         }
         if ($('form-pe-buzon')) $('form-pe-buzon').addEventListener('submit', enviarAlBuzon);
 
-        if (preview) {
+        if (preview && !token) {
             try {
-                var raw = window.localStorage.getItem('cl_portal_estudio_preview');
-                if (!raw) {
-                    mostrarError('No hay vista previa disponible', 'Abre Portal Cliente en /demo-contadores y pulsa Vista previa Marca Blanca.', 'Sin datos');
-                    return;
-                }
-                pintarPortal(JSON.parse(raw), true);
-                pintarListaBuzon([]);
+                var raw = (clienteId && window.localStorage.getItem('cl_portal_demo_' + clienteId))
+                    || window.localStorage.getItem('cl_portal_estudio_preview');
+                var parsed = raw ? JSON.parse(raw) : (DEMO_CATALOG[clienteId] || DEMO_CATALOG['san-isidro']);
+                pintarPortal(parsed, true);
+                pintarListaBuzon(loadLocalBuzon(buzonState.clienteId));
             } catch (e) {
-                mostrarError('No pudimos cargar la vista previa', 'Vuelve a generar la vista previa desde el panel del estudio.', 'Error local');
+                mostrarError('No pudimos cargar la vista previa', 'Vuelve a generar el enlace desde el panel del estudio.', 'Error local');
             }
             return;
         }

@@ -3472,6 +3472,7 @@
           <button type="button" class="btn btn--sm" data-emit-doc="liq-lote-pdf">Liquidaciones PDF</button>
           <button type="button" class="btn btn--sm" data-emit-doc="balance-pdf">Balance 8 Col. PDF</button>
           <button type="button" class="btn btn--sm" data-emit-doc="bancos-pdf">Conciliación PDF</button>
+          <button type="button" class="btn btn--sm" data-open-portal-id="${c.id}">Abrir Portal Cliente ↗</button>
           <button type="button" class="btn btn--sm" data-emit-doc="copy-portal">Copiar enlace Portal</button>
         </div>
       </div>
@@ -3655,15 +3656,20 @@
         </div>
       `;
     } else if (sel.id === 'portal') {
+      const lastUrl = state.lastPortalUrl || '';
       $('v2-inspector').innerHTML = `
         <div class="v2-ins-block">
           <div class="v2-ins-head"><h2 class="v2-ins-title">Portal del Cliente sin clave</h2><span class="tag tag--in">Activo</span></div>
-          <p class="muted" style="margin:0;font-size:12px">Cada empresa recibe un enlace único para subir cartolas o licencias y descargar su Paquete Mensual PDF con tu marca (${state.studioName}).</p>
-          <div class="v2-ins-list" style="margin-top:6px">
+          <p class="muted" style="margin:0;font-size:12px">Cada empresa tiene un enlace directo Marca Blanca (<strong>${state.studioName}</strong>) para ver su F29, P&amp;L, nómina y subir cartolas o licencias sin clave.</p>
+          ${lastUrl ? `<div class="v2-ins-note" style="margin-top:8px;font-size:11.5px;word-break:break-all"><strong>Último enlace copiado:</strong><br><a href="${lastUrl}" target="_blank" rel="noopener" style="color:#00382E;font-weight:600">${lastUrl} ↗</a></div>` : ''}
+          <div class="v2-ins-list" style="margin-top:8px">
             ${state.clients.map((c) => `
               <div class="v2-ins-row">
                 <span style="font-size:12px"><strong>${c.name.split(' ').slice(0, 2).join(' ')}</strong></span>
-                <button type="button" class="btn btn--sm" data-copy-portal-id="${c.id}">Copiar enlace</button>
+                <div style="display:flex;gap:5px;flex-shrink:0">
+                  <button type="button" class="btn btn--sm btn--primary" data-open-portal-id="${c.id}">Abrir ↗</button>
+                  <button type="button" class="btn btn--sm" data-copy-portal-id="${c.id}">Copiar</button>
+                </div>
               </div>
             `).join('')}
           </div>
@@ -4091,13 +4097,98 @@
     };
   }
 
+  function buildPortalSnapshot(c) {
+    const iso = currentPeriod().iso;
+    const workers = (c.workers || []).map((w) => {
+      const calc = calcularWorkerReal(w, iso);
+      return {
+        nombre: w.name,
+        rut: w.rut,
+        dias: 30,
+        haberes: calc.imponible || w.base || 0,
+        liquido: calc.liquido || 0,
+        costoEmpresa: calc.costoEmpleador || 0
+      };
+    });
+    const totalHab = workers.reduce((s, w) => s + w.haberes, 0);
+    const totalLiq = workers.reduce((s, w) => s + w.liquido, 0);
+    const totalCosto = workers.reduce((s, w) => s + w.haberes + w.costoEmpresa, 0);
+    const ivaDet = Math.max(0, (c.f29.debito || 0) - (c.f29.credito || 0));
+    const rem = Math.max(0, (c.f29.credito || 0) - (c.f29.debito || 0));
+    const ret = (c.f29.retenciones || 0) + (c.f29.bhe || 0);
+    const ingresos = c.rcv.ventasNeto || 0;
+    const costos = Math.round((c.rcv.comprasNeto || 0) * 0.72);
+    const gastos = Math.max(0, (c.rcv.comprasNeto || 0) - costos) + totalCosto;
+    const vencs = [
+      { titulo: 'Acuses recibo facturas a crédito (Ley 19.983)', fechaLimite: c.rcv.pendingAcuses ? `${c.rcv.pendingAcuses} por vencer` : 'Al día', estado: c.rcv.pendingAcuses ? 'critico' : 'ok' },
+      { titulo: 'Pago cotizaciones PreviRed', fechaLimite: c.nomina.previredOk ? 'Día 13 · Al día' : 'Mora · Ley Bustos', estado: c.nomina.previredOk ? 'ok' : 'critico' },
+      { titulo: 'Declaración y pago F29 SII', fechaLimite: `20/${currentPeriod().iso.slice(5, 7)}/${currentPeriod().iso.slice(0, 4)}`, estado: c.f29.state === 'declarado' || c.f29.state === 'pagado' ? 'ok' : 'proximo' }
+    ];
+    return {
+      estudio: { nombre: state.studioName, contador: getClientOwner(c), pie: `Portal Marca Blanca emitido por ${state.studioName}.` },
+      cliente: { id: c.id, nombre: c.name, rut: c.rut, periodo: currentPeriod().label, cerradoTributario: isPeriodClosed(c) },
+      f29: {
+        ivaDeterminado: ivaDet,
+        retenciones: ret,
+        ppm: c.f29.ppm || 0,
+        totalPagar: f29Total(c),
+        postergadoIva: !!c.f29.postergar,
+        montoPostergado: c.f29.postergar ? ivaDet : 0,
+        remanente: rem,
+        vencimientos: vencs
+      },
+      pnl: { ingresos, costos, gastos, resultado: ingresos - costos - gastos },
+      laboral: { cantidadTrabajadores: workers.length, totalHaberes: totalHab, totalLiquido: totalLiq, totalCostoEmpresa: totalCosto, trabajadores: workers },
+      secciones: { buzon: true },
+      vence: ''
+    };
+  }
+
+  function savePortalSnapshot(c) {
+    try {
+      const snap = buildPortalSnapshot(c);
+      const json = JSON.stringify(snap);
+      localStorage.setItem('cl_portal_estudio_preview', json);
+      localStorage.setItem('cl_portal_demo_' + c.id, json);
+    } catch (_) {}
+  }
+
+  function copyTextRobust(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        } catch (_) {}
+      });
+      return;
+    }
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    } catch (_) {}
+  }
+
   function emitDocument(docType, c) {
     if (docType === 'copy-portal') {
-      const url = `${window.location.origin}/portal-estudio?cliente=${encodeURIComponent(c.id)}`;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).catch(() => {});
-      }
-      toast(`Enlace de Portal sin clave copiado: /portal-estudio?cliente=${c.id}`);
+      savePortalSnapshot(c);
+      const url = `${window.location.origin}/portal-estudio?cliente=${encodeURIComponent(c.id)}&preview=1`;
+      state.lastPortalUrl = url;
+      copyTextRobust(url);
+      toast(`Enlace de Portal copiado para ${c.name}`);
+      if (state.level === 'studio' && state.studioView === 'conexiones') renderStudioConexiones();
       return;
     }
     const D = window.CLSuiteV2Docs;
@@ -4503,6 +4594,17 @@
     if (t.dataset.mcpQuery) {
       state.mcpDemoOutput = runMcpDemoQuery(t.dataset.mcpQuery);
       renderStudioConexiones();
+      return;
+    }
+    if (t.dataset.openPortalId) {
+      const targetC = state.clients.find((x) => x.id === t.dataset.openPortalId) || getClient();
+      if (targetC) {
+        savePortalSnapshot(targetC);
+        const url = `${window.location.origin}/portal-estudio?cliente=${encodeURIComponent(targetC.id)}&preview=1`;
+        state.lastPortalUrl = url;
+        window.open(url, '_blank', 'noopener');
+        toast(`Portal Cliente abierto para ${targetC.name}`);
+      }
       return;
     }
     if (t.dataset.copyPortalId) {
