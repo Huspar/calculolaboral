@@ -1,7 +1,5 @@
-/*
- * Cálculo Laboral · bloque que promociona el Asistente Laboral Pyme dentro de las páginas (v1.0.0, 14-oct-2026)
- * Lo inserta tools/promo_asistente.js. Panel verde bosque con el botón ámbar de la marca, sin degradados.
- */
+/* Hallmark · built: the project · theme: brand · redesign: restyle · genre: modern-minimal */
+/* Bloque promocional Asistente Laboral Pyme: panel verde bosque con botón ámbar de marca. */
 .cl-asistente {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -9,35 +7,39 @@
     align-items: center;
     margin: 2.5rem 0;
     padding: 1.5rem 1.75rem;
-    background-color: #00382E;
-    color: #ffffff;
+    background-color: var(--cl-forest);
+    color: var(--cl-on-dark);
     border-radius: 1.25rem;
 }
-.cl-asistente p { margin: 0 !important; max-width: 46rem; font-size: 0.95rem; line-height: 1.6; color: rgba(255, 255, 255, 0.86) !important; }
-.cl-asistente .cl-asistente-kicker { margin-bottom: 0.4rem !important; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.01em; color: #FFB703 !important; }
-.cl-asistente .cl-asistente-titulo { margin-bottom: 0.4rem !important; font-size: 1.2rem; font-weight: 800; line-height: 1.25; letter-spacing: -0.01em; color: #ffffff !important; }
+.cl-asistente p { margin: 0 !important; max-width: 46rem; font-size: 0.95rem; line-height: 1.6; color: var(--cl-on-dark-86) !important; }
+.cl-asistente .cl-asistente-kicker { margin-bottom: 0.4rem !important; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.01em; color: var(--cl-amber) !important; }
+.cl-asistente .cl-asistente-titulo { margin-bottom: 0.4rem !important; font-size: 1.2rem; font-weight: 800; line-height: 1.25; letter-spacing: -0.01em; color: var(--cl-on-dark) !important; }
 .cl-asistente.cl-asistente-grande { padding: 2rem 2.25rem; }
 .cl-asistente .cl-asistente-titulo { margin-top: 0; }
 .cl-asistente h2.cl-asistente-titulo { margin: 0; font-size: 1.6rem; max-width: 40rem; }
 .cl-asistente-grande .cl-asistente-titulo { margin-bottom: 0.6rem !important; }
 .cl-asistente-lista { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.4rem; }
-.cl-asistente-lista li { position: relative; padding-left: 1.2rem; font-size: 0.92rem; line-height: 1.5; color: rgba(255, 255, 255, 0.92); }
-.cl-asistente-lista li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 0.5rem; height: 0.5rem; border-radius: 50%; background-color: #FFB703; }
+.cl-asistente-lista li { position: relative; padding-left: 1.2rem; font-size: 0.92rem; line-height: 1.5; color: var(--cl-on-dark-92); }
+.cl-asistente-lista li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 0.5rem; height: 0.5rem; border-radius: 50%; background-color: var(--cl-amber); }
 .cl-asistente-acciones { display: flex; flex-direction: column; align-items: stretch; gap: 0.65rem; min-width: 14rem; }
 .cl-asistente a.cl-asistente-btn {
     display: inline-flex; align-items: center; justify-content: center;
-    padding: 0.8rem 1.35rem; border-radius: 999px;
-    background-color: #FFB703; color: #00382E !important;
+    min-height: 44px;
+    padding: 0.8rem 1.35rem; border-radius: var(--cl-radius-pill, 999px);
+    background-color: var(--cl-amber); color: var(--cl-forest) !important;
     font-size: 0.92rem; font-weight: 700; text-decoration: none !important;
     transition: background-color 0.18s ease, transform 0.12s ease;
 }
-.cl-asistente a.cl-asistente-btn:hover { background-color: #ffc933; }
+.cl-asistente a.cl-asistente-btn:hover { background-color: var(--cl-amber-light); }
 .cl-asistente a.cl-asistente-btn:active { transform: scale(0.98); }
-.cl-asistente a.cl-asistente-link { text-align: center; font-size: 0.9rem; font-weight: 600; color: #ffffff !important; text-decoration: underline !important; text-underline-offset: 3px; }
-.cl-asistente a.cl-asistente-link:hover { color: #FFB703 !important; }
-.cl-asistente a:focus-visible { outline: 2px solid #FFB703; outline-offset: 3px; }
+.cl-asistente a.cl-asistente-link { text-align: center; font-size: 0.9rem; font-weight: 600; color: var(--cl-on-dark) !important; text-decoration: underline !important; text-underline-offset: 3px; }
+.cl-asistente a.cl-asistente-link:hover { color: var(--cl-amber) !important; }
+.cl-asistente a:focus-visible { outline: 2px solid var(--cl-amber); outline-offset: 3px; }
 @media (max-width: 720px) {
     .cl-asistente { grid-template-columns: minmax(0, 1fr); padding: 1.25rem; margin: 2rem 0; }
     .cl-asistente-acciones { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cl-asistente a.cl-asistente-btn { transition: none; }
 }
 @media print { .cl-asistente { display: none !important; } }

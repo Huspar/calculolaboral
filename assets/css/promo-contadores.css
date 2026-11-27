@@ -1,17 +1,18 @@
+/* Hallmark · built: the project · theme: brand · redesign: restyle · genre: modern-minimal */
 /* Bloque discreto hacia Suite Contadores: sin gradientes ni sombras pesadas. */
 .cl-suite {
     margin: 2rem auto 1.25rem;
     max-width: 860px;
     padding: 1.2rem 1.4rem;
-    border-radius: 1rem;
-    background: #FFFFFF;
-    border: 1.5px solid #00382E;
+    border-radius: var(--cl-radius-card, 1rem);
+    background: var(--cl-surface);
+    border: 1.5px solid var(--cl-forest);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 1rem 1.5rem;
-    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-family: var(--cl-font-sans);
 }
 .cl-suite-cuerpo {
     flex: 1 1 320px;
@@ -21,20 +22,20 @@
     margin: 0 0 .35rem !important;
     font-size: .78rem;
     font-weight: 700;
-    color: #00382E;
+    color: var(--cl-forest);
 }
 .cl-suite-titulo {
     margin: 0 0 .3rem !important;
     font-size: 1.08rem;
     font-weight: 800;
     line-height: 1.28;
-    color: #0f172a;
+    color: var(--cl-ink-heading);
 }
 .cl-suite p {
     margin: 0 !important;
     font-size: .92rem;
     line-height: 1.55;
-    color: #334155;
+    color: var(--cl-ink-2);
 }
 .cl-suite-acciones {
     display: flex;
@@ -49,21 +50,21 @@
     justify-content: center;
     min-height: 44px;
     padding: .7rem 1.2rem;
-    border-radius: 999px;
-    background: #00382E;
-    color: #FFFFFF !important;
+    border-radius: var(--cl-radius-pill, 999px);
+    background: var(--cl-forest);
+    color: var(--cl-on-dark) !important;
     font-size: .9rem;
     font-weight: 700;
     text-decoration: none !important;
     white-space: nowrap;
 }
 .cl-suite-btn:hover {
-    background: #00261F;
-    color: #FFFFFF !important;
+    background: var(--cl-forest-deep);
+    color: var(--cl-on-dark) !important;
 }
 .cl-suite-btn:focus-visible,
 .cl-suite-link:focus-visible {
-    outline: 2px solid #00382E;
+    outline: 2px solid var(--cl-forest);
     outline-offset: 2px;
 }
 .cl-suite-link {
@@ -73,13 +74,13 @@
     padding: .45rem .35rem;
     font-size: .88rem;
     font-weight: 700;
-    color: #00382E;
+    color: var(--cl-forest);
     text-decoration: underline;
     text-underline-offset: 2px;
     white-space: nowrap;
 }
 .cl-suite-link:hover {
-    color: #00261F;
+    color: var(--cl-forest-deep);
 }
 @media (max-width: 760px) {
     .cl-suite {

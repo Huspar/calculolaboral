@@ -274,7 +274,7 @@ window.addEventListener('load', function () {
 
     .ls-hero { padding-bottom: 1.75rem; border-bottom: 1px solid #e2e8f0; margin-bottom: 1.75rem; }
     .ls-kicker { display: inline-block; font-size: .82rem; font-weight: 700; letter-spacing: .01em; color: #00382E; background: #e8f0ee; border-radius: 999px; padding: .3rem .75rem; margin: 0 0 1rem; }
-    .ls-h1 { font-size: clamp(1.65rem, 3.6vw, 2.2rem); max-width: 34ch; line-height: 1.12; font-weight: 800; letter-spacing: -.025em; color: #0f172a; margin: 0 0 1rem; text-wrap: balance; }
+    .ls-h1 { font-size: var(--cl-text-h1, clamp(2.1rem, 4.2vw, 3.1rem)); max-width: 28ch; line-height: 1.1; font-weight: 800; letter-spacing: -.025em; color: var(--cl-ink-heading, #0f172a); margin: 0 0 1rem; text-wrap: balance; }
     .ls-lead { font-size: 1.05rem; line-height: 1.65; color: #475569; margin: 0 0 1.35rem; max-width: 48rem; }
     .ls-hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-bottom: 1rem; }
     .ls-meta { font-size: .82rem; line-height: 1.55; color: #475569; margin: .4rem 0 0; }
@@ -295,7 +295,7 @@ window.addEventListener('load', function () {
     .ls-toc a:hover { color: #00382E; text-decoration: underline; }
 
     .ls-section { margin-bottom: 2.75rem; scroll-margin-top: 6rem; }
-    .ls-article h2 { font-size: clamp(1.35rem, 3vw, 1.7rem); line-height: 1.2; font-weight: 800; letter-spacing: -.02em; color: #0f172a; margin: 0 0 .9rem; text-wrap: balance; }
+    .ls-article h2 { font-size: var(--cl-text-h2, clamp(1.65rem, 3vw, 2.5rem)); line-height: 1.18; font-weight: 800; letter-spacing: -.02em; color: var(--cl-ink-heading, #0f172a); margin: 0 0 .9rem; text-wrap: balance; }
     .ls-article p { line-height: 1.7; margin: 0 0 1rem; }
     .ls-article a:not(.ls-btn) { color: #0f5e4f; font-weight: 600; text-decoration: underline; text-decoration-color: rgba(15,94,79,.3); text-underline-offset: 2px; }
     .ls-note { font-size: .88rem; color: #475569; }

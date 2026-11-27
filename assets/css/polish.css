@@ -1,30 +1,23 @@
+/* Hallmark · built: the project · theme: brand · redesign: restyle · genre: modern-minimal */
+@import url('/assets/css/tokens.css');
+
 /*
  * CalculoLaboral · capa compartida de pulido (Fase 1)
  * Se carga despues del <style> de cada pagina: superficies del navegador,
  * foco, feedback tactil y el lenguaje de movimiento comun.
  */
 
-:root {
-    --cl-forest: #00382E;
-    --cl-forest-600: #0F5E4F;
-    --cl-forest-700: #064A3E;
-    --cl-amber: #FFB703;
-    --cl-ink: #111827;
-    --cl-canvas: #F8FAF9;
-    --cl-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --cl-ease-ui: cubic-bezier(0.2, 0, 0, 1);
-}
 
 /* ---------- Superficies del navegador ---------- */
 
 ::selection {
-    background-color: rgba(255, 183, 3, 0.4);
+    background-color: var(--cl-selection-bg);
     color: var(--cl-ink);
 }
 
 .teal-footer-curve ::selection,
 .cl-forest-panel ::selection {
-    background-color: rgba(255, 183, 3, 0.85);
+    background-color: var(--cl-selection-dark-bg);
     color: var(--cl-forest);
 }
 
@@ -42,8 +35,8 @@ progress {
 }
 
 html {
-    scrollbar-color: #A9BDB6 transparent;
-    -webkit-tap-highlight-color: rgba(0, 56, 46, 0.08);
+    scrollbar-color: var(--cl-scroll-thumb) transparent;
+    -webkit-tap-highlight-color: var(--cl-tap-highlight);
 }
 
 @media (pointer: fine) {
@@ -61,14 +54,14 @@ html {
     }
 
     ::-webkit-scrollbar-thumb {
-        background-color: #A9BDB6;
+        background-color: var(--cl-scroll-thumb);
         border: 3px solid transparent;
         border-radius: 999px;
         background-clip: content-box;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background-color: #6F8F85;
+        background-color: var(--cl-scroll-thumb-hover);
     }
 }
 
@@ -112,7 +105,7 @@ article li a:not([class*="btn"]):not([class*="pill"]),
 .prose-content a:not([class*="btn"]):not([class*="pill"]) {
     text-underline-offset: 0.2em;
     text-decoration-thickness: 1px;
-    text-decoration-color: rgba(15, 94, 79, 0.45);
+    text-decoration-color: var(--cl-link-underline);
     transition: color 150ms var(--cl-ease-ui), text-decoration-color 150ms var(--cl-ease-ui);
 }
 
@@ -135,7 +128,7 @@ article li a:not([class*="btn"]):not([class*="pill"]):hover,
 .cl-mark {
     padding: 0 0.16em;
     margin: 0 -0.16em;
-    background-image: linear-gradient(transparent 60%, rgba(255, 183, 3, 0.55) 60%, rgba(255, 183, 3, 0.55) 90%, transparent 90%);
+    background-image: linear-gradient(transparent 60%, var(--cl-mark-bg) 60%, var(--cl-mark-bg) 90%, transparent 90%);
     background-repeat: no-repeat;
     background-size: 100% 100%;
     -webkit-box-decoration-break: clone;
@@ -203,8 +196,8 @@ main details[open] > :not(summary) {
 /* ---------- Paneles verde bosque (reemplazan degradados) ---------- */
 
 .cl-forest-panel {
-    background-image: radial-gradient(120% 140% at 100% 0%, rgba(255, 183, 3, 0.10), transparent 55%),
-        linear-gradient(160deg, #00382E 0%, #00261F 100%);
+    background-image: radial-gradient(120% 140% at 100% 0%, var(--cl-amber-glow), transparent 55%),
+        linear-gradient(160deg, var(--cl-forest) 0%, var(--cl-forest-deep) 100%);
 }
 
 /* =====================================================================
@@ -248,7 +241,7 @@ main h3 {
     align-items: center;
     gap: 0.375rem;
     text-decoration: underline;
-    text-decoration-color: rgba(6, 74, 62, 0.35);
+    text-decoration-color: var(--cl-link-underline-deep);
     text-underline-offset: 0.2em;
     transition: color 150ms var(--cl-ease-ui), text-decoration-color 150ms var(--cl-ease-ui);
 }
@@ -272,7 +265,7 @@ main h3 {
 .cl-calcnav {
     position: relative;
     margin: 1.75rem 0 2rem;
-    border-bottom: 1px solid #E2E8E5;
+    border-bottom: 1px solid var(--cl-rule-soft);
 }
 
 .cl-calcnav-track {
@@ -295,7 +288,7 @@ main h3 {
     min-height: 44px;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #4B5563;
+    color: var(--cl-muted);
     white-space: nowrap;
     transition: color 150ms var(--cl-ease-ui);
 }
@@ -307,7 +300,7 @@ main h3 {
     bottom: -1px;
     height: 2px;
     border-radius: 2px 2px 0 0;
-    background-color: #C9D6D1;
+    background-color: var(--cl-rule-mid);
     transform: scaleX(0);
     transform-origin: left center;
     transition: transform 220ms var(--cl-ease-out), background-color 150ms var(--cl-ease-ui);
@@ -342,7 +335,7 @@ main h3 {
         bottom: 1px;
         width: 2.5rem;
         pointer-events: none;
-        background: linear-gradient(to right, rgba(248, 250, 249, 0), var(--cl-canvas));
+        background: linear-gradient(to right, var(--cl-canvas-fade), var(--cl-canvas));
     }
 }
 
@@ -356,8 +349,8 @@ main h3 {
     max-width: 56rem;
     margin: 2.5rem auto;
     padding: 1rem;
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
+    background-color: var(--cl-surface);
+    border: 1px solid var(--cl-rule);
     border-radius: 1rem;
 }
 
@@ -372,7 +365,7 @@ main h3 {
 .cl-sponsor-label {
     margin-bottom: 0.25rem;
     font-size: 0.75rem;
-    color: #6B7280;
+    color: var(--cl-muted-2);
 }
 
 .cl-sponsor-body > a {
@@ -405,8 +398,8 @@ main h3 {
     gap: 0.75rem;
     margin: 0.5rem 0 2rem;
     padding: 0.875rem 0;
-    border-top: 1px solid #E5E7EB;
-    border-bottom: 1px solid #E5E7EB;
+    border-top: 1px solid var(--cl-rule);
+    border-bottom: 1px solid var(--cl-rule);
 }
 
 .cl-trust-icon {
@@ -436,9 +429,9 @@ main h3 {
 .cl-cover-frame {
     overflow: hidden;
     border-radius: 1rem;
-    outline: 1px solid rgba(0, 0, 0, 0.06);
+    outline: 1px solid var(--cl-outline-subtle);
     outline-offset: -1px;
-    background-color: #EEF6F3;
+    background-color: var(--cl-forest-50);
 }
 
 .cl-cover,
@@ -471,15 +464,15 @@ main h3 {
     margin-top: 0.875rem;
     font-size: 1.0625rem;
     line-height: 1.6;
-    color: #4B5563;
+    color: var(--cl-muted);
 }
 
 .cl-feature,
 .cl-post {
     display: block;
     color: inherit;
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
+    background-color: var(--cl-surface);
+    border: 1px solid var(--cl-rule);
     border-radius: 1.25rem;
     overflow: hidden;
     transition: border-color 200ms var(--cl-ease-ui), box-shadow 300ms var(--cl-ease-out), translate 300ms var(--cl-ease-out);
@@ -487,8 +480,8 @@ main h3 {
 
 .cl-feature:hover,
 .cl-post:hover {
-    border-color: #ADD6C9;
-    box-shadow: 0 12px 32px -16px rgba(0, 56, 46, 0.28);
+    border-color: var(--cl-rule-hover);
+    box-shadow: var(--cl-shadow-hover);
     translate: 0 -2px;
 }
 
@@ -496,7 +489,7 @@ main h3 {
 .cl-post figure {
     margin: 0;
     overflow: hidden;
-    background-color: #EEF6F3;
+    background-color: var(--cl-forest-50);
 }
 
 .cl-feature figure img,
@@ -549,7 +542,7 @@ main h3 {
     margin-top: 0.875rem;
     font-size: 1rem;
     line-height: 1.6;
-    color: #4B5563;
+    color: var(--cl-muted);
 }
 
 .cl-feature-cta {
@@ -617,7 +610,7 @@ main h3 {
     margin-top: 0.5rem;
     font-size: 0.9375rem;
     line-height: 1.55;
-    color: #4B5563;
+    color: var(--cl-muted);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -637,7 +630,7 @@ main h3 {
     margin: 0 0 1.25rem;
     overflow: hidden;
     border-radius: 0.75rem;
-    background-color: #EEF6F3;
+    background-color: var(--cl-forest-50);
 }
 
 /* ---------- Home: catalogo como indice editorial ----------
@@ -659,7 +652,7 @@ main h3 {
     position: relative;
     background: transparent !important;
     border: 0 !important;
-    border-top: 1px solid #D5DED9 !important;
+    border-top: 1px solid var(--cl-rule-strong) !important;
     border-radius: 0 !important;
     box-shadow: none !important;
     padding: 1.25rem 0 1.5rem !important;
@@ -778,7 +771,7 @@ main h3 {
 
 .cl-group-desc {
     font-size: 0.875rem;
-    color: #6B7280;
+    color: var(--cl-muted-2);
 }
 
 /* Recursos gratuitos del hero: enlaces de texto, no pildoras */
@@ -792,14 +785,14 @@ main h3 {
 }
 
 .cl-quicklinks span {
-    color: #6B7280;
+    color: var(--cl-muted-2);
 }
 
 .cl-quicklinks a {
     font-weight: 600;
     color: var(--cl-forest-600);
     text-decoration: underline;
-    text-decoration-color: rgba(15, 94, 79, 0.3);
+    text-decoration-color: var(--cl-link-underline-soft);
     text-underline-offset: 0.2em;
     transition: color 150ms var(--cl-ease-ui), text-decoration-color 150ms var(--cl-ease-ui);
 }
@@ -827,18 +820,18 @@ main h3 {
 }
 
 .cta-lead-btn:hover {
-    background-color: #FFAA00 !important;
+    background-color: var(--cl-amber-hover) !important;
 }
 
 /* Botones de documento sobre verde: el texto va en blanco */
 .btn-yellow-pill.doc-btn-sky,
 .btn-yellow-pill.doc-btn-sky span {
-    color: #FFFFFF !important;
+    color: var(--cl-surface) !important;
 }
 
 /* Subtitulos de modos inactivos en vacaciones (la clase la cambia el JS de la pagina) */
 [id^="tab-sub-"].text-slate-400 {
-    color: #64748B !important;
+    color: var(--cl-muted-slate) !important;
 }
 
 /* ---------- Piso tipografico de 12px para etiquetas definidas por pagina ---------- */
@@ -866,7 +859,7 @@ div[style*="teal-forest-deep"] .font-mono-num > span {
 @media print {
     html,
     body {
-        background: #FFFFFF !important;
+        background: var(--cl-surface) !important;
     }
 
     /* Plantillas antiguas: el informe vigente es #print-section (js/print_brand.js) */
@@ -921,7 +914,7 @@ div[style*="teal-forest-deep"] .font-mono-num > span {
  * el verde; al 62% llega a 5,9:1 (AA). Se ajusta aquí para que aplique igual
  * en todas las páginas sin tocar el bloque del pie. */
 .teal-footer-curve .text-white\/50 {
-    color: rgba(255, 255, 255, 0.62);
+    color: var(--cl-on-dark-62);
 }
 
 /* ---------- Objetivos tactiles de 44px (WCAG 2.5.8) ---------- */
@@ -982,13 +975,13 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-    outline: 2px solid var(--teal-forest, #00382E);
+    outline: 2px solid var(--cl-forest);
     outline-offset: 2px;
 }
 
 .teal-footer-curve a:focus-visible,
 .teal-footer-curve button:focus-visible {
-    outline-color: var(--teal-yellow, #FFB703);
+    outline-color: var(--cl-amber);
 }
 
 .teal-footer-curve .uppercase.tracking-wider {

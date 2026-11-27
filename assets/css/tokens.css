@@ -1,0 +1,87 @@
+/* Hallmark · built: the project · theme: brand · redesign: restyle · genre: modern-minimal */
+/* Hallmark · pre-emit critique: P5 H4 E5 S5 R5 V4 · weakest: H, marketing H2 scale varied across pages; unified via tokens */
+/*
+ * CálculoLaboral · Sistema de tokens único (marca oficial)
+ * Identidad: verde bosque #00382E, esmeralda #0F5E4F, ámbar #FFB703, Geist y Geist Mono.
+ */
+
+:root {
+  /* Marca */
+  --cl-forest: #00382E;
+  --cl-forest-hover: #002820;
+  --cl-forest-deep: #00261F;
+  --cl-forest-700: #064A3E;
+  --cl-forest-600: #0F5E4F;
+  --cl-forest-50: #EEF6F3;
+  --cl-forest-100: #D6EBE4;
+
+  --cl-amber: #FFB703;
+  --cl-amber-hover: #FFAA00;
+  --cl-amber-light: #FFC933;
+  --cl-amber-soft: #FFF3CF;
+  --cl-amber-border: #F1D58A;
+  --cl-amber-ink: #5B4300;
+  --cl-amber-ink-strong: #3D2D00;
+  --cl-amber-tag: #6B5A1E;
+
+  /* Superficies y tintas */
+  --cl-surface: #FFFFFF;
+  --cl-canvas: #F8FAF9;
+  --cl-surface-muted: #F4F7F6;
+  --cl-ink: #111827;
+  --cl-ink-heading: #0F172A;
+  --cl-ink-2: #334155;
+  --cl-ink-label: #374151;
+  --cl-muted: #4B5563;
+  --cl-muted-2: #6B7280;
+  --cl-muted-slate: #64748B;
+  --cl-rule: #E5E7EB;
+  --cl-rule-soft: #E2E8E5;
+  --cl-rule-mid: #C9D6D1;
+  --cl-rule-strong: #D5DED9;
+  --cl-rule-hover: #ADD6C9;
+  --cl-canvas-fade: rgba(248, 250, 249, 0);
+  --cl-outline-subtle: rgba(0, 0, 0, 0.06);
+  --cl-shadow-hover: 0 12px 32px -16px rgba(0, 56, 46, 0.28);
+  --cl-mark-bg: rgba(255, 183, 3, 0.55);
+  --cl-amber-glow: rgba(255, 183, 3, 0.10);
+  --cl-link-underline-soft: rgba(15, 94, 79, 0.3);
+  --cl-link-underline-deep: rgba(6, 74, 62, 0.35);
+
+  /* Texto sobre fondo oscuro */
+  --cl-on-dark: #FFFFFF;
+  --cl-on-dark-92: rgba(255, 255, 255, 0.92);
+  --cl-on-dark-86: rgba(255, 255, 255, 0.86);
+  --cl-on-dark-62: rgba(255, 255, 255, 0.62);
+  --cl-on-dark-muted: #A9C4BC;
+
+  /* Estado y acentos de interfaz */
+  --cl-risk: #BE123C;
+  --cl-risk-bg: #FFF1F2;
+  --cl-scroll-thumb: #A9BDB6;
+  --cl-scroll-thumb-hover: #6F8F85;
+  --cl-selection-bg: rgba(255, 183, 3, 0.4);
+  --cl-selection-dark-bg: rgba(255, 183, 3, 0.85);
+  --cl-tap-highlight: rgba(0, 56, 46, 0.08);
+  --cl-link-underline: rgba(15, 94, 79, 0.45);
+  --cl-shadow-card: 0 1px 2px rgba(0, 56, 46, 0.04), 0 18px 40px -28px rgba(0, 56, 46, 0.35);
+
+  /* Tipografía y escala */
+  --cl-font-sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --cl-font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
+  --cl-text-h1: clamp(2.1rem, 4.2vw, 3.2rem);
+  --cl-text-h2: clamp(1.65rem, 3vw, 2.5rem);
+
+  /* Movimiento y radios */
+  --cl-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --cl-ease-ui: cubic-bezier(0.2, 0, 0, 1);
+  --cl-radius-card: 16px;
+  --cl-radius-pill: 999px;
+
+  /* Compatibilidad con variables históricas */
+  --teal-forest: var(--cl-forest);
+  --teal-forest-hover: var(--cl-forest-hover);
+  --teal-forest-deep: var(--cl-forest-deep);
+  --teal-yellow: var(--cl-amber);
+  --teal-yellow-hover: var(--cl-amber-hover);
+}
