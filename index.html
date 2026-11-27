@@ -914,6 +914,7 @@ window.addEventListener('load', function () {
             <a href="calculadora-despido-articulo-160" class="block text-sm font-semibold text-slate-700">Despido Art. 160</a>
             <a href="generador-contrato-trabajo-chile" class="block text-sm font-semibold text-slate-700">Generador de Contrato</a>
             <a href="blog" class="block text-sm font-semibold text-slate-700">Blog de Guías Laborales</a>
+            <a href="suite-contadores" class="block text-sm font-bold text-[#00382E]">Suite Contadores</a>
             <div class="pt-2">
                 <a href="para-empleadores" class="btn-outline-pill w-full !text-xs text-center justify-center">Portal Empleadores</a>
             </div>
@@ -935,11 +936,11 @@ window.addEventListener('load', function () {
     <style>
         /* Portada: texto + abanico de calculadoras (js/home_fan.js). Clases propias: el CSS precompilado de Tailwind no trae las nuevas. */
         .clf-hero { padding: 2rem 0 2.5rem; overflow-x: clip; }
-        .clf-grid { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "fan" "actions"; gap: 1.25rem; }
+        .clf-grid { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "actions" "fan"; gap: 1.25rem; }
         .clf-left { display: contents; }
         .clf-copy { grid-area: copy; order: 1; display: grid; gap: 0.875rem; justify-items: start; min-width: 0; }
-        .clf-fanwrap { grid-area: fan; order: 2; display: grid; gap: 0.625rem; justify-items: center; min-width: 0; }
-        .clf-actions { grid-area: actions; order: 3; display: grid; gap: 1rem; justify-items: start; min-width: 0; }
+        .clf-actions { grid-area: actions; order: 2; display: grid; gap: 0.875rem; justify-items: start; min-width: 0; }
+        .clf-fanwrap { grid-area: fan; order: 3; display: grid; gap: 0.625rem; justify-items: center; min-width: 0; }
         .clf-h1 { margin: 0; color: var(--teal-forest); font-weight: 800; font-size: 2.25rem; line-height: 1.06; letter-spacing: -0.035em; text-wrap: balance; }
         .clf-lead { margin: 0; font-size: 1.02rem; line-height: 1.55; color: #4B5563; max-width: 36ch; }
         .clf-ctas { display: flex; flex-wrap: wrap; gap: 0.625rem; width: 100%; }
@@ -970,18 +971,19 @@ window.addEventListener('load', function () {
         .clf-card.clf-o3 { opacity: 0; pointer-events: none; }
         @media (hover: hover) { .clf-card:not(.is-active):hover { translate: 0 -18px; } }
         .clf-top { display: flex; align-items: center; justify-content: space-between; }
-        .clf-ico { width: 36px; height: 36px; border-radius: 10px; background: #EEF6F3; color: var(--teal-forest); display: flex; align-items: center; justify-content: center; }
+        .clf-ico { width: 24px; height: 24px; color: var(--cl-forest, #00382E); display: flex; align-items: center; justify-content: center; }
         .clf-ico .material-icons { font-size: 20px; }
-        .clf-tag { font-size: 0.75rem; font-weight: 600; color: #4B5563; border: 1px solid #E2E8F0; border-radius: 9999px; padding: 3px 8px; }
-        .clf-k { display: block; font-size: 0.75rem; font-weight: 600; color: #064A3E; margin-top: 0.25rem; }
-        .clf-n { display: block; margin-top: -0.4rem; font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
-        .clf-r { font-family: 'Geist Mono', monospace; font-variant-numeric: tabular-nums; font-size: 1.4rem; font-weight: 700; color: var(--teal-forest); letter-spacing: -0.02em; line-height: 1.1; }
-        .clf-r span { background-image: linear-gradient(transparent 58%, rgba(255, 183, 3, 0.5) 58%, rgba(255, 183, 3, 0.5) 92%, transparent 92%); padding: 0 2px; }
-        .clf-r small { display: block; font-family: 'Geist', sans-serif; font-size: 0.75rem; font-weight: 500; color: #6B7280; letter-spacing: 0; margin-bottom: 3px; }
-        .clf-d { margin: 0; font-size: 0.8rem; line-height: 1.45; color: #4B5563; }
-        .clf-go { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 0.375rem; padding: 0.55rem 0.875rem; border-radius: 9999px; background: #EEF6F3; color: var(--teal-forest); font-size: 0.8rem; font-weight: 700; transition: background 0.3s, color 0.3s; }
+        .clf-tag { font-size: 0.78rem; font-weight: 500; color: var(--cl-muted-2, #6B7280); }
+        .clf-k { display: block; font-size: 0.78rem; font-weight: 600; color: var(--cl-forest-600, #0F5E4F); margin-top: 0.15rem; }
+        .clf-n { display: block; margin-top: -0.35rem; font-size: 1.14rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; color: var(--cl-ink, #111827); }
+        .clf-r { font-family: var(--cl-font-mono, 'Geist Mono', monospace); font-variant-numeric: tabular-nums; font-size: 1.45rem; font-weight: 700; color: var(--cl-forest, #00382E); letter-spacing: -0.02em; line-height: 1.1; }
+        .clf-r span { padding: 0; }
+        .clf-r small { display: block; font-family: var(--cl-font-sans, 'Geist', sans-serif); font-size: 0.78rem; font-weight: 500; color: var(--cl-muted-2, #6B7280); letter-spacing: 0; margin-bottom: 3px; }
+        .clf-d { margin: 0; font-size: 0.82rem; line-height: 1.45; color: var(--cl-muted, #4B5563); }
+        .clf-go { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 0.375rem; padding: 0.55rem 0.9rem; border-radius: 9999px; border: 1px solid var(--cl-rule, #E5E7EB); background: var(--cl-canvas, #F8FAF9); color: var(--cl-forest, #00382E); font-size: 0.82rem; font-weight: 700; transition: background-color 0.2s, border-color 0.2s, color 0.2s; }
         .clf-go .material-icons { font-size: 1rem; }
-        .clf-card.is-active .clf-go { background: var(--teal-forest); color: #FFFFFF; }
+        .clf-card.is-active .clf-go { background: var(--cl-surface, #FFFFFF); border-color: var(--cl-forest, #00382E); color: var(--cl-forest, #00382E); }
+        .clf-card.is-active:hover .clf-go { background: var(--cl-forest-50, #EEF6F3); }
         .clf-bars { display: flex; align-items: flex-end; gap: 7px; height: 64px; padding-top: 4px; }
         .clf-bars div { display: grid; justify-items: center; gap: 3px; }
         .clf-bars i { display: block; width: 22px; border-radius: 5px 5px 2px 2px; background: var(--teal-forest); }
@@ -1060,7 +1062,7 @@ window.addEventListener('load', function () {
 
             <div class="clf-left">
             <div class="clf-copy">
-                <h1 id="clf-h1" class="clf-h1">Cálculo laboral <span class="cl-mark">y previsional</span> <span class="cl-mark">en Chile</span></h1>
+                <h1 id="clf-h1" class="clf-h1">Cálculo laboral y previsional en Chile</h1>
                 <p class="clf-lead">Calculadoras y herramientas para trabajadores y pymes, al día con la normativa 2026. Elige una y calcula en menos de un minuto.</p>
             </div>
 
