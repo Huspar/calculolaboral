@@ -392,9 +392,15 @@
   </url>
   <url>
     <loc>https://calculolaboral.cl/conector-mcp-contadores-chile</loc>
-    <lastmod>2026-11-22</lastmod>
+    <lastmod>2026-11-26</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://calculolaboral.cl/migracion-baseapi</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://calculolaboral.cl/calendario-declaraciones-juradas-at-2027-chile</loc>

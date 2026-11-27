@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Alternativa a BaseAPI en Chile (cierre 11 dic 2026): API SII RCV, BHE, F22 y MCP | Cálculo Laboral</title>
+<meta content="Migra desde BaseAPI en la nube antes del 11 de diciembre de 2026. API REST OpenAPI 3.1 y 13 herramientas MCP en servidor propio en Chile para RCV, BHE, F22, DDJJ, TGR y PreviRed sin costo por consulta." name="description"/>
+<link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="/favicon.ico" rel="icon"/>
+<link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+<link href="https://calculolaboral.cl/migracion-baseapi" rel="canonical"/>
+<meta content="Alternativa a BaseAPI en Chile: API SII (RCV, BHE, F22, DDJJ) + 13 tools MCP" property="og:title"/>
+<meta content="Tabla real de equivalencia endpoint por endpoint frente a BaseAPI, guía curl en 4 pasos y acceso gratis para 1–2 empresas en servidor propio en Chile." property="og:description"/>
+<meta content="website" property="og:type"/>
+<meta content="https://calculolaboral.cl/migracion-baseapi" property="og:url"/>
+<meta content="https://calculolaboral.cl/assets/og/default.png" property="og:image"/>
+<meta content="es_CL" property="og:locale"/>
+<meta content="Cálculo Laboral" property="og:site_name"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Alternativa a BaseAPI en Chile: migra RCV, BHE, F22 y DDJJ antes del 11-dic" name="twitter:title"/>
+<meta content="API REST OpenAPI 3.1 + 13 herramientas MCP en servidor propio en Chile sin cobro por consulta." name="twitter:description"/>
+<meta content="https://calculolaboral.cl/assets/og/default.png" name="twitter:image"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://calculolaboral.cl/migracion-baseapi#page",
+      "name": "Migración desde BaseAPI a Cálculo Laboral SII Gateway",
+      "url": "https://calculolaboral.cl/migracion-baseapi",
+      "description": "Guía técnica y tabla de equivalencia real para migrar consultas SII (RCV, BHE, F22, DDJJ, TGR, PreviRed) desde BaseAPI antes del 11 de diciembre de 2026.",
+      "inLanguage": "es-CL",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Cálculo Laboral",
+        "url": "https://calculolaboral.cl"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://calculolaboral.cl/" },
+        { "@type": "ListItem", "position": 2, "name": "Conector MCP y API SII", "item": "https://calculolaboral.cl/conector-mcp-contadores-chile" },
+        { "@type": "ListItem", "position": 3, "name": "Migración desde BaseAPI", "item": "https://calculolaboral.cl/migracion-baseapi" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Puedo emitir facturas o boletas electrónicas (DTE) con esta API?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Nuestro gateway cubre lectura tributaria y laboral (RCV compras y ventas, acuses de 8 días, BHE, F22, DDJJ, TGR y PreviRed), no emisión ni anulación de DTE. Si tu integración emite DTE, te recomendamos el facturador gratuito del SII o un proveedor de facturación electrónica dedicado."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Las consultas son en línea contra el SII como en BaseAPI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Nuestro servidor sincroniza el SII en segundo plano (mediante /sync-range, cron nocturno 24/7 y webhooks firmados) y guarda un espejo en PostgreSQL. Así tus lecturas responden en menos de 100 ms y sin costo por consulta."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuánto cuesta frente a BaseAPI Node self-hosted?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Puedes usar gratis de forma permanente 1 a 2 empresas (con API REST y 13 herramientas MCP) para validar tus flujos. Para carteras más grandes, los planes administrados parten en tarifa plana en CLP sin cobro por llamada y sin que debas mantener tu propio servidor."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=1.0.0">
+<script>
+window.addEventListener('load', function () {
+    var cargar = function () { var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Y03F1WB8J'; document.head.appendChild(s); };
+    if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 3000 }); else setTimeout(cargar, 1500);
+});
+</script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    var esInterno = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+    try {
+        if (/[?&]interno=1/.test(location.search)) localStorage.setItem('cl_interno', '1');
+        if (/[?&]interno=0/.test(location.search)) localStorage.removeItem('cl_interno');
+        if (localStorage.getItem('cl_interno') === '1') esInterno = true;
+    } catch (e) {}
+    gtag('config', 'G-9Y03F1WB8J', esInterno ? { traffic_type: 'internal' } : {});
+</script>
+<link href="/assets/css/style.css?v=3.5.0" rel="stylesheet"/>
+<style>
+    :root {
+        --teal-forest: #00382E;
+        --teal-forest-hover: #002820;
+        --teal-forest-deep: #00261F;
+        --teal-yellow: #FFB703;
+        --teal-yellow-hover: #FFAA00;
+        --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body { overflow-x: hidden; background-color: #F8FAF9; color: #111827; font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    main.site-container { min-width: 0; }
+    .btn-outline-pill:not(.hidden) { display: inline-flex; }
+    .btn-outline-pill {
+        background-color: #FFFFFF; color: #374151 !important; font-weight: 600; border-radius: 9999px;
+        padding: 11px 22px; font-size: 14px; border: 1.5px solid #D1D5DB;
+        align-items: center; justify-content: center; gap: 8px;
+        transition: all 0.2s var(--ease-spring); text-decoration: none; cursor: pointer;
+    }
+    .btn-outline-pill:hover { border-color: var(--teal-forest); color: var(--teal-forest) !important; background-color: #F8FAF9; }
+    .nav-dropdown-menu {
+        opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px);
+        transition: opacity 0.2s var(--ease-spring), transform 0.2s var(--ease-spring), visibility 0.2s;
+    }
+    .nav-dropdown-group:hover .nav-dropdown-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+    .nav-dropdown-group:hover .nav-chevron { transform: rotate(180deg); }
+    .teal-footer-curve {
+        background-color: #00382E; color: #FFFFFF; border-top-left-radius: 40px; border-top-right-radius: 40px;
+        position: relative; overflow: hidden;
+    }
+    .teal-footer-curve .footer-inner-container { max-width: 1240px; margin-left: auto; margin-right: auto; padding-left: 1.5rem; padding-right: 1.5rem; }
+    @media (min-width: 1024px) {
+        .teal-footer-curve { border-top-left-radius: 96px; border-top-right-radius: 0px; }
+        .teal-footer-curve .footer-inner-container { padding-left: 5rem !important; padding-right: 2rem !important; }
+    }
+    .site-container, .max-w-\[1240px\] { max-width: 1240px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important; }
+
+    .mg-wrap { max-width: 960px; width: 100%; min-width: 0; margin: 0 auto; color: #334155; }
+    .mg-crumbs { display: flex; flex-wrap: wrap; gap: .5rem; font-size: .75rem; color: #64748b; margin-bottom: 1.5rem; }
+    .mg-crumbs a { color: #64748b; font-weight: 500; text-decoration: none; }
+    .mg-crumbs a:hover { color: #00382E; }
+    .mg-crumbs [aria-current] { color: #334155; font-weight: 600; }
+    .mg-hero { padding-bottom: 1.75rem; border-bottom: 1px solid #e2e8f0; margin-bottom: 2rem; }
+    .mg-h1 { font-size: clamp(1.65rem, 3.6vw, 2.25rem); max-width: 34ch; line-height: 1.12; font-weight: 800; letter-spacing: -.025em; color: #0f172a; margin: 0 0 1rem; text-wrap: balance; }
+    .mg-lead { font-size: 1.03rem; line-height: 1.65; color: #475569; margin: 0 0 1.35rem; max-width: 50rem; }
+    .mg-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-bottom: 1rem; }
+    .mg-meta { font-size: .83rem; line-height: 1.55; color: #475569; margin: .4rem 0 0; }
+    .mg-btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 44px; font-weight: 700; font-size: .92rem; border-radius: 999px; padding: .75rem 1.35rem; text-decoration: none !important; transition: background-color .18s ease, border-color .18s ease, transform .12s ease; cursor: pointer; }
+    .mg-btn:active { transform: scale(.98); }
+    .mg-btn-primary { background: #00382E; color: #ffffff !important; border: 0; }
+    .mg-btn-primary:hover { background: #00261F; }
+    .mg-btn-ghost { background: #ffffff; color: #00382E !important; border: 1.5px solid #cbd5e1; }
+    .mg-btn-ghost:hover { border-color: #00382E; background: #f8faf9; }
+    .mg-sec { margin-bottom: 2.5rem; scroll-margin-top: 6rem; }
+    .mg-sec h2 { font-size: clamp(1.25rem, 2.6vw, 1.55rem); line-height: 1.2; font-weight: 800; letter-spacing: -.02em; color: #0f172a; margin: 0 0 .85rem; }
+    .mg-sec p { line-height: 1.68; margin: 0 0 1rem; }
+    .mg-honest { background: #FFFFFF; border: 1px solid #cbd5e1; border-left: 4px solid #00382E; border-radius: .75rem; padding: 1.05rem 1.2rem; margin: 1.25rem 0; font-size: .92rem; line-height: 1.6; color: #1e293b; }
+    .mg-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0; }
+    .mg-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.15rem 1.25rem; }
+    .mg-card h3 { margin: 0 0 .45rem; font-size: 1rem; font-weight: 750; color: #0f172a; }
+    .mg-card p, .mg-card li { font-size: .9rem; line-height: 1.55; color: #475569; }
+    .mg-card ul { margin: .35rem 0 0; padding-left: 1.15rem; display: grid; gap: .35rem; }
+    .mg-table-wrap { overflow-x: auto; border: 1px solid #cbd5e1; border-radius: .9rem; background: #ffffff; }
+    .mg-table { width: 100%; border-collapse: collapse; font-size: .86rem; text-align: left; }
+    .mg-table th { background: #f1f5f9; color: #0f172a; font-weight: 700; padding: .75rem .9rem; border-bottom: 1px solid #cbd5e1; }
+    .mg-table td { padding: .72rem .9rem; border-bottom: 1px solid #e2e8f0; vertical-align: top; color: #334155; }
+    .mg-table tr:last-child td { border-bottom: 0; }
+    .mg-table code { font-family: 'Geist Mono', ui-monospace, monospace; font-size: .79rem; color: #00261F; background: #f1f5f9; padding: .1rem .32rem; border-radius: .3rem; }
+    .st-ok { font-weight: 700; color: #00382E; white-space: nowrap; }
+    .st-part { font-weight: 700; color: #92400e; white-space: nowrap; }
+    .st-no { font-weight: 600; color: #64748b; white-space: nowrap; }
+    .mg-code { background: #0f172a; color: #e2e8f0; border-radius: .85rem; padding: 1rem 1.15rem; font-family: 'Geist Mono', ui-monospace, monospace; font-size: .8rem; line-height: 1.6; overflow-x: auto; white-space: pre; }
+    .mg-form-box { background: #ffffff; border: 2px solid #00382E; border-radius: 1rem; padding: 1.35rem 1.45rem; }
+    .mg-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; margin-top: 1rem; }
+    .mg-label { display: block; font-size: .8rem; font-weight: 600; color: #334155; margin-bottom: .3rem; }
+    .mg-input { width: 100%; padding: .62rem .8rem; border: 1px solid #cbd5e1; border-radius: .65rem; font-size: .9rem; background: #f8fafc; color: #0f172a; }
+    .mg-input:focus { outline: none; background: #ffffff; border-color: #00382E; box-shadow: 0 0 0 3px rgba(0, 56, 46, .14); }
+    .mg-faq { display: grid; gap: .7rem; }
+    .mg-faq details { background: #ffffff; border: 1px solid #e2e8f0; border-radius: .9rem; padding: .95rem 1.15rem; }
+    .mg-faq summary { font-weight: 700; font-size: .96rem; color: #0f172a; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+    .mg-faq summary::-webkit-details-marker { display: none; }
+    .mg-faq summary::after { content: '+'; font-size: 1.2rem; color: #64748b; }
+    .mg-faq details[open] summary::after { content: '−'; }
+    .mg-faq details p { margin: .65rem 0 0; font-size: .92rem; color: #475569; }
+    @media (max-width: 768px) {
+        .mg-grid-2, .mg-form-grid { grid-template-columns: 1fr; }
+        .mg-actions .mg-btn { flex: 1 1 100%; }
+    }
+</style>
+<link rel="stylesheet" href="/assets/css/polish.css?v=1.8.0">
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- 1. TOP TICKER: Live Official Economic Indicators (Pine Forest Deep) -->
+    <div style="background-color: var(--teal-forest-deep);" class="text-white text-xs py-2 border-b border-white/10 no-print">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="hidden sm:flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#FFB703]"></span>
+                <span class="font-medium text-slate-200">Ley 40 Horas (42h en 2026) · Fórmulas según el Código del Trabajo</span>
+            </div>
+            <div class="flex items-center gap-4 font-mono-num text-xs text-slate-300">
+                <span>UF: <strong class="uf-value text-white font-bold">$41.322,93</strong></span>
+                <span class="text-white/50">|</span>
+                <span>UTM: <strong class="utm-value text-white font-bold">$72.440</strong></span>
+                <span class="text-white/50">|</span>
+                <span>IMM: <strong class="text-white font-bold">$553.553</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MAIN HEADER (TealHQ Navbar: Pure White, Rotating Dropdowns & Clean CTA Pills) -->
+    <header class="sticky top-0 w-full z-50 bg-white border-b border-slate-200/90 no-print shadow-xs">
+        <div class="site-container max-w-[1240px] mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-14 sm:h-20">
+                
+                <!-- Brand Logo: Official CálculoLaboral Brand Logo -->
+                <a href="./" class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm active:scale-95 transition-transform shrink-0" style="background-color: #00382E;">
+                        <svg class="w-5 h-5" style="color: #FFB703;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Pedestal Base -->
+                            <path d="M30 84h40M38 79h24"></path>
+                            <!-- Vertical Pillar -->
+                            <path d="M50 22v57"></path>
+                            <!-- Center pointer tip -->
+                            <path d="M50 14l-2 4h4l-2-4v8"></path>
+                            <!-- Balance Beam -->
+                            <path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+                            <!-- Left Pan strings and dish -->
+                            <path d="M18 36l-8 18h16Z"></path>
+                            <path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Right Pan strings and dish -->
+                            <path d="M82 36l-8 18h16Z"></path>
+                            <path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+                            <!-- Monogram C wrapping left side -->
+                            <path d="M41 43.5a10 10 0 1 0 0 20h6"></path>
+                            <!-- Monogram L wrapping right side -->
+                            <path d="M58 43.5v20h10"></path>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Cálculo<span style="color: #00382E;">Laboral</span></span>
+                </a>
+
+                <!-- Desktop Center Navigation -->
+                <nav class="hidden lg:flex items-center gap-1 text-[14.5px] font-semibold text-slate-700">
+                    <a href="finiquito_calculator" class="px-3.5 py-2 hover:text-[#00382E] transition-colors">
+                        Simulador Finiquito
+                    </a>
+
+                    <!-- Dropdown: Herramientas ⌵ -->
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Herramientas</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 580px;">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="finiquito_calculator" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">calculate</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Finiquito Legal Completo</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Años de servicio, aviso y feriado.</div>
+                                    </div>
+                                </a>
+
+                                <a href="sueldo_liquido" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">payments</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Sueldo Líquido</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Descuentos AFP, Fonasa/Isapre y SII.</div>
+                                    </div>
+                                </a>
+
+                                <a href="gratificacion-legal-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">redeem</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Gratificación Legal</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">25% del sueldo con tope 4,75 IMM.</div>
+                                    </div>
+                                </a>
+
+                                <a href="impuesto-unico-segunda-categoria" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">receipt_long</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Impuesto Único</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Tabla del mes y cálculo por tramo.</div>
+                                    </div>
+                                </a>
+
+                                <a href="simulador-despido-injustificado-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">gavel</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Despido Injustificado</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Recargo del Art. 168 según la causal.</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-horas-extras" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">schedule</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Horas Extras 42h</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Factor legal al 50% Ley 40 Horas.</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-f29-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">receipt</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Calculadora F29</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">IVA, PPM, honorarios y RCV del SII</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-vacaciones" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">beach_access</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Vacaciones Proporcionales</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Días hábiles y proyección corrida.</div>
+                                    </div>
+                                </a>
+
+                                <a href="simulador-seguro-cesantia-afc" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">account_balance_wallet</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Seguro Cesantía AFC</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Giros de cuenta individual y fondo.</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-despido-articulo-160" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">gavel</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Despido Art. 160</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Causales sin indemnización y riesgos.</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-sueldo-part-time" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">schedule</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Sueldo Part-Time</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Sueldo proporcional y mínimo legal.</div>
+                                    </div>
+                                </a>
+
+                                <a href="calculadora-costo-empresa-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">business_center</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Costo Empresa</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Cuánto cuesta realmente un trabajador.</div>
+                                    </div>
+                                </a>
+
+                                <a href="generador-contrato-trabajo-chile" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">description</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Generador de Contrato</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Contrato de trabajo en Word a la medida.</div>
+                                    </div>
+                                </a>
+                                <a href="suite-contadores" class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="w-9 h-9 rounded-full bg-emerald-50 text-[#00382E] flex items-center justify-center shrink-0">
+                                        <span class="material-icons text-lg" aria-hidden="true">business_center</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-xs text-slate-900">Para Contadores</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Previred 105 campos, LRE y F29</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown: Guías ⌵ -->
+                    <div class="nav-dropdown-group relative">
+                        <button type="button" class="flex items-center gap-1 px-3.5 py-2 hover:text-[#00382E] transition-colors cursor-pointer">
+                            <span>Guías</span>
+                            <svg class="nav-chevron w-4 h-4 text-slate-400 transition-transform duration-200" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="nav-dropdown-menu absolute left-0 top-full bg-white rounded-2xl border border-slate-100 shadow-2xl p-4 z-50" style="width: 320px;">
+                            <div class="space-y-1">
+                                <a href="reclamar-despido-injustificado-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Cómo Reclamar Despido Injustificado
+                                </a>
+                                <a href="carta-de-renuncia-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Generador de Carta de Renuncia
+                                </a>
+                                <a href="carta-de-despido-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Cartas de Despido en Word (gratis)
+                                </a>
+                                <a href="finiquito-por-renuncia-voluntaria" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Finiquito por Renuncia Voluntaria
+                                </a>
+                                <a href="despido-necesidades-empresa-articulo-161" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Art. 161 Necesidades de la Empresa
+                                </a>
+                                <a href="checklist-fiscalizacion-dt-pymes-chile" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Checklist Fiscalización DT Pymes
+                                </a>
+                                <a href="ley-40-horas-chile-2026" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Ley 40 Horas (42 Horas en 2026)
+                                </a>
+                                <a href="aguinaldo-navidad-cierre-laboral-diciembre-2026" class="block p-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-800 transition-colors">
+                                    Cierre de Diciembre 2026 (Aguinaldo)
+                                </a>
+                                <div class="pt-2 border-t border-slate-100 mt-2">
+                                    <a href="blog" class="block px-2.5 py-1 text-xs font-bold text-[#00382E] hover:underline">
+                                        Ver todas las guías en el Blog →
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </nav>
+
+                <!-- Header Right CTAs (TealHQ Pill Style) -->
+                <div class="flex items-center gap-2">
+                    <a href="para-empleadores" class="hidden md:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">
+                        Portal Empleadores
+                    </a>
+                    <a href="contacto" class="hidden lg:inline-flex btn-outline-pill !py-2 !px-4 !text-xs">
+                        Contacto
+                    </a>
+                    
+                    <!-- Mobile Hamburger -->
+                    <button type="button" onclick="document.getElementById('mobile-drawer').classList.toggle('hidden')" class="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-xl cursor-pointer" aria-label="Abrir menú">
+                        <span class="material-icons text-2xl" aria-hidden="true">menu</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 space-y-3">
+            <a href="finiquito_calculator" class="block text-sm font-bold text-[#00382E]">Simulador Finiquito</a>
+            <a href="sueldo_liquido" class="block text-sm font-semibold text-slate-700">Sueldo Líquido</a>
+            <a href="gratificacion-legal-chile" class="block text-sm font-semibold text-slate-700">Gratificación Legal</a>
+            <a href="impuesto-unico-segunda-categoria" class="block text-sm font-semibold text-slate-700">Impuesto Único</a>
+            <a href="simulador-despido-injustificado-chile" class="block text-sm font-semibold text-slate-700">Despido Injustificado</a>
+            <a href="calculadora-horas-extras" class="block text-sm font-semibold text-slate-700">Horas Extras 42h</a>
+            <a href="calculadora-despido-articulo-160" class="block text-sm font-semibold text-slate-700">Despido Art. 160</a>
+            <a href="generador-contrato-trabajo-chile" class="block text-sm font-semibold text-slate-700">Generador de Contrato</a>
+            <a href="blog" class="block text-sm font-semibold text-slate-700">Blog de Guías Laborales</a>
+            <div class="pt-2">
+                <a href="para-empleadores" class="btn-outline-pill w-full !text-xs text-center justify-center">Portal Empleadores</a>
+            </div>
+        </div>
+    </header>
+
+<main class="site-container flex-grow px-4 sm:px-6 pt-8 pb-16">
+<div class="mg-wrap">
+<nav aria-label="Ruta de navegación" class="mg-crumbs">
+<a href="/">Inicio</a> <span aria-hidden="true">/</span>
+<a href="conector-mcp-contadores-chile">Conector MCP y API SII</a> <span aria-hidden="true">/</span>
+<span aria-current="page">Migración desde BaseAPI</span>
+</nav>
+
+<article>
+<header class="mg-hero">
+<h1 class="mg-h1">Alternativa a BaseAPI en Chile: migra tus consultas SII antes del 11 de diciembre</h1>
+<p class="mg-lead">BaseAPI anunció el cierre de su servicio en la nube para el <strong>11 de diciembre de 2026</strong>. Si lo usabas para consultar <strong>RCV (compras y ventas), acuses de 8 días, BHE, F22 o DDJJ</strong>, puedes migrar en una tarde a nuestro servidor propio en Chile (<code class="font-mono text-sm">connect.calculolaboral.cl</code>) con OpenAPI 3.1, tarifa plana sin cobro por consulta y <strong>13 herramientas MCP</strong> para Claude y ChatGPT.</p>
+<div class="mg-actions">
+<a class="mg-btn mg-btn-primary" href="#solicitar-key">Pedir API Key gratis (1–2 empresas)</a>
+<a class="mg-btn mg-btn-ghost" href="https://connect.calculolaboral.cl/reference" target="_blank" rel="noopener">Abrir Scalar API Reference ↗</a>
+<a class="mg-btn mg-btn-ghost" href="#tabla-equivalencia">Ver tabla de equivalencia real</a>
+</div>
+<p class="mg-meta"><strong>Sin instalar servidores propios</strong> · Lectura desde espejo PostgreSQL (&lt; 100 ms) · Bóveda cifrada AES-256-GCM · Gratis permanente para 1–2 empresas.</p>
+</header>
+
+<section class="mg-sec">
+<div class="mg-honest">
+<strong>Alcance honesto antes de migrar:</strong><br/>
+1) <strong>No emitimos ni anulamos DTE</strong> (facturas, boletas ni notas de crédito). Si tu flujo emite documentos ante el SII, mantén el facturador gratuito del SII o un proveedor de emisión dedicado.<br/>
+2) <strong>Lecturas desde espejo sincronizado, no consulta en línea:</strong> a diferencia de BaseAPI, nuestras respuestas salen de un espejo PostgreSQL sincronizado en segundo plano (vía <code class="font-mono text-xs">/sync-range</code>, Turno Nocturno 24/7 o webhooks firmados). Eso permite responder en &lt; 100 ms y sin cobro por llamada, pero requiere disparar o agendar la sincronización antes de leer.
+</div>
+
+<div class="mg-grid-2">
+<div class="mg-card">
+<h3>Lo que sí cubrimos desde hoy</h3>
+<ul>
+<li><strong>RCV compras y ventas</strong> por mes y estado de acuse 8 días (Ley 19.983).</li>
+<li><strong>BHE recibidas y emitidas</strong> (lectura mensual y anual con retención Cód. 151 al 15,25%).</li>
+<li><strong>F22, DDJJ, TGR y PreviRed</strong> (deudas, mora y riesgo Ley Bustos).</li>
+<li><strong>13 herramientas MCP</strong> listas para Claude/ChatGPT + Turno Nocturno + webhooks firmados.</li>
+</ul>
+</div>
+<div class="mg-card">
+<h3>Lo que NO cubrimos todavía</h3>
+<ul>
+<li>Emisión o anulación de DTE (facturas, boletas, notas de crédito/débito).</li>
+<li>Emisión o anulación de BHE ni boletas de terceros (BTE).</li>
+<li>Descarga de PDF individual por folio DTE/BHE ni cesiones (factoring).</li>
+<li>Catálogos públicos (regiones/comunas o situación tributaria de terceros sin clave).</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section id="tabla-equivalencia" class="mg-sec">
+<h2>Equivalencia real endpoint por endpoint (BaseAPI → Cálculo Laboral)</h2>
+<p>Contrastado directamente contra la superficie del SDK público de BaseAPI y nuestra especificación <a href="https://connect.calculolaboral.cl/openapi.json" target="_blank" rel="noopener">OpenAPI 3.1 en producción</a>.</p>
+<div class="mg-table-wrap">
+<table class="mg-table">
+<thead>
+<tr>
+<th>Módulo en BaseAPI</th>
+<th>Equivalente en <code>connect.calculolaboral.cl</code></th>
+<th>Estado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rcv.consultar</code> (compras/ventas mes)</td>
+<td><code>GET /api/v1/accounting/:companyId/rcv?period=YYYY-MM&amp;operacion=COMPRA|VENTA</code> (acepta RUT como alias; sync previo vía <code>POST /sync-range</code>)</td>
+<td class="st-ok">✓ Cubierto</td>
+</tr>
+<tr>
+<td><code>rcv.pendientes</code></td>
+<td><code>GET .../rcv?estadoContab=PENDIENTE</code> + cuenta regresiva de acuse 8d en <code>GET .../alerts</code></td>
+<td class="st-ok">✓ Cubierto</td>
+</tr>
+<tr>
+<td><code>bhe.receptor</code> (mensual y anual)</td>
+<td><code>GET .../bhe?direction=RECIBIDA</code> y <code>GET .../bhe/annual?year=YYYY</code> (incluye Cód. 151)</td>
+<td class="st-ok">✓ Cubierto</td>
+</tr>
+<tr>
+<td><code>f22.consultar</code></td>
+<td><code>GET .../f22?anioTributario=YYYY</code></td>
+<td class="st-ok">✓ Cubierto</td>
+</tr>
+<tr>
+<td><code>dj.consultar</code></td>
+<td><code>GET .../ddjj?anioTributario=YYYY</code></td>
+<td class="st-ok">✓ Cubierto</td>
+</tr>
+<tr>
+<td><code>carpetaTributaria</code></td>
+<td>Combinación de <code>/f22</code> + <code>/ddjj</code> + <code>/tgr</code> (deudas) + <code>/alerts</code></td>
+<td class="st-part">Parcial</td>
+</tr>
+<tr>
+<td><code>dte.recibidos</code></td>
+<td>Registro cubierto vía <code>GET .../rcv?operacion=COMPRA</code> (sin descarga PDF por folio)</td>
+<td class="st-part">Parcial</td>
+</tr>
+<tr>
+<td><code>auth.validar</code> (RUT + clave)</td>
+<td><code>POST /api/v1/companies</code> + <code>POST /companies/:id/credentials</code> (validación efectiva al primer sync en <code>GET .../status</code>)</td>
+<td class="st-part">Parcial</td>
+</tr>
+<tr>
+<td><code>rcv.anual</code></td>
+<td>Vía <code>POST /sync-range</code> (enero–diciembre) + lectura por mes</td>
+<td class="st-part">Parcial</td>
+</tr>
+<tr>
+<td><code>dte.emitir</code> / <code>anular</code> / <code>bhe.emitir</code> / <code>bte</code> / <code>cesiones</code></td>
+<td>No soportado (recomendamos SII gratuito o facturador dedicado)</td>
+<td class="st-no">— No cubre</td>
+</tr>
+<tr>
+<td><strong>Extra que BaseAPI no incluía</strong></td>
+<td><strong>13 herramientas MCP</strong> (<code>get_morning_report</code>, <code>auditor_f29</code>, <code>get_ops_status</code>, <code>get_glossary</code>), Turno Nocturno 24/7, webhooks firmados con reintentos, bóveda AES-256-GCM y monitoreo TGR + PreviRed.</td>
+<td class="st-ok">+ Incluido</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="pasos-curl" class="mg-sec">
+<h2>Migra tu primera empresa en 4 comandos cURL</h2>
+<p>Una vez recibas tu <code class="font-mono text-xs">x-api-key</code>, este flujo registra el RUT, guarda la Clave Tributaria cifrada en bóveda (nunca se devuelve en respuestas), encola el rango de meses y consulta el espejo:</p>
+<pre class="mg-code" id="baseapi-curl-block">BASE=https://connect.calculolaboral.cl
+KEY=tu-x-api-key
+ACC=tu-estudio
+
+# 1. Registrar empresa (RUT en cualquier formato)
+curl -s -X POST "$BASE/api/v1/companies" \
+  -H "x-api-key: $KEY" -H "x-account-id: $ACC" -H "content-type: application/json" \
+  -d '{"rut":"76.570.751-K","razonSocial":"Mi Empresa SpA","syncEnabled":true}'
+
+# 2. Guardar Clave Tributaria en bóveda AES-256-GCM
+curl -s -X POST "$BASE/api/v1/companies/&lt;companyId&gt;/credentials" \
+  -H "x-api-key: $KEY" -H "x-account-id: $ACC" -H "content-type: application/json" \
+  -d '{"kind":"CLAVE_TRIBUTARIA","siiEnv":"PRODUCTION","claveTributaria":"***"}'
+
+# 3. Encolar sincronización de meses (202 asíncrono)
+curl -s -X POST "$BASE/api/v1/accounting/&lt;companyId&gt;/sync-range" \
+  -H "x-api-key: $KEY" -H "x-account-id: $ACC" -H "content-type: application/json" \
+  -d '{"fromPeriod":"2026-01","toPeriod":"2026-11","jobType":"FULL_SYNC"}'
+
+# 4. Leer el espejo (el RUT funciona como alias del companyId)
+curl -s "$BASE/api/v1/accounting/76.570.751-K/rcv?period=2026-11&amp;amountFormat=number" \
+  -H "x-api-key: $KEY" -H "x-account-id: $ACC"</pre>
+<div style="display:flex;align-items:center;gap:.75rem;margin-top:.75rem;flex-wrap:wrap;">
+<button type="button" id="btn-copy-curl" class="mg-btn mg-btn-ghost" style="min-height:40px;padding:.5rem 1.1rem;font-size:.85rem;">Copiar comandos cURL</button>
+<a href="https://connect.calculolaboral.cl/reference" target="_blank" rel="noopener" class="mg-btn mg-btn-ghost" style="min-height:40px;padding:.5rem 1.1rem;font-size:.85rem;">Probar en Scalar Reference ↗</a>
+<span id="copy-curl-status" class="text-xs font-semibold text-[#00382E]" aria-live="polite"></span>
+</div>
+</section>
+
+<section id="solicitar-key" class="mg-sec">
+<div class="mg-form-box">
+<h2 style="margin-bottom:.35rem;">Solicita tu API Key gratis permanente (1–2 empresas)</h2>
+<p style="margin:0;font-size:.92rem;color:#475569;">Valida tus flujos antes del 11 de diciembre sin tarjeta ni instalación de servidor. Incluye acceso a la API REST, OpenAPI 3.1 y las 13 herramientas MCP con registro de consultas.</p>
+<form id="form-baseapi-migrate" class="mg-form-grid">
+<div>
+<label for="mg-nombre" class="mg-label">Nombre o equipo técnico</label>
+<input type="text" id="mg-nombre" required placeholder="Ej: Matías Rojas · Estudio / Software" class="mg-input"/>
+</div>
+<div>
+<label for="mg-correo" class="mg-label">Correo para recibir tu x-api-key</label>
+<input type="email" id="mg-correo" required placeholder="dev@tuempresa.cl" class="mg-input"/>
+</div>
+<div>
+<label for="mg-ruts" class="mg-label">Cantidad estimada de RUTs a consultar</label>
+<select id="mg-ruts" class="mg-input">
+<option value="1-2 empresas (Plan gratis permanente)">1–2 empresas (Plan gratis permanente)</option>
+<option value="3-20 empresas">3–20 empresas</option>
+<option value="21-100 empresas">21–100 empresas</option>
+<option value="Mas de 100 empresas">Más de 100 empresas</option>
+</select>
+</div>
+<div>
+<label for="mg-uso" class="mg-label">¿Qué endpoints usabas en BaseAPI?</label>
+<input type="text" id="mg-uso" placeholder="Ej: rcv.consultar, bhe, f22, alertas" class="mg-input"/>
+</div>
+<div style="grid-column:1 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:.85rem;margin-top:.25rem;">
+<button type="submit" id="btn-mg-submit" class="mg-btn mg-btn-primary">Solicitar x-api-key de migración</button>
+<a href="conector-mcp-contadores-chile" class="mg-btn mg-btn-ghost">Ver detalle de las 13 tools MCP</a>
+<span id="mg-form-status" class="text-xs font-semibold text-[#00382E]" aria-live="polite"></span>
+</div>
+</form>
+</div>
+</section>
+
+<section id="preguntas" class="mg-sec">
+<h2>Preguntas frecuentes sobre la migración</h2>
+<div class="mg-faq">
+<details>
+<summary>¿En qué se diferencia esto de instalar BaseAPI Node self-hosted?</summary>
+<p>Con BaseAPI Node debes contratar y mantener tu propio VPS, renovar sesiones, administrar backups y pagar 1 UF + IVA/mes por equipo. Aquí te entregamos la infraestructura ya administrada en Chile (backups automáticos, monitoreo horario, OpenAPI y 13 herramientas MCP) con 1–2 empresas gratis permanentes y planes en CLP sin cobro por llamada.</p>
+</details>
+<details>
+<summary>¿Puedo usar esto junto a Claude, ChatGPT o mi propio ERP?</summary>
+<p>Sí. La misma empresa sincronizada queda disponible por API REST tradicional (<code class="font-mono text-xs">x-api-key</code>) y por servidor MCP remoto (<code class="font-mono text-xs">https://connect.calculolaboral.cl/mcp</code>) en modo estricto de solo lectura.</p>
+</details>
+<details>
+<summary>¿Cómo protegen la Clave Tributaria del SII?</summary>
+<p>Cada credencial se cifra con AES-256-GCM en la bóveda del servidor y nunca se retorna por la API ni se envía a Claude/ChatGPT. Además cada consulta MCP queda registrada en un log de auditoría y los tokens se revocan en un clic.</p>
+</details>
+</div>
+</section>
+</article>
+</div>
+</main>
+
+<footer class="no-print mt-16">
+<div class="teal-footer-curve">
+<div class="footer-inner-container site-container max-w-[1240px] mx-auto px-6 sm:px-8 py-12 md:py-16">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-8 text-left">
+<div class="space-y-4">
+<a class="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity" href="./">
+<div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style="background-color: #FFB703;">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.5" style="color: #00382E;" viewbox="0 0 100 100">
+<path d="M30 84h40M38 79h24"></path><path d="M50 22v57"></path><path d="M50 14l-2 4h4l-2-4v8"></path>
+<path d="M18 36c10-9 22-12 32-12s22 3 32 12"></path>
+<path d="M18 36l-8 18h16Z"></path><path d="M10 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+<path d="M82 36l-8 18h16Z"></path><path d="M74 54c0 3 3.5 5 8 5s8-2 8-5"></path>
+<path d="M41 43.5a10 10 0 1 0 0 20h6"></path><path d="M58 43.5v20h10"></path>
+</svg>
+</div>
+<span class="font-bold text-xl tracking-tight text-white leading-none">Cálculo<span style="color: #FFB703;">Laboral</span></span>
+</a>
+<p class="text-sm text-white/75 leading-relaxed max-w-xs">
+Plataforma independiente con herramientas laborales y tributarias actualizadas para trabajadores, pymes y contadores en Chile (2026).
+</p>
+</div>
+<div class="space-y-3">
+<p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Para Contadores y API</p>
+<ul class="space-y-2 text-xs">
+<li><a class="text-white hover:text-[#FFB703] font-bold transition-colors" href="suite-contadores">Suite Contadores</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="demo-contadores">Demo Interactiva</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="conector-mcp-contadores-chile">Conector MCP y API SII</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="migracion-baseapi">Migración desde BaseAPI</a></li>
+</ul>
+</div>
+<div class="space-y-3">
+<p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Calculadoras</p>
+<ul class="space-y-2 text-xs">
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="finiquito_calculator">Finiquito Legal</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="sueldo_liquido">Sueldo Líquido</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="calculadora-f29-chile">Calculadora F29</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="calculadora-dj-1887-chile">Calculadora DJ 1887</a></li>
+</ul>
+</div>
+<div class="space-y-3">
+<p class="text-xs font-bold text-white/60 uppercase tracking-wider mb-0">Legal y Contacto</p>
+<ul class="space-y-2 text-xs">
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="sobre-nosotros">Sobre Nosotros</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="contacto">Contacto Directo</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="privacidad">Privacidad</a></li>
+<li><a class="text-white/80 hover:text-[#FFB703] transition-colors" href="terminos">Términos</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 text-center md:text-left">
+<div>© 2026 Cálculo Laboral Chile. Infraestructura propia en Chile · OpenAPI 3.1 y MCP.</div>
+<div><a class="hover:text-white transition-colors" href="disclaimer">Disclaimer</a></div>
+</div>
+</div>
+</div>
+</footer>
+
+<script src="/js/constants.js?v=2.1.2"></script>
+<script src="/js/indicators.js?v=2.9.2"></script>
+<script src="/js/origen.js?v=1.0.0" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var btnCopy = document.getElementById('btn-copy-curl');
+    var codeEl = document.getElementById('baseapi-curl-block');
+    var stCopy = document.getElementById('copy-curl-status');
+    if (btnCopy && codeEl) {
+        btnCopy.addEventListener('click', function () {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(codeEl.textContent || '').catch(function () {});
+            }
+            if (stCopy) {
+                stCopy.textContent = 'Comandos copiados al portapapeles.';
+                setTimeout(function () { stCopy.textContent = ''; }, 2000);
+            }
+        });
+    }
+    var form = document.getElementById('form-baseapi-migrate');
+    var stForm = document.getElementById('mg-form-status');
+    var btnSub = document.getElementById('btn-mg-submit');
+    if (form) {
+        form.addEventListener('submit', function (ev) {
+            ev.preventDefault();
+            var nombre = (document.getElementById('mg-nombre').value || '').trim();
+            var correo = (document.getElementById('mg-correo').value || '').trim();
+            var ruts = document.getElementById('mg-ruts').value || '';
+            var uso = (document.getElementById('mg-uso').value || '').trim();
+            if (!nombre || !correo) return;
+            if (btnSub) btnSub.disabled = true;
+            if (stForm) stForm.textContent = 'Enviando solicitud…';
+            fetch('/api/send-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    correo: correo,
+                    telefono: '',
+                    tipo: 'Migración BaseAPI / API SII',
+                    fuente: 'Migracion BaseAPI (/migracion-baseapi)',
+                    detalle: 'Cartera: ' + ruts + (uso ? ' | Endpoints: ' + uso : ''),
+                    monto_calculado: '0'
+                })
+            }).then(function (r) {
+                if (!r.ok) throw new Error('err');
+                if (stForm) stForm.textContent = 'Solicitud recibida. Te enviaremos tu x-api-key y acceso de prueba a ' + correo + '.';
+                form.reset();
+            }).catch(function () {
+                if (stForm) stForm.textContent = 'No pudimos enviar el formulario. Escríbenos directo a contacto@calculolaboral.cl.';
+            }).finally(function () {
+                if (btnSub) btnSub.disabled = false;
+            });
+        });
+    }
+});
+</script>
+</body>
+</html>

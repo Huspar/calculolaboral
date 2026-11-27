@@ -562,7 +562,7 @@ window.addEventListener('load', function () {
 <ol>
 <li><a href="#como-funciona">Cómo conectarlo en Claude o ChatGPT</a></li>
 <li><a href="#que-puedes-preguntar">Prompt estrella y consultas listas</a></li>
-<li><a href="#referencia-tecnica">Referencia técnica (12 tools MCP y OpenAPI)</a></li>
+<li><a href="#referencia-tecnica">Referencia técnica (13 tools MCP y OpenAPI)</a></li>
 <li><a href="#seguridad-solo-lectura">Seguridad de credenciales y solo lectura</a></li>
 <li><a href="#planes-mcp">Precio del add-on e inclusión en Estudio</a></li>
 <li><a href="#preguntas-mcp">Preguntas frecuentes</a></li>
@@ -644,11 +644,12 @@ window.addEventListener('load', function () {
 </section>
 
 <section id="referencia-tecnica" class="ls-section">
-<h2>Referencia técnica: 12 herramientas MCP y OpenAPI 3.1</h2>
-<p>Explora el catálogo completo de herramientas de solo lectura (con glosario tributario-laboral chileno, Auditor F29 y Reporte Matutino) o abre la documentación interactiva en Scalar.</p>
+<h2>Referencia técnica: 13 herramientas MCP y OpenAPI 3.1</h2>
+<p>Explora el catálogo completo de herramientas de solo lectura (con glosario tributario-laboral chileno, Auditor F29, salud operativa de colas/backups y Reporte Matutino) o abre la documentación interactiva en Scalar.</p>
 <div style="display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.75rem;">
 <a href="https://connect.calculolaboral.cl/reference" target="_blank" rel="noopener" class="ls-btn ls-btn-primary">Abrir Scalar API Reference ↗</a>
 <a href="https://connect.calculolaboral.cl/openapi.json" target="_blank" rel="noopener" class="ls-btn ls-btn-ghost">Descargar openapi.json</a>
+<a href="migracion-baseapi" class="ls-btn ls-btn-ghost">¿Migras desde BaseAPI (cierre 11-dic)? Ver equivalencias →</a>
 </div>
 <div class="ref-shell" id="mcp-ref-explorer">
 <div class="ref-side">
@@ -690,15 +691,15 @@ window.addEventListener('load', function () {
 </section>
 
 <section id="planes-mcp" class="ls-section">
-<h2>Parte gratis con 1 empresa o inclúyelo en toda tu cartera</h2>
+<h2>Parte gratis para siempre con 1–2 empresas o inclúyelo en toda tu cartera</h2>
 <div class="mcp-addon-cta" style="margin-bottom:1rem;border-color:#cbd5e1;">
 <div>
-<h3 style="margin:0 0 .25rem;font-size:1.05rem;font-weight:800;color:#0f172a;">Prueba gratuita · 1 empresa (sin cambiar tu software contable)</h3>
-<p class="mcp-addon-precio" style="color:#0f172a;">$0 <span style="font-size:.85rem;font-weight:600;color:#475569;">· Consultas ilimitadas en modo solo lectura sobre 1 RUT sincronizado</span></p>
-<p style="margin:0;font-size:.85rem;color:#475569;">Ideal si hoy usas Nubox, Kame, Defontana o Excel y quieres probar Claude o ChatGPT sobre tu SII real antes de pasar toda tu cartera.</p>
+<h3 style="margin:0 0 .25rem;font-size:1.05rem;font-weight:800;color:#0f172a;">Plan gratis permanente · 1–2 empresas (sin cambiar tu software contable)</h3>
+<p class="mcp-addon-precio" style="color:#0f172a;">$0 / mes <span style="font-size:.85rem;font-weight:600;color:#475569;">· Consultas ilimitadas en modo solo lectura + registro de auditoría MCP</span></p>
+<p style="margin:0;font-size:.85rem;color:#475569;">Ideal si hoy usas Nubox, Kame, Defontana o migras desde BaseAPI y quieres validar Claude, ChatGPT o la API REST sobre tu SII real antes de pasar toda tu cartera.</p>
 </div>
 <div class="mcp-addon-acciones">
-<a href="suite-contadores#acceso-anticipado" class="ls-btn ls-btn-primary">Solicitar 1 empresa gratis</a>
+<a href="migracion-baseapi#solicitar-key" class="ls-btn ls-btn-primary">Pedir x-api-key gratis (1–2 empresas)</a>
 <a href="demo-contadores" class="ls-btn ls-btn-ghost">Probar consultas en vivo</a>
 </div>
 </div>
@@ -872,7 +873,9 @@ document.addEventListener('DOMContentLoaded', function () {
         { id: 'get_f22_ddjj', kind: 'MCP · Solo lectura', desc: 'Estado y respaldos de Declaraciones Juradas (DDJJ) y Operación Renta F22.', path: '/api/v1/accounting/76543210-3/ddjj', method: 'GET' },
         { id: 'list_companies', kind: 'MCP · Solo lectura', desc: 'Lista las empresas sincronizadas del estudio con RUT, régimen y estado de credenciales en bóveda.', path: '/api/v1/companies', method: 'GET' },
         { id: 'get_sync_status', kind: 'MCP · Solo lectura', desc: 'Último estado de sincronización y salud de parsers del SII para una empresa (UUID o RUT).', path: '/api/v1/companies/76543210-3/status', method: 'GET' },
+        { id: 'get_ops_status', kind: 'MCP · Solo lectura', desc: 'Salud operativa del servidor propio: colas BullMQ, frescura del último backup, disco/RAM y errores de las últimas 24 h.', path: '/api/v1/ops/queue-stats', method: 'GET' },
         { id: 'GET /api/v1/me', kind: 'REST API · Studio', desc: 'Identidad del estudio autenticado, cantidad de empresas activas y cuota de rate limit vigente.', path: '/api/v1/me', method: 'GET' },
+        { id: 'GET /api/v1/ops/queue-stats', kind: 'REST API · Ops', desc: 'Snapshot operativo de colas BullMQ, backups y recursos del VPS (requiere x-admin-key).', path: '/api/v1/ops/queue-stats', method: 'GET' },
         { id: 'GET /api/v1/mcp/access-logs', kind: 'REST API · Auditoría', desc: 'Registro inmutable de consultas MCP (herramienta, empresa, cliente IA, estado y fecha; sobrevive a revocación de tokens).', path: '/api/v1/mcp/access-logs?limit=50', method: 'GET' },
         { id: 'POST /api/v1/sync/batch', kind: 'REST API · Lote', desc: 'Encola sincronización masiva de lectura para toda la cartera y devuelve batchId para seguimiento agregado.', path: '/api/v1/sync/batch', method: 'POST' },
         { id: 'GET /health/ready', kind: 'REST API · Salud', desc: 'Verifica disponibilidad real del gateway, PostgreSQL y Redis en el servidor propio en Chile.', path: '/health/ready', method: 'GET' }
