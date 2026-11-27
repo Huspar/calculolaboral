@@ -877,6 +877,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { id: 'GET /api/v1/me', kind: 'REST API · Studio', desc: 'Identidad del estudio autenticado, cantidad de empresas activas y cuota de rate limit vigente.', path: '/api/v1/me', method: 'GET' },
         { id: 'GET /api/v1/ops/queue-stats', kind: 'REST API · Ops', desc: 'Snapshot operativo de colas BullMQ, backups y recursos del VPS (requiere x-admin-key).', path: '/api/v1/ops/queue-stats', method: 'GET' },
         { id: 'GET /api/v1/mcp/access-logs', kind: 'REST API · Auditoría', desc: 'Registro inmutable de consultas MCP (herramienta, empresa, cliente IA, estado y fecha; sobrevive a revocación de tokens).', path: '/api/v1/mcp/access-logs?limit=50', method: 'GET' },
+        { id: 'POST /api/v1/onboard', kind: 'REST API · Alta 1 paso', desc: 'Registra empresa, guarda credencial cifrada en bóveda AES-256-GCM y encola el primer sync-range en una sola llamada (idempotente por RUT).', path: '/api/v1/onboard', method: 'POST' },
         { id: 'POST /api/v1/sync/batch', kind: 'REST API · Lote', desc: 'Encola sincronización masiva de lectura para toda la cartera y devuelve batchId para seguimiento agregado.', path: '/api/v1/sync/batch', method: 'POST' },
         { id: 'GET /health/ready', kind: 'REST API · Salud', desc: 'Verifica disponibilidad real del gateway, PostgreSQL y Redis en el servidor propio en Chile.', path: '/health/ready', method: 'GET' }
     ];

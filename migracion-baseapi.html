@@ -603,28 +603,23 @@ window.addEventListener('load', function () {
 </section>
 
 <section id="pasos-curl" class="mg-sec">
-<h2>Migra tu primera empresa en 4 comandos cURL</h2>
-<p>Una vez recibas tu <code class="font-mono text-xs">x-api-key</code>, este flujo registra el RUT, guarda la Clave Tributaria cifrada en bóveda (nunca se devuelve en respuestas), encola el rango de meses y consulta el espejo:</p>
+<h2>Migra tu primera empresa en 1 sola llamada (<code>POST /api/v1/onboard</code>)</h2>
+<p>Una vez recibas tu <code class="font-mono text-xs">x-api-key</code>, una única llamada registra el RUT, cifra la Clave Tributaria en bóveda AES-256-GCM (nunca se devuelve) y encola la sincronización de meses; luego lees el espejo directo por RUT:</p>
 <pre class="mg-code" id="baseapi-curl-block">BASE=https://connect.calculolaboral.cl
 KEY=tu-x-api-key
 ACC=tu-estudio
 
-# 1. Registrar empresa (RUT en cualquier formato)
-curl -s -X POST "$BASE/api/v1/companies" \
+# 1. Alta completa en 1 llamada (empresa + bóveda AES-256-GCM + sync-range)
+curl -s -X POST "$BASE/api/v1/onboard" \
   -H "x-api-key: $KEY" -H "x-account-id: $ACC" -H "content-type: application/json" \
-  -d '{"rut":"76.570.751-K","razonSocial":"Mi Empresa SpA","syncEnabled":true}'
+  -d '{"rut":"76.570.751-K","razonSocial":"Mi Empresa SpA","credential":{"kind":"CLAVE_TRIBUTARIA","siiEnv":"PRODUCTION","claveTributaria":"TU_CLAVE_SII"},"fromPeriod":"2026-01","toPeriod":"2026-11"}'
+# -> 201 con companyId, sync.batchId y batchStatusUrl (idempotente por RUT)
 
-# 2. Guardar Clave Tributaria en bóveda AES-256-GCM
-curl -s -X POST "$BASE/api/v1/companies/&lt;companyId&gt;/credentials" \
-  -H "x-api-key: $KEY" -H "x-account-id: $ACC" -H "content-type: application/json" \
-  -d '{"kind":"CLAVE_TRIBUTARIA","siiEnv":"PRODUCTION","claveTributaria":"***"}'
+# 2. Consultar progreso del lote
+curl -s "$BASE/api/v1/sync/batch/&lt;batchId&gt;" \
+  -H "x-api-key: $KEY" -H "x-account-id: $ACC"
 
-# 3. Encolar sincronización de meses (202 asíncrono)
-curl -s -X POST "$BASE/api/v1/accounting/&lt;companyId&gt;/sync-range" \
-  -H "x-api-key: $KEY" -H "x-account-id: $ACC" -H "content-type: application/json" \
-  -d '{"fromPeriod":"2026-01","toPeriod":"2026-11","jobType":"FULL_SYNC"}'
-
-# 4. Leer el espejo (el RUT funciona como alias del companyId)
+# 3. Leer el espejo en &lt; 100 ms (el RUT funciona como alias del companyId)
 curl -s "$BASE/api/v1/accounting/76.570.751-K/rcv?period=2026-11&amp;amountFormat=number" \
   -H "x-api-key: $KEY" -H "x-account-id: $ACC"</pre>
 <div style="display:flex;align-items:center;gap:.75rem;margin-top:.75rem;flex-wrap:wrap;">
