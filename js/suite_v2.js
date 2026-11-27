@@ -1124,6 +1124,9 @@
     `;
 
     const pendingDocs = state.inbox.filter((i) => i.state === 'Por revisar');
+    const totalPendingAcuses = state.clients.reduce((s, c) => s + (c.rcv.pendingAcuses || 0), 0);
+    const previredOkCount = state.clients.filter((c) => c.nomina.previredOk).length;
+    const lreReadyCount = state.clients.filter((c) => c.nomina.previredOk && getClientPayrollBlockers(c).length === 0).length;
     $('v2-inspector').innerHTML = `
       <div class="v2-ins-block">
         <div class="v2-ins-head">
@@ -1133,19 +1136,19 @@
         <div class="v2-ins-list">
           <button type="button" class="v2-ins-row-btn" data-jump-ola="acuses">
             <span><strong>Día 8</strong> · Acuses Ley 19.983</span>
-            <span class="tag tag--danger">3 por vencer</span>
+            <span class="tag ${totalPendingAcuses ? 'tag--danger' : 'tag--in'}">${totalPendingAcuses ? `${totalPendingAcuses} por vencer` : 'Al día'}</span>
           </button>
           <button type="button" class="v2-ins-row-btn" data-jump-ola="lre">
             <span><strong>Día 13</strong> · PreviRed</span>
-            <span class="tag tag--out">5/6 al día</span>
+            <span class="tag ${previredOkCount === counts.todos ? 'tag--in' : 'tag--out'}">${previredOkCount}/${counts.todos} al día</span>
           </button>
           <button type="button" class="v2-ins-row-btn" data-jump-ola="lre">
             <span><strong>Día 15</strong> · LRE Mi DT</span>
-            <span class="tag tag--in">4/6 listos</span>
+            <span class="tag ${lreReadyCount === counts.todos ? 'tag--in' : 'tag--out'}">${lreReadyCount}/${counts.todos} listos</span>
           </button>
           <button type="button" class="v2-ins-row-btn" data-jump-ola="f29">
             <span><strong>Día 20</strong> · Declaración F29</span>
-            <span class="tag tag--out">${counts.cerrado}/${counts.todos} cerrados</span>
+            <span class="tag ${counts.cerrado === counts.todos ? 'tag--in' : 'tag--out'}">${counts.cerrado}/${counts.todos} cerrados</span>
           </button>
         </div>
       </div>
@@ -1213,39 +1216,65 @@
     let rowsHtml = '';
 
     if (tab === 'acuses') {
-      const items = [
-        { id: 'ac1', client: 'Panadería San Isidro SpA', doc: 'Fact. #88412 · Molinos del Sur', monto: 945000, vence: 'En 18 h' },
-        { id: 'ac2', client: 'Panadería San Isidro SpA', doc: 'Fact. #20491 · Envases Chile', monto: 412000, vence: 'En 36 h' },
-        { id: 'ac3', client: 'Cafetería Barrio Italia EIRL', doc: 'Fact. #9920 · Tostaduría Sur', monto: 318500, vence: 'En 22 h' }
-      ];
+      const items = [];
+      state.clients.forEach((c) => {
+        ensureRcvDocs(c).forEach((d) => {
+          if (!d.acuseDone && d.plazoTag !== 'tag--in') {
+            items.push({
+              key: `acuse:${c.id}:${d.id}`,
+              cid: c.id,
+              did: d.id,
+              client: c.name,
+              doc: `Fact. #${d.folio} · ${d.supplier}`,
+              monto: (d.neto || 0) + (d.iva || 0),
+              vence: d.plazo || 'Por vencer',
+              tag: d.plazoTag || 'tag--on'
+            });
+          }
+        });
+      });
       headCols = `<tr><th style="width:32px"></th><th>Empresa</th><th>Documento SII</th><th class="num">Monto</th><th>Plazo Ley 19.983</th><th>Acción</th></tr>`;
-      rowsHtml = items.map((it) => `
+      rowsHtml = items.length ? items.map((it) => `
         <tr>
-          <td><input type="checkbox" data-batch-id="${it.id}" ${state.selectedIds.has(it.id) ? 'checked' : ''} aria-label="Seleccionar ${it.doc}"></td>
+          <td><input type="checkbox" data-batch-id="${it.key}" ${state.selectedIds.has(it.key) ? 'checked' : ''} aria-label="Seleccionar ${it.doc}"></td>
           <td><strong>${it.client}</strong></td>
           <td class="mono">${it.doc}</td>
           <td class="num">${fmt(it.monto)}</td>
-          <td><span class="tag tag--on">${it.vence}</span></td>
-          <td><button type="button" class="btn btn--sm" data-quick-ok="Acuse aceptado para ${it.doc}">Aceptar</button></td>
+          <td><span class="tag ${it.tag}">${it.vence}</span></td>
+          <td><button type="button" class="btn btn--sm btn--primary" data-ola-acuse="${it.cid}:${it.did}">Aceptar</button></td>
         </tr>
-      `).join('');
+      `).join('') : `<tr><td colspan="6" style="padding:24px;text-align:center" class="muted">Todos los acuses de 8 días están al día. No hay Crédito Fiscal IVA en riesgo.</td></tr>`;
     } else if (tab === 'lre') {
       headCols = `<tr><th style="width:32px"></th><th>Empresa</th><th class="num">Dotación</th><th>PreviRed (105 campos)</th><th>LRE Mi DT (147 cols)</th><th>Acción</th></tr>`;
-      rowsHtml = state.clients.map((c) => `
-        <tr>
-          <td><input type="checkbox" data-batch-id="${c.id}" ${state.selectedIds.has(c.id) ? 'checked' : ''} aria-label="Seleccionar ${c.name}"></td>
-          <td><strong>${c.name}</strong><span class="v2-cell-sub mono">${c.rut}</span></td>
-          <td class="num">${c.workers.length}</td>
-          <td><span class="tag ${c.nomina.previredOk ? 'tag--in' : 'tag--on'}">${c.nomina.previredOk ? 'Validado' : 'Mora · Ley Bustos'}</span></td>
-          <td><span class="tag ${c.nomina.state === 'ok' ? 'tag--in' : 'tag--out'}">${c.nomina.label}</span></td>
-          <td><button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="remuneraciones" data-open-sub="previred">Exportar</button></td>
-        </tr>
-      `).join('');
+      rowsHtml = state.clients.map((c) => {
+        const blockers = getClientPayrollBlockers(c);
+        const btnHtml = c.nomina.leyBustos
+          ? `<button type="button" class="btn btn--sm btn--primary" data-open-client="${c.id}" data-open-area="remuneraciones" data-open-sub="finiquitos">Regularizar Ley Bustos →</button>`
+          : blockers.length
+            ? `<button type="button" class="btn btn--sm btn--primary" data-open-client="${c.id}" data-open-area="remuneraciones" data-open-sub="nomina">Completar ${blockers.length} ficha(s) →</button>`
+            : `<button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="remuneraciones" data-open-sub="previred">Exportar</button>`;
+        return `
+          <tr>
+            <td><input type="checkbox" data-batch-id="${c.id}" ${state.selectedIds.has(c.id) ? 'checked' : ''} aria-label="Seleccionar ${c.name}"></td>
+            <td><strong>${c.name}</strong><span class="v2-cell-sub mono">${c.rut}</span></td>
+            <td class="num">${c.workers.length}</td>
+            <td><span class="tag ${c.nomina.previredOk ? 'tag--in' : 'tag--danger'}">${c.nomina.previredOk ? 'Validado' : 'Mora · Ley Bustos'}</span></td>
+            <td><span class="tag ${c.nomina.state === 'ok' && blockers.length === 0 ? 'tag--in' : 'tag--out'}">${blockers.length ? `${blockers.length} ficha(s) incompleta(s)` : c.nomina.label}</span></td>
+            <td>${btnHtml}</td>
+          </tr>
+        `;
+      }).join('');
     } else {
-      headCols = `<tr><th style="width:32px"></th><th>Empresa</th><th>Régimen</th><th class="num">IVA Det.</th><th class="num">Total Cód. 91</th><th>Estado F29</th></tr>`;
+      headCols = `<tr><th style="width:32px"></th><th>Empresa</th><th>Régimen</th><th class="num">IVA Det.</th><th class="num">Total Cód. 91</th><th>Estado F29</th><th>Acción</th></tr>`;
       rowsHtml = state.clients.map((c) => {
         const iva = Math.max(0, c.f29.debito - c.f29.credito);
-        const tag = c.f29.state === 'declarado' || c.f29.state === 'listo' ? 'tag--in' : 'tag--out';
+        const isDone = c.f29.state === 'declarado' || c.f29.state === 'pagado';
+        const tag = isDone || c.f29.state === 'listo' ? 'tag--in' : 'tag--out';
+        const btnHtml = c.f29.state === 'listo' || c.f29.state === 'contabilizado'
+          ? `<button type="button" class="btn btn--sm btn--primary" data-ola-approve-f29="${c.id}">Aprobar F29</button>`
+          : isDone
+            ? `<button type="button" class="btn btn--sm" data-ola-f29-pdf="${c.id}">Hoja PDF</button>`
+            : `<button type="button" class="btn btn--sm" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="f29">Revisar →</button>`;
         return `
           <tr>
             <td><input type="checkbox" data-batch-id="${c.id}" ${state.selectedIds.has(c.id) ? 'checked' : ''} aria-label="Seleccionar ${c.name}"></td>
@@ -1253,7 +1282,8 @@
             <td class="mono">${c.regime}</td>
             <td class="num">${fmt(iva)}</td>
             <td class="num"><strong>${fmt(f29Total(c))}</strong></td>
-            <td><span class="tag ${tag}">${c.f29.state}</span></td>
+            <td><span class="tag ${tag}">${f29StateLabel(c.f29.state)}</span></td>
+            <td>${btnHtml}</td>
           </tr>
         `;
       }).join('');
@@ -1590,6 +1620,79 @@
     return found ? found.label : code;
   }
 
+  function syncBankMetrics(c) {
+    if (!c || !c.bancos) return;
+    const txs = Array.isArray(c.bankTx) ? c.bankTx : [];
+    if (txs.length === 0) {
+      c.bancos.matched = 0;
+      c.bancos.total = 0;
+      c.bancos.state = 'esperando';
+      if (!c.bancos.label || c.bancos.label.includes('%')) c.bancos.label = 'Sin cartola';
+      return;
+    }
+    const conc = txs.filter((x) => x.status === 'Conciliado').length;
+    const pend = txs.length - conc;
+    const total = Math.max(c.bancos.total || 0, txs.length);
+    c.bancos.total = total;
+    if (pend === 0) {
+      c.bancos.matched = total;
+      c.bancos.state = 'ok';
+      c.bancos.label = '100% match';
+    } else {
+      c.bancos.matched = Math.max(0, Math.min(total - pend, Math.max(conc, c.bancos.matched || 0)));
+      const pct = total ? Math.round((c.bancos.matched / total) * 100) : 0;
+      c.bancos.state = 'pendiente';
+      c.bancos.label = `${pct}% match`;
+    }
+  }
+
+  function recomputeClientStatus(c) {
+    if (!c) return;
+    const blockers = getClientPayrollBlockers(c);
+    if (c.nomina) {
+      if (c.nomina.leyBustos) {
+        c.nomina.state = 'alerta';
+        c.nomina.label = 'Mora · Ley Bustos';
+      } else if (blockers.length > 0) {
+        c.nomina.state = 'alerta';
+        c.nomina.label = `${blockers.length} ficha(s) incompleta(s)`;
+      } else {
+        c.nomina.state = 'ok';
+        c.nomina.label = `${(c.workers || []).length} liq · LRE listo`;
+      }
+    }
+    if (c.f29 && c.f29.state === 'pagado') {
+      c.status = 'cerrado';
+      c.cierre = 'Pagado y cerrado';
+      return;
+    }
+    if (c.f29 && c.f29.state === 'declarado') {
+      c.status = 'cerrado';
+      c.cierre = 'Cerrado';
+      return;
+    }
+    if ((c.nomina && c.nomina.leyBustos) || (c.rcv && c.rcv.pendingAcuses > 0)) {
+      c.status = 'critico';
+      c.cierre = c.nomina && c.nomina.leyBustos
+        ? 'Bloqueo Ley Bustos'
+        : `${c.rcv.pendingAcuses} acuse(s) por vencer`;
+      return;
+    }
+    if (!c.bankTx || c.bankTx.length === 0) {
+      c.status = 'esperando';
+      c.cierre = 'Falta cartola';
+      return;
+    }
+    if (blockers.length > 0 || (c.bancos && c.bancos.state !== 'ok')) {
+      c.status = 'revisar';
+      c.cierre = blockers.length > 0 ? 'Fichas pendientes' : 'Conciliación pendiente';
+      return;
+    }
+    c.status = 'revisar';
+    if (c.f29 && c.f29.state === 'revisar') c.f29.state = 'listo';
+    c.cierre = c.f29 && c.f29.state === 'contabilizado' ? 'Contabilizado' : 'Listo para declarar';
+  }
+
   function ensureRcvDocs(c) {
     if (Array.isArray(c.rcvDocs) && c.rcvDocs.length) return c.rcvDocs;
     if (c.id === 'san-isidro') {
@@ -1599,15 +1702,22 @@
         { id: 'rcv3', folio: '20491', rut: '77.409.118-2', supplier: 'Envases Chile SpA', neto: 346218, iva: 65782, account: '41020', plazo: 'Vence en 36 h', plazoTag: 'tag--out', action: 'Aceptar', actionMsg: 'Acuse aceptado en SII para folio 20491', closed: false },
         { id: 'rcv4', folio: '77104', rut: '81.201.000-K', supplier: 'Supermercado Jumbo (Cód. 761)', neto: 151261, iva: 28739, account: '41090', plazo: 'Contado', plazoTag: 'tag--in', action: 'Pedir respaldo', actionMsg: 'Solicitud de respaldo enviada al cliente', closed: false }
       ];
+    } else if (c.id === 'barrio-italia') {
+      c.rcvDocs = [
+        { id: 'bi-r1', folio: '9920', rut: '76.441.890-3', supplier: 'Tostaduría Sur SpA', neto: 267647, iva: 50853, account: '41010', plazo: 'Vence en 22 h', plazoTag: 'tag--on', action: 'Aceptar', actionMsg: 'Acuse aceptado en SII para folio 9920', closed: false },
+        { id: 'bi-r2', folio: '50208', rut: '76.889.210-1', supplier: 'Distribuidora Central Ltda.', neto: 396000, iva: 75240, account: '41090', plazo: 'Aceptado', plazoTag: 'tag--in', action: 'Verificado', actionMsg: 'Documento ya aceptado en SII', closed: false },
+        { id: 'bi-r3', folio: '11902', rut: '96.512.330-4', supplier: 'Servicios Eléctricos y Gas S.A.', neto: 210084, iva: 39916, account: '41030', plazo: 'Contado', plazoTag: 'tag--in', action: 'Verificado', actionMsg: 'Servicio básico verificado', closed: false }
+      ];
     } else {
-      const closed = c.f29.state === 'declarado';
+      const closed = c.f29.state === 'declarado' || c.f29.state === 'pagado';
+      const pend = c.rcv.pendingAcuses || 0;
       const baseNeto = Math.max(120000, Math.round((c.rcv.comprasNeto || 1000000) * 0.22));
       const baseIva = Math.round(baseNeto * 0.19);
       const secNeto = Math.round(baseNeto * 0.55);
       const secIva = Math.round(secNeto * 0.19);
       c.rcvDocs = [
-        { id: `${c.id}-r1`, folio: '50114', rut: '76.889.210-1', supplier: 'Distribuidora Central Ltda.', neto: baseNeto, iva: baseIva, account: '41010', plazo: closed ? 'Cerrado SII' : 'Aceptado', plazoTag: 'tag--in', action: closed ? 'Cerrado' : 'Aceptar', actionMsg: 'Acuse confirmado en SII', closed },
-        { id: `${c.id}-r2`, folio: '50208', rut: '76.889.210-1', supplier: 'Distribuidora Central Ltda.', neto: secNeto, iva: secIva, account: '41090', plazo: closed ? 'Cerrado SII' : 'Aceptado', plazoTag: 'tag--in', action: closed ? 'Cerrado' : 'Aceptar', actionMsg: 'Acuse confirmado en SII', closed },
+        { id: `${c.id}-r1`, folio: '50114', rut: '76.889.210-1', supplier: 'Distribuidora Central Ltda.', neto: baseNeto, iva: baseIva, account: '41010', plazo: pend > 0 ? 'Vence en 24 h' : (closed ? 'Cerrado SII' : 'Aceptado'), plazoTag: pend > 0 ? 'tag--on' : 'tag--in', action: pend > 0 ? 'Aceptar' : (closed ? 'Cerrado' : 'Verificado'), actionMsg: 'Acuse confirmado en SII', closed },
+        { id: `${c.id}-r2`, folio: '50208', rut: '76.889.210-1', supplier: 'Distribuidora Central Ltda.', neto: secNeto, iva: secIva, account: '41090', plazo: pend > 1 ? 'Vence en 36 h' : (closed ? 'Cerrado SII' : 'Aceptado'), plazoTag: pend > 1 ? 'tag--out' : 'tag--in', action: pend > 1 ? 'Aceptar' : (closed ? 'Cerrado' : 'Verificado'), actionMsg: 'Acuse confirmado en SII', closed },
         { id: `${c.id}-r3`, folio: '11902', rut: '96.512.330-4', supplier: 'Servicios Eléctricos y Gas S.A.', neto: 210084, iva: 39916, account: '41030', plazo: 'Contado', plazoTag: 'tag--in', action: 'Verificado', actionMsg: 'Servicio básico verificado', closed }
       ];
     }
@@ -2579,7 +2689,7 @@
             ${selAux.status === 'Abierto'
               ? `<button type="button" class="btn btn--primary" data-settle-aux="${selAux.id}">${selAux.kind === 'cxc' ? 'Registrar cobro en Banco' : 'Registrar pago en Banco'}</button>`
               : `<div class="v2-ins-note">Movimiento ya saldado y registrado en Conciliación Bancaria.</div>`}
-            <button type="button" class="btn btn--sm" data-quick-ok="Recordatorio enviado por folio #${selAux.folio} (${selAux.party})">${selAux.kind === 'cxc' ? 'Enviar recordatorio de cobro' : 'Solicitar comprobante de pago'}</button>
+            <button type="button" class="btn btn--sm" data-request-client="${selAux.kind === 'cxc' ? `Recordatorio de cobro folio #${selAux.folio} (${selAux.party})` : `Comprobante de pago folio #${selAux.folio} (${selAux.party})`}" data-request-area="bancos">${selAux.kind === 'cxc' ? 'Enviar recordatorio de cobro' : 'Solicitar comprobante de pago'}</button>
           </div>
         </div>
       ` : '';
@@ -2674,7 +2784,7 @@
             ${selected.status !== 'Conciliado'
               ? `<button type="button" class="btn btn--primary" data-match-tx="${selected.id}">Confirmar calce y contabilizar</button>`
               : `<button type="button" class="btn" data-unmatch-tx="${selected.id}">Desvincular calce</button>`}
-            <button type="button" class="btn" data-quick-ok="Micro-solicitud sin clave enviada por ${selected.desc}">Pedir respaldo al cliente</button>
+            <button type="button" class="btn" data-request-client="Respaldo bancario: ${selected.desc}" data-request-area="bancos">Pedir respaldo al cliente</button>
           </div>
         </div>
 
@@ -2728,9 +2838,12 @@
       $('v2-inspector').innerHTML = `
         <div class="v2-ins-block">
           <h2 class="v2-ins-title">Cartola pendiente</h2>
-          <p class="muted" style="margin:0;font-size:12.5px">Pendientes por conciliar: ${pend}</p>
-          <button type="button" class="btn btn--primary" data-quick-ok="Enlace sin clave enviado a ${c.name}">Pedir cartola al cliente</button>
-          <div style="display:flex;gap:8px;margin-top:6px">
+          <p class="muted" style="margin:0;font-size:12.5px">Esta empresa aún no tiene cartola bancaria cargada en ${currentPeriod().label}. Carga una cartola de ejemplo para probar el calce o pídela al cliente por enlace sin clave.</p>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <button type="button" class="btn btn--primary" data-sample-cartola="1">Cargar cartola ejemplo + Transbank</button>
+            <button type="button" class="btn" data-request-client="Cartola bancaria ${currentPeriod().label}" data-request-area="bancos">Pedir cartola al cliente</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
             <button type="button" class="btn btn--sm" style="flex:1" data-emit-doc="bancos-pdf">Informe PDF</button>
             <button type="button" class="btn btn--sm" data-emit-doc="bancos-xlsx">Excel (.xlsx)</button>
           </div>
@@ -3145,10 +3258,22 @@
       <div class="v2-ins-block">
         <h2 class="v2-ins-title">Qué revisar antes de cerrar (Normativa)</h2>
         <div class="v2-ins-list" style="font-size:12px">
-          <div class="v2-ins-row"><span><strong>Acuses 8d:</strong> sin acuse pierdes Crédito Fiscal IVA.</span><span class="tag ${c.rcv.pendingAcuses ? 'tag--danger' : 'tag--in'}">${c.rcv.pendingAcuses ? `${c.rcv.pendingAcuses} pend.` : 'OK'}</span></div>
-          <div class="v2-ins-row"><span><strong>PPM ${c.regime}:</strong> ${c.regime === '14 D3' ? 'en ProPyme tributa sobre cobrado.' : 'validar tasa sobre ingresos.'}</span><span class="tag tag--out">Revisar</span></div>
-          <div class="v2-ins-row"><span><strong>Ley Bustos / Fichas:</strong> no ratificar finiquitos con mora.</span><span class="tag ${(c.nomina.leyBustos || blockers.length) ? 'tag--danger' : 'tag--in'}">${(c.nomina.leyBustos || blockers.length) ? 'Bloqueo' : 'OK'}</span></div>
-          <div class="v2-ins-row"><span><strong>F29 048 vs 151:</strong> IUSC y BHE 15,25% separados.</span><span class="tag tag--in">Separados</span></div>
+          <button type="button" class="v2-ins-row-btn" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="rcv">
+            <span><strong>Acuses 8d:</strong> sin acuse pierdes Crédito Fiscal IVA.</span>
+            <span class="tag ${c.rcv.pendingAcuses ? 'tag--danger' : 'tag--in'}">${c.rcv.pendingAcuses ? `${c.rcv.pendingAcuses} pend. →` : 'OK'}</span>
+          </button>
+          <button type="button" class="v2-ins-row-btn" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="f29">
+            <span><strong>PPM ${c.regime}:</strong> ${c.regime === '14 D3' ? 'en ProPyme tributa sobre cobrado.' : 'validar tasa sobre ingresos.'}</span>
+            <span class="tag tag--out">Revisar →</span>
+          </button>
+          <button type="button" class="v2-ins-row-btn" data-open-client="${c.id}" data-open-area="remuneraciones" data-open-sub="${c.nomina.leyBustos ? 'finiquitos' : 'nomina'}">
+            <span><strong>Ley Bustos / Fichas:</strong> no ratificar finiquitos con mora.</span>
+            <span class="tag ${(c.nomina.leyBustos || blockers.length) ? 'tag--danger' : 'tag--in'}">${(c.nomina.leyBustos || blockers.length) ? 'Resolver →' : 'OK'}</span>
+          </button>
+          <button type="button" class="v2-ins-row-btn" data-open-client="${c.id}" data-open-area="impuestos" data-open-sub="f29">
+            <span><strong>F29 048 vs 151:</strong> IUSC y BHE 15,25% separados.</span>
+            <span class="tag tag--in">Ver F29</span>
+          </button>
         </div>
       </div>
       <div class="v2-ins-block v2-ins-block--soft">
@@ -3505,8 +3630,11 @@
             <li class="${sel.prevOk ? 'is-ok' : 'is-fail'}"><span>PreviRed: ${sel.prevText}</span></li>
           </ul>
           <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
-            <button type="button" class="btn btn--primary btn--sm" data-monitor-pdf="${sel.c.id}">Emitir Expediente Tributario PDF</button>
-            <button type="button" class="btn btn--sm" data-open-client="${sel.c.id}" data-open-area="${sel.targetArea}">Abrir empresa →</button>
+            ${sel.level !== 'ok'
+              ? `<button type="button" class="btn btn--primary btn--sm" data-open-client="${sel.c.id}" data-open-area="${sel.targetArea}">Resolver alertas →</button>
+                 <button type="button" class="btn btn--sm" data-monitor-pdf="${sel.c.id}">Emitir Expediente Tributario PDF</button>`
+              : `<button type="button" class="btn btn--primary btn--sm" data-monitor-pdf="${sel.c.id}">Emitir Expediente Tributario PDF</button>
+                 <button type="button" class="btn btn--sm" data-open-client="${sel.c.id}" data-open-area="${sel.targetArea}">Abrir empresa →</button>`}
           </div>
         </div>
       ` : ''}
@@ -4198,8 +4326,8 @@
       ];
       c.bankTx.unshift(...sampleTx);
       c.bancos.total = c.bankTx.length;
-      c.bancos.matched = c.bankTx.filter((x) => x.status === 'Conciliado').length;
-      c.bancos.label = `${Math.round((c.bancos.matched / c.bancos.total) * 100)}% match`;
+      syncBankMetrics(c);
+      recomputeClientStatus(c);
       state.selectedBankId = sampleTx[0].id;
       toast('Cartola BancoEstado + Transbank cargada y auto-calzada');
       render();
@@ -4223,10 +4351,8 @@
           { ok: true, label: `Comisión neta Cta. 42030: ${fmt(com)} + IVA 11080: ${fmt(ivaC)}` },
           { ok: true, label: `Cuadrado exacto con abono banco ${fmt(tx.amount)}` }
         ];
-        c.bancos.matched = c.bankTx.filter((x) => x.status === 'Conciliado').length;
-        c.bancos.total = c.bankTx.length;
-        c.bancos.state = c.bancos.matched === c.bancos.total ? 'ok' : 'pendiente';
-        c.bancos.label = `${Math.round((c.bancos.matched / c.bancos.total) * 100)}% match`;
+        syncBankMetrics(c);
+        recomputeClientStatus(c);
         toast('Split de pasarela aplicado y asiento cuadrado');
         render();
       }
@@ -4236,12 +4362,7 @@
       const c = getClient();
       c.nomina.leyBustos = false;
       c.nomina.previredOk = true;
-      c.nomina.state = getClientPayrollBlockers(c).length ? 'alerta' : 'ok';
-      c.nomina.label = `${c.workers.length} liq · PreviRed al día`;
-      if (c.status === 'critico' && !c.rcv.pendingAcuses) {
-        c.status = 'revisar';
-        c.cierre = 'PreviRed al día';
-      }
+      recomputeClientStatus(c);
       toast('PreviRed regularizado: bloqueo Ley Bustos (Art. 162 CT) levantado');
       render();
       return;
@@ -4255,9 +4376,73 @@
       const w = (c.workers || []).find((x) => x.id === t.dataset.closeFiniquito);
       if (w) {
         w.estado = 'Finiquito cerrado';
+        recomputeClientStatus(c);
         toast(`Finiquito de ${w.name} marcado como ratificado y cerrado`);
         render();
       }
+      return;
+    }
+    if (t.dataset.olaAcuse) {
+      const [cid, did] = t.dataset.olaAcuse.split(':');
+      const targetC = state.clients.find((x) => x.id === cid);
+      if (targetC) {
+        const docs = ensureRcvDocs(targetC);
+        const d = docs.find((x) => x.id === did);
+        if (d && !d.acuseDone && d.plazoTag !== 'tag--in') {
+          d.acuseDone = true;
+          d.plazo = 'Acusado';
+          d.plazoTag = 'tag--in';
+          d.action = 'Acusado ✓';
+        }
+        const remaining = docs.filter((x) => !x.acuseDone && x.plazoTag !== 'tag--in').length;
+        targetC.rcv.pendingAcuses = remaining;
+        targetC.rcv.state = remaining > 0 ? 'alerta' : 'ok';
+        targetC.rcv.label = remaining > 0 ? `${remaining} acuse(s) < 48h` : 'RCV 100% cuadrado';
+        recomputeClientStatus(targetC);
+        state.selectedIds.delete(`acuse:${cid}:${did}`);
+        toast(remaining === 0 ? `Acuse aceptado en ${targetC.name} · Sin acuses pendientes` : `Acuse aceptado en ${targetC.name} (${remaining} pendiente)`);
+        render();
+      }
+      return;
+    }
+    if (t.dataset.olaApproveF29) {
+      const targetC = state.clients.find((x) => x.id === t.dataset.olaApproveF29);
+      if (targetC) {
+        targetC.f29.contabilizado = true;
+        targetC.f29.state = 'declarado';
+        targetC.f29.folio = targetC.f29.folio || String(84920200 + Math.floor(Math.random() * 800));
+        targetC.periodClosed = true;
+        recomputeClientStatus(targetC);
+        state.selectedIds.delete(targetC.id);
+        toast(`F29 aprobado para ${targetC.name} · Folio SII ${targetC.f29.folio}`);
+        render();
+      }
+      return;
+    }
+    if (t.dataset.olaF29Pdf) {
+      const targetC = state.clients.find((x) => x.id === t.dataset.olaF29Pdf);
+      if (targetC) emitDocument('f29-pdf', targetC);
+      return;
+    }
+    if (t.dataset.requestClient) {
+      const c = getClient();
+      const title = t.dataset.requestClient;
+      const area = t.dataset.requestArea || 'bancos';
+      const newId = 'req-' + Date.now();
+      state.inbox.unshift({
+        id: newId,
+        clientId: c.id,
+        client: c.name,
+        title,
+        age: 'Recién solicitado',
+        state: 'Pendiente cliente',
+        targetArea: area,
+        detail: `Enlace de carga sin clave enviado a ${c.name} (${c.rut}) para recibir: ${title}.`
+      });
+      const url = `${location.origin}/portal-estudio?empresa=${encodeURIComponent(c.id)}&req=${encodeURIComponent(newId)}`;
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).catch(() => {});
+      toast(`Solicitud registrada en Bandeja y enlace copiado para ${c.name}`);
+      render();
       return;
     }
     if (t.dataset.acuseDoc || t.dataset.acuseAll) {
@@ -4278,6 +4463,7 @@
       c.rcv.pendingAcuses = remaining;
       c.rcv.state = remaining > 0 ? 'alerta' : 'ok';
       c.rcv.label = remaining > 0 ? `${remaining} acuse(s) < 48h` : 'RCV 100% cuadrado';
+      recomputeClientStatus(c);
       toast(remaining === 0 ? `Listo: ${count} acuse(s) aceptados. Brecha de Crédito IVA resuelta.` : `Acuse aceptado (${remaining} pendiente)`);
       render();
       return;
@@ -4430,7 +4616,84 @@
     if (t.id === 'btn-period-next') { state.periodIdx = Math.min(PERIODS.length - 1, state.periodIdx + 1); render(); return; }
     if (t.id === 'btn-reset-demo') { state.clients = INITIAL_CLIENTS(); state.inbox = INITIAL_INBOX(); toast('Datos restablecidos'); render(); return; }
     if (t.id === 'btn-batch-clear') { state.selectedIds.clear(); render(); return; }
-    if (t.id === 'btn-batch-action') { toast(`Lote procesado (${state.selectedIds.size} elementos)`); state.selectedIds.clear(); render(); return; }
+    if (t.id === 'btn-batch-action') {
+      const ids = Array.from(state.selectedIds);
+      if (state.level === 'studio' && state.studioView === 'olas') {
+        if (state.olaTab === 'acuses') {
+          let ok = 0;
+          ids.forEach((key) => {
+            const parts = String(key).split(':');
+            if (parts[0] === 'acuse' && parts.length === 3) {
+              const targetC = state.clients.find((x) => x.id === parts[1]);
+              if (targetC) {
+                const docs = ensureRcvDocs(targetC);
+                const d = docs.find((x) => x.id === parts[2]);
+                if (d && !d.acuseDone && d.plazoTag !== 'tag--in') {
+                  d.acuseDone = true;
+                  d.plazo = 'Acusado';
+                  d.plazoTag = 'tag--in';
+                  d.action = 'Acusado ✓';
+                  ok++;
+                }
+                const rem = docs.filter((x) => !x.acuseDone && x.plazoTag !== 'tag--in').length;
+                targetC.rcv.pendingAcuses = rem;
+                targetC.rcv.state = rem > 0 ? 'alerta' : 'ok';
+                targetC.rcv.label = rem > 0 ? `${rem} acuse(s) < 48h` : 'RCV 100% cuadrado';
+                recomputeClientStatus(targetC);
+              }
+            }
+          });
+          state.selectedIds.clear();
+          toast(ok ? `${ok} acuse(s) aceptados en lote` : 'No había acuses pendientes en la selección');
+          render(); return;
+        }
+        if (state.olaTab === 'lre') {
+          const picked = state.clients.filter((c) => ids.includes(c.id));
+          const ready = picked.filter((c) => !c.nomina.leyBustos && getClientPayrollBlockers(c).length === 0);
+          const blocked = picked.length - ready.length;
+          if (ready.length) triggerLreDownload(ready[0]);
+          state.selectedIds.clear();
+          toast(ready.length
+            ? `LRE exportado para ${ready.length} empresa(s) lista(s)${blocked ? ` · ${blocked} con bloqueo omitida(s)` : ''}`
+            : 'Las empresas seleccionadas tienen bloqueos (Ley Bustos o fichas incompletas)');
+          render(); return;
+        }
+        if (state.olaTab === 'f29') {
+          let ok = 0;
+          state.clients.forEach((c) => {
+            if (ids.includes(c.id) && (c.f29.state === 'listo' || c.f29.state === 'contabilizado')) {
+              c.f29.contabilizado = true;
+              c.f29.state = 'declarado';
+              c.f29.folio = c.f29.folio || String(84920300 + ok);
+              c.periodClosed = true;
+              recomputeClientStatus(c);
+              ok++;
+            }
+          });
+          state.selectedIds.clear();
+          toast(ok ? `${ok} F29 aprobados en lote` : 'Ninguna de las seleccionadas está en estado «Listo» o «Contabilizado»');
+          render(); return;
+        }
+      }
+      if (state.level === 'client' && state.clientArea === 'remuneraciones') {
+        const c = getClient();
+        let fixed = 0;
+        (c.workers || []).forEach((w) => {
+          if (ids.includes(w.id)) {
+            const miss = getWorkerMissing(w);
+            miss.forEach((m) => { w[m.key] = false; });
+            if (miss.length) { w.estado = 'Listo'; fixed++; }
+          }
+        });
+        recomputeClientStatus(c);
+        state.selectedIds.clear();
+        toast(fixed ? `${fixed} ficha(s) regularizadas en lote` : `Lote validado (${ids.length} trabajador(es) al día)`);
+        render(); return;
+      }
+      state.selectedIds.clear();
+      toast(`Lote procesado (${ids.length} elementos)`);
+      render(); return;
+    }
     if (t.id === 'btn-dl-previred') { triggerPreviredDownload(getClient()); return; }
     if (t.id === 'btn-dl-lre') { triggerLreDownload(getClient()); return; }
     if (t.id === 'btn-sample-lre') {
@@ -4471,9 +4734,81 @@
         });
         return;
       }
+      if (state.level === 'studio' && state.studioView === 'olas') {
+        if (state.olaTab === 'acuses') {
+          let ok = 0;
+          state.clients.forEach((c) => {
+            const docs = ensureRcvDocs(c);
+            let changed = false;
+            docs.forEach((d) => {
+              if (!d.acuseDone && d.plazoTag !== 'tag--in') {
+                d.acuseDone = true;
+                d.plazo = 'Acusado';
+                d.plazoTag = 'tag--in';
+                d.action = 'Acusado ✓';
+                ok++;
+                changed = true;
+              }
+            });
+            if (changed) {
+              c.rcv.pendingAcuses = 0;
+              c.rcv.state = 'ok';
+              c.rcv.label = 'RCV 100% cuadrado';
+              recomputeClientStatus(c);
+            }
+          });
+          state.selectedIds.clear();
+          toast(ok ? `${ok} acuse(s) aceptados en toda la cartera` : 'Todos los acuses de 8 días ya están al día');
+          render(); return;
+        }
+        if (state.olaTab === 'lre') {
+          const ready = state.clients.filter((c) => !c.nomina.leyBustos && getClientPayrollBlockers(c).length === 0);
+          const blocked = state.clients.length - ready.length;
+          if (ready.length) triggerLreDownload(ready[0]);
+          toast(ready.length
+            ? `LRE generado (${ready.length} listas · ${blocked} con bloqueos por revisar)`
+            : 'Ninguna empresa lista para LRE: revisa Ley Bustos o fichas incompletas');
+          render(); return;
+        }
+        let ok = 0;
+        state.clients.forEach((c) => {
+          if (c.f29.state === 'listo' || c.f29.state === 'contabilizado') {
+            c.f29.contabilizado = true;
+            c.f29.state = 'declarado';
+            c.f29.folio = c.f29.folio || String(84920200 + ok);
+            c.periodClosed = true;
+            recomputeClientStatus(c);
+            ok++;
+          }
+        });
+        toast(ok ? `${ok} F29 aprobados en lote` : 'No hay F29 en estado Listo o Contabilizado');
+        render(); return;
+      }
+      if (state.level === 'studio' && state.studioView === 'bandeja') {
+        const targetC = state.clients.find((c) => !c.bankTx || c.bankTx.length === 0) || state.clients[0];
+        if (targetC) {
+          const newId = 'req-' + Date.now();
+          state.inbox.unshift({
+            id: newId,
+            clientId: targetC.id,
+            client: targetC.name,
+            title: `Solicitud de respaldo ${currentPeriod().label}`,
+            age: 'Recién enviado',
+            state: 'Pendiente cliente',
+            targetArea: 'bancos',
+            detail: `Enlace seguro sin clave generado para que ${targetC.name} suba su cartola o respaldo pendiente.`
+          });
+          state.selectedInboxId = newId;
+          const url = `${location.origin}/portal-estudio?empresa=${encodeURIComponent(targetC.id)}&req=${encodeURIComponent(newId)}`;
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).catch(() => {});
+          toast(`Solicitud creada para ${targetC.name} y enlace copiado`);
+          render();
+        }
+        return;
+      }
       if (state.level === 'studio' && state.studioView === 'hoy') {
         let ok = 0;
-        state.clients.forEach((c) => { if (c.f29.state === 'listo') { c.f29.state = 'declarado'; c.f29.folio = String(84920200 + ok); c.status = 'cerrado'; c.cierre = 'Cerrado'; ok++; } });
+        state.clients.forEach((c) => { if (c.f29.state === 'listo') { c.f29.state = 'declarado'; c.f29.folio = String(84920200 + ok); c.periodClosed = true; recomputeClientStatus(c); ok++; } });
         toast(ok ? `${ok} declaraciones F29 aprobadas en lote` : 'No hay F29 pendientes en estado listo');
         render(); return;
       }
@@ -4510,21 +4845,34 @@
         render(); return;
       }
       if (state.level === 'client' && state.clientArea === 'remuneraciones') {
-        if (state.clientSub === 'previred') triggerLreDownload(getClient());
+        const c = getClient();
+        if (state.clientSub === 'previred') triggerLreDownload(c);
         else if (state.clientSub === 'finiquitos') {
-          emitDocument('finiquitos-xlsx', getClient());
+          emitDocument('finiquitos-xlsx', c);
+        } else {
+          const blockers = getClientPayrollBlockers(c);
+          if (blockers.length > 0) {
+            state.workerFilter = 'incompletas';
+            state.selectedWorkerId = blockers[0].w.id;
+            toast(`Mostrando ${blockers.length} ficha(s) incompleta(s): completa los campos en el panel derecho`);
+            render();
+            return;
+          }
+          triggerPreviredDownload(c);
         }
-        else triggerPreviredDownload(getClient());
         return;
       }
       if (state.level === 'client' && state.clientArea === 'bancos') {
         const c = getClient();
+        if (!c.bankTx || c.bankTx.length === 0) {
+          toast('Primero carga una cartola CSV o usa «Cargar cartola ejemplo + Transbank»');
+          return;
+        }
         let n = 0;
         c.bankTx.forEach((tx) => { if (tx.status !== 'Conciliado') { tx.status = 'Conciliado'; n++; } });
-        c.bancos.matched = c.bancos.total || c.bankTx.length;
-        c.bancos.state = 'ok';
-        c.bancos.label = '100% match';
-        toast(n ? `${n} movimientos auto-conciliados` : 'Cartola ya está 100% cuadrada');
+        syncBankMetrics(c);
+        recomputeClientStatus(c);
+        toast(n ? `${n} movimientos auto-conciliados · Cartola 100% cuadrada` : 'Cartola ya está 100% cuadrada');
         render(); return;
       }
       if (state.level === 'client' && state.clientArea === 'contabilidad') {
@@ -4568,6 +4916,7 @@
         const rem = getWorkerMissing(w);
         if (rem.length === 0) w.estado = 'Listo';
         else w.estado = rem[0].label;
+        recomputeClientStatus(c);
         const left = getClientPayrollBlockers(c).length;
         toast(left === 0 ? 'Todas las fichas completas · PreviRed desbloqueado' : `Ficha de ${w.name} actualizada (${left} pendiente)`);
         render();
@@ -4655,7 +5004,8 @@
       const tx = c.bankTx.find((x) => x.id === t.dataset.matchTx);
       if (tx) {
         tx.status = 'Conciliado';
-        c.bancos.matched = Math.min(c.bancos.total || c.bankTx.length, c.bancos.matched + 1);
+        syncBankMetrics(c);
+        recomputeClientStatus(c);
         toast('Calce confirmado y contabilizado');
         render();
       }
@@ -4666,7 +5016,9 @@
       const tx = c.bankTx.find((x) => x.id === t.dataset.unmatchTx);
       if (tx && tx.status === 'Conciliado') {
         tx.status = 'Por conciliar';
-        c.bancos.matched = Math.max(0, c.bancos.matched - 1);
+        c.bancos.matched = Math.max(0, (c.bancos.matched || 1) - 1);
+        syncBankMetrics(c);
+        recomputeClientStatus(c);
         toast('Movimiento vuelto a pendiente');
         render();
       }
@@ -4953,6 +5305,8 @@
         }));
         c.bancos.total = c.bankTx.length;
         c.bancos.matched = 0;
+        syncBankMetrics(c);
+        recomputeClientStatus(c);
         toast(`Cartola importada: ${c.bankTx.length} movimientos`);
         render();
       };
@@ -5022,21 +5376,38 @@
     const name = $('nc-name').value.trim();
     const rut = $('nc-rut').value.trim();
     const regime = $('nc-regime').value;
+    const wCount = Math.min(30, Math.max(0, Number($('nc-workers')?.value) || 0));
     if (!name || !rut) return;
     const id = 'cli-' + Date.now();
+    const workers = [];
+    for (let i = 0; i < wCount; i++) {
+      workers.push({
+        id: `${id}-w${i + 1}`,
+        name: `Trabajador ${i + 1}`,
+        rut: rutConDv(17100000 + i * 137),
+        sexo: i % 2 === 0 ? 'F' : 'M',
+        ingreso: currentPeriod().iso + '-01',
+        cargo: 'Colaborador',
+        base: 650000,
+        afp: 'Habitat',
+        salud: 'Fonasa',
+        tipoRegimen: 'dependiente',
+        estado: 'Listo'
+      });
+    }
     state.clients.unshift({
       id, name, rut, regime, status: 'revisar',
       rcv: { state: 'ok', label: 'Sin movimientos', pendingAcuses: 0, ventasNeto: 0, comprasNeto: 0 },
-      nomina: { state: 'ok', label: '0 trab.', count: 0, previredOk: true, leyBustos: false },
+      nomina: { state: 'ok', label: `${workers.length} trab.`, count: workers.length, previredOk: true, leyBustos: false },
       bancos: { state: 'esperando', label: 'Sin cartola', matched: 0, total: 0 },
       f29: { state: 'revisar', folio: '', postergar: false, debito: 0, credito: 0, ppm: 0, retenciones: 0, history: [0,0,0,0,0,0,0,0,0,0,0,0] },
       cierre: 'Recién creada',
-      workers: [], bankTx: []
+      workers, bankTx: []
     });
     if (state.accountMode === 'studio') markOnboardStep('company');
     e.target.reset();
     closeDrawer();
-    toast(`${name} agregada a la cartera`);
+    toast(`${name} agregada a la cartera${workers.length ? ` (${workers.length} trabajador(es))` : ''}`);
     enterClient(id, 'resumen');
   });
 
